@@ -1,3 +1,14 @@
+#
+#    Copyright 2018 Picovoice Inc.
+#
+#    You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
+#    file accompanying this source.
+#
+#    Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+#    an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+#    specific language governing permissions and limitations under the License.
+#
+
 import os
 from ctypes import *
 from ctypes.util import find_library
@@ -5,7 +16,11 @@ from enum import Enum
 
 
 class Leopard(object):
+    """Python binding for Picovoice's Speech-to-Text engine."""
+
     class PicovoiceStatuses(Enum):
+        """Status codes corresponding to 'pv_status_t' defined in 'include/picovoice.h'"""
+
         SUCCESS = 0
         OUT_OF_MEMORY = 1
         IO_ERROR = 2
@@ -27,10 +42,19 @@ class Leopard(object):
         pass
 
     def __init__(self, library_path, acoustic_model_path, language_model_path, license_path):
+        """
+        Constructor.
+
+        :param library_path: Absolute path to dynamic library.
+        :param acoustic_model_path: Absolute path to file containing acoustic model parameters.
+        :param language_model_path: Absolute path to file containing language model parameters.
+        :param license_path : Absolute path to a valid license file.
+        """
+
         self._libc = CDLL(find_library('c'))
 
         if not os.path.exists(library_path):
-            raise IOError("Could not find Cheetah's dynamic library at '%s'" % library_path)
+            raise IOError("Could not find Leopard's dynamic library at '%s'" % library_path)
 
         library = cdll.LoadLibrary(library_path)
 
@@ -62,8 +86,7 @@ class Leopard(object):
         self._delete_func.restype = None
 
         self._process_func = library.pv_leopard_process
-        self._process_func.argtypes = \
-            [POINTER(self.CLeopard), POINTER(c_short), c_int32, POINTER(c_char_p)]
+        self._process_func.argtypes = [POINTER(self.CLeopard), POINTER(c_short), c_int32, POINTER(c_char_p)]
         self._process_func.restype = self.PicovoiceStatuses
 
         self._version = library.pv_leopard_version()
@@ -71,6 +94,14 @@ class Leopard(object):
         self._sample_rate = library.pv_sample_rate()
 
     def process(self, pcm):
+        """
+        Processes a given audio data and returns its transcription.
+
+        :param pcm: The audio needs to have a sample rate equal to 'pv_sample_rate()' and be 16-bit linearly-encoded.
+        Leopard operates on single-channel audio.
+        :return: Transcription.
+        """
+
         assert pcm.ndim == 1
 
         c_transcript = c_char_p()
@@ -84,12 +115,18 @@ class Leopard(object):
         return transcript
 
     def delete(self):
+        """Destructor."""
+
         self._delete_func(self._handle)
 
     @property
     def version(self):
+        """Getter for version string."""
+
         return self._version
 
     @property
     def sample_rate(self):
+        """Audio sample rate accepted by Leopard engine."""
+
         return self._sample_rate

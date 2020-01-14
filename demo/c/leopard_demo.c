@@ -78,22 +78,27 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    static const int WAV_HEADER_LENGTH_BYTE = 44;
+    static const int32_t WAV_HEADER_LENGTH_BYTE = 44;
 
     fseek(wav_handle, 0, SEEK_END);
     const int32_t pcm_length_byte = ftell(wav_handle) - WAV_HEADER_LENGTH_BYTE;
-    const int32_t pcm_length_samples = pcm_length_byte / sizeof(int16_t);
+    const int32_t num_samples = pcm_length_byte / sizeof(int16_t);
     fseek(wav_handle, WAV_HEADER_LENGTH_BYTE, SEEK_SET);
 
     int16_t *pcm = malloc(pcm_length_byte);
-    const size_t num_bytes_read = fread(pcm, sizeof(int16_t), pcm_length_samples, wav_handle);
-    if (num_bytes_read != (size_t) pcm_length_samples) {
+    if (!pcm) {
+        fprintf(stderr, "failed to allocate memory for audio buffer\n");
+        exit(1);
+    }
+
+    const size_t count = fread(pcm, sizeof(int16_t), num_samples, wav_handle);
+    if (count != (size_t) num_samples) {
         fprintf(stderr, "failed to read audio data from '%s'", wav_path);
         exit(1);
     }
 
     char *transcript;
-    status = pv_leopard_process(leopard, pcm, pcm_length_byte / sizeof(int16_t), &transcript);
+    status = pv_leopard_process(leopard, pcm, num_samples, &transcript);
     if (status != PV_STATUS_SUCCESS) {
         fprintf(stderr, "failed to process with '%s'.\n", pv_status_to_string(status));
         exit(1);
