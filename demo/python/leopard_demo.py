@@ -56,7 +56,7 @@ if __name__ == '__main__':
     for audio_path in [os.path.expanduser(x.strip()) for x in args.audio_paths.split(',')]:
         audio, sample_rate = soundfile.read(audio_path, dtype='int16')
         if sample_rate != leopard.sample_rate:
-            raise ValueError('Cheetah can only process audio data with sample rate of %d' % leopard.sample_rate)
+            raise ValueError('Leopard can only process audio data with sample rate of %d' % leopard.sample_rate)
 
         transcript = leopard.process(audio)
 
