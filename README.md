@@ -12,6 +12,17 @@ Beagle Bone are supported. Linux (x86_64) is available for personal and non-comm
 platforms are only available under the commercial license.
 * customizable. Allows adding new words and adapting to different contexts (Available only under the commercial license).
 
+## Table of Contents
+* [License](#license)
+* [Structure of Repository](#structure-of-repository)
+* [Running Demo Applications](#running-demo-applications)
+    * [Python Demo Application](#python-demo-application)
+    * [C Demo Application](#c-demo-application)
+* [Integration](#integration)
+    * [Python](#python)
+    * [C](#c)
+* [Releases](#releases)
+
 ## License
 
 This repository is provided for **personal & non-commercial** use only. Refer to [LICENSE](/LICENSE) for details. If you
