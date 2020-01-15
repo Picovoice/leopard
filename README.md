@@ -6,7 +6,7 @@ Leopard is an on-device Speech-to-Text engine. Leopard is:
 
 * offline and runs locally without an internet connection. 
 * highly-accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results).
-* compact and computationally-efficient [[1]]((https://github.com/Picovoice/speech-to-text-benchmark#results)).
+* compact and computationally-efficient [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results).
 * cross-platform. Linux (x86_64), Mac (x86_64), Windows (x86_64), web browsers, Android, iOS, Raspberry Pi, and
 Beagle Bone are supported. Linux (x86_64) is available for personal and non-commercial use free of charge. Other
 platforms are only available under the commercial license.
