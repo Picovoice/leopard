@@ -14,6 +14,7 @@ platforms are only available under the commercial license.
 
 ## Table of Contents
 * [License](#license)
+* [Use Cases](#use-cases)
 * [Structure of Repository](#structure-of-repository)
 * [Running Demo Applications](#running-demo-applications)
     * [Python Demo Application](#python-demo-application)
@@ -27,6 +28,18 @@ platforms are only available under the commercial license.
 
 This repository is provided for **personal & non-commercial** use only. Refer to [LICENSE](/LICENSE) for details. If you
 wish to use Leopard in a commercial product request access [here](https://picovoice.ai/contact.html).
+
+## Use Cases
+
+Leopard is meant to be used for open-domain transcription applications. It is an offline transcription engine (i.e.
+file-based processing).
+
+* If real-time feedback (incremental transcription results) are required, you should check out
+[Cheetah](https://github.com/Picovoice/cheetah).
+* If you need to understand naturally-spoken (complex) commands within a specific domain you should check out
+[Rhino](https://github.com/Picovoice/rhino).
+* If you need to recognize a few simple voice commands or activate a device using voice you should check out
+[Porcupine](https://github.com/Picovoice/porcupine).
 
 ## Structure of Repository
 
