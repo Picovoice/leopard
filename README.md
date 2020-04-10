@@ -2,15 +2,17 @@
 
 Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
-Leopard is an on-device Speech-to-Text engine. Leopard is:
+Leopard is an on-device Speech-to-Text engine.
 
-* offline and runs locally without an internet connection. 
-* highly-accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results).
+Leopard is:
+
+* offline: runs locally, without an Internet connection. 
+* highly accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results).
 * compact and computationally-efficient [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results).
 * cross-platform. Linux (x86_64), Mac (x86_64), Windows (x86_64), web browsers, Android, iOS, Raspberry Pi, and
-Beagle Bone are supported. Linux (x86_64) is available for personal and non-commercial use free of charge. Other
-platforms are only available under the commercial license.
-* customizable. Allows adding new words and adapting to different contexts (Available only under the commercial license).
+BeagleBone are supported. Linux (x86_64) is available for personal and non-commercial use, free of charge. Other
+platforms are only available under a commercial license.
+* customizable. Allows adding new words and adapting to different contexts (Available only under a commercial license).
 
 ## Table of Contents
 * [License](#license)
@@ -27,24 +29,23 @@ platforms are only available under the commercial license.
 ## License
 
 This repository is provided for **personal & non-commercial** use only. Refer to [LICENSE](/LICENSE) for details. If you
-wish to use Leopard in a commercial product request access [here](https://picovoice.ai/contact.html).
+wish to use Leopard in a commercial product, [contact Picovoice](https://picovoice.ai/contact/).
 
 ## Use Cases
 
-Leopard is meant to be used for open-domain transcription applications. It is an offline transcription engine (i.e.
-file-based processing).
+Leopard is intended to be used for open-domain transcription applications. It is an offline transcription engine (i.e. file-based processing).
 
-* If real-time feedback (incremental transcription results) are required, you should check out
+* If real-time feedback (incremental transcription results) is required, see
 [Cheetah](https://github.com/Picovoice/cheetah).
-* If you need to understand naturally-spoken (complex) commands within a specific domain you should check out
+* If you need to understand naturally-spoken (complex) commands within a specific domain, see
 [Rhino](https://github.com/Picovoice/rhino).
-* If you need to recognize a few simple voice commands or activate a device using voice you should check out
+* If you need to recognize a small set of fixed voice commands or activate a device using voice, see
 [Porcupine](https://github.com/Picovoice/porcupine).
 
 ## Structure of Repository
 
 Leopard is shipped as a dynamic library. The binary files for supported platforms are located under
-[lib](/lib) and header files are at [include](/include). Bindings are available at [binding](/binding) to facilitate
+[lib](/lib), and header files are at [include](/include). Bindings are available at [binding](/binding) to facilitate
 usage from higher-level languages/platforms. Demo applications are at [demo](/demo). Finally, [resources](/resources) is
 a placeholder for data used by various applications within the repository.
 
@@ -54,14 +55,14 @@ a placeholder for data used by various applications within the repository.
 
 The demo transcribes a set of audio files provided as command line arguments. The demo has been tested using Python 3.6
 on a machine running Ubuntu 18.04 (x86_64). Note that the audio files need to be single-channel, 16KHz, and 16-bit
-linearly-encoded. For more information about audio requirements refer to [pv_leopard.h](/include/pv_leopard.h). The
-following transcribes the WAV file located in the resource directory.
+linearly-encoded. For more information about audio requirements, refer to [pv_leopard.h](/include/pv_leopard.h). The
+following transcribes the WAV file located in the resource directory:
 
 ```bash
 python demo/python/leopard_demo.py --audio_paths resources/audio_samples/test.wav
 ```
 
-In order to transcribe multiple files provide their paths as below.
+In order to transcribe multiple files provide their paths:
 
 ```bash
 python demo/python/leopard_demo.py --audio_paths PATH_TO_AUDIO_FILE_1 PATH_TO_AUDIO_FILE_2 PATH_TO_AUDIO_FILE_3
@@ -72,19 +73,19 @@ python demo/python/leopard_demo.py --audio_paths PATH_TO_AUDIO_FILE_1 PATH_TO_AU
 This demo application accepts a list of WAV files as input and returns their transcripts. Note that the demo expects the
 audio files to be WAV, 16KHz, and 16-bit linearly-encoded. It does not perform any verification to assure the
 compatibility or correctness of the input audio files. Set the current working directory to the root of the repository.
-The demo can be built using `gcc` as below.
+The demo can be built using `gcc`:
 
 ```bash
 gcc -I include/ -O3 demo/c/leopard_demo.c -ldl -o leopard_demo
 ```
 
-The usage can be attained by
+The usage can be attained with:
 
 ```bash
 ./leopard_demo
 ```
 
-Then it can be used as follows
+Then it can be used as follows:
 
 ```bash
 ./leopard_demo \
@@ -100,7 +101,7 @@ Then it can be used as follows
 ### Python
 
 [leopard.py](/binding/python/leopard.py) provides a Python binding. Below is a quick demonstration of how to construct
-an instance of it.
+an instance:
 
 ```python
 library_path = ...  # the file is available under lib/linux/x86_64/libpv_leopard.so
@@ -120,7 +121,7 @@ audio = ... # audio data to be transcribed as a NumPy array
 transcript = handle.process(audio)
 ```
 
-When finished, release the acquired resources.
+When finished, release the acquired resources:
 
 ```python
 handle.delete()
