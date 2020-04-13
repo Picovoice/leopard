@@ -15,16 +15,20 @@ platforms are only available under a commercial license.
 * customizable. Allows adding new words and adapting to different contexts (Available only under a commercial license).
 
 ## Table of Contents
-* [License](#license)
-* [Use Cases](#use-cases)
-* [Structure of Repository](#structure-of-repository)
-* [Running Demo Applications](#running-demo-applications)
-    * [Python Demo Application](#python-demo-application)
-    * [C Demo Application](#c-demo-application)
-* [Integration](#integration)
-    * [Python](#python)
-    * [C](#c)
-* [Releases](#releases)
+- [Leopard](#leopard)
+  - [Table of Contents](#table-of-contents)
+  - [License](#license)
+  - [Use Cases](#use-cases)
+  - [Structure of Repository](#structure-of-repository)
+  - [Picovoice Console and License File](#picovoice-console-and-license-file)
+  - [Running Demo Applications](#running-demo-applications)
+    - [Python Demo Application](#python-demo-application)
+    - [C Demo Application](#c-demo-application)
+  - [Integration](#integration)
+    - [Python](#python)
+    - [C](#c)
+  - [Releases](#releases)
+    - [V1.0.0 — January 14th, 2020](#v100--january-14th-2020)
 
 ## License
 
@@ -49,6 +53,10 @@ Leopard is shipped as a dynamic library. The binary files for supported platform
 usage from higher-level languages/platforms. Demo applications are at [demo](/demo). Finally, [resources](/resources) is
 a placeholder for data used by various applications within the repository.
 
+## Picovoice Console and License File
+
+In order to run, Leopard requires a valid license file ('.lic' extension). To obtain a time-limited evaluation license file, visit [Picovoice Console](https://console.picovoice.ai). To obtain a commercial license, [contact Picovoice](https://picovoice.ai/contact/).
+
 ## Running Demo Applications
 
 ### Python Demo Application
@@ -59,13 +67,13 @@ linearly-encoded. For more information about audio requirements, refer to [pv_le
 following transcribes the WAV file located in the resource directory:
 
 ```bash
-python demo/python/leopard_demo.py --audio_paths resources/audio_samples/test.wav
+python demo/python/leopard_demo.py --audio_paths resources/audio_samples/test.wav --license_path ${PATH_TO_YOUR_LEOPARD_LICENSE_FILE}
 ```
 
 In order to transcribe multiple files provide their paths:
 
 ```bash
-python demo/python/leopard_demo.py --audio_paths PATH_TO_AUDIO_FILE_1 PATH_TO_AUDIO_FILE_2 PATH_TO_AUDIO_FILE_3
+python demo/python/leopard_demo.py --audio_paths ${PATH_TO_AUDIO_FILE_1} ${PATH_TO_AUDIO_FILE_2} ${PATH_TO_AUDIO_FILE_3} --license_path ${PATH_TO_YOUR_LEOPARD_LICENSE_FILE}
 ```
 
 ### C Demo Application
@@ -92,7 +100,7 @@ Then it can be used as follows:
 ./lib/linux/x86_64/libpv_leopard.so \
 ./lib/common/acoustic_model.pv \
 ./lib/common/language_model.pv \
-./resources/license/leopard_eval_linux.lic \
+${PATH_TO_YOUR_LEOPARD_LICENSE_FILE} \
 ./resources/audio_samples/test.wav
 ```
 
@@ -107,7 +115,7 @@ an instance:
 library_path = ...  # the file is available under lib/linux/x86_64/libpv_leopard.so
 acoustic_model_path = ...  # the file is available under lib/common/acoustic_model.pv
 language_model_path = ...  # the file is available under lib/common/language_model.pv
-license_path = ...  # the file is available under resources/license/leopard_eval_linux.lic
+license_path = ...  # The .lic file is available from Picovoice Console (https://console.picovoice.ai)
 
 handle = Leopard(library_path, acoustic_model_path, language_model_path, license_path)
 ```
@@ -136,7 +144,7 @@ constructed as follows.
 ```c
 const char *acoustic_model_path = ... // the file is available under lib/common/acoustic_model.pv
 const char *language_model_path = ... // the file is available under lib/common/language_model.pv
-const char *license_path = ... // the file is available under resources/license/leopard_eval_linux.lic
+const char *license_path = ... // The .lic file is available from Picovoice Console (https://console.picovoice.ai)
 
 pv_leopard_t *handle;
 const pv_status_t status = pv_leopard_init(acoustic_model_path, language_model_path, license_path, &handle);
