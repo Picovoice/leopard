@@ -67,13 +67,13 @@ linearly-encoded. For more information about audio requirements, refer to [pv_le
 following transcribes the WAV file located in the resource directory:
 
 ```bash
-python demo/python/leopard_demo.py --audio_paths resources/audio_samples/test.wav --license_path PATH_TO_YOUR_LEOPARD_LICENSE_FILE
+python demo/python/leopard_demo.py --audio_paths resources/audio_samples/test.wav --license_path ${PATH_TO_YOUR_LEOPARD_LICENSE_FILE}
 ```
 
 In order to transcribe multiple files provide their paths:
 
 ```bash
-python demo/python/leopard_demo.py --audio_paths PATH_TO_AUDIO_FILE_1 PATH_TO_AUDIO_FILE_2 PATH_TO_AUDIO_FILE_3 --license_path PATH_TO_YOUR_LEOPARD_LICENSE_FILE
+python demo/python/leopard_demo.py --audio_paths ${PATH_TO_AUDIO_FILE_1} ${PATH_TO_AUDIO_FILE_2} ${PATH_TO_AUDIO_FILE_3} --license_path ${PATH_TO_YOUR_LEOPARD_LICENSE_FILE}
 ```
 
 ### C Demo Application
@@ -100,7 +100,7 @@ Then it can be used as follows:
 ./lib/linux/x86_64/libpv_leopard.so \
 ./lib/common/acoustic_model.pv \
 ./lib/common/language_model.pv \
-./PATH_TO_YOUR_LEOPARD_LICENSE_FILE \
+${PATH_TO_YOUR_LEOPARD_LICENSE_FILE} \
 ./resources/audio_samples/test.wav
 ```
 
