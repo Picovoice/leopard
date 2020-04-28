@@ -55,7 +55,7 @@ a placeholder for data used by various applications within the repository.
 
 ## Picovoice Console and License File
 
-In order to run, Leopard requires a valid license file ('.lic' extension). To obtain a time-limited evaluation license file, visit [Picovoice Console](https://console.picovoice.ai). To obtain a commercial license, [contact Picovoice](https://picovoice.ai/contact/).
+In order to run, Leopard requires a valid license file ('.lic' extension). To obtain a time-limited evaluation license file, visit [Picovoice Console](https://picovoice.ai/console/). To obtain a commercial license, [contact Picovoice](https://picovoice.ai/contact/).
 
 ## Running Demo Applications
 
@@ -115,7 +115,7 @@ an instance:
 library_path = ...  # the file is available under lib/linux/x86_64/libpv_leopard.so
 acoustic_model_path = ...  # the file is available under lib/common/acoustic_model.pv
 language_model_path = ...  # the file is available under lib/common/language_model.pv
-license_path = ...  # The .lic file is available from Picovoice Console (https://console.picovoice.ai)
+license_path = ...  # The .lic file is available from Picovoice Console (https://picovoice.ai/console/)
 
 handle = Leopard(library_path, acoustic_model_path, language_model_path, license_path)
 ```
@@ -144,7 +144,7 @@ constructed as follows.
 ```c
 const char *acoustic_model_path = ... // the file is available under lib/common/acoustic_model.pv
 const char *language_model_path = ... // the file is available under lib/common/language_model.pv
-const char *license_path = ... // The .lic file is available from Picovoice Console (https://console.picovoice.ai)
+const char *license_path = ... // The .lic file is available from Picovoice Console (https://picovoice.ai/console/)
 
 pv_leopard_t *handle;
 const pv_status_t status = pv_leopard_init(acoustic_model_path, language_model_path, license_path, &handle);
