@@ -12,8 +12,9 @@
 import os
 import sys
 import unittest
+import wave
 
-import soundfile
+import numpy as np
 
 from leopard import Leopard
 
@@ -28,10 +29,13 @@ class LeopardTestCase(unittest.TestCase):
             library_path=abs_path('lib/linux/x86_64/libpv_leopard.so'),
             model_path=abs_path('lib/common/leopard_params.pv'))
 
-        audio, sample_rate = soundfile.read(abs_path('resources/audio_samples/test.wav'), dtype='int16')
-        assert sample_rate == leopard.sample_rate
+        with wave.open(abs_path('resources/audio_samples/test.wav'), 'rb') as f:
+            assert f.getframerate() == leopard.sample_rate
+            assert f.getnchannels() == 1
+            assert f.getsampwidth() == 2
+            pcm = np.frombuffer(f.readframes(f.getnframes()), np.int16)
 
-        transcript = leopard.process(audio)
+        transcript = leopard.process(pcm)
         self.assertEqual(
             transcript,
             "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL")

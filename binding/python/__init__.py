@@ -25,4 +25,4 @@ def create(access_key: str, library_path: Optional[str] = None, model_path: Opti
     if model_path is None:
         model_path = MODEL_PATH
 
-    return Leopard(library_path=library_path)
+    return Leopard(access_key=access_key, library_path=library_path, model_path=model_path)
