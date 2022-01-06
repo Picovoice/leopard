@@ -10,6 +10,7 @@
 #
 
 import os
+import sys
 import unittest
 
 import soundfile
@@ -23,10 +24,9 @@ class LeopardTestCase(unittest.TestCase):
             return os.path.join(os.path.dirname(__file__), '../..', rel_path)
 
         leopard = Leopard(
+            access_key=sys.argv[1],
             library_path=abs_path('lib/linux/x86_64/libpv_leopard.so'),
-            acoustic_model_path=abs_path('lib/common/acoustic_model.pv'),
-            language_model_path=abs_path('lib/common/language_model.pv'),
-            license_path=abs_path('resources/license/leopard_eval_linux.lic'))
+            model_path=abs_path('lib/common/leopard_params.pv'))
 
         audio, sample_rate = soundfile.read(abs_path('resources/audio_samples/test.wav'), dtype='int16')
         assert sample_rate == leopard.sample_rate
@@ -34,8 +34,8 @@ class LeopardTestCase(unittest.TestCase):
         transcript = leopard.process(audio)
         self.assertEqual(
             transcript,
-            "MISTER QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL")
+            "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL")
 
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(argv=sys.argv[:1])
