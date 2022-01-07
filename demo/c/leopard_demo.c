@@ -9,6 +9,12 @@
     specific language governing permissions and limitations under the License.
 */
 
+#if !(defined(_WIN32) || defined(_WIN64))
+
+#include <dlfcn.h>
+
+#endif
+
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,10 +23,6 @@
 #if defined(_WIN32) || defined(_WIN64)
 
 #include <windows.h>
-
-#else
-
-#include <dlfcn.h>
 
 #endif
 
@@ -72,11 +74,11 @@ static void print_dl_error(const char *message) {
 
 #if defined(_WIN32) || defined(_WIN64)
 
-    fprintf(stderr, "%s with code '%lu'.\n", message, GetLastError());
+    fprintf(stderr, "%s with code `%lu`.\n", message, GetLastError());
 
 #else
 
-    fprintf(stderr, "%s with '%s'.\n", message, dlerror());
+    fprintf(stderr, "%s with `%s`.\n", message, dlerror());
 
 #endif
 
@@ -87,7 +89,7 @@ int main(int argc, char **argv) {
     const char *library_path = NULL;
     const char *model_path = NULL;
 
-    int opt = -1;
+    int opt;
     while ((opt = getopt(argc, argv, "a:l:m:")) != -1) {
         switch (opt) {
             case 'a':
@@ -111,57 +113,65 @@ int main(int argc, char **argv) {
 
     void *dl_handle = open_dl(library_path);
     if (!dl_handle) {
-        fprintf(stderr, "failed to load dynamic library at '%s'.\n", library_path);
+        fprintf(stderr, "failed to load library at `%s`.\n", library_path);
         exit(1);
     }
 
-    char *error;
-
-    const char *(*pv_status_to_string)(pv_status_t) = dlsym(dl_handle, "pv_status_to_string");
-    if ((error = dlerror()) != NULL) {
-        fprintf(stderr, "failed to load 'pv_status_to_string' with '%s'.\n", error);
+    const char *(*pv_status_to_string)(pv_status_t) = load_symbol(dl_handle, "pv_status_to_string");
+    if (!pv_status_to_string) {
+        print_dl_error("failed to load `pv_status_to_string`");
         exit(1);
     }
 
     pv_status_t (*pv_leopard_init)(const char *, const char *, pv_leopard_t **) =
-    dlsym(dl_handle, "pv_leopard_init");
-    if ((error = dlerror()) != NULL) {
-        fprintf(stderr, "failed to load 'pv_leopard_init' with '%s'.\n", error);
+    load_symbol(dl_handle, "pv_leopard_init");
+    if (!pv_leopard_init) {
+        print_dl_error("failed to load `pv_leopard_init`");
         exit(1);
     }
 
-    void (*pv_leopard_delete)(pv_leopard_t *) = dlsym(dl_handle, "pv_leopard_delete");
-    if ((error = dlerror()) != NULL) {
-        fprintf(stderr, "failed to load 'pv_leopard_delete' with '%s'.\n", error);
+    void (*pv_leopard_delete)(pv_leopard_t *) = load_symbol(dl_handle, "pv_leopard_delete");
+    if (!pv_leopard_delete) {
+        print_dl_error("failed to load `pv_leopard_delete`");
         exit(1);
     }
 
     pv_status_t (*pv_leopard_process)(pv_leopard_t *, const int16_t *, int32_t, char **) =
-    dlsym(dl_handle, "pv_leopard_process");
-    if ((error = dlerror()) != NULL) {
-        fprintf(stderr, "failed to load 'pv_leopard_process' with '%s'.\n", error);
+    load_symbol(dl_handle, "pv_leopard_process");
+    if (!pv_leopard_process) {
+        print_dl_error("failed to load `pv_leopard_process`");
         exit(1);
     }
+
+    struct timeval before;
+    gettimeofday(&before, NULL);
 
     pv_leopard_t *leopard = NULL;
     pv_status_t status = pv_leopard_init(access_key, model_path, &leopard);
     if (status != PV_STATUS_SUCCESS) {
-        fprintf(stderr, "failed to init with '%s'.\n", pv_status_to_string(status));
+        fprintf(stderr, "failed to init with `%s`.\n", pv_status_to_string(status));
         exit(1);
     }
 
-    for (int32_t i = 0; i < (argc - optind); i++) {
-        FILE *wav_handle = fopen(argv[i + optind], "rb");
+    struct timeval after;
+    gettimeofday(&after, NULL);
+
+    double init_time_sec =
+            ((double) (after.tv_sec - before.tv_sec) + ((double) (after.tv_usec - before.tv_usec)) * 1e-6);
+    fprintf(stdout, "init took %.1f sec\n", init_time_sec);
+
+    for (int32_t i = optind; i < argc; i++) {
+        FILE *wav_handle = fopen(argv[i], "rb");
         if (!wav_handle) {
-            fprintf(stderr, "failed to open wav file located at '%s'.\n", argv[i + optind]);
+            fprintf(stderr, "failed to open wav file at `%s`.\n", argv[i]);
             exit(1);
         }
 
         static const int32_t WAV_HEADER_LENGTH_BYTE = 44;
 
         fseek(wav_handle, 0, SEEK_END);
-        const int32_t pcm_length_byte = ftell(wav_handle) - WAV_HEADER_LENGTH_BYTE;
-        const int32_t num_samples = pcm_length_byte / sizeof(int16_t);
+        const int32_t pcm_length_byte = (int32_t) ftell(wav_handle) - WAV_HEADER_LENGTH_BYTE;
+        const int32_t num_samples = pcm_length_byte / (int32_t) sizeof(int16_t);
         fseek(wav_handle, WAV_HEADER_LENGTH_BYTE, SEEK_SET);
 
         int16_t *pcm = malloc(pcm_length_byte);
@@ -172,22 +182,24 @@ int main(int argc, char **argv) {
 
         const size_t count = fread(pcm, sizeof(int16_t), num_samples, wav_handle);
         if (count != (size_t) num_samples) {
-            fprintf(stderr, "failed to read audio data from '%s'", argv[i + optind]);
+            fprintf(stderr, "failed to read audio data from `%s`", argv[i]);
             exit(1);
         }
 
-        char *transcript;
+        char *transcript = NULL;
         status = pv_leopard_process(leopard, pcm, num_samples, &transcript);
         if (status != PV_STATUS_SUCCESS) {
-            fprintf(stderr, "failed to process with '%s'.\n", pv_status_to_string(status));
+            fprintf(stderr, "failed to process with `%s`.\n", pv_status_to_string(status));
             exit(1);
         }
 
         fprintf(stdout, "%s\n", transcript);
-        fflush(stdout);
+        free(pcm);
+        free(transcript);
     }
 
     pv_leopard_delete(leopard);
+    close_dl(dl_handle);
 
     return 0;
 }
