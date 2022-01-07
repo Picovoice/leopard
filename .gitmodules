@@ -1,3 +1,0 @@
-[submodule "demo/c/pvrecorder"]
-	path = demo/c/pvrecorder
-	url = git@github.com:Picovoice/pvrecorder.git
