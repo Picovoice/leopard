@@ -10,37 +10,31 @@
 #
 
 import argparse
-import os
 
-import soundfile
 import pvleopard
+import soundfile
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--access_key', required=True)
     parser.add_argument('--library_path', default=None)
     parser.add_argument('--model_path', default=None)
 
-    parser.add_argument(
-        '--audio_paths',
-        nargs='+',
-        help='absolute paths to audio files to be transcribed',
-        required=True)
+    parser.add_argument('--audio_paths', nargs='+', required=True)
 
     args = parser.parse_args()
 
-    leopard = pvleopard.create(
-        access_key=args.access_key,
-        library_path=args.library_path,
-        model_path=args.model_path)
+    leopard = pvleopard.create(access_key=args.access_key, library_path=args.library_path, model_path=args.model_path)
 
     for audio_path in args.audio_paths:
-        audio_path = os.path.expanduser(audio_path.strip())
         audio, sample_rate = soundfile.read(audio_path, dtype='int16')
         if sample_rate != leopard.sample_rate:
             raise ValueError('Leopard can only process audio data with sample rate of %d' % leopard.sample_rate)
 
         transcript = leopard.process(audio)
-
         print(transcript)
+
+
+if __name__ == '__main__':
+    main()
