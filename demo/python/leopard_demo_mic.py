@@ -9,101 +9,68 @@
 #    specific language governing permissions and limitations under the License.
 #
 
-import argparse
-import sys
-import threading
+from argparse import ArgumentParser
+from threading import Thread
 import time
 import pvleopard
 from pvrecorder import PvRecorder
 
 
-class Recorder(threading.Thread):
+class Recorder(Thread):
     def __init__(self):
         super().__init__()
-        self._frames = list()
+        self._pcm = list()
+        self._is_recording = False
         self._stop = False
 
+    def is_recording(self):
+        return self._is_recording
+
     def run(self):
+        self._is_recording = True
+
         recorder = PvRecorder(device_index=-1, frame_length=1234)
         recorder.start()
 
         while not self._stop:
-            self._frames.extend(recorder.read())
+            self._pcm.extend(recorder.read())
         recorder.stop()
+
+        self._is_recording = False
 
     def stop(self):
         self._stop = True
-        return self._frames
+        while self._is_recording:
+            pass
 
+        pcm = self._pcm
+        self._pcm = list()
 
-class LoadingAnimation(threading.Thread):
-    def __init__(self, sleep_time_sec=0.1):
-        self._sleep_time_sec = sleep_time_sec
-        self._frames = [
-            ".  ",
-            ".. ",
-            "...",
-            " ..",
-            "  .",
-            "   "
-        ]
-        self._done = False
-        super().__init__()
-
-    def run(self):
-        self._done = False
-        while not self._done:
-            for frame in self._frames:
-                if self._done:
-                    break
-                sys.stdout.write('\r' + frame)
-                time.sleep(self._sleep_time_sec)
-
-    def stop(self):
-        self._done = True
+        return pcm
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = ArgumentParser()
     parser.add_argument('--access_key', required=True)
     parser.add_argument('--library_path', default=None)
     parser.add_argument('--model_path', default=None)
     args = parser.parse_args()
 
-    leopard = pvleopard.create(
-        access_key=args.access_key,
-        library_path=args.library_path,
-        model_path=args.model_path)
-
-    # indexing_animation = LoadingAnimation()
-    # indexing_animation.start()
+    leopard = pvleopard.create(access_key=args.access_key, library_path=args.library_path, model_path=args.model_path)
 
     recorder = None
 
-    options = {
-        "R": "record",
-        "S": "stop",
-        "Q": "quit"
-    }
-
-    def help_from_options(*a):
-        return 'or '.join([f'`{x}` for {options[x]}' for x in a])
-
-    help = help_from_options('R', 'Q')
     while True:
-        command = input(help)
-        if command == "Q":
-            break
-        elif command == "R":
+        if recorder is not None:
+            input('>>> Recording ... Press `ENTER` to stop: ')
+            print(leopard.process(recorder.stop()))
+            print()
+            recorder = None
+        else:
+            input('>>> Press `ENTER` to start: ')
             recorder = Recorder()
             recorder.start()
-            help = help_from_options('S')
-        elif command == "S":
-            pcm = recorder.stop()
-            print(leopard.process(pcm))
-            help = help_from_options('R', 'Q')
-        else:
-            pass
+            time.sleep(1.)
 
 
 if __name__ == '__main__':
