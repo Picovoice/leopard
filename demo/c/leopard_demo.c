@@ -117,28 +117,34 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    const char *(*pv_status_to_string)(pv_status_t) = load_symbol(dl_handle, "pv_status_to_string");
-    if (!pv_status_to_string) {
+    const char *(*pv_status_to_string_func)(pv_status_t) = load_symbol(dl_handle, "pv_status_to_string");
+    if (!pv_status_to_string_func) {
         print_dl_error("failed to load `pv_status_to_string`");
         exit(1);
     }
 
-    pv_status_t (*pv_leopard_init)(const char *, const char *, pv_leopard_t **) =
+    const int32_t (*pv_sample_rate_func)() = load_symbol(dl_handle, "pv_sample_rate");
+    if (!pv_sample_rate_func) {
+        print_dl_error("failed to load `pv_sample_rate`");
+        exit(1);
+    }
+
+    pv_status_t (*pv_leopard_init_func)(const char *, const char *, pv_leopard_t **) =
     load_symbol(dl_handle, "pv_leopard_init");
-    if (!pv_leopard_init) {
+    if (!pv_leopard_init_func) {
         print_dl_error("failed to load `pv_leopard_init`");
         exit(1);
     }
 
-    void (*pv_leopard_delete)(pv_leopard_t *) = load_symbol(dl_handle, "pv_leopard_delete");
-    if (!pv_leopard_delete) {
+    void (*pv_leopard_delete_func)(pv_leopard_t *) = load_symbol(dl_handle, "pv_leopard_delete");
+    if (!pv_leopard_delete_func) {
         print_dl_error("failed to load `pv_leopard_delete`");
         exit(1);
     }
 
-    pv_status_t (*pv_leopard_process)(pv_leopard_t *, const int16_t *, int32_t, char **) =
+    pv_status_t (*pv_leopard_process_func)(pv_leopard_t *, const int16_t *, int32_t, char **) =
     load_symbol(dl_handle, "pv_leopard_process");
-    if (!pv_leopard_process) {
+    if (!pv_leopard_process_func) {
         print_dl_error("failed to load `pv_leopard_process`");
         exit(1);
     }
@@ -147,9 +153,9 @@ int main(int argc, char **argv) {
     gettimeofday(&before, NULL);
 
     pv_leopard_t *leopard = NULL;
-    pv_status_t status = pv_leopard_init(access_key, model_path, &leopard);
+    pv_status_t status = pv_leopard_init_func(access_key, model_path, &leopard);
     if (status != PV_STATUS_SUCCESS) {
-        fprintf(stderr, "failed to init with `%s`.\n", pv_status_to_string(status));
+        fprintf(stderr, "failed to init with `%s`.\n", pv_status_to_string_func(status));
         exit(1);
     }
 
@@ -159,6 +165,9 @@ int main(int argc, char **argv) {
     double init_time_sec =
             ((double) (after.tv_sec - before.tv_sec) + ((double) (after.tv_usec - before.tv_usec)) * 1e-6);
     fprintf(stdout, "init took %.1f sec\n", init_time_sec);
+
+    double proc_time_sec = 0.;
+    double audio_length_sec = 0.;
 
     for (int32_t i = optind; i < argc; i++) {
         FILE *wav_handle = fopen(argv[i], "rb");
@@ -186,19 +195,29 @@ int main(int argc, char **argv) {
             exit(1);
         }
 
+        gettimeofday(&before, NULL);
+
         char *transcript = NULL;
-        status = pv_leopard_process(leopard, pcm, num_samples, &transcript);
+        status = pv_leopard_process_func(leopard, pcm, num_samples, &transcript);
         if (status != PV_STATUS_SUCCESS) {
-            fprintf(stderr, "failed to process with `%s`.\n", pv_status_to_string(status));
+            fprintf(stderr, "failed to process with `%s`.\n", pv_status_to_string_func(status));
             exit(1);
         }
+
+        gettimeofday(&after, NULL);
+
+        proc_time_sec +=
+                ((double) (after.tv_sec - before.tv_sec) + ((double) (after.tv_usec - before.tv_usec)) * 1e-6);
+        audio_length_sec += (double) num_samples / (double) pv_sample_rate_func();
 
         fprintf(stdout, "%s\n", transcript);
         free(pcm);
         free(transcript);
     }
 
-    pv_leopard_delete(leopard);
+    fprintf(stdout, "processed %.1f sec of audio in %.2f\n", audio_length_sec, proc_time_sec);
+
+    pv_leopard_delete_func(leopard);
     close_dl(dl_handle);
 
     return 0;
