@@ -104,7 +104,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    if (!(access_key && library_path && model_path && (argc > 4))) {
+    if (!(access_key && library_path && model_path && (optind < argc))) {
         fprintf(stderr, "-a ACCESS_KEY -l LIBRARY_PATH -m MODEL_PATH wav_path0 wav_path1 ...\n");
         exit(1);
     }
@@ -143,7 +143,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    pv_leopard_t *leopard;
+    pv_leopard_t *leopard = NULL;
     pv_status_t status = pv_leopard_init(access_key, model_path, &leopard);
     if (status != PV_STATUS_SUCCESS) {
         fprintf(stderr, "failed to init with '%s'.\n", pv_status_to_string(status));
