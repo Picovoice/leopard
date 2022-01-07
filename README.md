@@ -2,64 +2,48 @@
 
 Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
-Leopard is an on-device Speech-to-Text engine.
+[![Twitter URL](https://img.shields.io/twitter/url?label=%40AiPicovoice&style=social&url=https%3A%2F%2Ftwitter.com%2FAiPicovoice)](https://twitter.com/AiPicovoice)
+[![YouTube Channel Views](https://img.shields.io/youtube/channel/views/UCAdi9sTCXLosG1XeqDwLx7w?label=YouTube&style=social)](https://www.youtube.com/channel/UCAdi9sTCXLosG1XeqDwLx7w)
 
-Leopard is:
+Leopard is an on-device speech-to-text engine. Leopard is:
 
-* offline: runs locally, without an Internet connection. 
-* highly accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results).
-* compact and computationally-efficient [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results).
-* cross-platform. Linux (x86_64), Mac (x86_64), Windows (x86_64), web browsers, Android, iOS, Raspberry Pi, and
-BeagleBone are supported. Linux (x86_64) is available for personal and non-commercial use, free of charge. Other
-platforms are only available under a commercial license.
-* customizable. Allows adding new words and adapting to different contexts (Available only under a commercial license).
+- Private; All voice processing runs locally. 
+- Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
+- Compact and Computationally-Efficient [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
+- Cross-Platform:
+  - Linux (x86_64)
+  - macOS (x86_64, arm64)
+  - Windows (x86_64)
+  - Raspberry Pi
+  - NVIDIA Jetson Nano
+  - BeagleBone
 
 ## Table of Contents
 - [Leopard](#leopard)
   - [Table of Contents](#table-of-contents)
-  - [License](#license)
-  - [Use Cases](#use-cases)
-  - [Structure of Repository](#structure-of-repository)
-  - [Picovoice Console and License File](#picovoice-console-and-license-file)
-  - [Running Demo Applications](#running-demo-applications)
-    - [Python Demo Application](#python-demo-application)
-    - [C Demo Application](#c-demo-application)
-  - [Integration](#integration)
+  - [AccessKey](#accesskey)
+  - [Demos](#demos)
+    - [Python](#python-demos)
+    - [C](#c-demo)
+  - [SDKs](#sdks)
     - [Python](#python)
     - [C](#c)
   - [Releases](#releases)
-    - [V1.0.0 — January 14th, 2020](#v100--january-14th-2020)
+    - [V1.0.0 — January 14th, 2020](#v100--january-14th-2022)
+  
+## AccessKey
 
-## License
+AccessKey is your authentication and authorization token for deploying Picovoice SDKs. Anyone who is using Picovoice
+needs to have a valid AccessKey. You must keep your AccessKey secret! You do need internet connectivity to validate your
+AccessKey with Picovoice license servers even though the voice recognition is running 100% offline.
 
-This repository is provided for **personal & non-commercial** use only. Refer to [LICENSE](/LICENSE) for details. If you
-wish to use Leopard in a commercial product, [contact Picovoice](https://picovoice.ai/contact/).
+AccessKey also verifies that your usage is within the limits of your account. Everyone who signs up for
+[Picovoice Console](https://console.picovoice.ai/) receives the `Free Tier` usage rights as  described 
+[here](https://picovoice.ai/pricing/). If you wish to increase your limits, you need to purchase a subscription plan.
 
-## Use Cases
+## Demos
 
-Leopard is intended to be used for open-domain transcription applications. It is an offline transcription engine (i.e. file-based processing).
-
-* If real-time feedback (incremental transcription results) is required, see
-[Cheetah](https://github.com/Picovoice/cheetah).
-* If you need to understand naturally-spoken (complex) commands within a specific domain, see
-[Rhino](https://github.com/Picovoice/rhino).
-* If you need to recognize a small set of fixed voice commands or activate a device using voice, see
-[Porcupine](https://github.com/Picovoice/porcupine).
-
-## Structure of Repository
-
-Leopard is shipped as a dynamic library. The binary files for supported platforms are located under
-[lib](/lib), and header files are at [include](/include). Bindings are available at [binding](/binding) to facilitate
-usage from higher-level languages/platforms. Demo applications are at [demo](/demo). Finally, [resources](/resources) is
-a placeholder for data used by various applications within the repository.
-
-## Picovoice Console and License File
-
-In order to run, Leopard requires a valid license file ('.lic' extension). To obtain a time-limited evaluation license file, visit [Picovoice Console](https://picovoice.ai/console/). To obtain a commercial license, [contact Picovoice](https://picovoice.ai/contact/).
-
-## Running Demo Applications
-
-### Python Demo Application
+### Python Demos
 
 The demo transcribes a set of audio files provided as command line arguments. The demo has been tested using Python 3.6
 on a machine running Ubuntu 18.04 (x86_64). Note that the audio files need to be single-channel, 16KHz, and 16-bit
@@ -76,7 +60,7 @@ In order to transcribe multiple files provide their paths:
 python demo/python/leopard_demo_file.py --audio_paths ${PATH_TO_AUDIO_FILE_1} ${PATH_TO_AUDIO_FILE_2} ${PATH_TO_AUDIO_FILE_3} --license_path ${PATH_TO_YOUR_LEOPARD_LICENSE_FILE}
 ```
 
-### C Demo Application
+### C Demo
 
 This demo application accepts a list of WAV files as input and returns their transcripts. Note that the demo expects the
 audio files to be WAV, 16KHz, and 16-bit linearly-encoded. It does not perform any verification to assure the
@@ -104,7 +88,7 @@ ${PATH_TO_YOUR_LEOPARD_LICENSE_FILE} \
 ./resources/audio_samples/test.wav
 ```
 
-## Integration
+## SDKs
 
 ### Python
 
@@ -178,6 +162,6 @@ pv_leopard_delete(handle);
 
 ## Releases
 
-### V1.0.0 — January 14th, 2020
+### V1.0.0 — January 14th, 2022
 
 * Initial release.
