@@ -64,6 +64,10 @@ class LeopardActivationRefusedError(LeopardError):
 
 
 class Leopard(object):
+    """
+    Python binding for Leopard speech-to-text engine.
+    """
+
     class PicovoiceStatuses(Enum):
         SUCCESS = 0
         OUT_OF_MEMORY = 1
@@ -96,13 +100,24 @@ class Leopard(object):
         pass
 
     def __init__(self, access_key: str, library_path: str, model_path: str) -> None:
+        """
+        Constructor.
+
+        :param access_key: AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
+        :param library_path: Absolute path to Leopard's dynamic library.
+        :param model_path: Absolute path to the file containing model parameters.
+        """
+
+        if not isinstance(access_key, str) or len(access_key) == 0:
+            raise LeopardInvalidArgumentError("`access_key` should be a non-empty string.")
+
         if not os.path.exists(library_path):
-            raise LeopardIOError("Could not find Leopard's dynamic library at '%s'" % library_path)
+            raise LeopardIOError("Could not find Leopard's dynamic library at `%s`." % library_path)
 
         library = cdll.LoadLibrary(library_path)
 
         if not os.path.exists(model_path):
-            raise LeopardIOError("Could not find model file at '%s'" % model_path)
+            raise LeopardIOError("Could not find model file at `%s`." % model_path)
 
         init_func = library.pv_leopard_init
         init_func.argtypes = [c_char_p, c_char_p, POINTER(POINTER(self.CLeopard))]
@@ -112,7 +127,7 @@ class Leopard(object):
 
         status = init_func(access_key.encode(), model_path.encode(), byref(self._handle))
         if status is not self.PicovoiceStatuses.SUCCESS:
-            raise self._PICOVOICE_STATUS_TO_EXCEPTION[status]('Initialization failed')
+            raise self._PICOVOICE_STATUS_TO_EXCEPTION[status]()
 
         self._delete_func = library.pv_leopard_delete
         self._delete_func.argtypes = [POINTER(self.CLeopard)]
@@ -122,31 +137,66 @@ class Leopard(object):
         self._process_func.argtypes = [POINTER(self.CLeopard), POINTER(c_short), c_int32, POINTER(c_char_p)]
         self._process_func.restype = self.PicovoiceStatuses
 
+        self._process_file_func = library.pv_leopard_process_file
+        self._process_file_func.argtypes = [POINTER(self.CLeopard), c_char_p, POINTER(c_char_p)]
+        self._process_file_func.restype = self.PicovoiceStatuses
+
         self._version = library.pv_leopard_version()
 
         self._sample_rate = library.pv_sample_rate()
 
     def process(self, pcm: Sequence[int]) -> str:
+        """
+        Processes a given audio data and returns its transcription.
+
+        :param pcm: Audio data. The audio needs to have a sample rate equal to `.sample_rate` and be 16-bit
+        linearly-encoded. This function operates on single-channel audio. If you wish to process data in a different
+        sample rate or format consider using `.process_file`.
+        :return: Inferred transcription.
+        """
+
+        if len(pcm) == 0:
+            raise LeopardInvalidArgumentError()
+
         c_transcript = c_char_p()
         status = self._process_func(self._handle, (c_short * len(pcm))(*pcm), len(pcm), byref(c_transcript))
         if status is not self.PicovoiceStatuses.SUCCESS:
-            raise self._PICOVOICE_STATUS_TO_EXCEPTION[status]('Processing failed')
+            raise self._PICOVOICE_STATUS_TO_EXCEPTION[status]()
+
+        return c_transcript.value.decode('utf-8')
+
+    def process_file(self, audio_path: str) -> str:
+        """
+        Processes a given audio file and returns its transcription.
+
+        :param audio_path: Absolute path to the audio file. The file needs to have a sample rate equal to or greater
+        than `.sample_rate`. The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`, `Vorbis`, `WAV`, and `WebM`.
+        :return: Inferred transcription.
+        """
+
+        if not os.path.exists(audio_path):
+            raise LeopardIOError("Could not find the audio file at `%s`" % audio_path)
+
+        c_transcript = c_char_p()
+        status = self._process_file_func(self._handle, audio_path, byref(c_transcript))
+        if status is not self.PicovoiceStatuses.SUCCESS:
+            raise self._PICOVOICE_STATUS_TO_EXCEPTION[status]()
 
         return c_transcript.value.decode('utf-8')
 
     def delete(self):
-        """Destructor."""
+        """Releases resources acquired by Leopard."""
 
         self._delete_func(self._handle)
 
     @property
     def version(self):
-        """Getter for version string."""
+        """Version."""
 
         return self._version
 
     @property
     def sample_rate(self):
-        """Audio sample rate accepted by Leopard engine."""
+        """Audio sample rate accepted by `.process`."""
 
         return self._sample_rate
