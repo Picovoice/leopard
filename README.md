@@ -29,7 +29,6 @@ Leopard is an on-device speech-to-text engine. Leopard is:
     - [Python](#python)
     - [C](#c)
   - [Releases](#releases)
-    - [V1.0.0 — January 14th, 2020](#v100--january-14th-2022)
   
 ## AccessKey
 
