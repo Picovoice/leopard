@@ -1,5 +1,5 @@
 #
-#    Copyright 2018 Picovoice Inc.
+#    Copyright 2018-2022 Picovoice Inc.
 #
 #    You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 #    file accompanying this source.
@@ -16,29 +16,27 @@ import wave
 
 import numpy as np
 
+import util
 from leopard import Leopard
 
 
 class LeopardTestCase(unittest.TestCase):
+    AUDIO_PATH = os.path.join(os.path.dirname(__file__), '../../resources/audio_samples/test.wav')
+    TRANSCRIPT = "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL"
+
+    @classmethod
+    def setUpClass(cls):
+        cls._o = Leopard(access_key=sys.argv[1], library_path=util.pv_library_path('../..'),
+                         model_path=util.pv_model_path('../..'))
+
     def test_process(self):
-        def abs_path(rel_path):
-            return os.path.join(os.path.dirname(__file__), '../..', rel_path)
-
-        leopard = Leopard(
-            access_key=sys.argv[1],
-            library_path=abs_path('lib/linux/x86_64/libpv_leopard.so'),
-            model_path=abs_path('lib/common/leopard_params.pv'))
-
-        with wave.open(abs_path('resources/audio_samples/test.wav'), 'rb') as f:
-            assert f.getframerate() == leopard.sample_rate
-            assert f.getnchannels() == 1
-            assert f.getsampwidth() == 2
+        with wave.open(self.AUDIO_PATH, 'rb') as f:
             pcm = np.frombuffer(f.readframes(f.getnframes()), np.int16)
 
-        transcript = leopard.process(pcm)
-        self.assertEqual(
-            transcript,
-            "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL")
+        self.assertEqual(self._o.process(pcm), self.TRANSCRIPT)
+
+    def test_process_file(self):
+        self.assertEqual(self._o.process_file(self.AUDIO_PATH), self.TRANSCRIPT)
 
 
 if __name__ == '__main__':

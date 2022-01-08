@@ -178,7 +178,7 @@ class Leopard(object):
             raise LeopardIOError("Could not find the audio file at `%s`" % audio_path)
 
         c_transcript = c_char_p()
-        status = self._process_file_func(self._handle, audio_path, byref(c_transcript))
+        status = self._process_file_func(self._handle, audio_path.encode(), byref(c_transcript))
         if status is not self.PicovoiceStatuses.SUCCESS:
             raise self._PICOVOICE_STATUS_TO_EXCEPTION[status]()
 
