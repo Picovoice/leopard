@@ -45,48 +45,38 @@ AccessKey also verifies that your usage is within the limits of your account. Ev
 
 ### Python Demos
 
-The demo transcribes a set of audio files provided as command line arguments. The demo has been tested using Python 3.6
-on a machine running Ubuntu 18.04 (x86_64). Note that the audio files need to be single-channel, 16KHz, and 16-bit
-linearly-encoded. For more information about audio requirements, refer to [pv_leopard.h](/include/pv_leopard.h). The
-following transcribes the WAV file located in the resource directory:
+Install the demo package:
 
-```bash
-python demo/python/leopard_demo_file.py --audio_paths resources/audio_samples/test.wav --license_path ${PATH_TO_YOUR_LEOPARD_LICENSE_FILE}
+```console
+pip3 install pvleoparddemo
 ```
 
-In order to transcribe multiple files provide their paths:
+Run the following in the terminal:
 
 ```bash
-python demo/python/leopard_demo_file.py --audio_paths ${PATH_TO_AUDIO_FILE_1} ${PATH_TO_AUDIO_FILE_2} ${PATH_TO_AUDIO_FILE_3} --license_path ${PATH_TO_YOUR_LEOPARD_LICENSE_FILE}
+leopard_demo_file --access-key ${ACCESS_KEY} --audio-paths ${AUIDO_PATH}
 ```
+
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with path to an audio file you
+wish to transcribe.
 
 ### C Demo
 
-This demo application accepts a list of WAV files as input and returns their transcripts. Note that the demo expects the
-audio files to be WAV, 16KHz, and 16-bit linearly-encoded. It does not perform any verification to assure the
-compatibility or correctness of the input audio files. Set the current working directory to the root of the repository.
-The demo can be built using `gcc`:
+Build the demo:
 
-```bash
-gcc -I include/ -O3 demo/c/leopard_demo.c -ldl -o leopard_demo
+```console
+cmake -S demo/c/ -B demo/c/build && cmake --build demo/c/build
 ```
 
-The usage can be attained with:
+Run the demo:
 
-```bash
-./leopard_demo
+```console
+./demo/c/build/leopard_demo -a ${ACCESS_KEY} -l ${LIBRARY_PATH} -m ${MODEL_PATH} ${AUDIO_PATH}
 ```
 
-Then it can be used as follows:
-
-```bash
-./leopard_demo \
-./lib/linux/x86_64/libpv_leopard.so \
-./lib/common/acoustic_model.pv \
-./lib/common/language_model.pv \
-${PATH_TO_YOUR_LEOPARD_LICENSE_FILE} \
-./resources/audio_samples/test.wav
-```
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${LIBRARY_PATH}` with the path to appropriate
+library under [lib](/lib), `${MODEL_PATH}` to path to [default model file](/lib/common/leopard_params.pv)
+(or your own custom one), and `${AUDIO_PATH}` with path to an audio file you wish to transcribe.
 
 ## SDKs
 
