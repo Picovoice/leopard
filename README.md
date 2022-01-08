@@ -82,46 +82,42 @@ library under [lib](/lib), `${MODEL_PATH}` to path to [default model file](/lib/
 
 ### Python
 
-[leopard.py](/binding/python/leopard.py) provides a Python binding. Below is a quick demonstration of how to construct
-an instance:
+Install the Python SDK:
 
-```python
-library_path = ...  # the file is available under lib/linux/x86_64/libpv_leopard.so
-acoustic_model_path = ...  # the file is available under lib/common/acoustic_model.pv
-language_model_path = ...  # the file is available under lib/common/language_model.pv
-license_path = ...  # The .lic file is available from Picovoice Console (https://picovoice.ai/console/)
-
-handle = Leopard(library_path, acoustic_model_path, language_model_path, license_path)
+```console
+pip3 install pvleopard
 ```
 
-When initialized, valid sample rate can be retrieved using `handle.sample_rate`. Additionally, Leopard accepts
-single-channel 16-bit linearly-encoded audio.
+Create an instance of the engine:
 
 ```python
-audio = ... # audio data to be transcribed as a NumPy array
+import pvleopard
 
-transcript = handle.process(audio)
+access_key = ... # AccessKey obtained from Picovoice Console (https://picovoice.ai/console/)
+
+handle = pvleopard.create(access_key=access_key)
 ```
 
-When finished, release the acquired resources:
+When initialized, valid sample rate can be obtained using `handle.sample_rate`. The `handle` can be used to transcribe
+audio data:
 
 ```python
-handle.delete()
+pcm = ... # audio data read from a file. Needs to be 16kHz and 16-bit single channel.
+handle.process(pcm)
 ```
+
+Finally, when done be sure to explicitly release the resources using `handle.delete()`.
 
 ### C
 
-Leopard is implemented in ANSI C and therefore can be directly linked to C applications.
-[pv_leopard.h](/include/pv_leopard.h) header file contains relevant information. An instance of Leopard object can be
-constructed as follows.
+Create an instance of Leopard:
 
 ```c
-const char *acoustic_model_path = ... // the file is available under lib/common/acoustic_model.pv
-const char *language_model_path = ... // the file is available under lib/common/language_model.pv
-const char *license_path = ... // The .lic file is available from Picovoice Console (https://picovoice.ai/console/)
+const char *access_key = ... // AccessKey obtained from Picovoice Console (https://picovoice.ai/console/)
+const char *model_path = ... // the file is available under lib/common/leopard_params.pv
 
-pv_leopard_t *handle;
-const pv_status_t status = pv_leopard_init(acoustic_model_path, language_model_path, license_path, &handle);
+pv_leopard_t *handle = NULL;
+const pv_status_t status = pv_leopard_init(access_key, model_path, &handle);
 if (status != PV_STATUS_SUCCESS) {
     // error handling logic
 }
