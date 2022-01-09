@@ -55,7 +55,7 @@ Run the following in the terminal:
 leopard_demo_file --access-key ${ACCESS_KEY} --audio-paths ${AUIDO_PATH}
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with path to an audio file you
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
 wish to transcribe.
 
 ### C Demo
@@ -74,7 +74,7 @@ Run the demo:
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${LIBRARY_PATH}` with the path to appropriate
 library under [lib](/lib), `${MODEL_PATH}` to path to [default model file](/lib/common/leopard_params.pv)
-(or your own custom one), and `${AUDIO_PATH}` with path to an audio file you wish to transcribe.
+(or your custom one), and `${AUDIO_PATH}` with a path to an audio file you wish to transcribe.
 
 ## SDKs
 
@@ -86,25 +86,19 @@ Install the Python SDK:
 pip3 install pvleopard
 ```
 
-Create an instance of the engine:
+Create an instance of the engine and transcribe an audio file:
 
 ```python
 import pvleopard
 
-access_key = ... # AccessKey obtained from Picovoice Console (https://picovoice.ai/console/)
+handle = pvleopard.create(access_key='${ACCESS_KEY}')
 
-handle = pvleopard.create(access_key=access_key)
+print(handle.process_file('${AUDIO_PATH}'))
 ```
 
-When initialized, valid sample rate can be obtained using `handle.sample_rate`. The `handle` can be used to transcribe
-audio data:
-
-```python
-pcm = ... # audio data read from a file. Needs to be 16kHz and 16-bit single channel.
-handle.process(pcm)
-```
-
-Finally, when done be sure to explicitly release the resources using `handle.delete()`.
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
+`${AUDIO_PATH}` to path an audio file. Finally, when done be sure to explicitly release the resources using
+`handle.delete()`.
 
 ### C
 
