@@ -1,0 +1,50 @@
+name: C Demos
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - 'demo/c/**'
+      - '!demo/c/README.md'
+      - 'include/**'
+      - 'lib/beaglebone/**'
+      - 'lib/common/**'
+      - 'lib/linux/**'
+      - 'lib/jetson/**'
+      - 'lib/mac/**'
+      - 'lib/raspberry-pi/**'
+      - 'lib/windows/**'
+  pull_request:
+    branches: [master]
+    paths:
+      - 'demo/c/**'
+      - '!demo/c/README.md'
+      - 'include/**'
+      - 'lib/beaglebone/**'
+      - 'lib/common/**'
+      - 'lib/linux/**'
+      - 'lib/jetson/**'
+      - 'lib/mac/**'
+      - 'lib/raspberry-pi/**'
+      - 'lib/windows/**'
+
+defaults:
+  run:
+    working-directory: .
+
+jobs:
+  ubuntu:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      -name: CMake
+        run: cmake -S demo/c/ -B demo/c/build
+
+      -name: Build
+        run: cmake --build demo/c/build
+
+      -name: Test
+        run: ./demo/c/build/leopard_demo -a ${{secrets.PV_VALID_ACCESS_KEY}}
