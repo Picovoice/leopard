@@ -73,3 +73,23 @@ jobs:
         -l lib/mac/x86_64/libpv_leopard.dylib \
         -m lib/common/leopard_params.pv \
         resources/audio_samples/test.wav
+
+  windows:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: CMake
+      run: cmake -S demo/c/ -B demo/c/build
+
+    - name: Build
+      run: cmake --build demo/c/build
+
+    - name: Test
+      run: |
+        ./demo/c/build/leopard_demo.exe \
+        -a ${{secrets.PV_VALID_ACCESS_KEY}} \
+        -l lib/mac/x86_64/libpv_leopard.dylib \
+        -m lib/common/leopard_params.pv \
+        resources/audio_samples/test.wav
