@@ -25,7 +25,7 @@ shutil.copy(os.path.join(os.path.dirname(__file__), '__init__.py'), os.path.join
 shutil.copy(os.path.join(os.path.dirname(__file__), 'leopard.py'), os.path.join(package_folder, 'leopard.py'))
 shutil.copy(os.path.join(os.path.dirname(__file__), 'util.py'), os.path.join(package_folder, 'util.py'))
 
-platforms = ('beaglebone', 'jetson', 'linux', 'mac', 'raspberry-pi', 'windows')
+platforms = ('jetson', 'linux', 'mac', 'raspberry-pi', 'windows')
 
 os.mkdir(os.path.join(package_folder, 'lib'))
 for platform in ('common',) + platforms:
@@ -49,7 +49,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
 
 setuptools.setup(
     name="pvleopard",
-    version="0.9.1",
+    version="0.9.2",
     author="Picovoice",
     author_email="hello@picovoice.ai",
     description="Leopard Speech-to-Text Engine.",

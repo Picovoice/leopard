@@ -16,7 +16,6 @@ Leopard is an on-device speech-to-text engine. Leopard is:
   - Windows (x86_64)
   - Raspberry Pi (4, 3)
   - NVIDIA Jetson Nano
-  - BeagleBone
 
 ## Table of Contents
 - [Leopard](#leopard)
@@ -32,13 +31,13 @@ Leopard is an on-device speech-to-text engine. Leopard is:
   
 ## AccessKey
 
-AccessKey is your authentication and authorization token for deploying Picovoice SDKs. Anyone who is using Picovoice
-needs to have a valid AccessKey. You must keep your AccessKey secret! You do need internet connectivity to validate your
-AccessKey with Picovoice license servers even though the voice recognition is running 100% offline.
+AccessKey is your authentication and authorization token for deploying Picovoice SDKs, including Leopard. Anyone who is
+using Picovoice  needs to have a valid AccessKey. YOU MUST KEEP YOUR AccessKey SECRET! You do need internet connectivity
+to validate your AccessKey with Picovoice license servers even though the voice recognition is running 100% offline.
 
 AccessKey also verifies that your usage is within the limits of your account. Everyone who signs up for
-[Picovoice Console](https://console.picovoice.ai/) receives the `Free Tier` usage rights as  described 
-[here](https://picovoice.ai/pricing/). If you wish to increase your limits, you need to purchase a subscription plan.
+[Picovoice Console](https://console.picovoice.ai/) receives the `Free Tier` usage rights as described on
+[here](https://picovoice.ai/pricing/). If you wish to increase your limits, you can purchase a subscription plan.
 
 ## Demos
 
