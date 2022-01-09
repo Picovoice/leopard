@@ -97,8 +97,8 @@ jobs:
 
     - name: Test
       run: |
-        demo\\c\\build\\leopard_demo.exe^
-        -a ${{secrets.PV_VALID_ACCESS_KEY}}^
-        -l lib\\windows\\amd64\\libpv_leopard.dll^
-        -m lib\\common\\leopard_params.pv^
+        demo\\c\\build\\leopard_demo.exe ^
+        -a ${{secrets.PV_VALID_ACCESS_KEY}} ^
+        -l lib\\windows\\amd64\\libpv_leopard.dll ^
+        -m lib\\common\\leopard_params.pv ^
         resources\\audio_samples\\test.wav
