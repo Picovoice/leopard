@@ -26,8 +26,8 @@ class LeopardTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls._o = Leopard(access_key=sys.argv[1], library_path=util.pv_library_path('../..'),
-                         model_path=util.pv_model_path('../..'))
+        cls._o = Leopard(access_key=sys.argv[1], library_path=util.library_path('../..'),
+                         model_path=util.model_path('../..'))
 
     def test_process(self):
         with wave.open(self.AUDIO_PATH, 'rb') as f:

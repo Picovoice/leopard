@@ -9,14 +9,9 @@
 # specific language governing permissions and limitations under the License.
 #
 
-import logging
 import os
 import platform
 import subprocess
-
-
-log = logging.getLogger('PICOVOICE LEOPARD')
-log.setLevel(logging.WARNING)
 
 
 def _pv_linux_machine(machine):
@@ -72,7 +67,7 @@ _RASPBERRY_PI_MACHINES = {'arm11', 'cortex-a7', 'cortex-a53', 'cortex-a72', 'cor
 _JETSON_MACHINES = {'cortex-a57-aarch64'}
 
 
-def pv_library_path(relative):
+def library_path(relative):
     if _PV_SYSTEM == 'Darwin':
         if _PV_MACHINE == 'x86_64':
             return os.path.join(os.path.dirname(__file__), relative, 'lib/mac/x86_64/libpv_leopard.dylib')
@@ -99,5 +94,5 @@ def pv_library_path(relative):
     raise NotImplementedError('Unsupported platform.')
 
 
-def pv_model_path(relative):
+def model_path(relative):
     return os.path.join(os.path.dirname(__file__), relative, 'lib/common/leopard_params.pv')

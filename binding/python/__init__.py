@@ -13,9 +13,9 @@ from typing import *
 from .leopard import Leopard
 from .util import *
 
-LIBRARY_PATH = pv_library_path('')
+LIBRARY_PATH = library_path('')
 
-MODEL_PATH = pv_model_path('')
+MODEL_PATH = model_path('')
 
 
 def create(access_key: str, library_path: Optional[str] = None, model_path: Optional[str] = None) -> Leopard:
