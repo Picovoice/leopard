@@ -14,7 +14,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
   - Linux (x86_64)
   - macOS (x86_64, arm64)
   - Windows (x86_64)
-  - Raspberry Pi
+  - Raspberry Pi (4, 3)
   - NVIDIA Jetson Nano
   - BeagleBone
 

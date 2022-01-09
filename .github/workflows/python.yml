@@ -56,7 +56,7 @@ jobs:
 
     strategy:
       matrix:
-        machine: [rpi2, rpi3, rpi4, jetson, beaglebone]
+        machine: [rpi3, rpi4, jetson]
 
     steps:
     - uses: actions/checkout@v2

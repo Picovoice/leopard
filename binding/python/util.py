@@ -20,7 +20,7 @@ def _linux_machine():
         return machine
     elif machine == 'aarch64':
         arch_info = '-' + machine
-    elif machine in ['armv7l', 'armv6l']:
+    elif machine == 'armv7l':
         arch_info = ''
     else:
         raise NotImplementedError("Unsupported CPU architecture: `%s`" % machine)
@@ -33,23 +33,17 @@ def _linux_machine():
     except Exception as e:
         raise RuntimeError("Failed to identify the CPU with `%s`\nCPU info: `%s`" % (e, cpu_info))
 
-    if '0xb76' == cpu_part:
-        return 'arm11' + arch_info
-    elif '0xc07' == cpu_part:
-        return 'cortex-a7' + arch_info
-    elif '0xd03' == cpu_part:
+    if '0xd03' == cpu_part:
         return 'cortex-a53' + arch_info
     elif '0xd07' == cpu_part:
         return 'cortex-a57' + arch_info
     elif '0xd08' == cpu_part:
         return 'cortex-a72' + arch_info
-    elif '0xc08' == cpu_part:
-        return 'beaglebone' + arch_info
     else:
         raise NotImplementedError("Unsupported CPU: `%s`." % cpu_part)
 
 
-_RASPBERRY_PI_MACHINES = {'arm11', 'cortex-a7', 'cortex-a53', 'cortex-a72', 'cortex-a53-aarch64', 'cortex-a72-aarch64'}
+_RASPBERRY_PI_MACHINES = {'cortex-a53', 'cortex-a72', 'cortex-a53-aarch64', 'cortex-a72-aarch64'}
 _JETSON_MACHINES = {'cortex-a57-aarch64'}
 
 
@@ -70,8 +64,6 @@ def default_library_path(relative):
                 os.path.dirname(__file__),
                 relative,
                 'lib/raspberry-pi/%s/libpv_leopard.so' % linux_machine)
-        elif linux_machine == 'beaglebone':
-            return os.path.join(os.path.dirname(__file__), relative, 'lib/beaglebone/libpv_leopard.so')
     elif platform.system() == 'Windows':
         return os.path.join(os.path.dirname(__file__), relative, 'lib/windows/amd64/libpv_leopard.dll')
 
