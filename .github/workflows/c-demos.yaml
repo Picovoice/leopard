@@ -80,6 +80,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Set up MinGW
+      uses: egor-tensin/setup-mingw@v2
+      with:
+        platform: x64
+
     - name: CMake
       run: cmake -S demo/c/ -B demo/c/build
 
