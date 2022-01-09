@@ -28,7 +28,11 @@ class LeopardTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls._o = Leopard(access_key=sys.argv[1], library_path=library_path('../..'), model_path=model_path('../..'))
+        cls._o = Leopard(
+            access_key=sys.argv[1],
+            library_path=default_library_path('../..'),
+            model_path=default_model_path('../..')
+        )
 
     @classmethod
     def tearDownClass(cls):

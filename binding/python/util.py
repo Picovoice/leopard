@@ -53,7 +53,7 @@ _RASPBERRY_PI_MACHINES = {'arm11', 'cortex-a7', 'cortex-a53', 'cortex-a72', 'cor
 _JETSON_MACHINES = {'cortex-a57-aarch64'}
 
 
-def library_path(relative):
+def default_library_path(relative):
     if platform.system() == 'Darwin':
         if platform.machine() == 'x86_64':
             return os.path.join(os.path.dirname(__file__), relative, 'lib/mac/x86_64/libpv_leopard.dylib')
@@ -78,8 +78,8 @@ def library_path(relative):
     raise NotImplementedError('Unsupported platform.')
 
 
-def model_path(relative):
+def default_model_path(relative):
     return os.path.join(os.path.dirname(__file__), relative, 'lib/common/leopard_params.pv')
 
 
-__all__ = ['library_path', 'model_path']
+__all__ = ['default_library_path', 'default_model_path']
