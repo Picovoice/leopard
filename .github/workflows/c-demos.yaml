@@ -97,7 +97,7 @@ jobs:
 
     - name: Test
       run: |
-        ./demo/c/build/leopard_demo.exe \
+        demo/c/build/leopard_demo.exe \
         -a ${{secrets.PV_VALID_ACCESS_KEY}} \
         -l lib/mac/x86_64/libpv_leopard.dylib \
         -m lib/common/leopard_params.pv \
