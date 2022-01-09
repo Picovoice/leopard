@@ -86,7 +86,7 @@ jobs:
         platform: x64
 
     - name: CMake
-      run: cmake -S demo/c/ -B demo/c/build
+      run: cmake -S demo/c/ -B demo/c/build -G "MinGW Makefiles"
 
     - name: Build
       run: cmake --build demo/c/build
