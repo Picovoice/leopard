@@ -47,4 +47,9 @@ jobs:
       run: cmake --build demo/c/build
 
     - name: Test
-      run: ./demo/c/build/leopard_demo -a ${{secrets.PV_VALID_ACCESS_KEY}}
+      run: |
+        ./demo/c/build/leopard_demo \
+        -a ${{secrets.PV_VALID_ACCESS_KEY}} \
+        -l lib/linux/x86_64/libpv_leopard.so \
+        -m lib/common/leopard_params.pv \
+        resources/audio_samples/test.wav
