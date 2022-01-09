@@ -64,10 +64,7 @@ def library_path(relative):
         if linux_machine == 'x86_64':
             return os.path.join(os.path.dirname(__file__), relative, 'lib/linux/x86_64/libpv_leopard.so')
         elif linux_machine in _JETSON_MACHINES:
-            return os.path.join(
-                os.path.dirname(__file__),
-                relative,
-                'lib/jetson/%s/libpv_leopard.so' % linux_machine)
+            return os.path.join(os.path.dirname(__file__), relative, 'lib/jetson/%s/libpv_leopard.so' % linux_machine)
         elif linux_machine in _RASPBERRY_PI_MACHINES:
             return os.path.join(
                 os.path.dirname(__file__),
@@ -83,3 +80,6 @@ def library_path(relative):
 
 def model_path(relative):
     return os.path.join(os.path.dirname(__file__), relative, 'lib/common/leopard_params.pv')
+
+
+__all__ = ['library_path', 'model_path']

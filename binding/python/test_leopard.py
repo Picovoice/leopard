@@ -16,27 +16,32 @@ import wave
 
 import numpy as np
 
-import util
 from leopard import Leopard
+from util import *
 
 
 class LeopardTestCase(unittest.TestCase):
-    AUDIO_PATH = os.path.join(os.path.dirname(__file__), '../../resources/audio_samples/test.wav')
-    TRANSCRIPT = "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL"
+    _AUDIO_PATH = os.path.join(os.path.dirname(__file__), '../../resources/audio_samples/test.wav')
+    _TRANSCRIPT = "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL"
+
+    _o = None
 
     @classmethod
     def setUpClass(cls):
-        cls._o = Leopard(access_key=sys.argv[1], library_path=util.library_path('../..'),
-                         model_path=util.model_path('../..'))
+        cls._o = Leopard(access_key=sys.argv[1], library_path=library_path('../..'), model_path=model_path('../..'))
+
+    @classmethod
+    def tearDownClass(cls):
+        cls._o.delete()
 
     def test_process(self):
-        with wave.open(self.AUDIO_PATH, 'rb') as f:
+        with wave.open(self._AUDIO_PATH, 'rb') as f:
             pcm = np.frombuffer(f.readframes(f.getnframes()), np.int16)
 
-        self.assertEqual(self._o.process(pcm), self.TRANSCRIPT)
+        self.assertEqual(self._o.process(pcm), self._TRANSCRIPT)
 
     def test_process_file(self):
-        self.assertEqual(self._o.process_file(self.AUDIO_PATH), self.TRANSCRIPT)
+        self.assertEqual(self._o.process_file(self._AUDIO_PATH), self._TRANSCRIPT)
 
 
 if __name__ == '__main__':
