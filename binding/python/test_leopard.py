@@ -10,11 +10,10 @@
 #
 
 import os
+import struct
 import sys
 import unittest
 import wave
-
-import numpy as np
 
 from leopard import Leopard
 from util import *
@@ -40,7 +39,8 @@ class LeopardTestCase(unittest.TestCase):
 
     def test_process(self):
         with wave.open(self._AUDIO_PATH, 'rb') as f:
-            pcm = np.frombuffer(f.readframes(f.getnframes()), np.int16)
+            buffer = f.readframes(f.getnframes())
+            pcm = struct.unpack('%dh' % (len(buffer) / struct.calcsize('h')), buffer)
 
         self.assertEqual(self._o.process(pcm), self._TRANSCRIPT)
 

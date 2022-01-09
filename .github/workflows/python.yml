@@ -48,12 +48,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Pre-build dependencies
-      run: python -m pip install --upgrade pip
-
-    - name: Install dependencies
-      run: pip install -r requirements.txt
-
     - name: Test
       run: python test_leopard.py ${{secrets.PV_VALID_ACCESS_KEY}}
 
@@ -66,12 +60,6 @@ jobs:
 
       steps:
       - uses: actions/checkout@v2
-
-      - name: Pre-build dependencies
-        run: python3 -m pip install --upgrade pip
-
-      - name: Install dependencies
-        run: pip3 install -r requirements.txt
 
       - name: Test
         run: python3 test_leopard.py ${{secrets.PV_VALID_ACCESS_KEY}}
