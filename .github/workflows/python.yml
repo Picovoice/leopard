@@ -16,7 +16,7 @@ on:
         - 'lib/windows/**'
     pull_request:
       branches: [master]
-        paths:
+      paths:
         - 'binding/python/**'
         - '!binding/python/README.md'
         - 'lib/beaglebone/**'
