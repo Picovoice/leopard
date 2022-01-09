@@ -14,7 +14,8 @@ import platform
 import subprocess
 
 
-def _pv_linux_machine(machine):
+def _linux_machine():
+    machine = platform.machine()
     if machine == 'x86_64':
         return machine
     elif machine == 'aarch64':
@@ -48,47 +49,33 @@ def _pv_linux_machine(machine):
         raise NotImplementedError("Unsupported CPU: `%s`." % cpu_part)
 
 
-def _pv_platform():
-    pv_system = platform.system()
-    if pv_system not in {'Darwin', 'Linux', 'Windows'}:
-        raise ValueError("Unsupported system `%s`." % pv_system)
-
-    if pv_system == 'Linux':
-        pv_machine = _pv_linux_machine(platform.machine())
-    else:
-        pv_machine = platform.machine()
-
-    return pv_system, pv_machine
-
-
-_PV_SYSTEM, _PV_MACHINE = _pv_platform()
-
 _RASPBERRY_PI_MACHINES = {'arm11', 'cortex-a7', 'cortex-a53', 'cortex-a72', 'cortex-a53-aarch64', 'cortex-a72-aarch64'}
 _JETSON_MACHINES = {'cortex-a57-aarch64'}
 
 
 def library_path(relative):
-    if _PV_SYSTEM == 'Darwin':
-        if _PV_MACHINE == 'x86_64':
+    if platform.system() == 'Darwin':
+        if platform.machine() == 'x86_64':
             return os.path.join(os.path.dirname(__file__), relative, 'lib/mac/x86_64/libpv_leopard.dylib')
-        elif _PV_MACHINE == "arm64":
+        elif platform.machine() == "arm64":
             return os.path.join(os.path.dirname(__file__), relative, 'lib/mac/arm64/libpv_leopard.dylib')
-    elif _PV_SYSTEM == 'Linux':
-        if _PV_MACHINE == 'x86_64':
+    elif platform.system() == 'Linux':
+        linux_machine = _linux_machine()
+        if linux_machine == 'x86_64':
             return os.path.join(os.path.dirname(__file__), relative, 'lib/linux/x86_64/libpv_leopard.so')
-        elif _PV_MACHINE in _JETSON_MACHINES:
+        elif linux_machine in _JETSON_MACHINES:
             return os.path.join(
                 os.path.dirname(__file__),
                 relative,
-                'lib/jetson/%s/libpv_leopard.so' % _PV_MACHINE)
-        elif _PV_MACHINE in _RASPBERRY_PI_MACHINES:
+                'lib/jetson/%s/libpv_leopard.so' % linux_machine)
+        elif linux_machine in _RASPBERRY_PI_MACHINES:
             return os.path.join(
                 os.path.dirname(__file__),
                 relative,
-                'lib/raspberry-pi/%s/libpv_leopard.so' % _PV_MACHINE)
-        elif _PV_MACHINE == 'beaglebone':
+                'lib/raspberry-pi/%s/libpv_leopard.so' % linux_machine)
+        elif linux_machine == 'beaglebone':
             return os.path.join(os.path.dirname(__file__), relative, 'lib/beaglebone/libpv_leopard.so')
-    elif _PV_SYSTEM == 'Windows':
+    elif platform.system() == 'Windows':
         return os.path.join(os.path.dirname(__file__), relative, 'lib/windows/amd64/libpv_leopard.dll')
 
     raise NotImplementedError('Unsupported platform.')
