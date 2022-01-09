@@ -77,6 +77,10 @@ jobs:
   windows:
     runs-on: windows-latest
 
+    defaults:
+      run:
+        shell: cmd
+
     steps:
     - uses: actions/checkout@v2
 
