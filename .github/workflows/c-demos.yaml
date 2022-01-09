@@ -102,3 +102,23 @@ jobs:
         -l lib\\windows\\amd64\\libpv_leopard.dll ^
         -m lib\\common\\leopard_params.pv ^
         resources\\audio_samples\\test.wav
+
+  jetson:
+    runs-on: jetson
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: CMake
+      run: cmake -S demo/c/ -B demo/c/build
+
+    - name: Build
+      run: cmake --build demo/c/build
+
+    - name: Test
+      run: |
+        ./demo/c/build/leopard_demo \
+        -a ${{secrets.PV_VALID_ACCESS_KEY}} \
+        -l lib/jetson/cortex-a57-aarch64/libpv_leopard.so \
+        -m lib/common/leopard_params.pv \
+        resources/audio_samples/test.wav
