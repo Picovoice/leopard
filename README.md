@@ -102,41 +102,32 @@ Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://co
 
 ### C
 
-Create an instance of Leopard:
+Create an instance of the engine and transcribe an audio file:
 
 ```c
-const char *access_key = ... // AccessKey obtained from Picovoice Console (https://picovoice.ai/console/)
-const char *model_path = ... // the file is available under lib/common/leopard_params.pv
+#include <stdio.h>
+
+#include "pv_leopard.h"
 
 pv_leopard_t *handle = NULL;
-const pv_status_t status = pv_leopard_init(access_key, model_path, &handle);
-if (status != PV_STATUS_SUCCESS) {
-    // error handling logic
-}
-```
-
-Now the `handle` can be used to process audio. Leopard accepts single-channel 16-bit linearly-encoded audio. The sample
-rate can be retrieved using `pv_sample_rate()`.
-
-```C
-const int16_t *pcm = ... // audio data to be transcribed
-const int32_t num_samples = ... // number of samples to process
-
-char *transcript;
-const pv_status_t status = pv_leopard_process(handle, pcm, num_samples, &transcript);
+pv_status_t status = pv_leopard_init('${ACCESS_KEY}', '${MODEL_PATH}', &handle);
 if (status != PV_STATUS_SUCCESS) {
     // error handling logic
 }
 
-// the caller is required to free the transcription buffer when done.
+char *transcript = NULL;
+status = pv_leopard_process_file(handle, '${AUDIO_PATH}', &transcript)
+if (status != PV_STATUS_SUCCESS) {
+    // error handling logic
+}
+
+fprintf(stdout, "%s\n", transcript);
 free(transcript);
 ```
 
-Finally, when done be sure to release resources acquired.
-
-```C
-pv_leopard_delete(handle);
-```
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_PATH}` to path to
+[default model file](/lib/common/leopard_params.pv) (or your custom one), and `${AUDIO_PATH}` to path an audio file.
+Finally, when done be sure to release resources acquired using `pv_leopard_delete(handle)`.
 
 ## Releases
 
