@@ -2,30 +2,30 @@ name: Python
 
 on:
   workflow_dispatch:
-    push:
-      branches: [master]
-      paths:
-        - 'binding/python/**'
-        - '!binding/python/README.md'
-        - 'lib/beaglebone/**'
-        - 'lib/common/**'
-        - 'lib/linux/**'
-        - 'lib/jetson/**'
-        - 'lib/mac/**'
-        - 'lib/raspberry-pi/**'
-        - 'lib/windows/**'
-    pull_request:
-      branches: [master]
-      paths:
-        - 'binding/python/**'
-        - '!binding/python/README.md'
-        - 'lib/beaglebone/**'
-        - 'lib/common/**'
-        - 'lib/linux/**'
-        - 'lib/jetson/**'
-        - 'lib/mac/**'
-        - 'lib/raspberry-pi/**'
-        - 'lib/windows/**'
+  push:
+    branches: [master]
+    paths:
+      - 'binding/python/**'
+      - '!binding/python/README.md'
+      - 'lib/beaglebone/**'
+      - 'lib/common/**'
+      - 'lib/linux/**'
+      - 'lib/jetson/**'
+      - 'lib/mac/**'
+      - 'lib/raspberry-pi/**'
+      - 'lib/windows/**'
+  pull_request:
+    branches: [master]
+    paths:
+      - 'binding/python/**'
+      - '!binding/python/README.md'
+      - 'lib/beaglebone/**'
+      - 'lib/common/**'
+      - 'lib/linux/**'
+      - 'lib/jetson/**'
+      - 'lib/mac/**'
+      - 'lib/raspberry-pi/**'
+      - 'lib/windows/**'
 
 defaults:
   run:
