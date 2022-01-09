@@ -49,7 +49,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
 
 setuptools.setup(
     name="pvleopard",
-    version="0.9.0",
+    version="0.9.1",
     author="Picovoice",
     author_email="hello@picovoice.ai",
     description="Leopard Speech-to-Text Engine.",
@@ -57,7 +57,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Picovoice/leopard",
     packages=["pvleopard"],
-    install_requires=["enum34", "numpy"],
+    install_requires=["enum34"],
     include_package_data=True,
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -68,5 +68,5 @@ setuptools.setup(
         "Topic :: Multimedia :: Sound/Audio :: Speech"
     ],
     python_requires='>=3',
-    keywords="",
+    keywords="Speech-to-Text, Speech Recognition, Voice Recognition, ASR",
 )
