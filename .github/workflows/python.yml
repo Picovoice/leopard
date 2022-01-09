@@ -41,18 +41,18 @@ jobs:
         python-version: [3.6, 3.7, 3.8, 3.9]
 
     steps:
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-      -name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
+    -name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
 
-      - name: Pre-build dependencies
-        run: python -m pip install --upgrade pip
+    - name: Pre-build dependencies
+      run: python -m pip install --upgrade pip
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+    - name: Install dependencies
+      run: pip install -r requirements.txt
 
-      - name: Test
-        run: python test_leopard.py ${{secrets.PV_VALID_ACCESS_KEY}}
+    - name: Test
+      run: python test_leopard.py ${{secrets.PV_VALID_ACCESS_KEY}}
