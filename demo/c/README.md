@@ -9,5 +9,3 @@ cmake --build demo/c/build
 ```console
 ./demo/c/build/leopard_demo
 ```
-
-
