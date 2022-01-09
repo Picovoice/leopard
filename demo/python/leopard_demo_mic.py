@@ -9,10 +9,11 @@
 #    specific language governing permissions and limitations under the License.
 #
 
+import time
 from argparse import ArgumentParser
 from threading import Thread
-import time
-import pvleopard
+
+from pvleopard import *
 from pvrecorder import PvRecorder
 
 
@@ -29,7 +30,7 @@ class Recorder(Thread):
     def run(self):
         self._is_recording = True
 
-        recorder = PvRecorder(device_index=-1, frame_length=1234)
+        recorder = PvRecorder(device_index=-1, frame_length=160)
         recorder.start()
 
         while not self._stop:
@@ -43,10 +44,7 @@ class Recorder(Thread):
         while self._is_recording:
             pass
 
-        pcm = self._pcm
-        self._pcm = list()
-
-        return pcm
+        return self._pcm
 
 
 def main():
@@ -56,21 +54,24 @@ def main():
     parser.add_argument('--model_path', default=None)
     args = parser.parse_args()
 
-    leopard = pvleopard.create(access_key=args.access_key, library_path=args.library_path, model_path=args.model_path)
+    o = create(access_key=args.access_key, library_path=args.library_path, model_path=args.model_path)
 
     recorder = None
 
     while True:
         if recorder is not None:
             input('>>> Recording ... Press `ENTER` to stop: ')
-            print(leopard.process(recorder.stop()))
+            try:
+                print(o.process(recorder.stop()))
+            except LeopardActivationLimitError:
+                print(f"AccessKey '{args.access_key}' has reached it's processing limit.")
             print()
             recorder = None
         else:
             input('>>> Press `ENTER` to start: ')
             recorder = Recorder()
             recorder.start()
-            time.sleep(1.)
+            time.sleep(.25)
 
 
 if __name__ == '__main__':
