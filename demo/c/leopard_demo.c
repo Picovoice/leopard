@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
     }
 
     if (!(access_key && library_path && model_path && (optind < argc))) {
-        fprintf(stderr, "-a ACCESS_KEY -l LIBRARY_PATH -m MODEL_PATH wav_path0 wav_path1 ...\n");
+        fprintf(stderr, "usage: -a ACCESS_KEY -l LIBRARY_PATH -m MODEL_PATH audio_path0 audio_path1 ...\n");
         exit(1);
     }
 
@@ -142,10 +142,10 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    pv_status_t (*pv_leopard_process_func)(pv_leopard_t *, const int16_t *, int32_t, char **) =
-    load_symbol(dl_handle, "pv_leopard_process");
-    if (!pv_leopard_process_func) {
-        print_dl_error("failed to load `pv_leopard_process`");
+    pv_status_t (*pv_leopard_process_file_func)(pv_leopard_t *, const char *, char **) =
+    load_symbol(dl_handle, "pv_leopard_process_file");
+    if (!pv_leopard_process_file_func) {
+        print_dl_error("failed to load `pv_leopard_process_file`");
         exit(1);
     }
 
@@ -162,43 +162,16 @@ int main(int argc, char **argv) {
     struct timeval after;
     gettimeofday(&after, NULL);
 
-    double init_time_sec =
-            ((double) (after.tv_sec - before.tv_sec) + ((double) (after.tv_usec - before.tv_usec)) * 1e-6);
-    fprintf(stdout, "init took %.1f sec\n", init_time_sec);
+    double init_sec = ((double) (after.tv_sec - before.tv_sec) + ((double) (after.tv_usec - before.tv_usec)) * 1e-6);
+    fprintf(stdout, "init took %.1f sec\n", init_sec);
 
-    double proc_time_sec = 0.;
-    double audio_length_sec = 0.;
+    double proc_sec = 0.;
 
     for (int32_t i = optind; i < argc; i++) {
-        FILE *wav_handle = fopen(argv[i], "rb");
-        if (!wav_handle) {
-            fprintf(stderr, "failed to open wav file at `%s`.\n", argv[i]);
-            exit(1);
-        }
-
-        static const int32_t WAV_HEADER_LENGTH_BYTE = 44;
-
-        fseek(wav_handle, 0, SEEK_END);
-        const int32_t pcm_length_byte = (int32_t) ftell(wav_handle) - WAV_HEADER_LENGTH_BYTE;
-        const int32_t num_samples = pcm_length_byte / (int32_t) sizeof(int16_t);
-        fseek(wav_handle, WAV_HEADER_LENGTH_BYTE, SEEK_SET);
-
-        int16_t *pcm = malloc(pcm_length_byte);
-        if (!pcm) {
-            fprintf(stderr, "failed to allocate memory for audio buffer\n");
-            exit(1);
-        }
-
-        const size_t count = fread(pcm, sizeof(int16_t), num_samples, wav_handle);
-        if (count != (size_t) num_samples) {
-            fprintf(stderr, "failed to read audio data from `%s`", argv[i]);
-            exit(1);
-        }
-
         gettimeofday(&before, NULL);
 
         char *transcript = NULL;
-        status = pv_leopard_process_func(leopard, pcm, num_samples, &transcript);
+        status = pv_leopard_process_file_func(leopard, argv[i], &transcript);
         if (status != PV_STATUS_SUCCESS) {
             fprintf(stderr, "failed to process with `%s`.\n", pv_status_to_string_func(status));
             exit(1);
@@ -206,16 +179,13 @@ int main(int argc, char **argv) {
 
         gettimeofday(&after, NULL);
 
-        proc_time_sec +=
-                ((double) (after.tv_sec - before.tv_sec) + ((double) (after.tv_usec - before.tv_usec)) * 1e-6);
-        audio_length_sec += (double) num_samples / (double) pv_sample_rate_func();
+        proc_sec += ((double) (after.tv_sec - before.tv_sec) + ((double) (after.tv_usec - before.tv_usec)) * 1e-6);
 
         fprintf(stdout, "%s\n", transcript);
-        free(pcm);
         free(transcript);
     }
 
-    fprintf(stdout, "processed %.1f sec of audio in %.2f\n", audio_length_sec, proc_time_sec);
+    fprintf(stdout, "proc took %.2f sec\n", proc_sec);
 
     pv_leopard_delete_func(leopard);
     close_dl(dl_handle);
