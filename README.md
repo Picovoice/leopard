@@ -112,13 +112,13 @@ Create an instance of the engine and transcribe an audio file:
 #include "pv_leopard.h"
 
 pv_leopard_t *handle = NULL;
-pv_status_t status = pv_leopard_init('${ACCESS_KEY}', '${MODEL_PATH}', &handle);
+pv_status_t status = pv_leopard_init("${ACCESS_KEY}", "${MODEL_PATH}", &handle);
 if (status != PV_STATUS_SUCCESS) {
     // error handling logic
 }
 
 char *transcript = NULL;
-status = pv_leopard_process_file(handle, '${AUDIO_PATH}', &transcript)
+status = pv_leopard_process_file(handle, "${AUDIO_PATH}", &transcript)
 if (status != PV_STATUS_SUCCESS) {
     // error handling logic
 }
@@ -133,6 +133,6 @@ Finally, when done be sure to release resources acquired using `pv_leopard_delet
 
 ## Releases
 
-### V1.0.0 — January 14th, 2022
+### V1.0.0 — January 10th, 2022
 
 * Initial release.
