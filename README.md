@@ -108,6 +108,7 @@ Create an instance of the engine and transcribe an audio file:
 
 ```c
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "pv_leopard.h"
 
@@ -118,7 +119,7 @@ if (status != PV_STATUS_SUCCESS) {
 }
 
 char *transcript = NULL;
-status = pv_leopard_process_file(handle, "${AUDIO_PATH}", &transcript)
+status = pv_leopard_process_file(handle, "${AUDIO_PATH}", &transcript);
 if (status != PV_STATUS_SUCCESS) {
     // error handling logic
 }
