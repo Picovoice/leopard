@@ -33,7 +33,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 ## AccessKey
 
 AccessKey is your authentication and authorization token for deploying Picovoice SDKs, including Leopard. Anyone who is
-using Picovoice needs to have a valid AccessKey. YOU MUST KEEP YOUR AccessKey SECRET! You would need internet
+using Picovoice needs to have a valid AccessKey. You must keep your AccessKey secret. You would need internet
 connectivity to validate your AccessKey with Picovoice license servers even though the voice recognition is running 100%
 offline.
 
@@ -54,7 +54,7 @@ pip3 install pvleoparddemo
 Run the following in the terminal:
 
 ```bash
-leopard_demo_file --access-key ${ACCESS_KEY} --audio-paths ${AUIDO_PATH}
+leopard_demo_file --access_key ${ACCESS_KEY} --audio_paths ${AUIDO_PATH}
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
