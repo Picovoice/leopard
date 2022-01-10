@@ -30,11 +30,12 @@ pip3 install pvleoparddemo
 ## AccessKey
 
 AccessKey is your authentication and authorization token for deploying Picovoice SDKs, including Leopard. Anyone who is
-using Picovoice  needs to have a valid AccessKey. YOU MUST KEEP YOUR AccessKey SECRET! You do need internet connectivity
-to validate your AccessKey with Picovoice license servers even though the voice recognition is running 100% offline.
+using Picovoice needs to have a valid AccessKey. You must keep your AccessKey secret. You would need internet
+connectivity to validate your AccessKey with Picovoice license servers even though the voice recognition is running 100%
+offline.
 
 AccessKey also verifies that your usage is within the limits of your account. Everyone who signs up for
-[Picovoice Console](https://console.picovoice.ai/) receives the `Free Tier` usage rights as described on
+[Picovoice Console](https://console.picovoice.ai/) receives the `Free Tier` usage rights described
 [here](https://picovoice.ai/pricing/). If you wish to increase your limits, you can purchase a subscription plan.
 
 ## Usage
@@ -43,8 +44,8 @@ AccessKey also verifies that your usage is within the limits of your account. Ev
 
 Run the following in the terminal:
 
-```bash
-leopard_demo_file --access-key ${ACCESS_KEY} --audio-paths ${AUIDO_PATH}
+```console
+leopard_demo_file --access_key ${ACCESS_KEY} --audio_paths ${AUIDO_PATH}
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
@@ -52,10 +53,22 @@ wish to transcribe.
 
 ### Microphone Demo
 
-Run the following in the terminal:
+You need a working microphone connected to your machine for this demo. Run the following in the terminal:
 
-```bash
-leopard_demo_mic --access-key ${ACCESS_KEY}
+```console
+leopard_demo_mic --access_key ${ACCESS_KEY}
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console. Once running, the demo prints:
+
+```console
+>>> Press `ENTER` to start: 
+```
+
+Press `ENTER` key and wait for the following message in the terminal:
+
+```console
+>>> Recording ... Press `ENTER` to stop:
+```
+
+Now start recording and when done press `ENTER` key to get the transcription.

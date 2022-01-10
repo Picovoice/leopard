@@ -1,2 +1,2 @@
-pvleopard==0.9.2
+pvleopard==1.0.0
 pvrecorder==1.0.2
