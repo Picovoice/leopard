@@ -39,8 +39,8 @@ usage: -a ACCESS_KEY -l LIBRARY_PATH -m MODEL_PATH audio_path0 audio_path1 ...
 ```
 
 Run the command corresponding to your platform from the root of the repository. Replace `${ACCESS_KEY}` with yours
-obtained from [Picovoice Console](https://console.picovoice.ai/) and `${AUDIO_PATH}` with path to an audio file you want
-to transcribe.
+obtained from [Picovoice Console](https://console.picovoice.ai/) and `${AUDIO_PATH}` with the path to an audio file you
+want to transcribe.
 
 #### Linux (x86_64)
 
