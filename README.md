@@ -33,11 +33,12 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 ## AccessKey
 
 AccessKey is your authentication and authorization token for deploying Picovoice SDKs, including Leopard. Anyone who is
-using Picovoice needs to have a valid AccessKey. YOU MUST KEEP YOUR AccessKey SECRET! You do need internet connectivity
-to validate your AccessKey with Picovoice license servers even though the voice recognition is running 100% offline.
+using Picovoice needs to have a valid AccessKey. YOU MUST KEEP YOUR AccessKey SECRET! You would need internet
+connectivity to validate your AccessKey with Picovoice license servers even though the voice recognition is running 100%
+offline.
 
 AccessKey also verifies that your usage is within the limits of your account. Everyone who signs up for
-[Picovoice Console](https://console.picovoice.ai/) receives the `Free Tier` usage rights as described on
+[Picovoice Console](https://console.picovoice.ai/) receives the `Free Tier` usage rights described
 [here](https://picovoice.ai/pricing/). If you wish to increase your limits, you can purchase a subscription plan.
 
 ## Demos
