@@ -7,32 +7,33 @@ Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
 Leopard is an on-device speech-to-text engine. Leopard is:
 
-- Private; All voice processing runs locally. 
+- Private; All voice processing runs locally.
 - Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
 - Compact and Computationally-Efficient [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
 - Cross-Platform:
-  - Linux (x86_64)
-  - macOS (x86_64, arm64)
-  - Windows (x86_64)
-  - Raspberry Pi (4, 3)
-  - NVIDIA Jetson Nano
+    - Linux (x86_64)
+    - macOS (x86_64, arm64)
+    - Windows (x86_64)
+    - Raspberry Pi (4, 3)
+    - NVIDIA Jetson Nano
 
 ## Table of Contents
+
 - [Leopard](#leopard)
-  - [Table of Contents](#table-of-contents)
-  - [AccessKey](#accesskey)
-  - [Demos](#demos)
-    - [Python](#python-demos)
-    - [C](#c-demo)
-  - [SDKs](#sdks)
-    - [Python](#python)
-    - [C](#c)
-  - [Releases](#releases)
-  
+    - [Table of Contents](#table-of-contents)
+    - [AccessKey](#accesskey)
+    - [Demos](#demos)
+        - [Python](#python-demos)
+        - [C](#c-demo)
+    - [SDKs](#sdks)
+        - [Python](#python)
+        - [C](#c)
+    - [Releases](#releases)
+
 ## AccessKey
 
 AccessKey is your authentication and authorization token for deploying Picovoice SDKs, including Leopard. Anyone who is
-using Picovoice  needs to have a valid AccessKey. YOU MUST KEEP YOUR AccessKey SECRET! You do need internet connectivity
+using Picovoice needs to have a valid AccessKey. YOU MUST KEEP YOUR AccessKey SECRET! You do need internet connectivity
 to validate your AccessKey with Picovoice license servers even though the voice recognition is running 100% offline.
 
 AccessKey also verifies that your usage is within the limits of your account. Everyone who signs up for
