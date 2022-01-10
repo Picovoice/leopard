@@ -28,11 +28,12 @@ pip3 install pvleopard
 ## AccessKey
 
 AccessKey is your authentication and authorization token for deploying Picovoice SDKs, including Leopard. Anyone who is
-using Picovoice  needs to have a valid AccessKey. YOU MUST KEEP YOUR AccessKey SECRET! You do need internet connectivity
-to validate your AccessKey with Picovoice license servers even though the voice recognition is running 100% offline.
+using Picovoice needs to have a valid AccessKey. You must keep your AccessKey secret. You would need internet
+connectivity to validate your AccessKey with Picovoice license servers even though the voice recognition is running 100%
+offline.
 
 AccessKey also verifies that your usage is within the limits of your account. Everyone who signs up for
-[Picovoice Console](https://console.picovoice.ai/) receives the `Free Tier` usage rights as described on
+[Picovoice Console](https://console.picovoice.ai/) receives the `Free Tier` usage rights described
 [here](https://picovoice.ai/pricing/). If you wish to increase your limits, you can purchase a subscription plan.
 
 ### Usage
@@ -48,10 +49,10 @@ print(handle.process_file('${AUDIO_PATH}'))
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
-`${AUDIO_PATH}` to path an audio file. Finally, when done be sure to explicitly release the resources using
+`${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using
 `handle.delete()`.
 
 ## Demos
 
-[pvleoparddemo](https://pypi.org/project/pvleoparddemo/) provides command-line utilities for processing real-time audio
-(i.e. microphone) and files using Leopard.
+[pvleoparddemo](https://pypi.org/project/pvleoparddemo/) provides command-line utilities for processing audio using
+Leopard.
