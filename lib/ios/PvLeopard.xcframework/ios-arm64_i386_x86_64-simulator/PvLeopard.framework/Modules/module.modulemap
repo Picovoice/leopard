@@ -1,0 +1,7 @@
+framework module PvCheetah {
+  umbrella header "PvLeopard.h"
+  header "pv_leopard.h"
+  header "picovoice.h"
+  export *
+  module * {export *}
+}
