@@ -22,7 +22,7 @@ public class Leopard {
     ///   - accessKey: The AccessKey obtained from Picovoice Console (https://console.picovoice.ai).
     ///   - modelPath: Absolute path to file containing model parameters.
     /// - Throws: LeopardError
-    public init(accessKey: String, modelPath:String? = nil) throws {
+    public init(accessKey: String, modelPath: String? = nil) throws {
         
         var modelPathArg = modelPath
         if (modelPath == nil){
