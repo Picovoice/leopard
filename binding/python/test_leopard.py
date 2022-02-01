@@ -41,7 +41,7 @@ class LeopardTestCase(unittest.TestCase):
         with wave.open(self._AUDIO_PATH, 'rb') as f:
             buffer = f.readframes(f.getnframes())
             pcm = struct.unpack('%dh' % (len(buffer) / struct.calcsize('h')), buffer)
-        print(len(pcm))
+
         self.assertEqual(self._o.process(pcm), self._TRANSCRIPT)
 
     def test_process_file(self):
