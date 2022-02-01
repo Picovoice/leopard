@@ -11,11 +11,24 @@ import PvLeopard
 
 /// iOS binding for Leopard wake word engine. Provides a Swift interface to the Leopard library.
 public class Leopard {
-    
+
+    static let resourceBundle: Bundle = {
+        let myBundle = Bundle(for: Leopard.self)
+
+        guard let resourceBundleURL = myBundle.url(
+                forResource: "LeopardResources", withExtension: "bundle")
+                else { fatalError("LeopardResources.bundle not found") }
+
+        guard let resourceBundle = Bundle(url: resourceBundleURL)
+                else { fatalError("Could not open LeopardResources.bundle") }
+
+        return resourceBundle
+    }()
+
     private var handle: OpaquePointer?
     public static let sampleRate = UInt32(pv_sample_rate())
     public static let version = String(cString: pv_leopard_version())
-    
+
     /// Constructor.
     ///
     /// - Parameters:
@@ -23,7 +36,7 @@ public class Leopard {
     ///   - modelPath: Absolute path to file containing model parameters.
     /// - Throws: LeopardError
     public init(accessKey: String, modelPath: String? = nil) throws {
-        
+
         var modelPathArg = modelPath
         if (modelPath == nil){
             modelPathArg  = Leopard.resourceBundle.path(forResource: "leopard_params", ofType: "pv")
@@ -31,26 +44,26 @@ public class Leopard {
                 throw LeopardIOError("Unable to find the default model path")
             }
         }
-        
+
         if accessKey.count == 0 {
             throw LeopardInvalidArgumentError("AccessKey is required for Leopard initialization")
         }
-        
+
         if !FileManager().fileExists(atPath: modelPathArg!) {
             throw LeopardInvalidArgumentError("Model file at does not exist at '\(modelPathArg!)'")
         }
-        
+
         let status = pv_leopard_init(
-            accessKey,
-            modelPathArg,
-            &handle)
+                accessKey,
+                modelPathArg,
+                &handle)
         try checkStatus(status, "Leopard init failed")
     }
-    
+
     deinit {
         self.delete()
     }
-    
+
     /// Releases native resources that were allocated to Leopard
     public func delete(){
         if handle != nil {
@@ -58,7 +71,7 @@ public class Leopard {
             handle = nil
         }
     }
-    
+
     /// Processes a given audio data and returns its transcription.
     ///
     /// - Parameters:
@@ -71,16 +84,19 @@ public class Leopard {
         if handle == nil {
             throw LeopardInvalidStateError("Leopard must be initialized before processing")
         }
-        
+
         if pcm.count == 0 {
             throw LeopardInvalidArgumentError("Audio data must not be empty")
         }
-        
-        var cTranscript: UnsafePointer<Int8>?
-        let status = pv_leopard_process(self.handle, pcm, &cTranscript)
+
+        var cTranscript: UnsafeMutablePointer<Int8>?
+        let status = pv_leopard_process(self.handle, pcm, Int32(pcm.count), &cTranscript)
         try checkStatus(status, "Leopard process failed")
 
-        return String(cString: cTranscript)
+        let transcript = String(cString: cTranscript!)
+        cTranscript?.deallocate()
+
+        return transcript
     }
 
     /// Processes a given audio file and returns its transcription.
@@ -95,15 +111,18 @@ public class Leopard {
             throw LeopardInvalidStateError("Leopard must be initialized before processing")
         }
 
-        if !FileManager().fileExists(atPath: String!) {
+        if !FileManager().fileExists(atPath: audioPath) {
             throw LeopardInvalidArgumentError("Could not find the audio file at \(audioPath)")
         }
 
-        var cTranscript: UnsafePointer<Int8>?
-        let status = pv_leopard_process(self.handle, pcm, &cTranscript)
+        var cTranscript: UnsafeMutablePointer<Int8>?
+        let status = pv_leopard_process_file(self.handle, audioPath, &cTranscript)
         try checkStatus(status, "Leopard process failed")
 
-        return String(cString: cTranscript)
+        let transcript = String(cString: cTranscript!)
+        cTranscript?.deallocate()
+
+        return transcript
     }
 
     /// Processes a given audio file and returns its transcription.
@@ -119,14 +138,14 @@ public class Leopard {
             throw LeopardInvalidStateError("Leopard must be initialized before processing")
         }
 
-        return self.processFile(audioPath: audioURL.absoluteString)
+        return try self.processFile(audioPath: audioURL.path)
     }
-    
+
     private func checkStatus(_ status: pv_status_t, _ message: String) throws {
         if status == PV_STATUS_SUCCESS {
             return
         }
-        
+
         switch status {
         case PV_STATUS_OUT_OF_MEMORY:
             throw LeopardMemoryError(message)

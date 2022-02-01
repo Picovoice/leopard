@@ -1,0 +1,28 @@
+PODS:
+  - ios-voice-processor (1.0.3)
+  - Leopard-iOS (1.0.0):
+    - ios-voice-processor (~> 1.0.2)
+
+DEPENDENCIES:
+  - Leopard-iOS (from `https://raw.githubusercontent.com/Picovoice/leopard/ios-binding/binding/ios/Leopard-iOS.podspec`)
+
+SPEC REPOS:
+  trunk:
+    - ios-voice-processor
+
+EXTERNAL SOURCES:
+  Leopard-iOS:
+    :podspec: https://raw.githubusercontent.com/Picovoice/leopard/ios-binding/binding/ios/Leopard-iOS.podspec
+
+CHECKOUT OPTIONS:
+  Leopard-iOS:
+    :commit: b7298ac2defadd97624cbe5deabe6884d2a00465
+    :git: https://github.com/Picovoice/leopard.git
+
+SPEC CHECKSUMS:
+  ios-voice-processor: 65b25a8db69ea25ffba0eeef37bae71a982f34cc
+  Leopard-iOS: b187f2a7a9ae725a54fa8c2cbc26ef6a4d36eebb
+
+PODFILE CHECKSUM: ed9f5c6575fee442557aed37191a42f2f5ad9eee
+
+COCOAPODS: 1.11.2
