@@ -103,7 +103,8 @@ public class Leopard {
     ///
     /// - Parameters:
     ///   - audioPath: Absolute path to the audio file. The file needs to have a sample rate equal to or greater
-    ///                than `.sample_rate`. The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`, `Vorbis`, `WAV`, and `WebM`.
+    ///                than `Leopard.sampleRate`. The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`,
+    ///                `Vorbis`, `WAV`, and `WebM`.
     /// - Throws: LeopardError
     /// - Returns: Inferred transcription.
     public func processFile(audioPath: String) throws -> String {
