@@ -198,6 +198,7 @@
 				TargetAttributes = {
 					3276935E3038CD1E69CAFB3A = {
 						DevelopmentTeam = 65723695GD;
+						TestTargetID = 327696DE3A6139B4D33CA898;
 					};
 					327696DE3A6139B4D33CA898 = {
 						DevelopmentTeam = 65723695GD;
