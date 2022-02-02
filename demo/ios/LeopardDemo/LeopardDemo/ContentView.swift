@@ -45,6 +45,13 @@ struct ContentView: View {
                         .padding()
                         .font(.body)
                         .foregroundColor(Color.black)
+            } else if viewModel.state == .TRANSCRIBED {
+                Text(String(format: "Transcribed %.1f(s) of audio in %.1f(s).",
+                            viewModel.recordingTimeSec,
+                            viewModel.transcribeTimeSec))
+                        .padding()
+                        .font(.body)
+                        .foregroundColor(Color.black)
             } else {
                 Text(viewModel.errorMessage)
                         .padding()

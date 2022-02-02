@@ -34,6 +34,7 @@ class ViewModel: ObservableObject {
     @Published var state = UIState.INIT
     @Published var result: String = ""
     @Published var recordingTimeSec = 0.0
+    @Published var transcribeTimeSec = 0.0
 
     init() {
         initialize()
@@ -94,7 +95,7 @@ class ViewModel: ObservableObject {
         recordingTimeSec = 0
         recordingTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
             self.recordingTimeSec += 0.1
-            if(self.recordingTimeSec > self.MAX_RECORDING_LENGTH_SEC) {
+            if(self.recordingTimeSec >= self.MAX_RECORDING_LENGTH_SEC) {
                 self.toggleRecordingOff()
             }
         }
@@ -159,7 +160,10 @@ class ViewModel: ObservableObject {
         let directoryContents = try fileManager.contentsOfDirectory(at: documentDirectory, includingPropertiesForKeys: nil)
 
         let path = directoryContents[0].path
+
+        let begin = clock()
         result = try leopard.processFile(audioPath: path)
+        transcribeTimeSec = Double(clock() - begin) / Double(CLOCKS_PER_SEC)
     }
 
 }
