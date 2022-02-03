@@ -36,16 +36,20 @@ To obtain your `AccessKey`:
 
 ## Usage
 
-Create an instance of the engine:
+Add the Leopard model file to `Xcode` and create an instance of the engine:
 
 ```swift
 import Leopard
 
+let modelPath = Bundle(for: type(of: self)).path(
+        forResource: "${MODEL_FILE}", // Name of the model file name for Leopard
+        ofType: "pv")!
+
 let accessKey = "${ACCESS_KEY}" // AccessKey obtained from https://console.picovoice.ai/access_key
-let leopard = Leopard(accessKey: accessKey)
+let leopard = Leopard(accessKey: accessKey, modelPath: modelPath)
 ```
 
-Transcribe an audio file either by passing the absolute path or a url to the file:
+Transcribe an audio file either by passing the absolute path or an url to the file:
 
 ```swift
 
@@ -58,9 +62,10 @@ print(leopard.process_file(audioURL))
 ```
 
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)),
-`${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of 
-the file. Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)), `${MODEL_FILE}` 
+with the name of the Leopard model file name, `${AUDIO_FILE_NAME}` with the name of the audio file and 
+`${AUDIO_FILE_EXTENSION}` with the extension of the audio file. Finally, when done be sure to explicitly release
+the resources using `leopard.delete()`.
 
 ## Demo App
 

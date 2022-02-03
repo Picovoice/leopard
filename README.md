@@ -161,7 +161,11 @@ Create an instance of the engine and transcribe an audio_file:
 ```swift
 import Leopard
 
-leopard = Leopard(accessKey: "${ACCESS_KEY}")
+let modelPath = Bundle(for: type(of: self)).path(
+        forResource: "${MODEL_FILE}", // Name of the model file name for Leopard
+        ofType: "pv")!
+
+let leopard = Leopard(accessKey: "${ACCESS_KEY}", modelPath: modelPath)
 
 do {
     let audioPath = Bundle(for: type(of: self)).path(forResource: "${AUDIO_FILE_NAME}", ofType: "${AUDIO_FILE_EXTENSION}")
@@ -169,8 +173,7 @@ do {
 } catch { }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of 
-the file
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the name of the Leopard model file name, `${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of the audio file.
 
 ## Releases
 

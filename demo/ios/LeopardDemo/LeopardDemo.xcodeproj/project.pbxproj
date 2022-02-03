@@ -9,7 +9,9 @@
 /* Begin PBXBuildFile section */
 		32769079E5BC2BA141FA659F /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327695EA9D71F6A29C6D079A /* ViewModel.swift */; };
 		327693608DEE169684123990 /* test.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3276944A97818A612ED1D2C0 /* test.wav */; };
+		3276947B9CEB911537B1C647 /* leopard_params.pv in Resources */ = {isa = PBXBuildFile; fileRef = 3276985D3C3865B5EC13B467 /* leopard_params.pv */; };
 		3276967434C9CEBD0AF09237 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 327694975368499C3B7946DD /* Assets.xcassets */; };
+		327696B6A9132F948D8763C9 /* leopard_params.pv in Resources */ = {isa = PBXBuildFile; fileRef = 3276985D3C3865B5EC13B467 /* leopard_params.pv */; };
 		327698EADFD16D8F70823520 /* LeopardDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327697358B823E5B2EF0FA8C /* LeopardDemoApp.swift */; };
 		32769B2E1B2C5A2A897FFB10 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32769F3923C69C8C0C435CCF /* ContentView.swift */; };
 		32769D436A1FD396FF5710C7 /* LeopardDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3276967194B02CE009D52D3A /* LeopardDemoUITests.swift */; };
@@ -33,6 +35,7 @@
 		327695EA9D71F6A29C6D079A /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		3276967194B02CE009D52D3A /* LeopardDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeopardDemoUITests.swift; sourceTree = "<group>"; };
 		327697358B823E5B2EF0FA8C /* LeopardDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeopardDemoApp.swift; sourceTree = "<group>"; };
+		3276985D3C3865B5EC13B467 /* leopard_params.pv */ = {isa = PBXFileReference; lastKnownFileType = file.pv; name = leopard_params.pv; path = ../../../../lib/common/leopard_params.pv; sourceTree = "<group>"; };
 		327699927E572962C40A7A04 /* LeopardDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LeopardDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		32769B28B14D2E3D61B4F202 /* LeopardDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LeopardDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		32769CFD1A229B5B30E40E82 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
@@ -111,6 +114,7 @@
 				32769F3923C69C8C0C435CCF /* ContentView.swift */,
 				327695EA9D71F6A29C6D079A /* ViewModel.swift */,
 				32769E49F724E169E0E13E27 /* Info.plist */,
+				3276985D3C3865B5EC13B467 /* leopard_params.pv */,
 			);
 			path = LeopardDemo;
 			sourceTree = "<group>";
@@ -231,6 +235,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3276967434C9CEBD0AF09237 /* Assets.xcassets in Resources */,
+				327696B6A9132F948D8763C9 /* leopard_params.pv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -239,6 +244,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				327693608DEE169684123990 /* test.wav in Resources */,
+				3276947B9CEB911537B1C647 /* leopard_params.pv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

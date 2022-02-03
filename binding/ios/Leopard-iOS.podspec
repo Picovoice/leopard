@@ -26,10 +26,5 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '9.0'
   s.swift_version = '5.0'
   s.vendored_frameworks = 'lib/ios/PvLeopard.xcframework'
-  s.resource_bundles = {
-    'LeopardResources' => [
-      'lib/common/leopard_params.pv'
-    ]
-  }
   s.source_files = 'binding/ios/*.{swift}'
 end

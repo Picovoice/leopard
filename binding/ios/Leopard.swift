@@ -13,19 +13,6 @@ import PvLeopard
 public class Leopard {
     private static let supportedAudioTypes: Set = ["flac", "mp3", "ogg", "opus", "wav", "webm"]
 
-    static let resourceBundle: Bundle = {
-        let myBundle = Bundle(for: Leopard.self)
-
-        guard let resourceBundleURL = myBundle.url(
-                forResource: "LeopardResources", withExtension: "bundle")
-                else { fatalError("LeopardResources.bundle not found") }
-
-        guard let resourceBundle = Bundle(url: resourceBundleURL)
-                else { fatalError("Could not open LeopardResources.bundle") }
-
-        return resourceBundle
-    }()
-
     private var handle: OpaquePointer?
     public static let sampleRate = UInt32(pv_sample_rate())
     public static let version = String(cString: pv_leopard_version())
@@ -36,29 +23,31 @@ public class Leopard {
     ///   - accessKey: The AccessKey obtained from Picovoice Console (https://console.picovoice.ai).
     ///   - modelPath: Absolute path to file containing model parameters.
     /// - Throws: LeopardError
-    public init(accessKey: String, modelPath: String? = nil) throws {
-
-        var modelPathArg = modelPath
-        if (modelPath == nil){
-            modelPathArg  = Leopard.resourceBundle.path(forResource: "leopard_params", ofType: "pv")
-            if modelPathArg == nil {
-                throw LeopardIOError("Unable to find the default model path")
-            }
-        }
+    public init(accessKey: String, modelPath: String) throws {
 
         if accessKey.count == 0 {
             throw LeopardInvalidArgumentError("AccessKey is required for Leopard initialization")
         }
 
-        if !FileManager().fileExists(atPath: modelPathArg!) {
-            throw LeopardInvalidArgumentError("Model file at does not exist at '\(modelPathArg!)'")
+        if !FileManager().fileExists(atPath: modelPath) {
+            throw LeopardInvalidArgumentError("Model file at does not exist at '\(modelPath)'")
         }
 
         let status = pv_leopard_init(
                 accessKey,
-                modelPathArg,
+                modelPath,
                 &handle)
         try checkStatus(status, "Leopard init failed")
+    }
+
+    /// Constructor.
+    ///
+    /// - Parameters:
+    ///   - accessKey: The AccessKey obtained from Picovoice Console (https://console.picovoice.ai).
+    ///   - modelURL: URL file containing model parameters.
+    /// - Throws: LeopardError
+    public convenience init(accessKey: String, modelURL: URL) throws {
+        try self.init(accessKey: accessKey, modelPath: modelURL.path)
     }
 
     deinit {

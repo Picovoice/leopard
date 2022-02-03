@@ -19,7 +19,8 @@ class LeopardDemoUITests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        leopard = try? Leopard(accessKey: accessKey)
+        let modelURL = Bundle(for: type(of: self)).url(forResource: "leopard_params", withExtension: "pv")!
+        leopard = try? Leopard(accessKey: accessKey, modelURL: modelURL)
     }
 
     override func tearDown() {
