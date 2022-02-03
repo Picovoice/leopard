@@ -144,7 +144,7 @@ public class Leopard {
             throw LeopardInvalidStateError("Leopard must be initialized before processing")
         }
 
-        return try self.processFile(audioPath: audioURL.path)
+        return try self.processFile(audioURL.path)
     }
 
     private func checkStatus(_ status: pv_status_t, _ message: String) throws {
