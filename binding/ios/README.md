@@ -50,10 +50,10 @@ Transcribe an audio file either by passing the absolute path or a url to the fil
 ```swift
 
 let audioPath = Bundle(for: type(of: self)).path(forResource: "${AUDIO_FILE_NAME}", ofType: "${AUDIO_FILE_EXTENSION}")
-print(leopard.process(audioPath: audioPath))
+print(leopard.process_file(audioPath))
 
 let audioURL = Bundle(for: type(of: self)).url(forResource: "${AUDIO_FILE_NAME}", withExtension: "${AUDIO_FILE_EXTENSION}")
-print(leopard.process(audioURL: audioURL))
+print(leopard.process_file(audioURL))
 
 ```
 

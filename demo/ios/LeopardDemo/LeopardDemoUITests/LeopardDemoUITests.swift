@@ -40,7 +40,7 @@ class LeopardDemoUITests: XCTestCase {
             data.copyBytes(to: $0, from: 0..<data.count)
         }
 
-        let res = try leopard?.process(pcm: pcmBuffer)
+        let res = try leopard?.process(pcmBuffer)
         XCTAssertEqual(transcript, res)
     }
 
@@ -48,7 +48,7 @@ class LeopardDemoUITests: XCTestCase {
         let bundle = Bundle(for: type(of: self))
         let filePath: String = bundle.path(forResource: "test", ofType: "wav")!
 
-        let res = try leopard?.processFile(audioPath: filePath)
+        let res = try leopard?.processFile(filePath)
         XCTAssertEqual(transcript, res)
     }
 
@@ -56,7 +56,7 @@ class LeopardDemoUITests: XCTestCase {
         let bundle = Bundle(for: type(of: self))
         let fileURL: URL = bundle.url(forResource: "test", withExtension: "wav")!
 
-        let res = try leopard?.processFile(audioURL: fileURL)
+        let res = try leopard?.processFile(fileURL)
         XCTAssertEqual(transcript, res)
     }
 

@@ -81,7 +81,7 @@ public class Leopard {
     ///          sample rate or format consider using `.process_file`.
     /// - Throws: LeopardError
     /// - Returns: Inferred transcription.
-    public func process(pcm:[Int16]) throws -> String {
+    public func process(_ pcm:[Int16]) throws -> String {
         if handle == nil {
             throw LeopardInvalidStateError("Leopard must be initialized before processing")
         }
@@ -108,7 +108,7 @@ public class Leopard {
     ///                `Vorbis`, `WAV`, and `WebM`.
     /// - Throws: LeopardError
     /// - Returns: Inferred transcription.
-    public func processFile(audioPath: String) throws -> String {
+    public func processFile(_ audioPath: String) throws -> String {
         if handle == nil {
             throw LeopardInvalidStateError("Leopard must be initialized before processing")
         }
@@ -139,7 +139,7 @@ public class Leopard {
     ///               `Vorbis`, `WAV`, and `WebM`.
     /// - Throws: LeopardError
     /// - Returns: Inferred transcription.
-    public func processFile(audioURL: URL) throws -> String {
+    public func processFile(_ audioURL: URL) throws -> String {
         if handle == nil {
             throw LeopardInvalidStateError("Leopard must be initialized before processing")
         }

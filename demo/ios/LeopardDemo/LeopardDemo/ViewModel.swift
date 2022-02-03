@@ -162,7 +162,7 @@ class ViewModel: ObservableObject {
         let path = directoryContents[0].path
 
         let begin = clock()
-        result = try leopard.processFile(audioPath: path)
+        result = try leopard.processFile(path)
         transcribeTimeSec = Double(clock() - begin) / Double(CLOCKS_PER_SEC)
     }
 

@@ -165,7 +165,7 @@ leopard = Leopard(accessKey: "${ACCESS_KEY}")
 
 do {
     let audioPath = Bundle(for: type(of: self)).path(forResource: "${AUDIO_FILE_NAME}", ofType: "${AUDIO_FILE_EXTENSION}")
-    print(leopard.process(audioPath: audioPath))
+    print(leopard.process(audioPath))
 } catch { }
 ```
 
