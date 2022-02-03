@@ -59,7 +59,7 @@ print(leopard.process(audioURL: audioURL))
 
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)),
-`${AUDIO_FILE_NAME}` to the name of an audio file and `${AUDIO_FILE_EXTENSION}` with the extension of 
+`${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of 
 the file. Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
 
 ## Demo App
