@@ -11,6 +11,7 @@ import PvLeopard
 
 /// iOS binding for Leopard wake word engine. Provides a Swift interface to the Leopard library.
 public class Leopard {
+    private static let supportedAudioTypes: Set = ["flac", "mp3", "ogg", "opus", "wav", "webm"]
 
     static let resourceBundle: Bundle = {
         let myBundle = Bundle(for: Leopard.self)
@@ -110,6 +111,10 @@ public class Leopard {
     public func processFile(audioPath: String) throws -> String {
         if handle == nil {
             throw LeopardInvalidStateError("Leopard must be initialized before processing")
+        }
+
+        if !Leopard.supportedAudioTypes.contains((audioPath as NSString).pathExtension.lowercased()) {
+            throw LeopardInvalidArgumentError("File provided is not supported")
         }
 
         if !FileManager().fileExists(atPath: audioPath) {

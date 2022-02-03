@@ -85,7 +85,7 @@ class ViewModel: ObservableObject {
                 try self.stop()
                 self.state = UIState.TRANSCRIBED
             } catch {
-                self.errorMessage = "\(error)"
+                self.errorMessage = "\(error.localizedDescription)"
                 self.state = UIState.ERROR
             }
         }
@@ -105,7 +105,7 @@ class ViewModel: ObservableObject {
                 try self.start()
                 self.state = UIState.RECORDING
             } catch {
-                self.errorMessage = "\(error)"
+                self.errorMessage = "\(error.localizedDescription)"
                 self.state = UIState.ERROR
             }
         }
