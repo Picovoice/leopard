@@ -14,6 +14,8 @@ Leopard is an on-device speech-to-text engine. Leopard is:
     - Linux (x86_64)
     - macOS (x86_64, arm64)
     - Windows (x86_64)
+    - Android
+    - iOS
     - Raspberry Pi (4, 3)
     - NVIDIA Jetson Nano
 
@@ -25,9 +27,11 @@ Leopard is an on-device speech-to-text engine. Leopard is:
     - [Demos](#demos)
         - [Python](#python-demos)
         - [C](#c-demo)
+        - [iOS](#ios-demo)
     - [SDKs](#sdks)
         - [Python](#python)
         - [C](#c)
+        - [iOS](#ios)
     - [Releases](#releases)
 
 ## AccessKey
@@ -77,6 +81,18 @@ Run the demo:
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${LIBRARY_PATH}` with the path to appropriate
 library under [lib](/lib), `${MODEL_PATH}` to path to [default model file](/lib/common/leopard_params.pv)
 (or your custom one), and `${AUDIO_PATH}` with a path to an audio file you wish to transcribe.
+
+### iOS Demo
+
+To run the demo, go to [demo/ios/LeopardDemo](/demo/ios/LeopardDemo) and run:
+
+```console
+pod install
+```
+
+Replace `let accessKey = "${YOUR_ACCESS_KEY_HERE}"` in the file [ViewModel.swift](/demo/ios/LeopardDemo/LeopardDemo/ViewModel.swift) with your `AccessKey`.
+
+Then, using [Xcode](https://developer.apple.com/xcode/), open the generated `LeopardDemo.xcworkspace` and run the application.
 
 ## SDKs
 
@@ -131,6 +147,34 @@ free(transcript);
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_PATH}` to path to
 [default model file](/lib/common/leopard_params.pv) (or your custom one), and `${AUDIO_PATH}` to path an audio file.
 Finally, when done be sure to release resources acquired using `pv_leopard_delete(handle)`.
+
+### iOS
+
+The Leopard iOS binding is available via [CocoaPods](https://cocoapods.org/pods/Leopard-iOS). To import it into your iOS project, add the following line to your Podfile and run `pod install`: 
+
+```ruby
+pod 'Leopard-iOS'
+```
+
+Create an instance of the engine and transcribe an audio_file:
+
+```swift
+import Leopard
+
+let modelPath = Bundle(for: type(of: self)).path(
+        forResource: "${MODEL_FILE}", // Name of the model file name for Leopard
+        ofType: "pv")!
+
+let leopard = Leopard(accessKey: "${ACCESS_KEY}", modelPath: modelPath)
+
+do {
+    let audioPath = Bundle(for: type(of: self)).path(forResource: "${AUDIO_FILE_NAME}", ofType: "${AUDIO_FILE_EXTENSION}")
+    print(leopard.process(audioPath))
+} catch let error as LeopardError { 
+} catch { }
+```
+
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/cat), `${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of the audio file.
 
 ## Releases
 

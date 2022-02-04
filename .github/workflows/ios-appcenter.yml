@@ -1,0 +1,64 @@
+name: iOS AppCenter Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+    paths: 
+      - 'demo/ios/LeopardDemo/Podfile.lock'
+      - '.github/workflows/ios-appcenter.yml'
+  pull_request:
+    branches: [ master ]
+    paths: 
+      - 'demo/ios/LeopardDemo/Podfile.lock'
+      - '.github/workflows/ios-appcenter.yml'
+      
+defaults:
+  run:
+    working-directory: demo/ios/LeopardDemo
+    
+jobs:
+  build:
+    name: Run iOS Tests on AppCenter
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.4.0
+
+      - name: Install Cocoapods
+        run: gem install cocoapods
+
+      - name: Install AppCenter CLI
+        run: npm install -g appcenter-cli
+
+      - name: Make build dir
+        run: mkdir ddp
+
+      - name: Run Cocoapods
+        run: pod install
+
+      - name: Inject AppID
+        run: sed -i '.bak' 's:{TESTING_ACCESS_KEY_HERE}:${{secrets.PV_VALID_ACCESS_KEY}}:'
+          LeopardDemoUITests/LeopardDemoUITests.swift
+
+      - name: XCode Build
+        run: xcrun xcodebuild build-for-testing 
+          -configuration Debug 
+          -workspace LeopardDemo.xcworkspace 
+          -sdk iphoneos 
+          -scheme LeopardDemo
+          -derivedDataPath ddp 
+          CODE_SIGNING_ALLOWED=NO
+
+      - name: Run Tests on AppCenter
+        run: appcenter test run xcuitest 
+          --token ${{secrets.APPCENTERAPITOKEN}}
+          --app "Picovoice/Leopard-iOS" 
+          --devices "Picovoice/ios-min-max"
+          --test-series "leopard-ios" 
+          --locale "en_US" 
+          --build-dir ddp/Build/Products/Debug-iphoneos
