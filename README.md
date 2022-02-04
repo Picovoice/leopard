@@ -28,10 +28,12 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [Python](#python-demos)
         - [C](#c-demo)
         - [iOS](#ios-demo)
+        - [Android](#android-demo)
     - [SDKs](#sdks)
         - [Python](#python)
         - [C](#c)
         - [iOS](#ios)
+        - [Android](#android)
     - [Releases](#releases)
 
 ## AccessKey
@@ -93,6 +95,12 @@ pod install
 Replace `let accessKey = "${YOUR_ACCESS_KEY_HERE}"` in the file [ViewModel.swift](/demo/ios/LeopardDemo/LeopardDemo/ViewModel.swift) with your `AccessKey`.
 
 Then, using [Xcode](https://developer.apple.com/xcode/), open the generated `LeopardDemo.xcworkspace` and run the application.
+
+### Android Demo
+
+Using Android Studio, open [demo/android/LeopardDemo](/demo/android/LeopardDemo) as an Android project and then run the application. 
+
+Replace ``"${YOUR_ACCESS_KEY_HERE}"`` in the file [MainActivity.java](/demo/android/leopard-demo-app/src/main/java/ai/picovoice/leoparddemo/MainActivity.java) with your `AccessKey`.
 
 ## SDKs
 
@@ -175,6 +183,34 @@ do {
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/cat), `${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of the audio file.
+
+### Android
+
+To include the package in your Android project, ensure you have included `mavenCentral()` in your top-level `build.gradle` file and then add the following to your app's `build.gradle`:
+
+```groovy
+dependencies {    
+    implementation 'ai.picovoice:rhino-android:${LATEST_VERSION}'
+}
+```
+
+Create an instance of the engine and transcribe an audio_file:
+
+```java
+import ai.picovoice.leopard.*;
+
+final String accessKey = "${ACCESS_KEY}"; // AccessKey provided by Picovoice Console (https://picovoice.ai/console/)
+final String modelPath = "${MODEL_FILE}";
+try {
+    Leopard handle = new Leopard.Builder(accessKey).setModelPath(modelPath).build(appContext);
+
+    File audioFile = new File("${AUDIO_FILE_PATH}");
+    String transcript = handle.processFile(audioFile.getAbsolutePath());
+
+} catch (LeopardException ex) { }
+```
+
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/cat), and `${AUDIO_FILE_PATH}` with the path to the audio file.
 
 ## Releases
 
