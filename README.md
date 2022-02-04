@@ -150,7 +150,7 @@ Finally, when done be sure to release resources acquired using `pv_leopard_delet
 
 ### iOS
 
-The Leopard iOS binding is available via [Cocoapods](https://cocoapods.org/pods/Leopard-iOS). To import it into your iOS project, add the following line to your Podfile and run `pod install`: 
+The Leopard iOS binding is available via [CocoaPods](https://cocoapods.org/pods/Leopard-iOS). To import it into your iOS project, add the following line to your Podfile and run `pod install`: 
 
 ```ruby
 pod 'Leopard-iOS'
@@ -170,10 +170,11 @@ let leopard = Leopard(accessKey: "${ACCESS_KEY}", modelPath: modelPath)
 do {
     let audioPath = Bundle(for: type(of: self)).path(forResource: "${AUDIO_FILE_NAME}", ofType: "${AUDIO_FILE_EXTENSION}")
     print(leopard.process(audioPath))
+} catch let error as LeopardError { 
 } catch { }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the name of the Leopard model file name, `${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of the audio file.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/cat), `${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of the audio file.
 
 ## Releases
 

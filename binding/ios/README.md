@@ -20,7 +20,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 
 ## Installation
 
-The Leopard iOS binding is available via [Cocoapods](https://cocoapods.org/pods/Leopard-iOS). To import it into your iOS project, add the following line to your Podfile: 
+The Leopard iOS binding is available via [CocoaPods](https://cocoapods.org/pods/Leopard-iOS). To import it into your iOS project, add the following line to your Podfile: 
 
 ```ruby
 pod 'Leopard-iOS'
@@ -59,12 +59,15 @@ Transcribe an audio file either by passing the absolute path or an url to the fi
 
 ```swift
 
-let audioPath = Bundle(for: type(of: self)).path(forResource: "${AUDIO_FILE_NAME}", ofType: "${AUDIO_FILE_EXTENSION}")
-print(leopard.process_file(audioPath))
+do {
+    let audioPath = Bundle(for: type(of: self)).path(forResource: "${AUDIO_FILE_NAME}", ofType: "${AUDIO_FILE_EXTENSION}")
+    print(leopard.process_file(audioPath))
 
-let audioURL = Bundle(for: type(of: self)).url(forResource: "${AUDIO_FILE_NAME}", withExtension: "${AUDIO_FILE_EXTENSION}")
-print(leopard.process_file(audioURL))
-
+    let audioURL = Bundle(for: type(of: self)).url(forResource: "${AUDIO_FILE_NAME}", withExtension: "${AUDIO_FILE_EXTENSION}")
+    print(leopard.process_file(audioURL))
+} catch let error as CheetahError { 
+    // handle error
+} catch { }
 ```
 
 
