@@ -9,7 +9,7 @@
 
 import PvLeopard
 
-/// iOS binding for Leopard wake word engine. Provides a Swift interface to the Leopard library.
+/// iOS binding for Leopard speech-to-text engine. Provides a Swift interface to the Leopard library.
 public class Leopard {
     private static let supportedAudioTypes: Set = ["flac", "mp3", "ogg", "opus", "wav", "webm"]
 
@@ -30,7 +30,7 @@ public class Leopard {
         }
 
         if !FileManager().fileExists(atPath: modelPath) {
-            throw LeopardInvalidArgumentError("Model file at does not exist at '\(modelPath)'")
+            throw LeopardInvalidArgumentError("Model file at does not exist '\(modelPath)'")
         }
 
         let status = pv_leopard_init(

@@ -13,9 +13,10 @@ Leopard is an on-device speech-to-text engine. Leopard is:
     - Linux (x86_64)
     - macOS (x86_64, arm64)
     - Windows (x86_64)
+    - Android
+    - iOS
     - Raspberry Pi (4, 3)
     - NVIDIA Jetson Nano
-    - Android and iOS
 
 ## Installation
 
@@ -36,7 +37,12 @@ To obtain your `AccessKey`:
 
 ## Usage
 
-Add the Leopard model file to `Xcode` and create an instance of the engine:
+Add the Leopard model file in `Xcode` by:
+
+1. Either creating a model in [Picovoice CAT Console](https://picovoice.ai/cat/) or get the default model in [/lib/common/leopard_params.pv](/lib/common/leopard_params.pv).
+2. Add the model as a bundled resource by selecting Build Phases and adding it to Copy Bundle Resources step.
+
+Create an instance of the engine:
 
 ```swift
 import Leopard

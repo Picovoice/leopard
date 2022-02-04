@@ -15,7 +15,7 @@ Copy your `AccessKey` into the `ACCESS_KEY` variable inside [`ViewModel.swift`](
 
 Before building the demo app, run the following from [LeopardDemo](/demo/ios/LeopardDemo) directory to install the Leopard Cocoapod:
 
-```ruby
+```console
 pod install
 ```
 Open [LeopardDemo.xcworkspace](/demo/ios/LeopardDemo/LeopardDemo.xcworkspace`) and run the demo.

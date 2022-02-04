@@ -16,9 +16,10 @@ Pod::Spec.new do |s|
       - Linux (x86_64)
       - macOS (x86_64, arm64)
       - Windows (x86_64)
+      - Android
+      - iOS
       - Raspberry Pi (4, 3)
       - NVIDIA Jetson Nano
-      - Android and iOS
   DESC
   s.homepage = 'https://github.com/Picovoice/leopard/tree/master/binding/ios'
   s.author = { 'Picovoice' => 'hello@picovoice.ai' }
