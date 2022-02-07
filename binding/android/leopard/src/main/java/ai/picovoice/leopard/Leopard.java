@@ -49,9 +49,6 @@ public class Leopard {
         handle = init(accessKey, modelPath);
     }
 
-    private static void extractPackageResources(Context context) throws LeopardException {
-        final Resources resources = context.getResources();
-
     private static String extractResource(Context context, InputStream srcFileStream, String dstFilename) throws IOException {
         InputStream is = new BufferedInputStream(srcFileStream, 256);
         OutputStream os = new BufferedOutputStream(context.openFileOutput(dstFilename, Context.MODE_PRIVATE), 256);

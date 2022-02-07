@@ -1,5 +1,5 @@
 /*
-    Copyright 2021 Picovoice Inc.
+    Copyright 2022 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
@@ -9,7 +9,6 @@
     express or implied. See the License for the specific language governing permissions and
     limitations under the License.
 */
-
 
 package ai.picovoice.leoparddemo;
 
@@ -53,10 +52,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.leopard_demo);
 
         try {
-            String modelPath = new File(getApplicationContext().getFilesDir(), "leopard_params.pv").getAbsolutePath();
+            String modelPath = "leopard_params.pv";
             leopard = new Leopard.Builder(ACCESS_KEY).setModelPath(modelPath).build(getApplicationContext());
         } catch (LeopardInvalidArgumentException e) {
-            displayError(String.format("AccessKey '%s' is invalid", ACCESS_KEY));
+            displayError(String.format("(%s)\n Ensure your AccessKey '%s' is valid", e.getMessage(), ACCESS_KEY));
         } catch (LeopardActivationException e) {
             displayError("AccessKey activation error");
         } catch (LeopardActivationLimitException e) {
@@ -77,7 +76,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayError(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        TextView errorText = findViewById(R.id.errorTextView);
+        errorText.setText(message);
+        errorText.setVisibility(View.VISIBLE);
     }
 
     private boolean hasRecordPermission() {

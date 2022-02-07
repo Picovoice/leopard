@@ -3,13 +3,13 @@ name: Android AppCenter Tests
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ master ]
     paths:
       - 'demo/android/LeopardDemo/**'
       - '!demo/android/LeopardDemo/README.md'
     
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
     paths:
       - 'demo/android/LeopardDemo/**'
       - '!demo/android/LeopardDemo/README.md'
