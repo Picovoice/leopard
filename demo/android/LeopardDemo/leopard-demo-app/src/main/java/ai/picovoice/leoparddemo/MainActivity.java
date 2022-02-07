@@ -22,14 +22,12 @@ import android.os.Bundle;
 import android.os.Process;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -79,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
         TextView errorText = findViewById(R.id.errorTextView);
         errorText.setText(message);
         errorText.setVisibility(View.VISIBLE);
+
+        ToggleButton recordButton = findViewById(R.id.recordButton);
+        recordButton.setEnabled(false);
     }
 
     private boolean hasRecordPermission() {
