@@ -11,7 +11,6 @@
 
 package ai.picovoice.leopard;
 
-
 import android.content.Context;
 import android.content.res.Resources;
 
