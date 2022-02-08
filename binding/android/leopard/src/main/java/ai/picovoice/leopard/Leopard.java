@@ -29,8 +29,6 @@ import java.util.regex.Pattern;
  */
 public class Leopard {
 
-    private static String defaultModelPath;
-
     static {
         System.loadLibrary("pv_leopard");
     }
@@ -72,8 +70,7 @@ public class Leopard {
     /**
      * Processes given audio data and returns its transcription.
      *
-     * @param pcm A frame of audio samples. The number of samples per frame can be attained by
-     *            calling {@link #getFrameLength()}. The incoming audio needs to have a sample rate
+     * @param pcm A frame of audio samples. The incoming audio needs to have a sample rate
      *            equal to {@link #getSampleRate()} and be 16-bit linearly-encoded. Furthermore,
      *            Leopard operates on single channel audio. If you wish to process data in a different
      *            sample rate or format consider using `.process_file`.

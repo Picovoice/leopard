@@ -8,7 +8,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally.
 - Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
-- Compact and Computationally-Efficient [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
+- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#results)
 - Cross-Platform:
     - Linux (x86_64)
     - macOS (x86_64, arm64)
@@ -39,7 +39,7 @@ dependencies {
 
 Add the Leopard model file to your Android application by:
 
-1. Either creating a model in [Picovoice CAT Console](https://picovoice.ai/cat/) or get the default model in [/lib/common/leopard_params.pv](/lib/common/leopard_params.pv).
+1. Either creat a model in [Picovoice Console](https://console.picovoice.ai/) or get the default model in [/lib/common/leopard_params.pv](/lib/common/leopard_params.pv).
 2. Add the model as a bundled resource by placing it under the `assets` directory of your Android application.
 
 Create an instance of the engine with the Leopard Builder class by passing in the Android app context:

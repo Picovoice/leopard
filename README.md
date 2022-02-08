@@ -100,7 +100,7 @@ Then, using [Xcode](https://developer.apple.com/xcode/), open the generated `Leo
 
 Using Android Studio, open [demo/android/LeopardDemo](/demo/android/LeopardDemo) as an Android project and then run the application. 
 
-Replace ``"${YOUR_ACCESS_KEY_HERE}"`` in the file [MainActivity.java](/demo/android/leopard-demo-app/src/main/java/ai/picovoice/leoparddemo/MainActivity.java) with your `AccessKey`.
+Replace `"${YOUR_ACCESS_KEY_HERE}"` in the file [MainActivity.java](/demo/android/leopard-demo-app/src/main/java/ai/picovoice/leoparddemo/MainActivity.java) with your `AccessKey`.
 
 ## SDKs
 
@@ -182,7 +182,7 @@ do {
 } catch { }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/cat), `${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of the audio file.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/), `${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of the audio file.
 
 ### Android
 
@@ -199,7 +199,7 @@ Create an instance of the engine and transcribe an audio_file:
 ```java
 import ai.picovoice.leopard.*;
 
-final String accessKey = "${ACCESS_KEY}"; // AccessKey provided by Picovoice Console (https://picovoice.ai/console/)
+final String accessKey = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://picovoice.ai/console/)
 final String modelPath = "${MODEL_FILE}";
 try {
     Leopard handle = new Leopard.Builder(accessKey).setModelPath(modelPath).build(appContext);
@@ -210,7 +210,7 @@ try {
 } catch (LeopardException ex) { }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/cat), and `${AUDIO_FILE_PATH}` with the path to the audio file.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/), and `${AUDIO_FILE_PATH}` with the path to the audio file.
 
 ## Releases
 
