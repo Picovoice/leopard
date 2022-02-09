@@ -190,7 +190,7 @@ To include the package in your Android project, ensure you have included `mavenC
 
 ```groovy
 dependencies {    
-    implementation 'ai.picovoice:rhino-android:${LATEST_VERSION}'
+    implementation 'ai.picovoice:leopard-android:${LATEST_VERSION}'
 }
 ```
 
