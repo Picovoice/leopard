@@ -11,14 +11,84 @@
 
 // Go binding for Leopard Speech-to-Text engine.
 
-//go:build linux || darwin
 // +build linux darwin
 
 package leopard
 
 /*
 #cgo LDFLAGS: -ldl
-#include "leopard.h"
+#include <dlfcn.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+typedef int32_t (*pv_leopard_sample_rate_func)();
+
+int32_t pv_leopard_sample_rate_wrapper(void *f) {
+     return ((pv_leopard_sample_rate_func) f)();
+}
+
+typedef char* (*pv_leopard_version_func)();
+
+char* pv_leopard_version_wrapper(void* f) {
+     return ((pv_leopard_version_func) f)();
+}
+
+typedef int32_t (*pv_leopard_init_func)(
+	const char *access_key,
+	const char *model_path,
+	void **object);
+
+int32_t pv_leopard_init_wrapper(
+	void *f,
+	const char *access_key,
+	const char *model_path,
+	void **object) {
+	return ((pv_leopard_init_func) f)(
+		access_key,
+		model_path,
+		object);
+}
+
+typedef int32_t (*pv_leopard_process_func)(
+	void *object,
+	const int16_t *pcm,
+	int32_t num_samples,
+	char **transcript);
+
+int32_t pv_leopard_process_wrapper(
+	void *f,
+	void *object,
+	const int16_t *pcm,
+	int32_t num_samples,
+	char **transcript) {
+	return ((pv_leopard_process_func) f)(
+		object,
+		pcm,
+		num_samples,
+		transcript);
+}
+
+typedef int32_t (*pv_leopard_process_file_func)(
+	void *object,
+	const char *audio_path,
+	char **transcript);
+
+int32_t pv_leopard_process_file_wrapper(
+	void *f,
+	void *object,
+	const char *audio_path,
+	char **transcript) {
+	return ((pv_leopard_process_file_func) f)(
+		object,
+		audio_path,
+		transcript);
+}
+
+typedef void (*pv_leopard_delete_func)(void *);
+
+void pv_leopard_delete_wrapper(void *f, void *object) {
+	return ((pv_leopard_delete_func) f)(object);
+}
 */
 import "C"
 
@@ -64,6 +134,7 @@ func (nl nativeLeopardType) nativeDelete(leopard *Leopard) {
 
 func (nl nativeLeopardType) nativeProcess(leopard *Leopard, pcm []int16) (status PvStatus, transcript string) {
 	var transcriptPtr uintptr
+
 	var ret = C.pv_leopard_process_wrapper(pv_leopard_process_ptr,
 		unsafe.Pointer(leopard.handle),
 		(*C.int16_t)(unsafe.Pointer(&pcm[0])),
@@ -81,6 +152,7 @@ func (nl nativeLeopardType) nativeProcessFile(leopard *Leopard, audioPath string
 		transcriptPtr uintptr
 		audioPathC = C.CString(audioPath)
 	)
+	defer C.free(unsafe.Pointer(audioPathC))
 
 	var ret = C.pv_leopard_process_file_wrapper(pv_leopard_process_file_ptr,
 		unsafe.Pointer(leopard.handle),
@@ -89,7 +161,6 @@ func (nl nativeLeopardType) nativeProcessFile(leopard *Leopard, audioPath string
 
 	transcript = C.GoString((*C.char)(unsafe.Pointer(transcriptPtr)))
 	C.free(unsafe.Pointer(transcriptPtr))
-	defer C.free(unsafe.Pointer(audioPathC))
 
 	return PvStatus(ret), transcript
 }
