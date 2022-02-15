@@ -77,14 +77,19 @@ func (nl nativeLeopardType) nativeProcess(leopard *Leopard, pcm []int16) (status
 }
 
 func (nl nativeLeopardType) nativeProcessFile(leopard *Leopard, audioPath string) (status PvStatus, transcript string) {
-	var transcriptPtr uintptr
-	var ret = C.pv_leopard_process_file_wrapper(pv_leopard_process_ptr,
+	var (
+		transcriptPtr uintptr
+		audioPathC = C.CString(audioPath)
+	)
+
+	var ret = C.pv_leopard_process_file_wrapper(pv_leopard_process_file_ptr,
 		unsafe.Pointer(leopard.handle),
-		C.CString(audioPath),
+		audioPathC,
 		(**C.char)(unsafe.Pointer(&transcriptPtr)))
 
 	transcript = C.GoString((*C.char)(unsafe.Pointer(transcriptPtr)))
 	C.free(unsafe.Pointer(transcriptPtr))
+	defer C.free(unsafe.Pointer(audioPathC))
 
 	return PvStatus(ret), transcript
 }

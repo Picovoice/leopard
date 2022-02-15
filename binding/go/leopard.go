@@ -108,7 +108,7 @@ func (leopard *Leopard) Init() error {
 	if leopard.AccessKey == "" {
 		return &LeopardError{
 			INVALID_ARGUMENT,
-			"No AccessKey provided to Porcupine"}
+			"No AccessKey provided to Leopard"}
 	}
 
 	if leopard.ModelPath == "" {
@@ -136,7 +136,7 @@ func (leopard *Leopard) Delete() error {
 	if leopard.handle == 0 {
 		return &LeopardError{
 			INVALID_STATE,
-			"Porcupine has not been initialized or has already been deleted"}
+			"Leopard has not been initialized or has already been deleted"}
 	}
 
 	nativeLeopard.nativeDelete(leopard)
@@ -165,7 +165,7 @@ func (leopard *Leopard) Process(pcm []int16) (string, error) {
 	if PvStatus(ret) != SUCCESS {
 		return "", &LeopardError{
 			PvStatus(ret),
-			"Porcupine process failed."}
+			"Leopard process failed."}
 	}
 
 	return transcript, nil
@@ -186,20 +186,20 @@ func (leopard *Leopard) ProcessFile(audioPath string) (string, error) {
 	if !validExtensions.includes(fileExtension) {
 		return "", &LeopardError{
 			INVALID_ARGUMENT,
-			fmt.Sprintf("Specified file with extension %s is not supported", fileExtension)}
+			fmt.Sprintf("Specified file with extension '%s' is not supported", fileExtension)}
 	}
 
 	if _, err := os.Stat(audioPath); os.IsNotExist(err) {
 		return "", &LeopardError{
 			INVALID_ARGUMENT,
-			fmt.Sprintf("Specified file could not be found at %s", audioPath)}
+			fmt.Sprintf("Specified file could not be found at '%s'", audioPath)}
 	}
 
 	ret, transcript := nativeLeopard.nativeProcessFile(leopard, audioPath)
 	if PvStatus(ret) != SUCCESS {
 		return "", &LeopardError{
 			PvStatus(ret),
-			"Porcupine process failed."}
+			"Leopard process failed."}
 	}
 
 	return transcript, nil
@@ -242,7 +242,7 @@ func (le *leopardExts) includes(extension string) bool {
 }
 
 func getExtensions() leopardExts {
-	extensions := []string{"flac", "mp3", "ogg", "opus", "wav", "webm"}
+	extensions := []string{".flac", ".mp3", ".ogg", ".opus", ".wav", ".webm"}
 	exts := make(map[string]struct{})
 	for _, ext := range extensions {
 		exts[ext] = struct{}{}
