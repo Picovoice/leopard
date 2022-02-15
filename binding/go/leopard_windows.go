@@ -34,7 +34,7 @@ var (
 	delete_func       = lib.NewProc("pv_leopard_delete")
 )
 
-func (np nativeLeopardType) nativeInit(leopard *Leopard) (status PvStatus) {
+func (nl nativeLeopardType) nativeInit(leopard *Leopard) (status PvStatus) {
 	var (
 		accessKeyC  = C.CString(leopard.AccessKey)
 		modelPathC  = C.CString(leopard.ModelPath)
@@ -50,11 +50,11 @@ func (np nativeLeopardType) nativeInit(leopard *Leopard) (status PvStatus) {
 	return PvStatus(ret)
 }
 
-func (np nativeLeopardType) nativeDelete(leopard *Leopard) {
+func (nl nativeLeopardType) nativeDelete(leopard *Leopard) {
 	delete_func.Call(leopard.handle)
 }
 
-func (np nativeLeopardType) nativeProcess(leopard *Leopard, pcm []int16) (status PvStatus, transcript string) {
+func (nl nativeLeopardType) nativeProcess(leopard *Leopard, pcm []int16) (status PvStatus, transcript string) {
 	var transcriptPtr uintptr
 
 	ret, _, _ := process_func.Call(
@@ -69,7 +69,7 @@ func (np nativeLeopardType) nativeProcess(leopard *Leopard, pcm []int16) (status
 	return PvStatus(ret), transcript
 }
 
-func (np nativeLeopardType) nativeProcessFile(leopard *Leopard, audioPath string) (status PvStatus, transcript string) {
+func (nl nativeLeopardType) nativeProcessFile(leopard *Leopard, audioPath string) (status PvStatus, transcript string) {
 	var (
 		transcriptPtr uintptr
 		audioPathC = C.CString(audioPath)
@@ -87,12 +87,12 @@ func (np nativeLeopardType) nativeProcessFile(leopard *Leopard, audioPath string
 	return PvStatus(ret), transcript
 }
 
-func (np nativeLeopardType) nativeSampleRate() (sampleRate int) {
+func (nl nativeLeopardType) nativeSampleRate() (sampleRate int) {
 	ret, _, _ := sample_rate_func.Call()
 	return int(ret)
 }
 
-func (np nativeLeopardType) nativeVersion() (version string) {
+func (nl nativeLeopardType) nativeVersion() (version string) {
 	ret, _, _ := version_func.Call()
 	return C.GoString((*C.char)(unsafe.Pointer(ret)))
 }
