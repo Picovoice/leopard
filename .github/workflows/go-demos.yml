@@ -43,7 +43,7 @@ jobs:
       run: go build filedemo/leopard_file_demo.go
 
     - name: Test filedemo
-      run: ./leopard_file_demo -access_key ${{secrets.PV_VALID_ACCESS_KEY}} -audio_paths ../../resources/audio_samples/test.wav
+      run: ./leopard_file_demo -access_key ${{secrets.PV_VALID_ACCESS_KEY}} -input_audio_path ../../resources/audio_samples/test.wav
 
   build-self-hoster:
     runs-on: ${{ matrix.machine }}
@@ -62,4 +62,4 @@ jobs:
       run: go build filedemo/leopard_file_demo.go
 
     - name: Test filedemo
-      run: ./leopard_file_demo -access_key ${{secrets.PV_VALID_ACCESS_KEY}} -audio_paths ../../resources/audio_samples/test.wav
+      run: ./leopard_file_demo -access_key ${{secrets.PV_VALID_ACCESS_KEY}} -input_audio_path ../../resources/audio_samples/test.wav
