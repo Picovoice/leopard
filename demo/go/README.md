@@ -97,7 +97,7 @@ go run micdemo/leopard_mic_demo.go \
 If the problem persists we suggest storing the recorded audio into a file for inspection. This can be achieved with:
 
 ```console
-go run micdemo/leoparde_mic_demo.go \
+go run micdemo/leopard_mic_demo.go \
 -access_key "${ACCESS_KEY}" \
 -audio_device_index 0 \
 -output_path ./test.wav
