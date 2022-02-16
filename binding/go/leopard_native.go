@@ -11,15 +11,52 @@
 
 // Go binding for Leopard Speech-to-Text engine.
 
-// +build linux darwin
-
 package leopard
 
 /*
-#cgo LDFLAGS: -ldl
-#include <dlfcn.h>
+#cgo linux LDFLAGS: -ldl
+#cgo darwin LDFLAGS: -ldl
+
 #include <stdint.h>
 #include <stdlib.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+
+	#include <windows.h>
+
+#else
+
+	#include <dlfcn.h>
+
+#endif
+
+static void *open_dl(const char *dl_path) {
+
+#if defined(_WIN32) || defined(_WIN64)
+
+    return LoadLibrary((LPCSTR) dl_path);
+
+#else
+
+    return dlopen(dl_path, RTLD_NOW);
+
+#endif
+
+}
+
+static void *load_symbol(void *handle, const char *symbol) {
+
+#if defined(_WIN32) || defined(_WIN64)
+
+    return GetProcAddress((HMODULE) handle, symbol);
+
+#else
+
+    return dlsym(handle, symbol);
+
+#endif
+
+}
 
 typedef int32_t (*pv_leopard_sample_rate_func)();
 
@@ -98,14 +135,14 @@ import (
 
 // private vars
 var (
-	lib = C.dlopen(C.CString(libName), C.RTLD_NOW)
+	lib = C.open_dl(C.CString(libName))
 
-	pv_leopard_init_ptr         = C.dlsym(lib, C.CString("pv_leopard_init"))
-	pv_leopard_process_ptr      = C.dlsym(lib, C.CString("pv_leopard_process"))
-	pv_leopard_process_file_ptr = C.dlsym(lib, C.CString("pv_leopard_process_file"))
-	pv_leopard_delete_ptr       = C.dlsym(lib, C.CString("pv_leopard_delete"))
-	pv_leopard_version_ptr      = C.dlsym(lib, C.CString("pv_leopard_version"))
-	pv_sample_rate_ptr          = C.dlsym(lib, C.CString("pv_sample_rate"))
+	pv_leopard_init_ptr         = C.load_symbol(lib, C.CString("pv_leopard_init"))
+	pv_leopard_process_ptr      = C.load_symbol(lib, C.CString("pv_leopard_process"))
+	pv_leopard_process_file_ptr = C.load_symbol(lib, C.CString("pv_leopard_process_file"))
+	pv_leopard_delete_ptr       = C.load_symbol(lib, C.CString("pv_leopard_delete"))
+	pv_leopard_version_ptr      = C.load_symbol(lib, C.CString("pv_leopard_version"))
+	pv_sample_rate_ptr          = C.load_symbol(lib, C.CString("pv_sample_rate"))
 )
 
 func (nl nativeLeopardType) nativeInit(leopard *Leopard) (status PvStatus) {
@@ -150,7 +187,7 @@ func (nl nativeLeopardType) nativeProcess(leopard *Leopard, pcm []int16) (status
 func (nl nativeLeopardType) nativeProcessFile(leopard *Leopard, audioPath string) (status PvStatus, transcript string) {
 	var (
 		transcriptPtr uintptr
-		audioPathC = C.CString(audioPath)
+		audioPathC    = C.CString(audioPath)
 	)
 	defer C.free(unsafe.Pointer(audioPathC))
 
