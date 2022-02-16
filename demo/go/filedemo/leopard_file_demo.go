@@ -20,7 +20,7 @@ import (
 )
 
 func main() {
-	inputAudioPathArg := flag.String("input_audio_path", "", "Path to input audio file (mono, WAV, 16-bit, 16kHz)")
+	inputAudioPathArg := flag.String("input_audio_path", "", "Path to input audio file (mono, valid: `FLAC`, `MP3`, `Ogg`, `Opus`, `Vorbis`, `WAV`, and `WebM`, 16-bit, 16kHz)")
 	accessKeyArg := flag.String("access_key", "", "AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)")
 	modelPathArg := flag.String("model_path", "", "Path to Leopard model file")
 	flag.Parse()
