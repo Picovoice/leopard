@@ -15,6 +15,7 @@ import {
   NativeEventEmitter,
   PermissionsAndroid,
   Platform,
+  SafeAreaView,
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
@@ -225,10 +226,8 @@ export default class App extends Component<Props, State> {
       this.state.appState === UIState.error ||
       this.state.appState === UIState.processing;
 
-    // @ts-ignore
-    // @ts-ignore
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <View style={styles.statusBar}>
           <Text style={styles.statusBarText}>Leopard</Text>
         </View>
@@ -288,7 +287,7 @@ export default class App extends Component<Props, State> {
             Made in Vancouver, Canada by Picovoice
           </Text>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -308,6 +307,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#377DFF',
     justifyContent: 'flex-end',
+    maxHeight: 50,
   },
   statusBarText: {
     fontSize: 18,
