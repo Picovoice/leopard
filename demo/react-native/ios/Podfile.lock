@@ -253,6 +253,8 @@ PODS:
     - React-jsi (= 0.63.3)
   - RNCPicker (1.16.8):
     - React-Core
+  - RNFS (2.18.0):
+    - React
   - Yoga (1.14.0)
 
 DEPENDENCIES:
@@ -286,6 +288,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
+  - RNFS (from `../node_modules/react-native-fs`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -350,6 +353,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCPicker:
     :path: "../node_modules/@react-native-picker/picker"
+  RNFS:
+    :path: "../node_modules/react-native-fs"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -384,6 +389,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: 8e9fb25724a0805107fc1acc9075e26f814df454
   ReactCommon: 4167844018c9ed375cc01a843e9ee564399e53c3
   RNCPicker: 0991c56da7815c0cf946d6f63cf920b25296e5f6
+  RNFS: 3ab21fa6c56d65566d1fb26c2228e2b6132e5e32
   Yoga: 7d13633d129fd179e01b8953d38d47be90db185a
 
 PODFILE CHECKSUM: fc6dffe55eacb13c06acd2bb7df7116c6df3b3a1

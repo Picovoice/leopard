@@ -10,73 +10,122 @@
 //
 
 import React, {Component} from 'react';
-import {PermissionsAndroid, Platform, TouchableOpacity} from 'react-native';
+import {
+  EventSubscription,
+  NativeEventEmitter,
+  PermissionsAndroid,
+  Platform,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import {StyleSheet, Text, View} from 'react-native';
+
 import {Leopard, LeopardErrors} from '@picovoice/leopard-react-native';
+import {
+  VoiceProcessor,
+  BufferEmitter,
+} from '@picovoice/react-native-voice-processor';
+
+import Recorder from './Recorder';
+
+enum UIState {
+  loading,
+  init,
+  recording,
+  processing,
+  transcribed,
+  error,
+}
 
 type Props = {};
 type State = {
-  buttonText: string;
-  buttonDisabled: boolean;
-  isListening: boolean;
-  backgroundColour: string;
-  isError: boolean;
+  appState: UIState;
   errorMessage: string | null;
+  transcription: string;
+  recordSeconds: number;
+  processSeconds: number;
 };
 
 export default class App extends Component<Props, State> {
-  _leopard: Leopard | undefined;
-  _detectionColour: string = '#00E5C3';
-  _defaultColour: string = '#F5FCFF';
+  _leopard?: Leopard;
   _accessKey: string = '${YOUR_ACCESS_KEY_HERE}'; // AccessKey obtained from Picovoice Console (https://picovoice.ai/console/)
+
+  _recorder: Recorder = new Recorder();
+  _voiceProcessor?: VoiceProcessor;
+  _bufferListener?: EventSubscription;
+  _bufferEmitter?: NativeEventEmitter;
+
+  _recordInterval?: NodeJS.Timer;
 
   constructor(props: Props) {
     super(props);
     this.state = {
-      buttonText: 'Start',
-      buttonDisabled: false,
-      isListening: false,
-      backgroundColour: this._defaultColour,
-      isError: false,
+      appState: UIState.loading,
       errorMessage: null,
+      transcription: '',
+      recordSeconds: 0.0,
+      processSeconds: 0.0,
     };
-  }
 
-  async componentDidMount() {
-    try {
-      this._leopard = await Leopard.create(this._accessKey);
-    } catch (err: any) {
-      let errorMessage = '';
-      if (err instanceof LeopardErrors.LeopardInvalidArgumentError) {
-        errorMessage = `${err.message}\nPlease make sure accessKey ${this._accessKey} is a valid access key.`;
-      } else if (err instanceof LeopardErrors.LeopardActivationError) {
-        errorMessage = 'AccessKey activation error';
-      } else if (err instanceof LeopardErrors.LeopardActivationLimitError) {
-        errorMessage = 'AccessKey reached its device limit';
-      } else if (err instanceof LeopardErrors.LeopardActivationRefusedError) {
-        errorMessage = 'AccessKey refused';
-      } else if (err instanceof LeopardErrors.LeopardActivationThrottledError) {
-        errorMessage = 'AccessKey has been throttled';
-      } else {
-        errorMessage = err.toString();
-      }
-
-      this.setState({
-        isError: true,
-        errorMessage: errorMessage,
-      });
-    }
+    this.init();
   }
 
   componentWillUnmount() {
-    if (this.state.isListening) {
+    if (this.state.appState === UIState.recording) {
       this._stopProcessing();
     }
   }
 
-  async _startProcessing() {
+  async init() {
+    try {
+      this._leopard = await Leopard.create(
+        this._accessKey,
+        'leopard_params.pv',
+      );
+      this._voiceProcessor = VoiceProcessor.getVoiceProcessor(
+        512,
+        this._leopard.sampleRate,
+      );
+      this._bufferEmitter = new NativeEventEmitter(BufferEmitter);
+      this._bufferListener = this._bufferEmitter.addListener(
+        BufferEmitter.BUFFER_EMITTER_KEY,
+        async (buffer: number[]) => {
+          await this._recorder.writeSamples(buffer);
+        },
+      );
+      this.setState({
+        appState: UIState.init,
+      });
+    } catch (err: any) {
+      this.handleError(err);
+    }
+  }
+
+  handleError(err: any) {
+    let errorMessage = '';
+    if (err instanceof LeopardErrors.LeopardInvalidArgumentError) {
+      errorMessage = `${err.message}\nPlease make sure accessKey ${this._accessKey} is a valid access key.`;
+    } else if (err instanceof LeopardErrors.LeopardActivationError) {
+      errorMessage = 'AccessKey activation error';
+    } else if (err instanceof LeopardErrors.LeopardActivationLimitError) {
+      errorMessage = 'AccessKey reached its device limit';
+    } else if (err instanceof LeopardErrors.LeopardActivationRefusedError) {
+      errorMessage = 'AccessKey refused';
+    } else if (err instanceof LeopardErrors.LeopardActivationThrottledError) {
+      errorMessage = 'AccessKey has been throttled';
+    } else {
+      errorMessage = err.toString();
+    }
+
     this.setState({
-      buttonDisabled: true,
+      appState: UIState.error,
+      errorMessage: errorMessage,
+    });
+  }
+
+  _startProcessing() {
+    this.setState({
+      appState: UIState.recording,
     });
 
     let recordAudioRequest;
@@ -88,29 +137,65 @@ export default class App extends Component<Props, State> {
       });
     }
 
-    recordAudioRequest.then((hasPermission) => {
+    recordAudioRequest.then(async (hasPermission) => {
       if (!hasPermission) {
-        console.error(
-          "Required permissions (Microphone) we're not found. Please add to platform code.",
+        this.handleError(
+          'Required permissions (Microphone) were not found. Please add to platform code.',
         );
-        this.setState({
-          buttonDisabled: false,
-        });
         return;
+      }
+
+      try {
+        await this._recorder.writeWavHeader();
+        await this._voiceProcessor?.start();
+
+        this._recordInterval = setInterval(() => {
+          if (this.state.recordSeconds < 120 - 0.1) {
+            this.setState({
+              recordSeconds: this.state.recordSeconds + 0.1,
+            });
+          } else {
+            this._stopProcessing();
+          }
+        }, 100);
+      } catch (err: any) {
+        this.handleError(err);
       }
     });
   }
 
   _stopProcessing() {
     this.setState({
-      buttonDisabled: true,
+      appState: UIState.processing,
+    });
+    clearInterval(this._recordInterval!);
+
+    this._voiceProcessor?.stop().then(async () => {
+      try {
+        const audioPath = await this._recorder.finalize();
+        const start = Date.now();
+        const res = await this._leopard?.processFile(audioPath);
+        const end = Date.now();
+        if (res !== undefined) {
+          this.setState({
+            transcription: res,
+            appState: UIState.transcribed,
+            processSeconds: (end - start) / 1000,
+          });
+        }
+      } catch (err: any) {
+        this.handleError(err);
+      }
     });
   }
 
   _toggleListening() {
-    if (this.state.isListening) {
+    if (this.state.appState === UIState.recording) {
       this._stopProcessing();
-    } else {
+    } else if (
+      this.state.appState === UIState.init ||
+      this.state.appState === UIState.transcribed
+    ) {
       this._startProcessing();
     }
   }
@@ -129,56 +214,33 @@ export default class App extends Component<Props, State> {
       );
       return granted === PermissionsAndroid.RESULTS.GRANTED;
     } catch (err: any) {
-      this.setState({
-        isError: true,
-        errorMessage: err.toString(),
-      });
+      this.handleError(err);
       return false;
     }
   }
 
   render() {
+    const disabled =
+      this.state.appState === UIState.loading ||
+      this.state.appState === UIState.error ||
+      this.state.appState === UIState.processing;
+
+    // @ts-ignore
+    // @ts-ignore
     return (
-      <View
-        style={[
-          styles.container,
-          {backgroundColor: this.state.backgroundColour},
-        ]}>
+      <View style={styles.container}>
         <View style={styles.statusBar}>
-          <Text style={styles.statusBarText}>Porcupine</Text>
+          <Text style={styles.statusBarText}>Leopard</Text>
         </View>
-        <View style={{flex: 1, paddingTop: '10%'}}>
-          <Text style={{color: '#666666', marginLeft: 15, marginBottom: 5}}>
-            Keyword
-          </Text>
-          <View
-            style={{
-              width: '90%',
-              height: '40%',
-              alignContent: 'center',
-              justifyContent: 'center',
-              alignSelf: 'center',
-            }}
-          />
+        <View style={{flex: 6}}>
+          <ScrollView style={styles.transcriptionBox}>
+            <Text style={styles.transcriptionText}>
+              {this.state.transcription}
+            </Text>
+          </ScrollView>
         </View>
 
-        <View
-          style={{flex: 1, justifyContent: 'center', alignContent: 'center'}}>
-          <TouchableOpacity
-            style={{
-              width: '50%',
-              height: '50%',
-              alignSelf: 'center',
-              justifyContent: 'center',
-              backgroundColor: '#377DFF',
-              borderRadius: 100,
-            }}
-            onPress={() => this._toggleListening()}
-            disabled={this.state.buttonDisabled || this.state.isError}>
-            <Text style={styles.buttonText}>{this.state.buttonText}</Text>
-          </TouchableOpacity>
-        </View>
-        {this.state.isError && (
+        {this.state.appState === UIState.error ? (
           <View style={styles.errorBox}>
             <Text
               style={{
@@ -188,8 +250,40 @@ export default class App extends Component<Props, State> {
               {this.state.errorMessage}
             </Text>
           </View>
+        ) : (
+          <View style={styles.stateContainer}>
+            {this.state.appState === UIState.recording && (
+              <Text>
+                Recording: {this.state.recordSeconds.toFixed(1)} / 120 (seconds)
+              </Text>
+            )}
+
+            {this.state.appState === UIState.processing && (
+              <Text>Processing audio...</Text>
+            )}
+
+            {this.state.appState === UIState.transcribed && (
+              <Text>
+                Transcribed '{this.state.recordSeconds.toFixed(1)}' seconds of
+                audio in '{this.state.processSeconds.toFixed(1)}' seconds.
+              </Text>
+            )}
+          </View>
         )}
-        <View style={{flex: 1, justifyContent: 'flex-end', paddingBottom: 25}}>
+
+        <View
+          style={{flex: 1, justifyContent: 'center', alignContent: 'center'}}>
+          <TouchableOpacity
+            style={[styles.buttonStyle, disabled ? styles.buttonDisabled : {}]}
+            onPress={() => this._toggleListening()}
+            disabled={disabled}>
+            <Text style={styles.buttonText}>
+              {this.state.appState === UIState.recording ? 'Stop' : 'Start'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={{flex: 0.5, justifyContent: 'center', paddingBottom: 10}}>
           <Text style={styles.instructions}>
             Made in Vancouver, Canada by Picovoice
           </Text>
@@ -211,7 +305,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   statusBar: {
-    flex: 0.4,
+    flex: 1,
     backgroundColor: '#377DFF',
     justifyContent: 'flex-end',
   },
@@ -223,6 +317,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   buttonStyle: {
+    width: '50%',
+    height: '100%',
+    alignSelf: 'center',
+    justifyContent: 'center',
     backgroundColor: '#377DFF',
     borderRadius: 100,
   },
@@ -231,6 +329,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
+  },
+  buttonDisabled: {
+    backgroundColor: 'gray',
   },
   itemStyle: {
     fontWeight: 'bold',
@@ -243,9 +344,24 @@ const styles = StyleSheet.create({
   },
   errorBox: {
     backgroundColor: 'red',
-    borderRadius: 5,
     margin: 20,
     padding: 20,
     textAlign: 'center',
+  },
+  stateContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 10,
+  },
+  transcriptionBox: {
+    backgroundColor: '#25187E',
+    margin: 20,
+    padding: 20,
+    height: '100%',
+  },
+  transcriptionText: {
+    fontSize: 20,
+    color: 'white',
   },
 });

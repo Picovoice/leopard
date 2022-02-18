@@ -18,20 +18,20 @@ class PvLeopard: NSObject {
     @objc(create:modelPath:resolver:rejecter:)
     func create(accessKey: String, modelPath: String,
         resolver resolve:RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock) -> Void {
-        
+
         do {
             let leopard = try Leopard(
                 accessKey: accessKey,
-                modelPath: modelPath.isEmpty ? nil : try getResourcePath(modelPath))
-            
+                modelPath: try getResourcePath(modelPath))
+
             let handle: String = String(describing: leopard)
             leopardPool[handle] = leopard
-            
+
             var param: [String: Any] = [:]
             param["handle"] = handle
             param["sampleRate"] = Leopard.sampleRate
             param["version"] = Leopard.version
-            
+
             resolve(param)
         } catch let error as LeopardError {
             let (code, message) = errorToCodeAndMessage(error)
@@ -41,20 +41,20 @@ class PvLeopard: NSObject {
             reject(code, message, nil)
         }
     }
-    
+
     @objc(delete:)
-    func delete(handle:String) -> Void {        
+    func delete(handle:String) -> Void {
         if let leopard = leopardPool.removeValue(forKey: handle) {
             leopard.delete()
         }
     }
-    
+
     @objc(process:pcm:resolver:rejecter:)
-    func process(handle:String, pcm:[Int16], 
+    func process(handle:String, pcm:[Int16],
         resolver resolve:RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock) -> Void {
         do {
             if let leopard = leopardPool[handle] {
-                let result = try leopard.process(pcm: pcm)
+                let result = try leopard.process(pcm)
                 resolve(result)
             } else {
                 let (code, message) = errorToCodeAndMessage(LeopardRuntimeError("Invalid handle provided to Leopard 'process'"))
@@ -69,8 +69,8 @@ class PvLeopard: NSObject {
         }
     }
 
-    @objc(process:audioPath:resolver:rejecter:)
-    func process(handle:String, audioPath:String,
+    @objc(processFile:audioPath:resolver:rejecter:)
+    func processFile(handle:String, audioPath:String,
                  resolver resolve:RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock) -> Void {
         do {
             if let leopard = leopardPool[handle] {
@@ -96,13 +96,13 @@ class PvLeopard: NSObject {
                     return resourcePath
                 }
             }
-            
+
             throw LeopardIOError("Could not find file at path '\(filePath)'. If this is a packaged asset, ensure you have added it to your xcode project.")
         }
-        
+
         return filePath
     }
-    
+
     private func errorToCodeAndMessage(_ error: LeopardError) -> (String, String) {
         return (error.name.replacingOccurrences(of: "Error", with: "Exception"), error.localizedDescription)
     }

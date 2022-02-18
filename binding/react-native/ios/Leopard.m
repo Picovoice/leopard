@@ -15,17 +15,17 @@
 
 RCT_EXTERN_METHOD(create: (NSString *)accessKey
                   modelPath: (NSString *)modelPath
-                  resolver: (RCTPromiseResolveBlock)resolve 
+                  resolver: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(delete: (NSString *)handle)
 
-RCT_EXTERN_METHOD(process: (NSString *)handle 
+RCT_EXTERN_METHOD(process: (NSString *)handle
                   pcm: (NSArray<NSNumber>)pcm
-                  resolver: (RCTPromiseResolveBlock)resolve 
+                  resolver: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(process: (NSString *)handle
+RCT_EXTERN_METHOD(processFile: (NSString *)handle
                   audioPath: (NSString *)audioPath
                   resolver: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject)
