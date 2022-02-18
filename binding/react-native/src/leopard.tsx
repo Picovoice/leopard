@@ -25,7 +25,7 @@ class Leopard {
   private readonly _version: string;
 
   /**
-   * Static creator for initializing Leopard from a list of paths to custom keyword files
+   * Static creator for initializing Leopard given the model path.
    * @param accessKey AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).
    * @param modelPath Path to the file containing model parameters.
    * @returns An instance of the engine.
