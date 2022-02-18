@@ -59,7 +59,7 @@
 		134814211AA4EA7D00B7C361 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				134814201AA4EA6300B7C361 /* libLEopard.a */,
+				134814201AA4EA6300B7C361 /* libLeopard.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -287,7 +287,7 @@
 				PRODUCT_NAME = Leopard;
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "${SRCROOT}";
-				SWIFT_OBJC_BRIDGING_HEADER = "LEopard-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Leopard-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
