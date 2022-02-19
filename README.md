@@ -128,7 +128,7 @@ The demo requires `cgo`, which on Windows may mean that you need to install a gc
 From [demo/go](/demo/go) run the following command from the terminal to build and run the file demo:
 
 ```console
-go run filedemo/leopard_file_demo.go -access_key "${ACCESS_KEY}"  -input_audio_path "${AUDIO_PATH}"
+go run filedemo/leopard_file_demo.go -access_key "${ACCESS_KEY}" -input_audio_path "${AUDIO_PATH}"
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you wish to transcribe.
