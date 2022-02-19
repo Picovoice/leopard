@@ -68,13 +68,19 @@ export default class App extends Component<Props, State> {
       recordSeconds: 0.0,
       processSeconds: 0.0,
     };
+  }
 
+  componentDidMount() {
     this.init();
   }
 
   componentWillUnmount() {
     if (this.state.appState === UIState.recording) {
       this._stopProcessing();
+    }
+    if (this._leopard !== undefined) {
+      this._leopard.delete();
+      this._leopard = undefined;
     }
   }
 
