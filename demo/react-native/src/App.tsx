@@ -17,6 +17,7 @@ import {
   Platform,
   SafeAreaView,
   ScrollView,
+  StatusBar,
   TouchableOpacity,
 } from 'react-native';
 import {StyleSheet, Text, View} from 'react-native';
@@ -228,6 +229,7 @@ export default class App extends Component<Props, State> {
 
     return (
       <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor="#377DFF" />
         <View style={styles.statusBar}>
           <Text style={styles.statusBarText}>Leopard</Text>
         </View>

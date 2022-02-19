@@ -84,10 +84,10 @@ const getAudioFrame = () => {
 }
 
 try {
-  const leopard = Leopard.create("${ACCESS_KEY}", "${MODEL_FILE}")
-  console.log(leopard.process(getAudioFrame()))
+  const leopard = await Leopard.create("${ACCESS_KEY}", "${MODEL_FILE}")
+  console.log(await leopard.process(getAudioFrame()))
 
-  console.log(leopard.processFile("${AUDIO_FILE_NAME}"))
+  console.log(await leopard.processFile("${AUDIO_FILE_NAME}"))
 } catch (err: any) {
   if (err instanceof LeopardErrors) {
     // handle error

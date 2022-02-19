@@ -31,6 +31,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [Android](#android-demo)
         - [Node.js](#nodejs-demo)
         - [Go](#go-demo)
+        - [React Native](#react-native-demo)
     - [SDKs](#sdks)
         - [Python](#python)
         - [C](#c)
@@ -38,6 +39,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [Android](#android)
         - [Node.js](#nodejs)
         - [Go](#go)
+        - [React Native](#react-native)
     - [Releases](#releases)
 
 ## AccessKey
@@ -121,6 +123,7 @@ leopard-mic-demo --access_key ${ACCESS_KEY}
 ```
 
 For more information about Node.js demos go to [demo/nodejs](/demo/nodejs).
+
 ### Go Demo
 
 The demo requires `cgo`, which on Windows may mean that you need to install a gcc compiler like [Mingw](http://mingw-w64.org/doku.php) to build it properly. 
@@ -134,6 +137,26 @@ go run filedemo/leopard_file_demo.go -access_key "${ACCESS_KEY}" -input_audio_pa
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you wish to transcribe.
 
 For more information about Go demos go to [demo/go](/demo/go).
+
+### React Native Demo
+
+To run the React Native Porcupine demo app you will first need to set up your React Native environment. For this,
+please refer to [React Native's documentation](https://reactnative.dev/docs/environment-setup). Once your environment has
+been set up, navigate to [demo/react-native](/demo/react-native) to run the following commands:
+
+For Android:
+
+```console
+yarn android-install    # sets up environment
+yarn android-run        # builds and deploys to Android
+```
+
+For iOS:
+
+```console
+yarn ios-install        # sets up environment
+yarn ios-run 
+```
 
 ## SDKs
 
@@ -302,6 +325,37 @@ log.Println(transcription)
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
 `${AUDIO_PATH}` to path an audio file. Finally, when done be sure to explicitly release the resources using
 `leopard.Delete()`.
+
+### React Native
+
+he Leopard React Native binding is available via [NPM](https://www.npmjs.com/package/@picovoice/leopard-react-native). Add it via the following command:
+
+```console
+yarn add @picovoice/leopard-react-native
+```
+
+Create an instance of the engine and transcribe an audio file:
+
+```typescript
+import {Leopard, LeopardErrors} from '@picovoice/leopard-react-native';
+
+const getAudioFrame = () => {
+  // get audio frames
+}
+
+try {
+  const leopard = await Leopard.create("${ACCESS_KEY}", "${MODEL_FILE}")
+  const transcriptByFrames = await leopard.process(getAudioFrame())
+
+  const transcriptByFile = await leopard.processFile("${AUDIO_FILE_NAME}")
+} catch (err: any) {
+  if (err instanceof LeopardErrors) {
+    // handle error
+  }
+}
+```
+
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/) and `${AUDIO_FILE_NAME}` with the name of the audio file.
 
 ## Releases
 
