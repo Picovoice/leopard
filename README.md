@@ -345,9 +345,8 @@ const getAudioFrame = () => {
 
 try {
   const leopard = await Leopard.create("${ACCESS_KEY}", "${MODEL_FILE}")
-  const transcriptByFrames = await leopard.process(getAudioFrame())
-
-  const transcriptByFile = await leopard.processFile("${AUDIO_FILE_NAME}")
+  const transcript = await leopard.processFile("${AUDIO_FILE_NAME}")
+  console.log(transcript)
 } catch (err: any) {
   if (err instanceof LeopardErrors) {
     // handle error
