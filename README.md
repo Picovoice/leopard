@@ -328,7 +328,7 @@ Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://co
 
 ### React Native
 
-he Leopard React Native binding is available via [NPM](https://www.npmjs.com/package/@picovoice/leopard-react-native). Add it via the following command:
+The Leopard React Native binding is available via [NPM](https://www.npmjs.com/package/@picovoice/leopard-react-native). Add it via the following command:
 
 ```console
 yarn add @picovoice/leopard-react-native
