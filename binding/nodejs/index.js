@@ -178,12 +178,6 @@ class Leopard {
       );
     }
 
-    if (!VALID_AUDIO_EXTENSIONS.includes(path.extname(audioPath.toLowerCase()))) {
-      throw new PvArgumentError(
-        `Unsupported audio file: '${path.extname(audioPath.toLowerCase())}'`
-      );
-    }
-
     let transcriptAndStatus = null;
     try {
       transcriptAndStatus = this._pvLeopard.process_file(this._handle, audioPath);
@@ -193,6 +187,9 @@ class Leopard {
 
     const status = transcriptAndStatus.status;
     if (status !== PV_STATUS_T.SUCCESS) {
+      if (status === PV_STATUS_T.INVALID_ARGUMENT && !VALID_AUDIO_EXTENSIONS.includes(path.extname(audioPath.toLowerCase()))) {
+        pvStatusToException(status, `Specified file with extension '${path.extname(audioPath.toLowerCase())}' is not supported`);
+      }
       pvStatusToException(status, "Leopard failed to process the audio file");
     }
     return transcriptAndStatus.transcript;
