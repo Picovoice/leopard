@@ -14,7 +14,6 @@
 const { program } = require("commander");
 const readline = require("readline");
 const Leopard = require("@picovoice/leopard-node");
-const { PvArgumentError } = require("@picovoice/leopard-node/errors");
 const PvRecorder = require("@picovoice/pvrecorder-node");
 
 program
@@ -42,7 +41,7 @@ program.parse(process.argv);
 
 let isInterrupted = false;
 
-function audioLoudnessBar(pcm, width) {
+function VuMeter(pcm, width) {
   let sum = 0;
   const blackBox = "█";
   const emptyBox = " ";
@@ -103,17 +102,17 @@ async function micDemo() {
     }
   });
 
-  let audio_frame = [];
+  let audioFrame = [];
   while (!isInterrupted) {
     const pcm = await recorder.read();
-    process.stdout.write(`\r${audioLoudnessBar(pcm, 20)}`);
-    audio_frame.push(...pcm);
+    process.stdout.write(`\r${VuMeter(pcm, 20)}`);
+    audioFrame.push(...pcm);
   }
   recorder.stop();
   recorder.release();
 
   console.log("\nProcessing...");
-  const audioFrameInt16 = new Int16Array(audio_frame);
+  const audioFrameInt16 = new Int16Array(audioFrame);
   let transcript = engineInstance.process(audioFrameInt16);
   console.log(transcript);
   engineInstance.release();
