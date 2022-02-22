@@ -92,7 +92,7 @@ var (
 	libName          = extractLib()
 	nativeLeopard    = nativeLeopardType{}
 
-	validExtensions  = getExtensions()
+	validExtensions = getExtensions()
 )
 
 var (
@@ -182,13 +182,6 @@ func (leopard *Leopard) ProcessFile(audioPath string) (string, error) {
 			"Leopard has not been initialized or has already been deleted"}
 	}
 
-	fileExtension := filepath.Ext(audioPath)
-	if !validExtensions.includes(fileExtension) {
-		return "", &LeopardError{
-			INVALID_ARGUMENT,
-			fmt.Sprintf("Specified file with extension '%s' is not supported", fileExtension)}
-	}
-
 	if _, err := os.Stat(audioPath); os.IsNotExist(err) {
 		return "", &LeopardError{
 			INVALID_ARGUMENT,
@@ -196,7 +189,15 @@ func (leopard *Leopard) ProcessFile(audioPath string) (string, error) {
 	}
 
 	ret, transcript := nativeLeopard.nativeProcessFile(leopard, audioPath)
-	if PvStatus(ret) != SUCCESS {
+	if ret != SUCCESS {
+		if ret == INVALID_ARGUMENT {
+			fileExtension := filepath.Ext(audioPath)
+			if !validExtensions.includes(fileExtension) {
+				return "", &LeopardError{
+					INVALID_ARGUMENT,
+					fmt.Sprintf("Specified file with extension '%s' is not supported", fileExtension)}
+			}
+		}
 		return "", &LeopardError{
 			PvStatus(ret),
 			"Leopard process failed."}
