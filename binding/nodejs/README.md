@@ -41,11 +41,12 @@ AccessKey also verifies that your usage is within the limits of your account. Ev
 Create an instance of the engine and transcribe an audio file:
 
 ```javascript
-import pvleopard
+const Leopard = require("@picovoice/leopard-node");
 
-handle = pvleopard.create(access_key='${ACCESS_KEY}')
+const accessKey = "${ACCESS_KEY}" // Obtained from the Picovoice Console (https://console.picovoice.ai/)
+const handle = new Leopard(accessKey);
 
-print(handle.process_file('${AUDIO_PATH}'))
+console.log(handle.process_file('${AUDIO_PATH}'))
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
