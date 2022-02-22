@@ -134,6 +134,7 @@ export default class App extends Component<Props, State> {
   _startProcessing() {
     this.setState({
       appState: UIState.recording,
+      recordSeconds: 0,
     });
 
     let recordAudioRequest;
@@ -259,6 +260,12 @@ export default class App extends Component<Props, State> {
           </View>
         ) : (
           <View style={styles.stateContainer}>
+            {this.state.appState === UIState.init && (
+              <Text style={{textAlign: 'center'}}>
+                Record up to 2 minutes of audio to be transcribed by Leopard
+              </Text>
+            )}
+
             {this.state.appState === UIState.recording && (
               <Text>
                 Recording: {this.state.recordSeconds.toFixed(1)} / 120 (seconds)
@@ -271,8 +278,8 @@ export default class App extends Component<Props, State> {
 
             {this.state.appState === UIState.transcribed && (
               <Text>
-                Transcribed '{this.state.recordSeconds.toFixed(1)}' seconds of
-                audio in '{this.state.processSeconds.toFixed(1)}' seconds.
+                Transcribed {this.state.recordSeconds.toFixed(1)} seconds of
+                audio in {this.state.processSeconds.toFixed(1)} seconds
               </Text>
             )}
           </View>
@@ -290,7 +297,8 @@ export default class App extends Component<Props, State> {
           </TouchableOpacity>
         </View>
 
-        <View style={{flex: 0.5, justifyContent: 'center', paddingBottom: 10}}>
+        <View
+          style={{flex: 0.5, justifyContent: 'flex-end', paddingBottom: 10}}>
           <Text style={styles.instructions}>
             Made in Vancouver, Canada by Picovoice
           </Text>
@@ -357,7 +365,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   stateContainer: {
-    flex: 1,
+    flex: 0.5,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
@@ -365,6 +373,7 @@ const styles = StyleSheet.create({
   transcriptionBox: {
     backgroundColor: '#25187E',
     margin: 20,
+    marginBottom: 10,
     padding: 20,
     height: '100%',
   },
