@@ -178,7 +178,7 @@ class Leopard {
       );
     }
 
-    if (VALID_AUDIO_EXTENSIONS.includes(path.extname(audioPath.toLowerCase()))) {
+    if (!VALID_AUDIO_EXTENSIONS.includes(path.extname(audioPath.toLowerCase()))) {
       throw new PvArgumentError(
         `Unsupported audio file: '${path.extname(audioPath.toLowerCase())}'`
       );
