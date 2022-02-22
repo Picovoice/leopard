@@ -54,4 +54,4 @@ Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://co
 
 ## Demos
 
-[Leopard Node.js demo package](https://www.npmjs.com/package/@picovoice/porcupine-node-demo) provides command-line utilities for processing audio using Leopard.
+[Leopard Node.js demo package](https://www.npmjs.com/package/@picovoice/leopard-node-demo) provides command-line utilities for processing audio using leopard.

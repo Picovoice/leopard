@@ -24,7 +24,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 ## Installation
 
 ```console
-npm install -g @picovoice/porcupine-node-demo
+npm install -g @picovoice/leopard-node-demo
 ```
 
 ## AccessKey
