@@ -20,7 +20,7 @@ const { getPlatform, getSystemLibraryPath } = require("./platforms");
 
 const MODEL_PATH = "./lib/common/leopard_params.pv";
 
-const WAV_PATH = "../../resources/audio_samples/test.WAV";
+const WAV_PATH = "../../resources/audio_samples/test.wav";
 const TRANSCRIPT = "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL"
 
 const libraryPath = getSystemLibraryPath();
