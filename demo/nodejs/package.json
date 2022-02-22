@@ -7,8 +7,8 @@
     "mic": "node mic.js"
   },
   "bin": {
-    "rhn-file-demo": "./file.js",
-    "rhn-mic-demo": "./mic.js"
+    "leopard-file-demo": "./file.js",
+    "leopard-mic-demo": "./mic.js"
   },
   "keywords": [
     "leopard, picovoice, nlu, offline, private, voice ai, speech recognition, microphone, mic, realtime"

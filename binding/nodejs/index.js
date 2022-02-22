@@ -24,6 +24,16 @@ const { getSystemLibraryPath } = require("./platforms");
 
 const MODEL_PATH_DEFAULT = "lib/common/leopard_params.pv";
 
+const VALID_AUDIO_EXTENSIONS = [
+  ".flac",
+  ".mp3",
+  ".ogg",
+  ".opus",
+  ".vorbis",
+  ".wav",
+  ".webm"
+];
+
 /**
  * Wraps the Leopard engine.
  *
@@ -164,7 +174,13 @@ class Leopard {
 
     if (!fs.existsSync(audioPath)) {
       throw new PvArgumentError(
-        `Could not find the audio file at '${modelPath}'`
+        `Could not find the audio file at '${audioPath}'`
+      );
+    }
+
+    if (VALID_AUDIO_EXTENSIONS.includes(path.extname(audioPath.toLowerCase()))) {
+      throw new PvArgumentError(
+        `Unsupported audio file: '${path.extname(audioPath.toLowerCase())}'`
       );
     }
 

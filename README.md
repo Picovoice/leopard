@@ -29,11 +29,13 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [C](#c-demo)
         - [iOS](#ios-demo)
         - [Android](#android-demo)
+        - [Node.js](#nodejs-demo)
     - [SDKs](#sdks)
         - [Python](#python)
         - [C](#c)
         - [iOS](#ios)
         - [Android](#android)
+        - [Node.js](#nodejs)
     - [Releases](#releases)
 
 ## AccessKey
@@ -101,6 +103,22 @@ Then, using [Xcode](https://developer.apple.com/xcode/), open the generated `Leo
 Using Android Studio, open [demo/android/LeopardDemo](/demo/android/LeopardDemo) as an Android project and then run the application. 
 
 Replace `"${YOUR_ACCESS_KEY_HERE}"` in the file [MainActivity.java](/demo/android/leopard-demo-app/src/main/java/ai/picovoice/leoparddemo/MainActivity.java) with your `AccessKey`.
+
+### Node.js Demo
+
+Install the demo package:
+
+```console
+yarn global add @picovoice/leopard-node-demo
+```
+
+With a working microphone connected to your device, run the following in the terminal:
+
+```console
+leopard-mic-demo --access_key ${ACCESS_KEY}
+```
+
+For more information about Node.js demos go to [demo/nodejs](/demo/nodejs).
 
 ## SDKs
 
@@ -211,6 +229,32 @@ try {
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/), and `${AUDIO_FILE_PATH}` with the path to the audio file.
+
+### Node.js
+
+Install the Node.js SDK:
+
+```console
+yarn add @picovoice/leopard-node
+```
+
+Create instances of the Leopard class:
+
+```javascript
+const Leopard = require("@picovoice/leopard-node");
+const accessKey = "${ACCESS_KEY}" // Obtained from the Picovoice Console (https://console.picovoice.ai/)
+let handle = new Leopard(accessKey);
+print(handle.processFile('${AUDIO_PATH}'))
+```
+
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
+`${AUDIO_PATH}` to path an audio file.
+
+When done, be sure to release resources using `release()`:
+
+```javascript
+handle.release();
+```
 
 ## Releases
 
