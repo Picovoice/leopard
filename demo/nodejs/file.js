@@ -15,7 +15,6 @@ const { program } = require("commander");
 const fs = require("fs");
 
 const Leopard = require("@picovoice/leopard-node");
-const { PvArgumentError } = require("@picovoice/leopard-node/errors");
 
 program
   .requiredOption(
@@ -24,13 +23,13 @@ program
   )
   .requiredOption(
     "-i, --input_audio_file_path <string>",
-    "input audio wave file in 16-bit 16KHz linear PCM format (mono)"
+    "input audio file"
   )
   .option(
     "-l, --library_file_path <string>",
-    "absolute path to rhino dynamic library"
+    "absolute path to leopard dynamic library"
   )
-  .option("-m, --model_file_path <string>", "absolute path to rhino model")
+  .option("-m, --model_file_path <string>", "absolute path to leopard model")
 
 if (process.argv.length < 2) {
   program.help();
