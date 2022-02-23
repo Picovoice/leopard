@@ -31,12 +31,12 @@ import {
 import Recorder from './Recorder';
 
 enum UIState {
-  loading,
-  init,
-  recording,
-  processing,
-  transcribed,
-  error,
+  LOADING,
+  INIT,
+  RECORDING,
+  PROCESSING,
+  TRANSCRIBED,
+  ERROR,
 }
 
 type Props = {};
@@ -62,7 +62,7 @@ export default class App extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      appState: UIState.loading,
+      appState: UIState.LOADING,
       errorMessage: null,
       transcription: '',
       recordSeconds: 0.0,
@@ -75,7 +75,7 @@ export default class App extends Component<Props, State> {
   }
 
   componentWillUnmount() {
-    if (this.state.appState === UIState.recording) {
+    if (this.state.appState === UIState.RECORDING) {
       this._stopProcessing();
     }
     if (this._leopard !== undefined) {
@@ -98,11 +98,17 @@ export default class App extends Component<Props, State> {
       this._bufferListener = this._bufferEmitter.addListener(
         BufferEmitter.BUFFER_EMITTER_KEY,
         async (buffer: number[]) => {
-          await this._recorder.writeSamples(buffer);
+          if (this.state.appState !== UIState.ERROR) {
+            try {
+              await this._recorder.writeSamples(buffer);
+            } catch {
+              this.handleError('Failed to write to wav file.');
+            }
+          }
         },
       );
       this.setState({
-        appState: UIState.init,
+        appState: UIState.INIT,
       });
     } catch (err: any) {
       this.handleError(err);
@@ -125,15 +131,16 @@ export default class App extends Component<Props, State> {
       errorMessage = err.toString();
     }
 
+    this._voiceProcessor?.stop();
     this.setState({
-      appState: UIState.error,
+      appState: UIState.ERROR,
       errorMessage: errorMessage,
     });
   }
 
   _startProcessing() {
     this.setState({
-      appState: UIState.recording,
+      appState: UIState.RECORDING,
       recordSeconds: 0,
     });
 
@@ -155,6 +162,7 @@ export default class App extends Component<Props, State> {
       }
 
       try {
+        await this._recorder.resetFile();
         await this._recorder.writeWavHeader();
         await this._voiceProcessor?.start();
 
@@ -175,7 +183,7 @@ export default class App extends Component<Props, State> {
 
   _stopProcessing() {
     this.setState({
-      appState: UIState.processing,
+      appState: UIState.PROCESSING,
     });
     clearInterval(this._recordInterval!);
 
@@ -188,7 +196,7 @@ export default class App extends Component<Props, State> {
         if (res !== undefined) {
           this.setState({
             transcription: res,
-            appState: UIState.transcribed,
+            appState: UIState.TRANSCRIBED,
             processSeconds: (end - start) / 1000,
           });
         }
@@ -199,11 +207,11 @@ export default class App extends Component<Props, State> {
   }
 
   _toggleListening() {
-    if (this.state.appState === UIState.recording) {
+    if (this.state.appState === UIState.RECORDING) {
       this._stopProcessing();
     } else if (
-      this.state.appState === UIState.init ||
-      this.state.appState === UIState.transcribed
+      this.state.appState === UIState.INIT ||
+      this.state.appState === UIState.TRANSCRIBED
     ) {
       this._startProcessing();
     }
@@ -216,7 +224,6 @@ export default class App extends Component<Props, State> {
         {
           title: 'Microphone Permission',
           message: 'Leopard needs access to your microphone to record audio',
-          buttonNeutral: 'Ask Me Later',
           buttonNegative: 'Cancel',
           buttonPositive: 'OK',
         },
@@ -230,9 +237,9 @@ export default class App extends Component<Props, State> {
 
   render() {
     const disabled =
-      this.state.appState === UIState.loading ||
-      this.state.appState === UIState.error ||
-      this.state.appState === UIState.processing;
+      this.state.appState === UIState.LOADING ||
+      this.state.appState === UIState.ERROR ||
+      this.state.appState === UIState.PROCESSING;
 
     return (
       <SafeAreaView style={styles.container}>
@@ -248,7 +255,7 @@ export default class App extends Component<Props, State> {
           </ScrollView>
         </View>
 
-        {this.state.appState === UIState.error ? (
+        {this.state.appState === UIState.ERROR ? (
           <View style={styles.errorBox}>
             <Text
               style={{
@@ -260,23 +267,23 @@ export default class App extends Component<Props, State> {
           </View>
         ) : (
           <View style={styles.stateContainer}>
-            {this.state.appState === UIState.init && (
+            {this.state.appState === UIState.INIT && (
               <Text style={{textAlign: 'center'}}>
                 Record up to 2 minutes of audio to be transcribed by Leopard
               </Text>
             )}
 
-            {this.state.appState === UIState.recording && (
+            {this.state.appState === UIState.RECORDING && (
               <Text>
                 Recording: {this.state.recordSeconds.toFixed(1)} / 120 (seconds)
               </Text>
             )}
 
-            {this.state.appState === UIState.processing && (
+            {this.state.appState === UIState.PROCESSING && (
               <Text>Processing audio...</Text>
             )}
 
-            {this.state.appState === UIState.transcribed && (
+            {this.state.appState === UIState.TRANSCRIBED && (
               <Text>
                 Transcribed {this.state.recordSeconds.toFixed(1)} seconds of
                 audio in {this.state.processSeconds.toFixed(1)} seconds
@@ -292,7 +299,7 @@ export default class App extends Component<Props, State> {
             onPress={() => this._toggleListening()}
             disabled={disabled}>
             <Text style={styles.buttonText}>
-              {this.state.appState === UIState.recording ? 'Stop' : 'Start'}
+              {this.state.appState === UIState.RECORDING ? 'Stop' : 'Start'}
             </Text>
           </TouchableOpacity>
         </View>

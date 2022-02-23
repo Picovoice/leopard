@@ -16,6 +16,14 @@ class Recorder {
     }
   }
 
+  public async resetFile(): Promise<void> {
+    this._totalCount = 0;
+    const exists = await RNFS.exists(this._recordingPath);
+    if (exists) {
+      await RNFS.unlink(this._recordingPath);
+    }
+  }
+
   public async writeWavHeader(
     totalSampleCount = 0,
     channelCount = 1,
@@ -61,13 +69,7 @@ class Recorder {
     writeUint32((bitDepth / 8) * totalSampleCount);
 
     const header = Recorder.bufferToString(buffer);
-    if (totalSampleCount === 0) {
-      this._totalCount = 0;
-      const exists = await RNFS.exists(this._recordingPath);
-      if (exists) {
-        await RNFS.unlink(this._recordingPath);
-      }
-    }
+    this._totalCount = totalSampleCount;
 
     await RNFS.write(this._recordingPath, header, 0, this._encoding);
   }
