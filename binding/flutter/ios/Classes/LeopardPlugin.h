@@ -11,5 +11,5 @@
 
 #import <Flutter/Flutter.h>
 
-@interface CheetahPlugin : NSObject<FlutterPlugin>
+@interface LeopardPlugin : NSObject<FlutterPlugin>
 @end

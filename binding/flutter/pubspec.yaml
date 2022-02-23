@@ -1,5 +1,5 @@
-name: cheetah_flutter
-description: A Flutter plugin for Picovoice's Cheetah Speech-to-Text engine
+name: leopard_flutter
+description: A Flutter plugin for Picovoice's Leopard Speech-to-Text engine
 version: 2.1.0
 homepage: https://picovoice.ai/
 
@@ -21,7 +21,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: ai.picovoice.flutter.cheetah
-        pluginClass: CheetahPlugin
+        package: ai.picovoice.flutter.leopard
+        pluginClass: LeopardPlugin
       ios:
-        pluginClass: CheetahPlugin
+        pluginClass: LeopardPlugin

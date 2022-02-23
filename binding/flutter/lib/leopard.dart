@@ -16,56 +16,31 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
-import 'package:cheetah_flutter/cheetah_error.dart';
+import 'package:leopard_flutter/leopard_error.dart';
 
-class CheetahTranscript {
-  final String _transcript;
-  final bool? _isEndpoint;
-
-  /// private constructor + basic checks
-  CheetahTranscript(this._transcript, this._isEndpoint) {
-    if (_transcript == null) {
-      throw CheetahInvalidStateException(
-          "field 'transcript' must be present.");
-    }
-  }
-
-  String get transcript => _transcript;
-
-  bool? get isEndpoint => _isEndpoint;
-}
-
-class Cheetah {
-  static final MethodChannel _channel = MethodChannel("cheetah");
+class Leopard {
+  static final MethodChannel _channel = MethodChannel("leopard");
 
   String? _handle;
-  final int _frameLength;
   final int _sampleRate;
   final String _version;
 
-  /// Cheetah version string
+  /// Leopard version string
   String get version => _version;
 
-  /// The number of audio samples per frame required by Cheetah
-  int get frameLength => _frameLength;
-
-  /// The audio sample rate required by Cheetah
+  /// The audio sample rate required by Leopard
   int get sampleRate => _sampleRate;
 
-  /// Static creator for initializing Cheetah
+  /// Static creator for initializing Leopard
   ///
   /// [accessKey] AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).
   ///
   /// [modelPath] Path to the file containing model parameters.
   ///
-  /// [endpointDuration] (Optional) Duration of endpoint in seconds. A speech endpoint is detected when there is a
-  ///                               chunk of audio (with a duration specified herein) after an utterance without
-  ///                               any speech in it. Set duration to 0 to disable this. Default is 1 second.
-  ///
-  /// Thows a `CheetahException` if not initialized correctly
+  /// Thows a `LeopardException` if not initialized correctly
   ///
   /// returns an instance of the speech-to-text engine
-  static Future<Cheetah> create(String accessKey, String modelPath, {double endpointDuration = 1}) async {
+  static Future<Leopard> create(String accessKey, String modelPath) async {
     modelPath = await _tryExtractFlutterAsset(modelPath);
 
     try {
@@ -73,66 +48,68 @@ class Cheetah {
           Map<String, dynamic>.from(await _channel.invokeMethod('create', {
         'accessKey': accessKey,
         'modelPath': modelPath,
-        'endpointDuration': endpointDuration,
       }));
 
-      return Cheetah._(result['handle'], result['frameLength'], result['sampleRate'], result['version']);
+      return Leopard._(result['handle'], result['sampleRate'], result['version']);
     } on PlatformException catch (error) {
-      throw cheetahStatusToException(error.code, error.message);
+      throw leopardStatusToException(error.code, error.message);
     } on Exception catch (error) {
-      throw CheetahException(error.toString());
+      throw LeopardException(error.toString());
     }
   }
 
   // private constructor
-  Cheetah._(this._handle, this._frameLength, this._sampleRate, this._version);
+  Leopard._(this._handle, this._sampleRate, this._version);
 
   /// Process a frame of pcm audio with the speech-to-text engine.
   ///
   /// [frame] frame of 16-bit integers of 16kHz linear PCM mono audio.
-  /// The specific array length is obtained from Cheetah via the frameLength field.
   ///
-  /// returns CheetahTranscript object.
-  Future<CheetahTranscript> process(List<int>? frame) async {
+  /// returns LeopardTranscript object.
+  Future<LeopardTranscript> process(List<int>? frame) async {
     try {
       Map<String, dynamic> transcript = Map<String, dynamic>.from(await _channel
           .invokeMethod('process', {'handle': _handle, 'frame': frame}));
 
       if (transcript['transcript'] == null) {
-        throw CheetahInvalidStateException(
+        throw LeopardInvalidStateException(
             "field 'transcript' must be always present");
       }
 
-      return CheetahTranscript(transcript['transcript'], transcript['isEndpoint']);
+      return transcript['transcript'];
     } on PlatformException catch (error) {
-      throw cheetahStatusToException(error.code, error.message);
+      throw leopardStatusToException(error.code, error.message);
     } on Exception catch (error) {
-      throw CheetahException(error.toString());
+      throw LeopardException(error.toString());
     }
   }
 
-  /// Processes any remaining audio data and returns its transcription.
+  /// Processes given audio data and returns its transcription.
   ///
-  /// returns CheetahTranscript object.
-  Future<CheetahTranscript> flush() async {
+  /// [path] Absolute path to the audio file. The file needs to have a sample rate equal to or greater
+  ///        than Leopard.sampleRate. The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`,
+  ///        `Vorbis`, `WAV`, and `WebM`.
+  ///
+  /// returns LeopardTranscript object.
+  Future<LeopardTranscript> processFile(String path) async {
     try {
       Map<String, dynamic> transcript = Map<String, dynamic>.from(await _channel
-          .invokeMethod('flush', {'handle': _handle}));
+          .invokeMethod('processfile', {'handle': _handle, 'path': path}));
 
       if (transcript['transcript'] == null) {
-        throw CheetahInvalidStateException(
+        throw LeopardInvalidStateException(
             "field 'transcript' must be always present");
       }
 
-      return CheetahTranscript(transcript['transcript'], null);
+      return transcript['transcript'];
     } on PlatformException catch (error) {
-      throw cheetahStatusToException(error.code, error.message);
+      throw leopardStatusToException(error.code, error.message);
     } on Exception catch (error) {
-      throw CheetahException(error.toString());
+      throw LeopardException(error.toString());
     }
   }
 
-  /// Frees memory that was allocated for Cheetah
+  /// Frees memory that was allocated for Leopard
   Future<void> delete() async {
     if (_handle != null) {
       await _channel.invokeMethod('delete', {'handle': _handle});
@@ -164,7 +141,7 @@ class Cheetah {
           buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
       return outputPath;
     } catch (_) {
-      throw CheetahIOException("failed to extract '$filePath'");
+      throw LeopardIOException("failed to extract '$filePath'");
     }
   }
 }

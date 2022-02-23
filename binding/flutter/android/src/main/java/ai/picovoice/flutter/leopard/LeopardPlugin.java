@@ -9,7 +9,7 @@
 // specific language governing permissions and limitations under the License.
 //
 
-package ai.picovoice.flutter.cheetah;
+package ai.picovoice.flutter.leopard;
 
 import android.content.Context;
 
@@ -19,30 +19,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import ai.picovoice.cheetah.*;
+import ai.picovoice.leopard.*;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
-public class CheetahPlugin implements FlutterPlugin, MethodCallHandler {
+public class LeopardPlugin implements FlutterPlugin, MethodCallHandler {
 
   private enum Method {
     CREATE,
     PROCESS,
-    FLUSH,
+    PROCCESSFILE,
     DELETE
   }
 
   private Context flutterContext;
   private MethodChannel channel;
-  private final Map<String, Cheetah> cheetahPool = new HashMap<>();
+  private final Map<String, Leopard> leopardPool = new HashMap<>();
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     flutterContext = flutterPluginBinding.getApplicationContext();
-    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "cheetah");
+    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "leopard");
     channel.setMethodCallHandler(this);
   }
 
@@ -53,8 +53,8 @@ public class CheetahPlugin implements FlutterPlugin, MethodCallHandler {
       method = Method.valueOf(call.method.toUpperCase());
     } catch (IllegalArgumentException e) {
       result.error(
-              CheetahRuntimeException.class.getSimpleName(),
-              String.format("Cheetah method '%s' is not a valid function", call.method),
+              LeopardRuntimeException.class.getSimpleName(),
+              String.format("Leopard method '%s' is not a valid function", call.method),
               null);
       return;
     }
@@ -64,26 +64,23 @@ public class CheetahPlugin implements FlutterPlugin, MethodCallHandler {
         try {
           String accessKey = call.argument("accessKey");
           String modelPath = call.argument("modelPath");
-          double endpointDuration = call.argument("endpointDuration");
 
-          Cheetah.Builder cheetahBuilder = new Cheetah.Builder(accessKey)
+          Leopard.Builder leopardBuilder = new Leopard.Builder(accessKey)
                   .setModelPath(modelPath)
-                  .setEndpointDuration((float) endpointDuration);
 
-          Cheetah cheetah = cheetahBuilder.build(flutterContext);
-          cheetahPool.put(String.valueOf(System.identityHashCode(cheetah)), cheetah);
+          Leopard leopard = leopardBuilder.build(flutterContext);
+          leopardPool.put(String.valueOf(System.identityHashCode(leopard)), leopard);
 
           Map<String, Object> param = new HashMap<>();
-          param.put("handle", String.valueOf(System.identityHashCode(cheetah)));
-          param.put("frameLength", cheetah.getFrameLength());
-          param.put("sampleRate", cheetah.getSampleRate());
-          param.put("version", cheetah.getVersion());
+          param.put("handle", String.valueOf(System.identityHashCode(leopard)));
+          param.put("sampleRate", leopard.getSampleRate());
+          param.put("version", leopard.getVersion());
 
           result.success(param);
-        } catch (CheetahException e) {
+        } catch (LeopardException e) {
           result.error(e.getClass().getSimpleName(), e.getMessage(), null);
         } catch (Exception e) {
-          result.error(CheetahException.class.getSimpleName(), e.getMessage(), null);
+          result.error(LeopardException.class.getSimpleName(), e.getMessage(), null);
         }
         break;
       case PROCESS:
@@ -91,10 +88,10 @@ public class CheetahPlugin implements FlutterPlugin, MethodCallHandler {
           String handle = call.argument("handle");
           ArrayList<Integer> pcmList = call.argument("frame");
 
-          if (!cheetahPool.containsKey(handle)) {
+          if (!leopardPool.containsKey(handle)) {
             result.error(
-                    CheetahInvalidStateException.class.getSimpleName(),
-                    "Invalid cheetah handle provided to native module",
+                    LeopardInvalidStateException.class.getSimpleName(),
+                    "Invalid leopard handle provided to native module",
                     null);
             return;
           }
@@ -107,41 +104,41 @@ public class CheetahPlugin implements FlutterPlugin, MethodCallHandler {
             }
           }
 
-          Cheetah cheetah = cheetahPool.get(handle);
-          CheetahTranscript transcriptObj = cheetah.process(pcm);
+          Leopard leopard = leopardPool.get(handle);
+          String transcript = leopard.process(pcm);
 
           Map<String, Object> param = new HashMap<>();
-          param.put("transcript", transcriptObj.getTranscript());
-          param.put("isEndpoint", transcriptObj.getIsEndpoint());
+          param.put("transcript", transcript);
 
           result.success(param);
-        } catch (CheetahException e) {
+        } catch (LeopardException e) {
           result.error(
                   e.getClass().getSimpleName(),
                   e.getMessage(),
                   null);
         }
         break;
-      case FLUSH:
+      case PROCESSFILE:
         try {
           String handle = call.argument("handle");
+          String path = call.argument("path");
 
-          if (!cheetahPool.containsKey(handle)) {
+          if (!leopardPool.containsKey(handle)) {
             result.error(
-                    CheetahInvalidStateException.class.getSimpleName(),
-                    "Invalid cheetah handle provided to native module",
+                    LeopardInvalidStateException.class.getSimpleName(),
+                    "Invalid leopard handle provided to native module",
                     null);
             return;
           }
 
-          Cheetah cheetah = cheetahPool.get(handle);
-          CheetahTranscript transcriptObj = cheetah.flush();
+          Leopard leopard = leopardPool.get(handle);
+          String transcript = leopard.processFile(path);
 
           Map<String, Object> param = new HashMap<>();
-          param.put("transcript", transcriptObj.getTranscript());
+          param.put("transcript", transcript);
 
           result.success(param);
-        } catch (CheetahException e) {
+        } catch (LeopardException e) {
           result.error(
                   e.getClass().getSimpleName(),
                   e.getMessage(),
@@ -151,17 +148,17 @@ public class CheetahPlugin implements FlutterPlugin, MethodCallHandler {
       case DELETE:
         String handle = call.argument("handle");
 
-        if (!cheetahPool.containsKey(handle)) {
+        if (!leopardPool.containsKey(handle)) {
           result.error(
-                  CheetahInvalidArgumentException.class.getSimpleName(),
-                  "Invalid Cheetah handle provided to native module.",
+                  LeopardInvalidArgumentException.class.getSimpleName(),
+                  "Invalid Leopard handle provided to native module.",
                   null);
           return;
         }
 
-        Cheetah cheetah = cheetahPool.get(handle);
-        cheetah.delete();
-        cheetahPool.remove(handle);
+        Leopard leopard = leopardPool.get(handle);
+        leopard.delete();
+        leopardPool.remove(handle);
 
         result.success(null);
         break;

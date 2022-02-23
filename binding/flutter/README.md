@@ -1,10 +1,10 @@
-# Cheetah Binding for Flutter
+# Leopard Binding for Flutter
 
-## Cheetah Speech-to-Text Engine
+## Leopard Speech-to-Text Engine
 
 Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
-Cheetah is an on-device speech-to-text engine. Cheetah is:
+Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally.
 - Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
@@ -20,7 +20,7 @@ Cheetah is an on-device speech-to-text engine. Cheetah is:
 
 ## Compatibility
 
-This binding is for running Cheetah on **Flutter 1.20.0+** on the following platforms:
+This binding is for running Leopard on **Flutter 1.20.0+** on the following platforms:
 
 - Android 4.4+ (API 19+)
 - iOS 9.0+
@@ -29,15 +29,15 @@ This binding is for running Cheetah on **Flutter 1.20.0+** on the following plat
 
 To start, you must have the [Flutter SDK](https://flutter.dev/docs/get-started/install) installed on your system. Once installed, you can run `flutter doctor` to determine any other missing requirements.
 
-To add the Cheetah plugin to your app project, you can reference it in your pub.yaml:
+To add the Leopard plugin to your app project, you can reference it in your pub.yaml:
 ```yaml
 dependencies:
-  cheetah_flutter: ^<version>
+  leopard_flutter: ^<version>
 ```
 
 ## AccessKey
 
-The Cheetah SDK requires a valid `AccessKey` at initialization. `AccessKey`s act as your credentials when using Cheetah SDKs.
+The Leopard SDK requires a valid `AccessKey` at initialization. `AccessKey`s act as your credentials when using Leopard SDKs.
 You can create your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
 
 To obtain your `AccessKey`:
@@ -64,31 +64,31 @@ On Android, open your AndroidManifest.xml and add the following line:
 
 ## Model File
 
-Add the Cheetah model file to your Flutter application by:
+Add the Leopard model file to your Flutter application by:
 
-1. Either creating a model in [Picovoice Console](https://console.picovoice.ai/) or using the default model in [/lib/common/cheetah_params.pv](/lib/common/cheetah_params.pv).
+1. Either creating a model in [Picovoice Console](https://console.picovoice.ai/) or using the default model in [/lib/common/leopard_params.pv](/lib/common/leopard_params.pv).
 2. Add the model file to an `assets` folder in your project directory.
 3. Then add it to your `pubspec.yaml`:
 ```yaml
 flutter:
   assets:
-    - assets/cheetah_model.pv
+    - assets/leopard_model.pv
 ```
 
 ## Usage
 
-`Cheetah` is created by passing a model file path into it's static constructor `create`:
+`Leopard` is created by passing a model file path into it's static constructor `create`:
 
 ```dart
-import 'package:cheetah/cheetah.dart';
+import 'package:leopard/leopard.dart';
 
 const accessKey = "{ACCESS_KEY}"  // AccessKey obtained from Picovoice Console (https://picovoice.ai/console/)
 
-void createCheetah() async {
+void createLeopard() async {
     try{
-        _cheetah = await Cheetah.create(accessKey, '{CHEETAH_MODEL_PATH}');
-    } on CheetahException catch (err) {
-        // handle Cheetah init error
+        _leopard = await Leopard.create(accessKey, '{LEOPARD_MODEL_PATH}');
+    } on LeopardException catch (err) {
+        // handle Leopard init error
     }
 }
 ```
@@ -101,11 +101,11 @@ List<int> buffer = getAudioFrame();
 String transcript = "";
 
 while true {
-    CheetahTranscript transcriptObj = await _cheetah.process(getAudioFrame());
+    LeopardTranscript transcriptObj = await _leopard.process(getAudioFrame());
     transcript += transcriptObj.transcript;
 
     if (transcriptObj.isEndpoint) {
-        CheetahTranscript endpointTranscriptObj = await _cheetah.flush();
+        LeopardTranscript endpointTranscriptObj = await _leopard.flush();
         transcript += endpointTranscriptObj.transcript;
     }
 }
@@ -114,7 +114,7 @@ while true {
 When done resources have to be released explicitly:
 
 ```dart
-cheetah.delete();
+leopard.delete();
 ```
 
 ## Demo App

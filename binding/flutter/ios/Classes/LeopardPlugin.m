@@ -9,18 +9,18 @@
 // specific language governing permissions and limitations under the License.
 //
 
-#import "CheetahPlugin.h"
-#if __has_include(<cheetah_flutter/cheetah_flutter-Swift.h>)
-#import <cheetah_flutter/cheetah_flutter-Swift.h>
+#import "LeopardPlugin.h"
+#if __has_include(<leopard_flutter/leopard_flutter-Swift.h>)
+#import <leopard_flutter/leopard_flutter-Swift.h>
 #else
 // Support project import fallback if the generated compatibility header
 // is not copied when this plugin is created as a library.
 // https://forums.swift.org/t/swift-static-libraries-dont-copy-generated-objective-c-header/19816
-#import "cheetah_flutter-Swift.h"
+#import "leopard_flutter-Swift.h"
 #endif
 
-@implementation CheetahPlugin
+@implementation LeopardPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [SwiftCheetahPlugin registerWithRegistrar:registrar];
+  [SwiftLeopardPlugin registerWithRegistrar:registrar];
 }
 @end
