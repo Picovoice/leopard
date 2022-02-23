@@ -8,7 +8,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally.
 - Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
-- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
+- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#results)
 - Cross-Platform:
     - Linux (x86_64)
     - macOS (x86_64, arm64)
@@ -85,7 +85,7 @@ import 'package:leopard/leopard.dart';
 const accessKey = "{ACCESS_KEY}"  // AccessKey obtained from Picovoice Console (https://picovoice.ai/console/)
 
 void createLeopard() async {
-    try{
+    try {
         _leopard = await Leopard.create(accessKey, '{LEOPARD_MODEL_PATH}');
     } on LeopardException catch (err) {
         // handle Leopard init error
@@ -93,22 +93,12 @@ void createLeopard() async {
 }
 ```
 
-Transcribe audio:
+Transcribe an audio file by passing in the absolute path:
 
 ```dart
-List<int> buffer = getAudioFrame();
-
-String transcript = "";
-
-while true {
-    LeopardTranscript transcriptObj = await _leopard.process(getAudioFrame());
-    transcript += transcriptObj.transcript;
-
-    if (transcriptObj.isEndpoint) {
-        LeopardTranscript endpointTranscriptObj = await _leopard.flush();
-        transcript += endpointTranscriptObj.transcript;
-    }
-}
+try {
+    String transcript = = await _leopard.processFile("${AUDIO_FILE_PATH}");
+} on LeopardException catch (err) { }
 ```
 
 When done resources have to be released explicitly:

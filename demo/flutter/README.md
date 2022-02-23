@@ -26,4 +26,9 @@ Run the following command from [demo/flutter](/demo/flutter) to build and deploy
 flutter run
 ```
 
-Once the app is loaded, press the `start` button to begin transcribing audio. Your transcription will appear in the text box above.
+Once the app is loaded:
+
+1. Press the record button.
+2. Start talking. Record some phrases or whatever audio you would like to transcribe.
+3. Press stop. Wait for the info box to display "Transcribed...". This may take a few seconds.
+4. The transcription will appear in the textbox above.
