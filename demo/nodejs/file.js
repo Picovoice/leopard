@@ -16,6 +16,9 @@ const fs = require("fs");
 
 const Leopard = require("@picovoice/leopard-node");
 
+const { PvStatusActivationLimitReached } = require("@picovoice/leopard-node/errors");
+
+
 program
   .requiredOption(
     "-a, --access_key <string>",
@@ -53,9 +56,15 @@ function fileDemo() {
     return;
   }
 
-  let transcript = engineInstance.processFile(audioPath);
-
-  console.log(transcript);
+  try {
+    console.log(engineInstance.processFile(audioPath));
+  } catch (err) {
+    if (err instanceof PvStatusActivationLimitReached) {
+      console.error(`AccessKey '${access_key}' has reached it's processing limit.`);
+    } else {
+      console.error(err);
+    }
+  }
 
   engineInstance.release();
 }

@@ -6,15 +6,15 @@ Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
 Leopard is an on-device speech-to-text engine. Leopard is:
 
-- Private; All voice processing runs locally. 
+- Private; All voice processing runs locally.
 - Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
-- Compact and Computationally-Efficient [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
+- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
-  - Linux (x86_64)
-  - macOS (x86_64, arm64)
-  - Windows (x86_64)
-  - Raspberry Pi (4, 3)
-  - NVIDIA Jetson Nano
+    - Linux (x86_64)
+    - macOS (x86_64, arm64)
+    - Windows (x86_64)
+    - Raspberry Pi (4, 3)
+    - NVIDIA Jetson Nano
 
 ## Compatibility
 
@@ -45,7 +45,7 @@ AccessKey also verifies that your usage is within the limits of your account. Ev
 Run the following in the terminal:
 
 ```console
-leopard_demo_file --access_key ${ACCESS_KEY} --audio_paths ${AUIDO_PATH}
+leopard_demo_file --access_key ${ACCESS_KEY} --input_audio_file_path ${AUIDO_PATH}
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you

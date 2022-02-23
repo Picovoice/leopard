@@ -16,6 +16,9 @@ const readline = require("readline");
 const Leopard = require("@picovoice/leopard-node");
 const PvRecorder = require("@picovoice/pvrecorder-node");
 
+const { PvStatusActivationLimitReached } = require("@picovoice/leopard-node/errors");
+const PV_RECORDER_FRAME_LENGTH = 2048;
+
 program
   .option(
     "-a, --access_key <string>",
@@ -65,38 +68,52 @@ async function micDemo() {
 
   let engineInstance = new Leopard(accessKey, modelFilePath, libraryFilePath);
 
-  const recorder = new PvRecorder(audioDeviceIndex, 512);
-  recorder.start();
+  const recorder = new PvRecorder(audioDeviceIndex, PV_RECORDER_FRAME_LENGTH);
 
   console.log(`Using device: ${recorder.getSelectedDevice()}`);
 
-  console.log(
-    "Recording... Press `ENTER` to stop:"
-  );
+  console.log(">>> Press `CTRL+C` to exit: ");
 
   readline.emitKeypressEvents(process.stdin);
   process.stdin.setRawMode(true);
 
   process.stdin.on("keypress", (key, str) => {
-    if (str.name === 'return') {
+
+    if (str.sequence === '\r') {
       isInterrupted = true;
+    } else if (str.sequence === '\x03') {
+      recorder.release();
+      engineInstance.release();
+      process.exit();
     }
   });
 
-  let audioFrame = [];
-  while (!isInterrupted) {
-    const pcm = await recorder.read();
-    audioFrame.push(...pcm);
+  while (true) {
+    console.log(">>> Recording ... Press `ENTER` to stop: ");
+    let audioFrame = [];
+    recorder.start();
+    while (!isInterrupted) {
+      const pcm = await recorder.read();
+      audioFrame.push(...pcm);
+    }
+    console.log(">>> Processing ... ");
+    recorder.stop();
+    const audioFrameInt16 = new Int16Array(audioFrame);
+    try {
+      console.log(engineInstance.process(audioFrameInt16));
+    } catch (err) {
+      if (err instanceof PvStatusActivationLimitReached) {
+        console.error(`AccessKey '${access_key}' has reached it's processing limit.`);
+      } else {
+        console.error(err);
+      }
+      recorder.release();
+      engineInstance.release();
+      process.exit();
+    }
+    isInterrupted = false;
   }
-  recorder.stop();
-  recorder.release();
 
-  console.log("\nProcessing...");
-  const audioFrameInt16 = new Int16Array(audioFrame);
-  let transcript = engineInstance.process(audioFrameInt16);
-  console.log(transcript);
-  engineInstance.release();
-  process.exit();
 }
 
 micDemo();

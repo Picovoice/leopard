@@ -12,6 +12,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const assert = require('assert');
 
 const PV_STATUS_T = require("./pv_status_t");
 const {
@@ -22,7 +23,7 @@ const {
 
 const { getSystemLibraryPath } = require("./platforms");
 
-const MODEL_PATH_DEFAULT = "lib/common/leopard_params.pv";
+const DEFAULT_MODEL_PATH = "lib/common/leopard_params.pv";
 
 const VALID_AUDIO_EXTENSIONS = [
   ".flac",
@@ -35,8 +36,8 @@ const VALID_AUDIO_EXTENSIONS = [
 ];
 
 /**
- * Wraps the Leopard engine.
- *
+ * Node.js binding for Leopard speech-to-text engine.
+ * 
  * Performs the calls to the Leopard node library. Does some basic parameter validation to prevent
  * errors occurring in the library layer. Provides clearer error messages in native JavaScript.
  */
@@ -44,10 +45,12 @@ class Leopard {
   /**
    * Creates an instance of Leopard.
    * @param {string} accessKey AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).
-   * @param {string} manualModelPath the path to the Leopard model (.pv extension)
-   * @param {string} manualLibraryPath the path to the Leopard dynamic library (platform-dependent extension)
+   * @param {string} modelPath the path to the Leopard model (.pv extension)
+   * @param {string} libraryPath the path to the Leopard dynamic library (.node extension)
    */
-  constructor(accessKey, manualModelPath, manualLibraryPath) {
+  constructor(accessKey, modelPath, libraryPath) {
+    assert(typeof accessKey === 'string');
+
     if (
       accessKey === null ||
       accessKey === undefined ||
@@ -56,12 +59,10 @@ class Leopard {
       throw new PvArgumentError(`No AccessKey provided to Leopard`);
     }
 
-    let modelPath = manualModelPath;
     if (modelPath === undefined || modelPath === null) {
-      modelPath = path.resolve(__dirname, MODEL_PATH_DEFAULT);
+      modelPath = path.resolve(__dirname, DEFAULT_MODEL_PATH);
     }
 
-    let libraryPath = manualLibraryPath;
     if (libraryPath === undefined || modelPath === null) {
       libraryPath = getSystemLibraryPath();
     }
@@ -114,12 +115,14 @@ class Leopard {
   /**
    * Processes a given audio data and returns its transcription.
    *
-   * @param {Array} pcm Audio data. The audio needs to have a sample rate equal to `.sampleRate` and be 16-bit linearly-encoded.
+   * @param {Int16Array} pcm Audio data. The audio needs to have a sample rate equal to `Leopard.sampleRate` and be 16-bit linearly-encoded.
    * This function operates on single-channel audio. If you wish to process data in a different
-   * sample rate or format consider using `.processFile`.
+   * sample rate or format consider using `Leopard.processFile()`.
    * @returns {string} Inferred transcription.
    */
   process(pcm) {
+    assert(pcm instanceof Int16Array);
+
     if (
       this._handle === 0 ||
       this._handle === null ||
@@ -130,10 +133,10 @@ class Leopard {
 
     if (pcm === undefined || pcm === null) {
       throw new PvArgumentError(
-        `PCM array provided to process() is undefined or null`
+        `PCM array provided to 'Leopard.process()' is undefined or null`
       );
     } else if (pcm.length === 0) {
-      throw new PvArgumentError(`PCM array provided to process() is empty`);
+      throw new PvArgumentError(`PCM array provided to 'Leopard.process()' is empty`);
     }
 
     let transcriptAndStatus = null;
@@ -164,6 +167,8 @@ class Leopard {
    * @returns {string} Inferred transcription.
    */
   processFile(audioPath) {
+    assert(typeof audioPath === 'string');
+
     if (
       this._handle === 0 ||
       this._handle === null ||
