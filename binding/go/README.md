@@ -6,7 +6,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally. 
 - Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
-- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#results)
+- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
   - Linux (x86_64)
   - macOS (x86_64, arm64)
@@ -50,6 +50,7 @@ err := leopard.Init()
 if err != nil {
     // handle err init
 }
+defer leopard.Delete()
 
 transcription, err := leopard.ProcessFile("${AUDIO_PATH}")
 if err != nil {
@@ -61,7 +62,7 @@ print(transcription)
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
 `${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using
-`handle.delete()`.
+`leopard.Delete()`.
 
 ## Demos
 

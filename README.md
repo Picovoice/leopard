@@ -289,6 +289,7 @@ err := leopard.Init()
 if err != nil {
     // handle err init
 }
+defer leopard.Delete()
 
 transcription, err := leopard.ProcessFile("${AUDIO_PATH}")
 if err != nil {
@@ -300,7 +301,7 @@ log.Println(transcription)
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
 `${AUDIO_PATH}` to path an audio file. Finally, when done be sure to explicitly release the resources using
-`handle.delete()`.
+`leopard.Delete()`.
 
 ## Releases
 

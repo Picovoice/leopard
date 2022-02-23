@@ -58,7 +58,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer l.Delete()
 
 	frameLength := 512
 	recorder := pvrecorder.PvRecorder{
@@ -71,7 +70,6 @@ func main() {
 	if err := recorder.Init(); err != nil {
 		log.Fatalf("Error: %s.\n", err.Error())
 	}
-	defer recorder.Delete()
 
 	log.Printf("Using device: %s", recorder.GetSelectedDevice())
 
@@ -87,7 +85,11 @@ func main() {
 	go func() {
 		<-signalCh
 		fmt.Println()
-		os.Exit(0)
+		os.Exit(func() int {
+			l.Delete()
+			recorder.Delete()
+			return 0
+		}())
 	}()
 
 	reader := bufio.NewReader(os.Stdin)
