@@ -41,25 +41,6 @@ program.parse(process.argv);
 
 let isInterrupted = false;
 
-function VuMeter(pcm, width) {
-  let sum = 0;
-  const blackBox = "█";
-  const emptyBox = " ";
-  const minDB = -30;
-
-  for (let i = 0; i < pcm.length; i++) {
-    sum += Math.pow(pcm[i], 2);
-  }
-  const loudnessDb =
-    10 * Math.log10((sum + 0.0001) / pcm.length / Math.pow(0xffff, 2));
-
-  const volume = Math.max(
-    0,
-    Math.floor(((loudnessDb - minDB) * width) / -minDB)
-  );
-  return `${blackBox.repeat(volume)}${emptyBox.repeat(width - volume)}`;
-}
-
 async function micDemo() {
   let accessKey = program["access_key"];
   let libraryFilePath = program["library_file_path"];
@@ -105,7 +86,6 @@ async function micDemo() {
   let audioFrame = [];
   while (!isInterrupted) {
     const pcm = await recorder.read();
-    process.stdout.write(`\r${VuMeter(pcm, 20)}`);
     audioFrame.push(...pcm);
   }
   recorder.stop();
