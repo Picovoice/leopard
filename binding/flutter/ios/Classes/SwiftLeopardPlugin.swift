@@ -45,7 +45,7 @@ public class SwiftLeopardPlugin: NSObject, FlutterPlugin {
 
                     let leopard = try Leopard(
                         accessKey: accessKey,
-                        modelPath: modelPath,
+                        modelPath: modelPath
                     )
                     
                     let handle: String = String(describing: leopard)

@@ -29,6 +29,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final String accessKey = '{YOUR_ACCESS_KEY_HERE}'; // AccessKey obtained from Picovoice Console (https://picovoice.ai/console/)
   final int maxRecordingLengthSecs = 12;
+  final int maxRecordingLengthSecs = 120;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -181,15 +182,15 @@ class _MyAppState extends State<MyApp> {
   buildStartButton(BuildContext context) {
     final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
         primary: picoBlue,
-        shape: CircleBorder(),
+        shape: BeveledRectangleBorder(),
         textStyle: TextStyle(color: Colors.white));
 
     return Expanded(
-      flex: 2,
+      flex: 1,
       child: Container(
           child: SizedBox(
               width: 130,
-              height: 130,
+              height: 65,
               child: ElevatedButton(
                 style: buttonStyle,
                 onPressed:
