@@ -11,41 +11,42 @@
 package main
 
 import (
+	"bufio"
 	"flag"
+	"fmt"
+	leopard "github.com/Picovoice/leopard/binding/go"
+	pvrecorder "github.com/Picovoice/pvrecorder/sdk/go"
 	"log"
 	"os"
 	"os/signal"
-	"path/filepath"
-
-	leopard "github.com/Picovoice/leopard/binding/go"
-	pvrecorder "github.com/Picovoice/pvrecorder/sdk/go"
-	"github.com/go-audio/wav"
 )
+
+func readFrames(recorder *pvrecorder.PvRecorder, data *[]int16, stopCh chan struct{}, stoppedCh chan struct{}) {
+	for {
+		select {
+		case <-stopCh:
+			close(stoppedCh)
+			return
+		default:
+			pcm, err := recorder.Read()
+			if err != nil {
+				log.Fatalf("Error: %v.\n", err)
+			}
+			*data = append(*data, pcm...)
+		}
+	}
+}
 
 func main() {
 	accessKeyArg := flag.String("access_key", "", "AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)")
 	modelPathArg := flag.String("model_path", "", "Path to Leopard model file")
 	audioDeviceIndex := flag.Int("audio_device_index", -1, "Index of capture device to use.")
-	outputPathArg := flag.String("output_path", "", "Path to recorded audio (for debugging)")
 	showAudioDevices := flag.Bool("show_audio_devices", false, "Display all available capture devices")
 	flag.Parse()
 
 	if *showAudioDevices {
 		printAudioDevices()
 		return
-	}
-
-	var outputWav *wav.Encoder
-	if *outputPathArg != "" {
-		outputFilePath, _ := filepath.Abs(*outputPathArg)
-		outputFile, err := os.Create(outputFilePath)
-		if err != nil {
-			log.Fatalf("Failed to create output audio at path %s", outputFilePath)
-		}
-		defer outputFile.Close()
-
-		outputWav = wav.NewEncoder(outputFile, leopard.SampleRate, 16, 1, 1)
-		defer outputWav.Close()
 	}
 
 	l := leopard.Leopard{
@@ -62,7 +63,7 @@ func main() {
 	frameLength := 512
 	recorder := pvrecorder.PvRecorder{
 		DeviceIndex:    *audioDeviceIndex,
-		FrameLength: 	frameLength,
+		FrameLength:    frameLength,
 		BufferSizeMSec: 1000,
 		LogOverflow:    0,
 	}
@@ -78,47 +79,54 @@ func main() {
 		log.Fatalf("Error: %s.\n", err.Error())
 	}
 
-	log.Printf("Recording...")
+	fmt.Printf(">>> Press 'CTRL+C' to exit: \n")
 
 	signalCh := make(chan os.Signal, 1)
-	waitCh := make(chan struct{})
 	signal.Notify(signalCh, os.Interrupt)
 
 	go func() {
 		<-signalCh
-		close(waitCh)
+		fmt.Println()
+		os.Exit(0)
 	}()
 
-	audioData := make([]int16, frameLength)
+	reader := bufio.NewReader(os.Stdin)
+	recording := false
 
-waitLoop:
+	var audioData []int16
+	var stopCh chan struct{}
+	var stoppedCh chan struct{}
+
 	for {
-		select {
-		case <-waitCh:
-			log.Println("Transcribing audio...")
-			break waitLoop
-		default:
-			pcm, err := recorder.Read()
+		if recording {
+			fmt.Print(">>> Recording ... Press 'ENTER' to stop: ")
+			_, err := reader.ReadString('\n')
 			if err != nil {
 				log.Fatalf("Error: %v.\n", err)
 			}
-			audioData = append(audioData, pcm...)
+			recording = false
+			close(stopCh)
+			<-stoppedCh
+
+			res, err := l.Process(audioData)
+			if err != nil {
+				log.Fatalf("Error processing: %v\n", err)
+			}
+
+			fmt.Printf("%s\n\n", res)
+		} else {
+			fmt.Print(">>> Press 'ENTER' to start: ")
+			_, err := reader.ReadString('\n')
+			if err != nil {
+				log.Fatalf("Error: %v.\n", err)
+			}
+			audioData = make([]int16, frameLength)
+			stopCh = make(chan struct{})
+			stoppedCh = make(chan struct{})
+			recording = true
+			go readFrames(&recorder, &audioData, stopCh, stoppedCh)
 		}
 	}
-			
-	// write to debug file
-	if outputWav != nil {
-		for outputBufIndex := range audioData {
-			outputWav.WriteFrame(audioData[outputBufIndex])
-		}
-	}
-
-	res, err := l.Process(audioData)
-	if err != nil {
-		log.Fatalf("Error processing: %v\n", err)
-	}
-
-	log.Println(res)
 }
 
 func printAudioDevices() {

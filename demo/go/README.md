@@ -8,7 +8,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally. 
 - Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
-- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#results)
+- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
   - Linux (x86_64)
   - macOS (x86_64, arm64)
