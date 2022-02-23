@@ -65,8 +65,8 @@ class Leopard {
   ///
   /// [frame] frame of 16-bit integers of 16kHz linear PCM mono audio.
   ///
-  /// returns LeopardTranscript object.
-  Future<LeopardTranscript> process(List<int>? frame) async {
+  /// returns String object.
+  Future<String> process(List<int>? frame) async {
     try {
       Map<String, dynamic> transcript = Map<String, dynamic>.from(await _channel
           .invokeMethod('process', {'handle': _handle, 'frame': frame}));
@@ -90,8 +90,8 @@ class Leopard {
   ///        than Leopard.sampleRate. The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`,
   ///        `Vorbis`, `WAV`, and `WebM`.
   ///
-  /// returns LeopardTranscript object.
-  Future<LeopardTranscript> processFile(String path) async {
+  /// returns String object.
+  Future<String> processFile(String path) async {
     try {
       Map<String, dynamic> transcript = Map<String, dynamic>.from(await _channel
           .invokeMethod('processfile', {'handle': _handle, 'path': path}));

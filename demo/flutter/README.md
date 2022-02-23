@@ -1,10 +1,10 @@
-# Cheetah Flutter Demo
+# Leopard Flutter Demo
 
-To run the Cheetah demo on Android or iOS with Flutter, you must have the [Flutter SDK](https://flutter.dev/docs/get-started/install) installed on your system. Once installed, you can run `flutter doctor` to determine any other missing requirements for your relevant platform. Once your environment has been set up, launch a simulator or connect an Android/iOS device.
+To run the Leopard demo on Android or iOS with Flutter, you must have the [Flutter SDK](https://flutter.dev/docs/get-started/install) installed on your system. Once installed, you can run `flutter doctor` to determine any other missing requirements for your relevant platform. Once your environment has been set up, launch a simulator or connect an Android/iOS device.
 
 ## AccessKey
 
-All demos require a valid Picovoice `AccessKey` at initialization. `AccessKey`s act as your credentials when using Cheetah SDKs.
+All demos require a valid Picovoice `AccessKey` at initialization. `AccessKey`s act as your credentials when using Leopard SDKs.
 You can create your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
 
 To obtain your `AccessKey`:
@@ -19,7 +19,7 @@ final String accessKey = "{YOUR_ACCESS_KEY_HERE}"; // AccessKey obtained from Pi
 
 ## Usage
 
-Before launching the app, use the copy_assets.sh script to copy the cheetah demo model file into the demo project. (**NOTE**: on Windows, Git Bash or another bash shell is required, or you will have to manually copy the context into the project.).
+Before launching the app, use the copy_assets.sh script to copy the leopard demo model file into the demo project. (**NOTE**: on Windows, Git Bash or another bash shell is required, or you will have to manually copy the context into the project.).
 
 Run the following command from [demo/flutter](/demo/flutter) to build and deploy the demo to your device:
 ```console

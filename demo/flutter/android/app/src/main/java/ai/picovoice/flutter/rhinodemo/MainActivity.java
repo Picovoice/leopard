@@ -1,4 +1,4 @@
-package ai.picovoice.flutter.cheetahdemo;
+package ai.picovoice.flutter.leoparddemo;
 
 import io.flutter.embedding.android.FlutterActivity;
 

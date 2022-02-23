@@ -1,5 +1,5 @@
-name: cheetah_demo
-description: Demonstrates how to use the cheetah plugin.
+name: leopard_demo
+description: Demonstrates how to use the leopard plugin.
 
 publish_to: 'none'
 
@@ -12,7 +12,7 @@ dependencies:
   
   flutter_voice_processor: ^1.0.6
 
-  cheetah_flutter:
+  leopard_flutter:
     path: ../../binding/flutter
   
 dev_dependencies:
@@ -23,5 +23,5 @@ dev_dependencies:
 flutter:  
   uses-material-design: true
   assets:
-    - assets/contexts/android/cheetah_params.pv
-    - assets/contexts/ios/cheetah_params.pv
+    - assets/contexts/android/leopard_params.pv
+    - assets/contexts/ios/leopard_params.pv

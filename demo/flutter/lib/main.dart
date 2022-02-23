@@ -14,8 +14,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_voice_processor/flutter_voice_processor.dart';
-import 'package:cheetah_flutter/cheetah.dart';
-import 'package:cheetah_flutter/cheetah_error.dart';
+import 'package:leopard_flutter/leopard.dart';
+import 'package:leopard_flutter/leopard_error.dart';
 
 void main() {
   runApp(MyApp());
@@ -28,106 +28,131 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final String accessKey = '{YOUR_ACCESS_KEY_HERE}'; // AccessKey obtained from Picovoice Console (https://picovoice.ai/console/)
+  final int maxRecordingLengthSecs = 12;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool isError = false;
   String errorMessage = "";
 
+  bool isRecording = false;
   bool isProcessing = false;
+  String statusAreaText = "";
   String transcriptText = "";
-  CheetahManager? _cheetahManager;
 
-  ScrollController _controller = ScrollController();
+  MicRecorder? _micRecorder;
+  Leopard? _leopard;
 
   @override
   void initState() {
     super.initState();
     setState(() {
+      statusAreaText = "Press START to start recording some audio to transcribe";
       transcriptText = "";
     });
 
-    initCheetah();
+    initLeopard();
   }
 
-  Future<void> initCheetah() async {
+  Future<void> initLeopard() async {
     String platform = Platform.isAndroid
         ? "android"
         : Platform.isIOS
             ? "ios"
-            : throw CheetahRuntimeException(
+            : throw LeopardRuntimeException(
                 "This demo supports iOS and Android only.");
-    String modelPath = "assets/contexts/$platform/cheetah_params.pv";
+    String modelPath = "assets/contexts/$platform/leopard_params.pv";
 
     try {
-      _cheetahManager = await CheetahManager.create(accessKey, modelPath, transcriptCallback, errorCallback);
-    } on CheetahInvalidArgumentException catch (ex) {
-      errorCallback(CheetahInvalidArgumentException(
+      _leopard = await Leopard.create(accessKey, modelPath);
+      _micRecorder = await MicRecorder.create(_leopard!.sampleRate, recordedCallback, errorCallback);
+    } on LeopardInvalidArgumentException catch (ex) {
+      errorCallback(LeopardInvalidArgumentException(
           "${ex.message}\nEnsure your accessKey '$accessKey' is a valid access key."));
-    } on CheetahActivationException {
-      errorCallback(CheetahActivationException("AccessKey activation error."));
-    } on CheetahActivationLimitException {
+    } on LeopardActivationException {
+      errorCallback(LeopardActivationException("AccessKey activation error."));
+    } on LeopardActivationLimitException {
       errorCallback(
-          CheetahActivationLimitException("AccessKey reached its device limit."));
-    } on CheetahActivationRefusedException {
-      errorCallback(CheetahActivationRefusedException("AccessKey refused."));
-    } on CheetahActivationThrottledException {
+          LeopardActivationLimitException("AccessKey reached its device limit."));
+    } on LeopardActivationRefusedException {
+      errorCallback(LeopardActivationRefusedException("AccessKey refused."));
+    } on LeopardActivationThrottledException {
       errorCallback(
-          CheetahActivationThrottledException("AccessKey has been throttled."));
-    } on CheetahException catch (ex) {
+          LeopardActivationThrottledException("AccessKey has been throttled."));
+    } on LeopardException catch (ex) {
       errorCallback(ex);
     }
   }
 
-  void transcriptCallback(String transcript) {
-    bool shouldScroll = _controller.position.pixels == _controller.position.maxScrollExtent;
+  Future<void> recordedCallback(double length) async {
 
-    setState(() {
-      transcriptText = transcriptText + transcript;
-    });
-
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      if (shouldScroll && !_controller.position.atEdge) {
-        _controller.jumpTo(_controller.position.maxScrollExtent);
-      }
-    });
+    if (length < maxRecordingLengthSecs) {
+      setState(() {
+        statusAreaText = "Recording : ${length.toStringAsFixed(1)} / ${maxRecordingLengthSecs} seconds";
+      });
+    } else {
+      setState(() {
+        statusAreaText = "Transcribing, please wait...";
+      });
+      await _stopRecording();
+    }
   }
 
-  void errorCallback(CheetahException error) {
+  void errorCallback(LeopardException error) {
     setState(() {
       isError = true;
       errorMessage = error.message!;
     });
   }
 
-  Future<void> _startProcessing() async {
-    if (isProcessing) {
+  Future<void> _startRecording() async {
+    if (isRecording || _micRecorder == null) {
       return;
     }
 
     try {
-      await _cheetahManager!.startProcess();
+      await _micRecorder!.startRecord();
       setState(() {
-        isProcessing = true;
+        isRecording = true;
       });
-    } on CheetahException catch (ex) {
+    } on LeopardException catch (ex) {
       print("Failed to start audio capture: ${ex.message}");
     }
   }
 
-  Future<void> _stopProcessing() async {
-    if (!isProcessing) {
+  Future<void> _stopRecording() async {
+    if (!isRecording || _micRecorder == null) {
       return;
     }
 
     try {
-      await _cheetahManager!.stopProcess();
+      List<int> pcmData = await _micRecorder!.stopRecord();
       setState(() {
-        isProcessing = false;
+        statusAreaText = "Transcribing, please wait...";
+        isRecording = false;
       });
-    } on CheetahException catch (ex) {
-      print("Failed to start audio capture: ${ex.message}");
+      _processAudio(pcmData);
+    } on LeopardException catch (ex) {
+      print("Failed to stop audio capture: ${ex.message}");
     }
+  }
+
+  Future<void> _processAudio(List<int> pcmData) async {
+    if (_leopard == null) {
+      return;
+    }
+
+    Stopwatch stopwatch = new Stopwatch()..start();
+    String? transcript = await _leopard?.process(pcmData);
+    Duration elapsed = stopwatch.elapsed;
+
+    String audioLength = (pcmData.length / _leopard!.sampleRate).toStringAsFixed(1);
+    String transcriptionTime = (elapsed.inMilliseconds / 1000).toStringAsFixed(1);
+
+    setState(() {
+      statusAreaText = "Transcribed ${audioLength}(s) of audio in ${transcriptionTime}(s)";
+      transcriptText = transcript ?? "";
+    });
   }
 
   Color picoBlue = Color.fromRGBO(55, 125, 255, 1);
@@ -137,13 +162,14 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          title: const Text('Cheetah Demo'),
+          title: const Text('Leopard Demo'),
           backgroundColor: picoBlue,
         ),
         body: Column(
           children: [
-            buildCheetahTextArea(context),
+            buildLeopardTextArea(context),
             buildErrorMessage(context),
+            buildLeopardStatusArea(context),
             buildStartButton(context),
             footer
           ],
@@ -167,14 +193,14 @@ class _MyAppState extends State<MyApp> {
               child: ElevatedButton(
                 style: buttonStyle,
                 onPressed:
-                    (isProcessing) ? _stopProcessing : _startProcessing,
-                child: Text(isProcessing ? "Stop" : "Start",
+                    (isRecording) ? _stopRecording : _startRecording,
+                child: Text(isRecording ? "Stop" : "Start",
                     style: TextStyle(fontSize: 30)),
               ))),
     );
   }
 
-  buildCheetahTextArea(BuildContext context) {
+  buildLeopardTextArea(BuildContext context) {
     return Expanded(
         flex: 6,
         child: Container(
@@ -182,7 +208,6 @@ class _MyAppState extends State<MyApp> {
           color: Color(0xff25187e),
           margin: EdgeInsets.all(10),
           child: SingleChildScrollView(
-            controller: _controller,
             scrollDirection: Axis.vertical,
             padding: EdgeInsets.all(10),
             physics: RangeMaintainingScrollPhysics(),
@@ -197,6 +222,18 @@ class _MyAppState extends State<MyApp> {
           )
         )
       );
+  }
+
+  buildLeopardStatusArea(BuildContext context) {
+    return Expanded(
+      flex: 1,
+      child: Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.only(bottom: 20),
+          child: Text(
+            statusAreaText,
+            style: TextStyle(color: Colors.black),
+          )));
   }
 
   buildErrorMessage(BuildContext context) {
@@ -229,93 +266,83 @@ class _MyAppState extends State<MyApp> {
           )));
 }
 
-typedef TranscriptCallback = Function(String transcript);
+typedef RecordedCallback = Function(double length);
+typedef ProcessErrorCallback = Function(LeopardException error);
 
-typedef ProcessErrorCallback = Function(CheetahException error);
-
-class CheetahManager {
+class MicRecorder {
   final VoiceProcessor? _voiceProcessor;
-  Cheetah? _cheetah;
+  int _sampleRate;
 
-  final TranscriptCallback _transcriptCallback;
+  final RecordedCallback _recordedCallback;
   final ProcessErrorCallback _processErrorCallback;
   RemoveListener? _removeVoiceProcessorListener;
   RemoveListener? _removeErrorListener;
 
-  static Future<CheetahManager> create(
-      String accessKey, String modelPath, TranscriptCallback transcriptCallback, ProcessErrorCallback processErrorCallback) async {
-    Cheetah cheetah = await Cheetah.create(accessKey, modelPath);
-    return CheetahManager._(cheetah, transcriptCallback, processErrorCallback);
+  List<int> _pcmData = [];
+
+  static Future<MicRecorder> create(int sampleRate, RecordedCallback recordedCallback, ProcessErrorCallback processErrorCallback) async {
+    return MicRecorder._(sampleRate, recordedCallback, processErrorCallback);
   }
 
-  CheetahManager._(this._cheetah, this._transcriptCallback, this._processErrorCallback)
-      : _voiceProcessor = VoiceProcessor.getVoiceProcessor(
-            _cheetah!.frameLength, _cheetah.sampleRate) {
+  MicRecorder._(this._sampleRate, this._recordedCallback, this._processErrorCallback)
+      : _voiceProcessor = VoiceProcessor.getVoiceProcessor(512, _sampleRate) {
     if (_voiceProcessor == null) {
-      throw CheetahRuntimeException("flutter_voice_processor not available.");
+      throw LeopardRuntimeException("flutter_voice_processor not available.");
     }
     _removeVoiceProcessorListener =
         _voiceProcessor!.addListener((buffer) async {
-      List<int> cheetahFrame;
+      List<int> frame;
       try {
-        cheetahFrame = (buffer as List<dynamic>).cast<int>();
+        frame = (buffer as List<dynamic>).cast<int>();
       } on Error {
-        CheetahException castError = CheetahException(
+        LeopardException castError = LeopardException(
             "flutter_voice_processor sent an unexpected data type.");
         _processErrorCallback(castError);
         return;
       }
 
-      try {
-        CheetahTranscript? cheetahTranscript = await _cheetah?.process(cheetahFrame);
-        _transcriptCallback(cheetahTranscript?.transcript ?? "");
-
-        if (cheetahTranscript?.isEndpoint ?? false) {
-          CheetahTranscript? cheetahTranscript = await _cheetah?.flush();
-          _transcriptCallback(" " + (cheetahTranscript?.transcript ?? "") + " ");
-        }
-      } on CheetahException catch (error) {
-        _processErrorCallback(error);
-      }
+      _pcmData.addAll(frame);
+      _recordedCallback(_pcmData.length / _sampleRate);
     });
 
     _removeErrorListener = _voiceProcessor!.addErrorListener((errorMsg) {
-      CheetahException nativeError = CheetahException(errorMsg as String);
+      LeopardException nativeError = LeopardException(errorMsg as String);
       _processErrorCallback(nativeError);
     });
   }
 
-  Future<void> startProcess() async {
-    if (_cheetah == null || _voiceProcessor == null) {
-      throw CheetahInvalidStateException(
-          "Cannot start Cheetah - resources have already been released");
+  Future<void> startRecord() async {
+    if (_voiceProcessor == null) {
+      throw LeopardInvalidStateException(
+          "Cannot start Leopard - resources have already been released");
     }
+
+    _pcmData.clear();
 
     if (await _voiceProcessor?.hasRecordAudioPermission() ?? false) {
       try {
         await _voiceProcessor!.start();
       } on PlatformException {
-        throw CheetahRuntimeException(
+        throw LeopardRuntimeException(
             "Audio engine failed to start. Hardware may not be supported.");
       }
     } else {
-      throw CheetahRuntimeException(
+      throw LeopardRuntimeException(
           "User did not give permission to record audio.");
     }
   }
 
-  Future<void> stopProcess() async {
-    if (_cheetah == null || _voiceProcessor == null) {
-      throw CheetahInvalidStateException(
-          "Cannot start Cheetah - resources have already been released");
+  Future<List<int>> stopRecord() async {
+    if (_voiceProcessor == null) {
+      throw LeopardInvalidStateException(
+          "Cannot start Leopard - resources have already been released");
     }
 
     if (_voiceProcessor?.isRecording ?? false) {
       await _voiceProcessor!.stop();
-
-      CheetahTranscript? cheetahTranscript = await _cheetah?.flush();
-      _transcriptCallback((cheetahTranscript?.transcript ?? "") + " ");
     }
+
+    return _pcmData;
   }
 
   Future<void> delete() async {
@@ -324,7 +351,5 @@ class CheetahManager {
     }
     _removeVoiceProcessorListener?.call();
     _removeErrorListener?.call();
-    _cheetah?.delete();
-    _cheetah = null;
   }
 }

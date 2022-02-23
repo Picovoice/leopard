@@ -31,7 +31,7 @@ public class LeopardPlugin implements FlutterPlugin, MethodCallHandler {
   private enum Method {
     CREATE,
     PROCESS,
-    PROCCESSFILE,
+    PROCESSFILE,
     DELETE
   }
 
@@ -65,8 +65,7 @@ public class LeopardPlugin implements FlutterPlugin, MethodCallHandler {
           String accessKey = call.argument("accessKey");
           String modelPath = call.argument("modelPath");
 
-          Leopard.Builder leopardBuilder = new Leopard.Builder(accessKey)
-                  .setModelPath(modelPath)
+          Leopard.Builder leopardBuilder = new Leopard.Builder(accessKey).setModelPath(modelPath);
 
           Leopard leopard = leopardBuilder.build(flutterContext);
           leopardPool.put(String.valueOf(System.identityHashCode(leopard)), leopard);

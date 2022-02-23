@@ -5,7 +5,7 @@ then
 fi
 
 echo "Copying Android demo model..."
-cp ../../lib/common/cheetah_params.pv ./assets/contexts/android/cheetah_params.pv
+cp ../../lib/common/leopard_params.pv ./assets/contexts/android/leopard_params.pv
 
 if [ ! -d "./assets/contexts/ios" ]
 then 
@@ -14,4 +14,4 @@ then
 fi
 
 echo "Copying iOS demo model..."
-cp ../../lib/common/cheetah_params.pv ./assets/contexts/ios/cheetah_params.pv
+cp ../../lib/common/leopard_params.pv ./assets/contexts/ios/leopard_params.pv

@@ -33,7 +33,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "ai.picovoice.flutter.cheetahdemo"
+        applicationId "ai.picovoice.flutter.leoparddemo"
         minSdkVersion 19
         targetSdkVersion 31
         versionCode flutterVersionCode.toInteger()
