@@ -30,12 +30,14 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [iOS](#ios-demo)
         - [Android](#android-demo)
         - [Node.js](#nodejs-demo)
+        - [Go](#go-demo)
     - [SDKs](#sdks)
         - [Python](#python)
         - [C](#c)
         - [iOS](#ios)
         - [Android](#android)
         - [Node.js](#nodejs)
+        - [Go](#go)
     - [Releases](#releases)
 
 ## AccessKey
@@ -119,6 +121,19 @@ leopard-mic-demo --access_key ${ACCESS_KEY}
 ```
 
 For more information about Node.js demos go to [demo/nodejs](/demo/nodejs).
+### Go Demo
+
+The demo requires `cgo`, which on Windows may mean that you need to install a gcc compiler like [Mingw](http://mingw-w64.org/doku.php) to build it properly. 
+
+From [demo/go](/demo/go) run the following command from the terminal to build and run the file demo:
+
+```console
+go run filedemo/leopard_file_demo.go -access_key "${ACCESS_KEY}" -input_audio_path "${AUDIO_PATH}"
+```
+
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you wish to transcribe.
+
+For more information about Go demos go to [demo/go](/demo/go).
 
 ## SDKs
 
@@ -255,6 +270,38 @@ When done, be sure to release resources using `release()`:
 ```javascript
 handle.release();
 ```
+
+### Go
+
+Install the Go binding:
+
+```console
+go get github.com/Picovoice/leopard/binding/go
+```
+
+Create an instance of the engine and transcribe an audio file:
+
+```go
+import . "github.com/Picovoice/leopard/binding/go"
+
+leopard = Leopard{AccessKey: "${ACCESS_KEY}"}
+err := leopard.Init()
+if err != nil {
+    // handle err init
+}
+defer leopard.Delete()
+
+transcription, err := leopard.ProcessFile("${AUDIO_PATH}")
+if err != nil {
+    // handle process error
+}
+
+log.Println(transcription)
+```
+
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
+`${AUDIO_PATH}` to path an audio file. Finally, when done be sure to explicitly release the resources using
+`leopard.Delete()`.
 
 ## Releases
 
