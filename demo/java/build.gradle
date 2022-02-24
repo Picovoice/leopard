@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+}
+
+dependencies {
+    // implementation 'ai.picovoice:leopard-java:1.0.0'
+    implementation files('../../binding/java/build/libs/Leopard.jar')
+    implementation 'commons-cli:commons-cli:1.4'
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "ai.picovoice.leoparddemo.MicDemo",
+                   "Class-Path": "leopard-1.0.0.jar;commons-cli-1.4.jar"
+    }
+    from sourceSets.main.output
+    exclude "**/FileDemo.class"
+    archiveFileName = 'leopard-mic-demo.jar'
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+task fileDemoJar(type: Jar) {
+    manifest {
+        attributes "Main-Class": "ai.picovoice.leoparddemo.FileDemo",
+                   "Class-Path": "leopard-1.0.0.jar;commons-cli-1.4.jar"
+    }
+    from sourceSets.main.output
+    exclude "**/MicDemo.class"
+    archiveFileName = 'leopard-file-demo.jar'
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+artifacts {
+    archives fileDemoJar
+}
