@@ -1,0 +1,9 @@
+.vscode
+.vs
+*.user
+Leopard/bin
+Leopard/obj
+Leopard/Properties
+LeopardTest/bin
+LeopardTest/obj
+TestResults
