@@ -1,22 +1,22 @@
-# Leopard Speech-to-Text Demos
+# Leopard Speech-to-Text Engine
 
 Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
 ## Leopard
 
-Leopard is an on-device streaming speech-to-text engine. Leopard is:
+Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally.
 - Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
-- Compact and Computationally-Efficient [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
+- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
-    - Linux (x86_64)
-    - macOS (x86_64, arm64)
-    - Windows (x86_64)
-    - Android
-    - iOS
-    - Raspberry Pi (4, 3)
-    - NVIDIA Jetson Nano
+  - Linux (x86_64)
+  - macOS (x86_64, arm64)
+  - Windows (x86_64)
+  - Android
+  - iOS
+  - Raspberry Pi (4, 3)
+  - NVIDIA Jetson Nano
 
 ## Compatibility
 
@@ -50,7 +50,7 @@ cd leopard/demo/java/build/libs
 
 ### File Demo
 
-The file demo uses Leopard to get speech-to-text results from an audio file. This demo is mainly useful for quantitative performance benchmarking against a corpus of audio data.
+The file demo uses Leopard to get speech-to-text results from an audio file.
 
 ```console
 java -jar leopard-file-demo.jar -a ${ACCESS_KEY} -i ${AUDIO_PATH}
@@ -58,7 +58,7 @@ java -jar leopard-file-demo.jar -a ${ACCESS_KEY} -i ${AUDIO_PATH}
 
 ### Microphone Demo
 
-The microphone demo opens an audio stream from a microphone and performs live speech-to-text:
+The microphone demo opens an audio stream from a microphone, records audio and performces speech-to-text transcription from the recorded audio:
 
 ```console
 java -jar leopard-mic-demo.jar -a ${ACCESS_KEY}
@@ -84,11 +84,3 @@ You can use the device index to specify which microphone to use for the demo. Fo
 ```console
 java -jar leopard-mic-demo.jar -a ${ACCESS_KEY} -di 1
 ```
-
-If the problem persists we suggest storing the recorded audio into a file for inspection. This can be achieved with:
-
-```console
-java -jar leopard-mic-demo.jar -a ${ACCESS_KEY} -di 1 -o ./test.wav
-```
-
-If after listening to stored file there is no apparent problem detected, please open an issue.

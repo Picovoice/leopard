@@ -32,6 +32,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [Node.js](#nodejs-demo)
         - [Go](#go-demo)
         - [React Native](#react-native-demo)
+        - [Java](#java-demo)
     - [SDKs](#sdks)
         - [Python](#python)
         - [C](#c)
@@ -40,6 +41,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [Node.js](#nodejs)
         - [Go](#go)
         - [React Native](#react-native)
+        - [Java](#java)
     - [Releases](#releases)
 
 ## AccessKey
@@ -157,6 +159,24 @@ For iOS:
 yarn ios-install        # sets up environment
 yarn ios-run 
 ```
+
+### Java Demos
+
+The [Leopard Java demo](/demo/java) is a command-line application that lets you choose between running Leopard on an audio file or on microphone input.
+
+From [demo/java](/demo/java) run the following commands from the terminal to build and run the file demo:
+
+```console
+cd demo/java
+./gradlew build
+cd build/libs
+java -jar leopard-file-demo.jar -a ${ACCESS_KEY} -i ${AUDIO_PATH}
+```
+
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you wish to transcribe.
+
+For more information about Java demos go to [demo/java](/demo/java).
+
 
 ## SDKs
 
@@ -355,6 +375,33 @@ try {
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/) and `${AUDIO_FILE_PATH}` with the absolute path of the audio file. When done be sure to explicitly release the resources using `leopard.delete()`.
+
+### Java
+
+The latest Java bindings are available from the Maven Central Repository at:
+
+```console
+ai.picovoice:leopard-java:${version}
+```
+
+Create an instance of the engine with the Leopard Builder class and transcribe an audio file:
+
+```java
+import ai.picovoice.leopard.*;
+
+final String accessKey = "${ACCESS_KEY}";
+
+try {
+    Leopard leopard = new Leopard.Builder().setAccessKey(accessKey).build();
+    String transcript = leopard.processFile("${AUDIO_PATH}");
+    leopard.delete();
+} catch (LeopardException ex) { }
+
+System.out.println(transcript);
+```
+
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and `${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
+
 
 ## Releases
 

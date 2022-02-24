@@ -65,7 +65,7 @@ do {
 
     let audioURL = Bundle(for: type(of: self)).url(forResource: "${AUDIO_FILE_NAME}", withExtension: "${AUDIO_FILE_EXTENSION}")
     print(leopard.process_file(audioURL))
-} catch let error as CheetahError { 
+} catch let error as LeopardError {
     // handle error
 } catch { }
 ```
