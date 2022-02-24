@@ -10,12 +10,15 @@
 //
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_voice_processor/flutter_voice_processor.dart';
 import 'package:leopard_flutter/leopard.dart';
 import 'package:leopard_flutter/leopard_error.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -37,6 +40,7 @@ class _MyAppState extends State<MyApp> {
 
   bool isRecording = false;
   bool isProcessing = false;
+  double recordedLength = 0.0;
   String statusAreaText = "";
   String transcriptText = "";
 
@@ -47,6 +51,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     setState(() {
+      recordedLength = 0.0;
       statusAreaText = "Press START to start recording some audio to transcribe";
       transcriptText = "";
     });
@@ -85,13 +90,14 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> recordedCallback(double length) async {
-
     if (length < maxRecordingLengthSecs) {
       setState(() {
+        recordedLength = length;
         statusAreaText = "Recording : ${length.toStringAsFixed(1)} / ${maxRecordingLengthSecs} seconds";
       });
     } else {
       setState(() {
+        recordedLength = length;
         statusAreaText = "Transcribing, please wait...";
       });
       await _stopRecording();
@@ -126,27 +132,28 @@ class _MyAppState extends State<MyApp> {
     }
 
     try {
-      List<int> pcmData = await _micRecorder!.stopRecord();
+      File recordedFile = await _micRecorder!.stopRecord();
       setState(() {
         statusAreaText = "Transcribing, please wait...";
         isRecording = false;
       });
-      _processAudio(pcmData);
+      _processAudio(recordedFile);
     } on LeopardException catch (ex) {
       print("Failed to stop audio capture: ${ex.message}");
     }
   }
 
-  Future<void> _processAudio(List<int> pcmData) async {
+  Future<void> _processAudio(File recordedFile) async {
     if (_leopard == null) {
       return;
     }
 
     Stopwatch stopwatch = new Stopwatch()..start();
-    String? transcript = await _leopard?.process(pcmData);
+    debugPrint(recordedFile.path);
+    String? transcript = await _leopard?.processFile(recordedFile.path);
     Duration elapsed = stopwatch.elapsed;
 
-    String audioLength = (pcmData.length / _leopard!.sampleRate).toStringAsFixed(1);
+    String audioLength = recordedLength.toStringAsFixed(1);
     String transcriptionTime = (elapsed.inMilliseconds / 1000).toStringAsFixed(1);
 
     setState(() {
@@ -332,7 +339,7 @@ class MicRecorder {
     }
   }
 
-  Future<List<int>> stopRecord() async {
+  Future<File> stopRecord() async {
     if (_voiceProcessor == null) {
       throw LeopardInvalidStateException(
           "Cannot start Leopard - resources have already been released");
@@ -342,7 +349,58 @@ class MicRecorder {
       await _voiceProcessor!.stop();
     }
 
-    return _pcmData;
+    return await writeWavFile();
+  }
+
+  Future<File> writeWavFile() async {
+    final int channelCount = 1;
+    final int bitDepth = 16;
+    final int sampleRate = 16000;
+
+    final directory = await getApplicationDocumentsDirectory();
+    final wavFile = File('${directory.path}/recording.wav');
+
+    final bytesBuilder = BytesBuilder();
+
+    void writeString(String s) {
+      final stringBuffer = utf8.encode(s);
+      bytesBuilder.add(stringBuffer);
+    }
+
+    void writeUint32(int value) {
+      final uint32Buffer = Uint8List(4)..buffer.asByteData().setUint32(0, value, Endian.little);
+      bytesBuilder.add(uint32Buffer);
+    }
+
+    void writeUint16(int value) {
+      final uint16Buffer = Uint8List(2)..buffer.asByteData().setUint16(0, value, Endian.little);
+      bytesBuilder.add(uint16Buffer);
+    }
+
+    void writeInt16(int value) {
+      final int16Buffer = Uint8List(2)..buffer.asByteData().setInt16(0, value, Endian.little);
+      bytesBuilder.add(int16Buffer);
+    }
+
+    writeString('RIFF');
+    writeUint32(((bitDepth / 8) * _pcmData.length + 36).toInt());
+    writeString('WAVE');
+    writeString('fmt ');
+    writeUint32(16);
+    writeUint16(1);
+    writeUint16(channelCount);
+    writeUint32(sampleRate);
+    writeUint32(((sampleRate * channelCount * bitDepth) / 8).toInt());
+    writeUint16(((channelCount * bitDepth) / 8).toInt());
+    writeUint16(bitDepth);
+    writeString('data');
+    writeUint32(((bitDepth / 8) * _pcmData.length).toInt());
+
+    for (int i = 0; i < _pcmData.length; i++) {
+      writeInt16(_pcmData[i]);
+    }
+
+    return wavFile.writeAsBytes(bytesBuilder.toBytes());
   }
 
   Future<void> delete() async {

@@ -10,6 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
   
+  path_provider: ^2.0.9
+
   flutter_voice_processor: ^1.0.6
 
   leopard_flutter:
