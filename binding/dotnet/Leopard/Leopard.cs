@@ -76,8 +76,8 @@ namespace Pv
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         private static extern PvStatus pv_leopard_process(
             IntPtr handle,
-            short[] pcm,
-            long pcmLength,
+            System.Int16[] pcm,
+            System.Int32[] pcmLength,
             out IntPtr transcriptPtr);
 
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
@@ -157,7 +157,7 @@ namespace Pv
                 throw new LeopardInvalidArgumentException("Input audio frame is empty");
             }
 
-            IntPtr transcriptPtr;
+            IntPtr transcriptPtr = IntPtr.Zero;
             PvStatus status = pv_leopard_process(_libraryPointer, pcm, pcm.Length, out transcriptPtr);
             if (status != PvStatus.SUCCESS)
             {
@@ -186,7 +186,7 @@ namespace Pv
                 throw new LeopardIOException($"Couldn't find audio file at '{audioPath}'");
             }
 
-            IntPtr transcriptPtr;
+            IntPtr transcriptPtr = IntPtr.Zero;
             PvStatus status = pv_leopard_process_file(_libraryPointer, audioPath, out transcriptPtr);
             if (status != PvStatus.SUCCESS)
             {
