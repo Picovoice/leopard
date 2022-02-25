@@ -30,6 +30,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [iOS](#ios-demo)
         - [Android](#android-demo)
         - [Node.js](#nodejs-demo)
+        - [Flutter](#flutter-demo)
         - [Go](#go-demo)
         - [React Native](#react-native-demo)
         - [Java](#java-demo)
@@ -39,6 +40,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [iOS](#ios)
         - [Android](#android)
         - [Node.js](#nodejs)
+        - [Flutter](#flutter)
         - [Go](#go)
         - [React Native](#react-native)
         - [Java](#java)
@@ -125,6 +127,20 @@ leopard-mic-demo --access_key ${ACCESS_KEY}
 ```
 
 For more information about Node.js demos go to [demo/nodejs](/demo/nodejs).
+
+### Flutter Demo
+
+To run the Leopard demo on Android or iOS with Flutter, you must have the [Flutter SDK](https://flutter.dev/docs/get-started/install) installed on your system. Once installed, you can run `flutter doctor` to determine any other missing requirements for your relevant platform. Once your environment has been set up, launch a simulator or connect an Android/iOS device.
+
+Before launching the app, use the [copy_assets.sh](/demo/flutter/copy_assets.sh) script to copy the cheetah demo model file into the demo project. (**NOTE**: on Windows, Git Bash or another bash shell is required, or you will have to manually copy the context into the project).
+
+Replace `"${YOUR_ACCESS_KEY_HERE}"` in the file [main.dart](/demo/flutter/lib/main.dart) with your `AccessKey`.
+
+Run the following command from [demo/flutter](/demo/flutter) to build and deploy the demo to your device:
+
+```console
+flutter run
+```
 
 ### Go Demo
 
@@ -270,7 +286,7 @@ dependencies {
 }
 ```
 
-Create an instance of the engine and transcribe an audio_file:
+Create an instance of the engine and transcribe an audio file:
 
 ```java
 import ai.picovoice.leopard.*;
@@ -313,6 +329,30 @@ When done, be sure to release resources using `release()`:
 ```javascript
 handle.release();
 ```
+
+### Flutter
+
+Add the [Leopard Flutter plugin](https://pub.dev/packages/leopard_flutter) to your pub.yaml.
+
+```yaml
+dependencies:
+  leopard_flutter: ^<version>
+```
+
+Create an instance of the engine and transcribe an audio file:
+
+```dart
+import 'package:leopard/leopard.dart';
+
+const accessKey = "{ACCESS_KEY}"  // AccessKey obtained from Picovoice Console (https://picovoice.ai/console/)
+
+try {
+    Leopard _leopard = await Leopard.create(accessKey, '{LEOPARD_MODEL_PATH}');
+    String transcript = = await _leopard.processFile("${AUDIO_FILE_PATH}");
+} on LeopardException catch (err) { }
+```
+
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/), and `${AUDIO_FILE_PATH}` with the path to the audio file.
 
 ### Go
 
