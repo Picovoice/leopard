@@ -111,8 +111,7 @@ If the problem persists we suggest storing the recorded audio into a file for in
 
 ```console
 dotnet run -c MicDemo.Release -- \
---access_key ${ACCESS_KEY} \
---output_path ./test.wav
+--access_key ${ACCESS_KEY}
 ```
 
 If after listening to the stored file there is no apparent problem detected, please open an issue.

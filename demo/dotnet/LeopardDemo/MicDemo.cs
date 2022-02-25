@@ -11,6 +11,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Pv;
 
@@ -23,15 +24,6 @@ namespace LeopardDemo
     {
 
         private static readonly int PV_RECORDER_FRAME_LENGTH = 2048;
-
-        static void Recorder(PvRecorder recorder, List<short> audioFrame)
-        {
-            while(true)
-            {
-                short[] pcm = recorder.Read();
-                audioFrame.AddRange(pcm);
-            }
-        }
 
         /// <summary>
         /// Creates an input audio stream and instantiates an instance of Leopard object.
@@ -53,18 +45,33 @@ namespace LeopardDemo
 
             PvRecorder recorder = PvRecorder.Create(audioDeviceIndex, PV_RECORDER_FRAME_LENGTH);
 
+            List<short> audioFrame = new List<short>();
+
+            var tokenSource = new CancellationTokenSource();
+            CancellationToken token = tokenSource.Token;
+
             Console.CancelKeyPress += (s, o) =>
             {
                 Console.WriteLine("Stopping...");
 
+                tokenSource.Cancel();
                 Leopard?.Dispose();
-                recorder.Stop();
                 recorder.Dispose();
             };
 
-            List<short> audioFrame = new List<short>();
-            recorder.Start();
-            Task recordingTask = Task.Run(() => { Recorder(recorder, audioFrame); });
+            Task recordingTask = Task.Run(() => {
+
+                token.ThrowIfCancellationRequested();
+
+                audioFrame.Clear();
+                recorder.Start();
+                while(!token.IsCancellationRequested)
+                {
+                    short[] pcm = recorder.Read();
+                    audioFrame.AddRange(pcm);
+                }
+                recorder.Stop();
+            }, tokenSource.Token);
 
 
             Console.WriteLine($"\nUsing device: {recorder.SelectedDevice}");
@@ -75,7 +82,7 @@ namespace LeopardDemo
                 audioFrame.Clear();
                 Console.WriteLine(">>> Recording ... Press `ENTER` to stop:\n");
 
-                Console.Read();
+                Console.ReadKey();
                 short[] pcm = audioFrame.ToArray();
                 Console.WriteLine(">>> Processing ... \n");
 
@@ -85,7 +92,7 @@ namespace LeopardDemo
                 }
                 catch (LeopardActivationLimitException)
                 {
-                    Console.WriteLine($"AccessKey '{accessKey}' has reached it's processing limit.");
+                    Console.WriteLine($"AccessKey '{accessKey}' has reached its processing limit.");
                 }
             }
         }

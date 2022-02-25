@@ -152,7 +152,7 @@ namespace Pv
         /// </returns>
         public string Process(short[] pcm)
         {
-            if (pcm.Length == 0)
+            if (pcm.Length == 0 | pcm == null)
             {
                 throw new LeopardInvalidArgumentException("Input audio frame is empty");
             }
@@ -172,8 +172,8 @@ namespace Pv
         /// <summary>
         /// Processes a given audio file and returns its transcription.
         /// </summary>
-        /// <param name="pcm">
-        /// audio_path Absolute path to the audio file. The file needs to have a sample rate equal to or greater than `SampleRate`.
+        /// <param name="audioPath">
+        /// Absolute path to the audio file. The file needs to have a sample rate equal to or greater than `SampleRate`.
         /// The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`, `Vorbis`, `WAV`, and `WebM`.
         /// </param>
         /// <returns>
