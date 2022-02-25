@@ -25,5 +25,5 @@ dev_dependencies:
 flutter:  
   uses-material-design: true
   assets:
-    - assets/contexts/android/leopard_params.pv
-    - assets/contexts/ios/leopard_params.pv
+    - assets/models/android/leopard_params.pv
+    - assets/models/ios/leopard_params.pv

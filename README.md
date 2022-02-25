@@ -130,9 +130,9 @@ For more information about Node.js demos go to [demo/nodejs](/demo/nodejs).
 
 ### Flutter Demo
 
-To run the Cheetah demo on Android or iOS with Flutter, you must have the [Flutter SDK](https://flutter.dev/docs/get-started/install) installed on your system. Once installed, you can run `flutter doctor` to determine any other missing requirements for your relevant platform. Once your environment has been set up, launch a simulator or connect an Android/iOS device.
+To run the Leopard demo on Android or iOS with Flutter, you must have the [Flutter SDK](https://flutter.dev/docs/get-started/install) installed on your system. Once installed, you can run `flutter doctor` to determine any other missing requirements for your relevant platform. Once your environment has been set up, launch a simulator or connect an Android/iOS device.
 
-Before launching the app, use the [copy_assets.sh](/demo/flutter/copy_assets.sh) script to copy the cheetah demo model file into the demo project. (**NOTE**: on Windows, Git Bash or another bash shell is required, or you will have to manually copy the context into the project.).
+Before launching the app, use the [copy_assets.sh](/demo/flutter/copy_assets.sh) script to copy the cheetah demo model file into the demo project. (**NOTE**: on Windows, Git Bash or another bash shell is required, or you will have to manually copy the context into the project).
 
 Replace `"${YOUR_ACCESS_KEY_HERE}"` in the file [main.dart](/demo/flutter/lib/main.dart) with your `AccessKey`.
 
@@ -332,7 +332,7 @@ handle.release();
 
 ### Flutter
 
-Add the [Leopard Flutter plugin](https://pub.dev/packages/leopard) to your pub.yaml.
+Add the [Leopard Flutter plugin](https://pub.dev/packages/leopard_flutter) to your pub.yaml.
 
 ```yaml
 dependencies:

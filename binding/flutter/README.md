@@ -60,9 +60,9 @@ On Android, open your AndroidManifest.xml and add the following line:
 <uses-permission android:name="android.permission.INTERNET" />
 ```
 
-**NOTE:** When archiving for release on iOS, you may have to change the build settings of your project in order to prevent stripping of the Cheetaaah library. To do this open the Runner project in XCode and change build setting Deployment -> Strip Style to 'Non-Global Symbols'.
+**NOTE:** When archiving for release on iOS, you may have to change the build settings of your project in order to prevent stripping of the Cheetah library. To do this open the Runner project in XCode and change build setting Deployment -> Strip Style to 'Non-Global Symbols'.
 
-## Model File
+## Leopard Model File Integration
 
 Add the Leopard model file to your Flutter application by:
 
@@ -77,10 +77,10 @@ flutter:
 
 ## Usage
 
-`Leopard` is created by passing a model file path into it's static constructor `create`:
+An instance of `Leopard` is created by passing a model file path into its static constructor `create`:
 
 ```dart
-import 'package:leopard/leopard.dart';
+import 'package:leopard_flutter/leopard.dart';
 
 const accessKey = "{ACCESS_KEY}"  // AccessKey obtained from Picovoice Console (https://picovoice.ai/console/)
 
