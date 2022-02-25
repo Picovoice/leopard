@@ -21,6 +21,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 ## Compatibility
 
 - Java 11+
+- Runs on Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64), Raspberry Pi (4, 3), and NVIDIA Jetson Nano.
 
 ## Installation
 
