@@ -72,6 +72,10 @@ flutter:
   assets:
     - assets/leopard_model.pv
 ```
+4. In this example, the path to the model file in code would then be as follows:
+```dart
+String modelPath = "assets/leopard_model.pv";
+```
 
 ## Usage
 

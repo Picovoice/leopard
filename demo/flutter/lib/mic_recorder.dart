@@ -98,7 +98,7 @@ class MicRecorder {
       return await writeWavFile();
     } catch(e) {
       throw LeopardIOException(
-          "Failed to save recorded aaudio to file.");
+          "Failed to save recorded audio to file.");
     }
   }
 
