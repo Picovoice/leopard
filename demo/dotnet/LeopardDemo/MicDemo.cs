@@ -47,31 +47,14 @@ namespace LeopardDemo
 
             List<short> audioFrame = new List<short>();
 
-            var tokenSource = new CancellationTokenSource();
-            CancellationToken token = tokenSource.Token;
 
             Console.CancelKeyPress += (s, o) =>
             {
                 Console.WriteLine("Stopping...");
 
-                tokenSource.Cancel();
                 Leopard?.Dispose();
                 recorder.Dispose();
             };
-
-            Task recordingTask = Task.Run(() => {
-
-                token.ThrowIfCancellationRequested();
-
-                audioFrame.Clear();
-                recorder.Start();
-                while(!token.IsCancellationRequested)
-                {
-                    short[] pcm = recorder.Read();
-                    audioFrame.AddRange(pcm);
-                }
-                recorder.Stop();
-            }, tokenSource.Token);
 
 
             Console.WriteLine($"\nUsing device: {recorder.SelectedDevice}");
@@ -79,13 +62,27 @@ namespace LeopardDemo
 
             while (true)
             {
-                audioFrame.Clear();
                 Console.WriteLine(">>> Recording ... Press `ENTER` to stop:\n");
+                var tokenSource = new CancellationTokenSource();
+                CancellationToken token = tokenSource.Token;
+                Task recordingTask = Task.Run(() =>
+                {
+                    audioFrame.Clear();
+                    recorder.Start();
+                    while (!token.IsCancellationRequested)
+                    {
+                        short[] pcm = recorder.Read();
+                        audioFrame.AddRange(pcm);
+                    }
+                    recorder.Stop();
+                }, token);
 
-                Console.ReadKey();
+                Console.Read();
+
+                tokenSource.Cancel();
                 short[] pcm = audioFrame.ToArray();
-                Console.WriteLine(">>> Processing ... \n");
 
+                Console.WriteLine(">>> Processing ... \n");
                 try
                 {
                     Console.WriteLine(Leopard.Process(pcm));
