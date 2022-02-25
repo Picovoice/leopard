@@ -1,0 +1,5 @@
+.vs
+LeopardDemo/bin/**
+LeopardDemo/obj/**
+LeopardDemo/Properties/**
+*.user
