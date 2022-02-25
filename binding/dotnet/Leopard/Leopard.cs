@@ -68,7 +68,7 @@ namespace Pv
             out IntPtr handle);
 
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-        private static extern int pv_sample_rate();
+        private static extern System.Int32 pv_sample_rate();
 
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         private static extern void pv_leopard_delete(IntPtr handle);
@@ -77,7 +77,7 @@ namespace Pv
         private static extern PvStatus pv_leopard_process(
             IntPtr handle,
             System.Int16[] pcm,
-            System.Int32[] pcmLength,
+            System.Int32 pcmLength,
             out IntPtr transcriptPtr);
 
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
@@ -150,7 +150,7 @@ namespace Pv
         /// <returns>
         /// Inferred transcription.
         /// </returns>
-        public string Process(short[] pcm)
+        public string Process(System.Int16[] pcm)
         {
             if (pcm.Length == 0 | pcm == null)
             {
@@ -158,7 +158,7 @@ namespace Pv
             }
 
             IntPtr transcriptPtr = IntPtr.Zero;
-            PvStatus status = pv_leopard_process(_libraryPointer, pcm, pcm.Length, out transcriptPtr);
+            PvStatus status = pv_leopard_process(_libraryPointer, pcm, (System.Int32) pcm.Length, out transcriptPtr);
             if (status != PvStatus.SUCCESS)
             {
                 throw PvStatusToException(status, "Leopard failed to process the audio frame.");
@@ -208,7 +208,7 @@ namespace Pv
         /// Get the audio sample rate required by Leopard
         /// </summary>
         /// <returns>Required sample rate.</returns>
-        public int SampleRate { get; private set; }
+        public System.Int32 SampleRate { get; private set; }
 
         /// <summary>
         /// Coverts status codes to relavent .NET exceptions
