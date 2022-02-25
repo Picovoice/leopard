@@ -25,10 +25,12 @@ public class Leopard {
 
     public static final String LIBRARY_PATH;
     public static final String MODEL_PATH;
+    public static final String[] VALID_EXTENSIONS;
 
     static {
         LIBRARY_PATH = Utils.getPackagedLibraryPath();
         MODEL_PATH = Utils.getPackagedModelPath();
+        VALID_EXTENSIONS = Utils.getValidFileExtensions();
     }
 
     /**
@@ -77,7 +79,17 @@ public class Leopard {
      * @throws LeopardException if there is an error while processing the audio frame.
      */
     public String processFile(String path) throws LeopardException {
-        return processFile(libraryHandle, path);
+        try {
+            return processFile(libraryHandle, path);
+        } catch (LeopardInvalidArgumentException e) {
+            if (path.contains(".")) {
+                String extension = path.substring(path.lastIndexOf(".") + 1);
+                if (!Arrays.asList(VALID_EXTENSIONS).contains(extension)) {
+                    throw new LeopardInvalidArgumentException(String.format("Specified file with extension '%s' is not supported", extension));
+                }
+            }
+            throw e;
+        }
     }
 
     /**
@@ -94,13 +106,13 @@ public class Leopard {
      */
     public native String getVersion();
 
-    private native long init(String accessKey, String modelPath);
+    private native long init(String accessKey, String modelPath) throws LeopardException;
 
     private native void delete(long object);
 
-    private native String process(long object, short[] pcm, int numSamples);
+    private native String process(long object, short[] pcm, int numSamples) throws LeopardException;
 
-    private native String processFile(long object, String path);
+    private native String processFile(long object, String path) throws LeopardException;
 
     public static class Builder {
         private String accessKey = null;

@@ -225,4 +225,8 @@ class Utils {
                 return null;
         }
     }
+
+    public static String[] getValidFileExtensions() {
+        return new String[]{".flac", ".mp3", ".ogg", ".opus", ".wav", ".webm"};
+    }
 }
