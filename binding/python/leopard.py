@@ -9,6 +9,7 @@
 #    specific language governing permissions and limitations under the License.
 #
 
+import pathlib
 import os
 from ctypes import *
 from enum import Enum
@@ -188,7 +189,7 @@ class Leopard(object):
             if status is self.PicovoiceStatuses.INVALID_ARGUMENT:
                 if not audio_path.lower().endswith(self._VALID_EXTENSIONS):
                     raise self._PICOVOICE_STATUS_TO_EXCEPTION[status](
-                        f"Specified file with extension is not supported"
+                        f"Specified file with extension '{pathlib.Path(audio_path).suffix}' is not supported"
                     )
             raise self._PICOVOICE_STATUS_TO_EXCEPTION[status]()
 
