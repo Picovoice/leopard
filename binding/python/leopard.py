@@ -9,6 +9,7 @@
 #    specific language governing permissions and limitations under the License.
 #
 
+import pathlib
 import os
 from ctypes import *
 from enum import Enum
@@ -95,6 +96,8 @@ class Leopard(object):
         PicovoiceStatuses.ACTIVATION_THROTTLED: LeopardActivationThrottledError,
         PicovoiceStatuses.ACTIVATION_REFUSED: LeopardActivationRefusedError
     }
+
+    _VALID_EXTENSIONS = ('.flac', '.mp3', '.ogg', '.opus', '.wav', '.webm')
 
     class CLeopard(Structure):
         pass
@@ -183,6 +186,11 @@ class Leopard(object):
         c_transcript = c_char_p()
         status = self._process_file_func(self._handle, audio_path.encode(), byref(c_transcript))
         if status is not self.PicovoiceStatuses.SUCCESS:
+            if status is self.PicovoiceStatuses.INVALID_ARGUMENT:
+                if not audio_path.lower().endswith(self._VALID_EXTENSIONS):
+                    raise self._PICOVOICE_STATUS_TO_EXCEPTION[status](
+                        f"Specified file with extension '{pathlib.Path(audio_path).suffix}' is not supported"
+                    )
             raise self._PICOVOICE_STATUS_TO_EXCEPTION[status]()
 
         return c_transcript.value.decode('utf-8')
