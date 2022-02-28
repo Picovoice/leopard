@@ -34,6 +34,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [Go](#go-demo)
         - [React Native](#react-native-demo)
         - [Java](#java-demo)
+        - [.NET](#net-demo)
     - [SDKs](#sdks)
         - [Python](#python)
         - [C](#c)
@@ -44,6 +45,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [Go](#go)
         - [React Native](#react-native)
         - [Java](#java)
+        - [.NET](#net)
     - [Releases](#releases)
 
 ## AccessKey
@@ -176,7 +178,7 @@ yarn ios-install        # sets up environment
 yarn ios-run 
 ```
 
-### Java Demos
+### Java Demo
 
 The [Leopard Java demo](/demo/java) is a command-line application that lets you choose between running Leopard on an audio file or on microphone input.
 
@@ -193,6 +195,21 @@ Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_
 
 For more information about Java demos go to [demo/java](/demo/java).
 
+### .NET Demo
+
+[Leopard .NET demo](/demo/dotnet) is a command-line application that lets you choose between running Leopard on an audio
+file or on real-time microphone input.
+
+Make sure there is a working microphone connected to your device. From [demo/dotnet/LeopardDemo](/demo/dotnet/LeopardDemo)
+run the following in the terminal:
+
+```console
+dotnet run -c MicDemo.Release -- --access_key ${ACCESS_KEY}
+```
+
+Replace `${ACCESS_KEY}` with your Picovoice `AccessKey`.
+
+For more information about .NET demos, go to [demo/dotnet](/demo/dotnet).
 
 ## SDKs
 
@@ -442,6 +459,28 @@ System.out.println(transcript);
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and `${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
 
+### .NET
+
+Install the .NET SDK using NuGet or the dotnet CLI:
+
+```console
+dotnet add package Leopard
+```
+
+Create an instance of the engine and transcribe an audio file:
+
+```csharp
+using Pv;
+
+const string accessKey = "${ACCESS_KEY}";
+const string audioPath = "/absolute/path/to/audio_file";
+
+Leopard handle = Leopard.Create(accessKey);
+
+Console.Write(handle.ProcessFile(audioPath));
+```
+
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)). Finally, when done release the resources using `handle.Dispose()`.
 
 ## Releases
 
