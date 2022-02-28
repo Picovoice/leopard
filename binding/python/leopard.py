@@ -96,7 +96,7 @@ class Leopard(object):
         PicovoiceStatuses.ACTIVATION_REFUSED: LeopardActivationRefusedError
     }
 
-    _VALID_EXTENSIONS = ('flac', 'mp3', 'ogg', 'opus', 'wav', 'webm')
+    _VALID_EXTENSIONS = ('.flac', '.mp3', '.ogg', '.opus', '.wav', '.webm')
 
     class CLeopard(Structure):
         pass
