@@ -37,9 +37,9 @@ namespace LeopardDemo
             int audioDeviceIndex)
         {
 
-            Leopard Leopard = null;
+            Leopard leopard = null;
 
-            Leopard = Leopard.Create(
+            leopard = Leopard.Create(
                 accessKey,
                 modelPath);
 
@@ -52,7 +52,7 @@ namespace LeopardDemo
             {
                 Console.WriteLine("Stopping...");
 
-                Leopard?.Dispose();
+                leopard?.Dispose();
                 recorder.Dispose();
             };
 
@@ -85,7 +85,7 @@ namespace LeopardDemo
                 Console.WriteLine(">>> Processing ... \n");
                 try
                 {
-                    Console.WriteLine(Leopard.Process(pcm));
+                    Console.WriteLine(leopard.Process(pcm));
                 }
                 catch (LeopardActivationLimitException)
                 {
