@@ -18,7 +18,7 @@ using Pv;
 namespace LeopardDemo
 {
     /// <summary>
-    /// Microphone Demo for Leopard Speech-to-Tntent engine. It creates an input audio stream from a microphone. 
+    /// Microphone Demo for Leopard Speech-to-Text engine. It creates an input audio stream from a microphone. 
     /// </summary>
     public class MicDemo
     {
