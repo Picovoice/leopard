@@ -34,7 +34,7 @@ namespace LeopardDemo
             string inputAudioPath,
             string modelPath)
         {
-            // init Leopard speech-to-test engine
+            // init Leopard speech-to-text engine
             using Leopard Leopard = Leopard.Create(
                 accessKey,
                 modelPath);
