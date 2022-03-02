@@ -41,6 +41,7 @@
 		1E00653627CFEF02006FF6E9 /* LeopardAppTestUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeopardAppTestUITests.swift; sourceTree = "<group>"; };
 		1E00654727CFF55C006FF6E9 /* test.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = test.wav; path = ../../../../resources/audio_samples/test.wav; sourceTree = "<group>"; };
 		1E00654927CFF571006FF6E9 /* leopard_params.pv */ = {isa = PBXFileReference; lastKnownFileType = file; name = leopard_params.pv; path = ../../../../lib/common/leopard_params.pv; sourceTree = "<group>"; };
+		1E00658727CFF9A9006FF6E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6BC50A1115F0683ED58A3282 /* Pods-LeopardAppTestUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardAppTestUITests.release.xcconfig"; path = "Target Support Files/Pods-LeopardAppTestUITests/Pods-LeopardAppTestUITests.release.xcconfig"; sourceTree = "<group>"; };
 		8B0DF9298098D5CC4E1923F1 /* Pods-LeopardAppTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardAppTest.release.xcconfig"; path = "Target Support Files/Pods-LeopardAppTest/Pods-LeopardAppTest.release.xcconfig"; sourceTree = "<group>"; };
 		A628417A52824080EC61AA1F /* Pods-LeopardAppTestUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardAppTestUITests.debug.xcconfig"; path = "Target Support Files/Pods-LeopardAppTestUITests/Pods-LeopardAppTestUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -117,6 +118,7 @@
 				1E00654727CFF55C006FF6E9 /* test.wav */,
 				1E00654927CFF571006FF6E9 /* leopard_params.pv */,
 				1E00653627CFEF02006FF6E9 /* LeopardAppTestUITests.swift */,
+				1E00658727CFF9A9006FF6E9 /* Info.plist */,
 			);
 			path = LeopardAppTestUITests;
 			sourceTree = "<group>";
