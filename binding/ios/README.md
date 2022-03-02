@@ -76,6 +76,10 @@ with the name of the Leopard model file name, `${AUDIO_FILE_NAME}` with the name
 `${AUDIO_FILE_EXTENSION}` with the extension of the audio file. Finally, when done be sure to explicitly release
 the resources using `leopard.delete()`.
 
+## Running Unit Tests
+
+Copy your `AccessKey` into the `accessKey` variable in [`LeopardAppTestUITests.swift`](LeopardAppTest/LeopardAppTestUITests/LeopardAppTestUITests.swift). Open `LeopardAppTest.xcworkspace` with XCode and run the tests with `Product > Test`.
+
 ## Demo App
 
 For example usage refer to our [iOS demo application](/demo/ios).
