@@ -5,17 +5,17 @@ on:
   push:
     branches: [ master ]
     paths: 
-      - 'demo/ios/LeopardDemo/Podfile.lock'
+      - 'binding/ios/LeopardAppTest/Podfile.lock'
       - '.github/workflows/ios-appcenter.yml'
   pull_request:
     branches: [ master ]
     paths: 
-      - 'demo/ios/LeopardDemo/Podfile.lock'
+      - 'binding/ios/LeopardAppTest/Podfile.lock'
       - '.github/workflows/ios-appcenter.yml'
       
 defaults:
   run:
-    working-directory: demo/ios/LeopardDemo
+    working-directory: binding/ios/LeopardAppTest
     
 jobs:
   build:
@@ -43,14 +43,14 @@ jobs:
 
       - name: Inject AppID
         run: sed -i '.bak' 's:{TESTING_ACCESS_KEY_HERE}:${{secrets.PV_VALID_ACCESS_KEY}}:'
-          LeopardDemoUITests/LeopardDemoUITests.swift
+          LeopardAppTestUITests/LeopardAppTestUITests.swift
 
       - name: XCode Build
         run: xcrun xcodebuild build-for-testing 
           -configuration Debug 
-          -workspace LeopardDemo.xcworkspace 
+          -workspace LeopardAppTest.xcworkspace 
           -sdk iphoneos 
-          -scheme LeopardDemo
+          -scheme LeopardAppTest
           -derivedDataPath ddp 
           CODE_SIGNING_ALLOWED=NO
 

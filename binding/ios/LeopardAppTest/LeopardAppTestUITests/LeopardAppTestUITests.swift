@@ -11,8 +11,8 @@ import AVFoundation
 import XCTest
 import Leopard
 
-class LeopardDemoUITests: XCTestCase {
-    let accessKey: String = "Tw4jothrMMLyRYQ793yD/XF3DeithcbeNVsYlNN0Dc1vY26suWNOkg=="
+class LeopardAppTestUITests: XCTestCase {
+    let accessKey: String = "{TESTING_ACCESS_KEY_HERE}"
     let transcript: String = "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL"
 
     var leopard: Leopard?

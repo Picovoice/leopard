@@ -19,7 +19,3 @@ Before building the demo app, run the following from [LeopardDemo](/demo/ios/Leo
 pod install
 ```
 Open [LeopardDemo.xcworkspace](/demo/ios/LeopardDemo/LeopardDemo.xcworkspace`) and run the demo.
-
-## Running the On-Device Unit Tests
-
-Copy your `AccessKey` into the `accessKey` variable in [LeopardDemoUITests.swift](/demo/ios/LeopardDemo/LeopardDemoUITests/LeopardDemoUITests.swift). Open [LeopardDemo.xcworkspace](/demo/ios/LeopardDemo/LeopardDemo.xcworkspace`)  with XCode and run the tests with `Product > Test`.

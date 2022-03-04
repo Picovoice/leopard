@@ -1,0 +1,619 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0BDFC0A822E9A2F6228E92A8 /* libPods-LeopardAppTestUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B668EC1ABCFC88724E7BD315 /* libPods-LeopardAppTestUITests.a */; };
+		1E00651627CFEF00006FF6E9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E00651527CFEF00006FF6E9 /* AppDelegate.swift */; };
+		1E00651A27CFEF00006FF6E9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E00651927CFEF00006FF6E9 /* ViewController.swift */; };
+		1E00651D27CFEF00006FF6E9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E00651B27CFEF00006FF6E9 /* Main.storyboard */; };
+		1E00651F27CFEF02006FF6E9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E00651E27CFEF02006FF6E9 /* Assets.xcassets */; };
+		1E00652227CFEF02006FF6E9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E00652027CFEF02006FF6E9 /* LaunchScreen.storyboard */; };
+		1E00653727CFEF02006FF6E9 /* LeopardAppTestUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E00653627CFEF02006FF6E9 /* LeopardAppTestUITests.swift */; };
+		1E00654827CFF55C006FF6E9 /* test.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1E00654727CFF55C006FF6E9 /* test.wav */; };
+		1E00654A27CFF571006FF6E9 /* leopard_params.pv in Resources */ = {isa = PBXBuildFile; fileRef = 1E00654927CFF571006FF6E9 /* leopard_params.pv */; };
+		988C1BA31269C05D013AD6A7 /* libPods-LeopardAppTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FAAD60C0B3177B883F765BC5 /* libPods-LeopardAppTest.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1E00653327CFEF02006FF6E9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1E00650A27CFEF00006FF6E9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1E00651127CFEF00006FF6E9;
+			remoteInfo = LeopardAppTest;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1E00651227CFEF00006FF6E9 /* LeopardAppTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LeopardAppTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1E00651527CFEF00006FF6E9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		1E00651927CFEF00006FF6E9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		1E00651C27CFEF00006FF6E9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		1E00651E27CFEF02006FF6E9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1E00652127CFEF02006FF6E9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		1E00652327CFEF02006FF6E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1E00653227CFEF02006FF6E9 /* LeopardAppTestUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LeopardAppTestUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1E00653627CFEF02006FF6E9 /* LeopardAppTestUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeopardAppTestUITests.swift; sourceTree = "<group>"; };
+		1E00654727CFF55C006FF6E9 /* test.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = test.wav; path = ../../../../resources/audio_samples/test.wav; sourceTree = "<group>"; };
+		1E00654927CFF571006FF6E9 /* leopard_params.pv */ = {isa = PBXFileReference; lastKnownFileType = file; name = leopard_params.pv; path = ../../../../lib/common/leopard_params.pv; sourceTree = "<group>"; };
+		1E00658727CFF9A9006FF6E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6BC50A1115F0683ED58A3282 /* Pods-LeopardAppTestUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardAppTestUITests.release.xcconfig"; path = "Target Support Files/Pods-LeopardAppTestUITests/Pods-LeopardAppTestUITests.release.xcconfig"; sourceTree = "<group>"; };
+		8B0DF9298098D5CC4E1923F1 /* Pods-LeopardAppTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardAppTest.release.xcconfig"; path = "Target Support Files/Pods-LeopardAppTest/Pods-LeopardAppTest.release.xcconfig"; sourceTree = "<group>"; };
+		A628417A52824080EC61AA1F /* Pods-LeopardAppTestUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardAppTestUITests.debug.xcconfig"; path = "Target Support Files/Pods-LeopardAppTestUITests/Pods-LeopardAppTestUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		ABC7F42231559CA8C0EAB4FF /* Pods-LeopardAppTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardAppTest.debug.xcconfig"; path = "Target Support Files/Pods-LeopardAppTest/Pods-LeopardAppTest.debug.xcconfig"; sourceTree = "<group>"; };
+		B668EC1ABCFC88724E7BD315 /* libPods-LeopardAppTestUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LeopardAppTestUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		FAAD60C0B3177B883F765BC5 /* libPods-LeopardAppTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LeopardAppTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1E00650F27CFEF00006FF6E9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				988C1BA31269C05D013AD6A7 /* libPods-LeopardAppTest.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1E00652F27CFEF02006FF6E9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0BDFC0A822E9A2F6228E92A8 /* libPods-LeopardAppTestUITests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		07E48C12FECF6BD7D85456EF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FAAD60C0B3177B883F765BC5 /* libPods-LeopardAppTest.a */,
+				B668EC1ABCFC88724E7BD315 /* libPods-LeopardAppTestUITests.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		1E00650927CFEF00006FF6E9 = {
+			isa = PBXGroup;
+			children = (
+				1E00651427CFEF00006FF6E9 /* LeopardAppTest */,
+				1E00653527CFEF02006FF6E9 /* LeopardAppTestUITests */,
+				1E00651327CFEF00006FF6E9 /* Products */,
+				F86E3070BA0AB1892EFF0BA0 /* Pods */,
+				07E48C12FECF6BD7D85456EF /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		1E00651327CFEF00006FF6E9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1E00651227CFEF00006FF6E9 /* LeopardAppTest.app */,
+				1E00653227CFEF02006FF6E9 /* LeopardAppTestUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1E00651427CFEF00006FF6E9 /* LeopardAppTest */ = {
+			isa = PBXGroup;
+			children = (
+				1E00651527CFEF00006FF6E9 /* AppDelegate.swift */,
+				1E00651927CFEF00006FF6E9 /* ViewController.swift */,
+				1E00651B27CFEF00006FF6E9 /* Main.storyboard */,
+				1E00651E27CFEF02006FF6E9 /* Assets.xcassets */,
+				1E00652027CFEF02006FF6E9 /* LaunchScreen.storyboard */,
+				1E00652327CFEF02006FF6E9 /* Info.plist */,
+			);
+			path = LeopardAppTest;
+			sourceTree = "<group>";
+		};
+		1E00653527CFEF02006FF6E9 /* LeopardAppTestUITests */ = {
+			isa = PBXGroup;
+			children = (
+				1E00654727CFF55C006FF6E9 /* test.wav */,
+				1E00654927CFF571006FF6E9 /* leopard_params.pv */,
+				1E00653627CFEF02006FF6E9 /* LeopardAppTestUITests.swift */,
+				1E00658727CFF9A9006FF6E9 /* Info.plist */,
+			);
+			path = LeopardAppTestUITests;
+			sourceTree = "<group>";
+		};
+		F86E3070BA0AB1892EFF0BA0 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				ABC7F42231559CA8C0EAB4FF /* Pods-LeopardAppTest.debug.xcconfig */,
+				8B0DF9298098D5CC4E1923F1 /* Pods-LeopardAppTest.release.xcconfig */,
+				A628417A52824080EC61AA1F /* Pods-LeopardAppTestUITests.debug.xcconfig */,
+				6BC50A1115F0683ED58A3282 /* Pods-LeopardAppTestUITests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1E00651127CFEF00006FF6E9 /* LeopardAppTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1E00653C27CFEF02006FF6E9 /* Build configuration list for PBXNativeTarget "LeopardAppTest" */;
+			buildPhases = (
+				8FFE415B5E42E4BD50C70999 /* [CP] Check Pods Manifest.lock */,
+				1E00650E27CFEF00006FF6E9 /* Sources */,
+				1E00650F27CFEF00006FF6E9 /* Frameworks */,
+				1E00651027CFEF00006FF6E9 /* Resources */,
+				15E648A41DDE8623D3283489 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LeopardAppTest;
+			productName = LeopardAppTest;
+			productReference = 1E00651227CFEF00006FF6E9 /* LeopardAppTest.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1E00653127CFEF02006FF6E9 /* LeopardAppTestUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1E00654227CFEF02006FF6E9 /* Build configuration list for PBXNativeTarget "LeopardAppTestUITests" */;
+			buildPhases = (
+				DCF6EC99A386DB9369EC23FA /* [CP] Check Pods Manifest.lock */,
+				1E00652E27CFEF02006FF6E9 /* Sources */,
+				1E00652F27CFEF02006FF6E9 /* Frameworks */,
+				1E00653027CFEF02006FF6E9 /* Resources */,
+				28D5E5B53AE578A39EF43803 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1E00653427CFEF02006FF6E9 /* PBXTargetDependency */,
+			);
+			name = LeopardAppTestUITests;
+			productName = LeopardAppTestUITests;
+			productReference = 1E00653227CFEF02006FF6E9 /* LeopardAppTestUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1E00650A27CFEF00006FF6E9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1320;
+				LastUpgradeCheck = 1320;
+				TargetAttributes = {
+					1E00651127CFEF00006FF6E9 = {
+						CreatedOnToolsVersion = 13.2.1;
+					};
+					1E00653127CFEF02006FF6E9 = {
+						CreatedOnToolsVersion = 13.2.1;
+						TestTargetID = 1E00651127CFEF00006FF6E9;
+					};
+				};
+			};
+			buildConfigurationList = 1E00650D27CFEF00006FF6E9 /* Build configuration list for PBXProject "LeopardAppTest" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1E00650927CFEF00006FF6E9;
+			productRefGroup = 1E00651327CFEF00006FF6E9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1E00651127CFEF00006FF6E9 /* LeopardAppTest */,
+				1E00653127CFEF02006FF6E9 /* LeopardAppTestUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1E00651027CFEF00006FF6E9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1E00652227CFEF02006FF6E9 /* LaunchScreen.storyboard in Resources */,
+				1E00651F27CFEF02006FF6E9 /* Assets.xcassets in Resources */,
+				1E00651D27CFEF00006FF6E9 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1E00653027CFEF02006FF6E9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1E00654827CFF55C006FF6E9 /* test.wav in Resources */,
+				1E00654A27CFF571006FF6E9 /* leopard_params.pv in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		15E648A41DDE8623D3283489 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-LeopardAppTest/Pods-LeopardAppTest-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-LeopardAppTest/Pods-LeopardAppTest-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-LeopardAppTest/Pods-LeopardAppTest-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		28D5E5B53AE578A39EF43803 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-LeopardAppTestUITests/Pods-LeopardAppTestUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-LeopardAppTestUITests/Pods-LeopardAppTestUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-LeopardAppTestUITests/Pods-LeopardAppTestUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8FFE415B5E42E4BD50C70999 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-LeopardAppTest-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DCF6EC99A386DB9369EC23FA /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-LeopardAppTestUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1E00650E27CFEF00006FF6E9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1E00651A27CFEF00006FF6E9 /* ViewController.swift in Sources */,
+				1E00651627CFEF00006FF6E9 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1E00652E27CFEF02006FF6E9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1E00653727CFEF02006FF6E9 /* LeopardAppTestUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1E00653427CFEF02006FF6E9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1E00651127CFEF00006FF6E9 /* LeopardAppTest */;
+			targetProxy = 1E00653327CFEF02006FF6E9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		1E00651B27CFEF00006FF6E9 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1E00651C27CFEF00006FF6E9 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		1E00652027CFEF02006FF6E9 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1E00652127CFEF02006FF6E9 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1E00653A27CFEF02006FF6E9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		1E00653B27CFEF02006FF6E9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1E00653D27CFEF02006FF6E9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = ABC7F42231559CA8C0EAB4FF /* Pods-LeopardAppTest.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 65723695GD;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LeopardAppTest/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.picovoice.LeopardAppTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		1E00653E27CFEF02006FF6E9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8B0DF9298098D5CC4E1923F1 /* Pods-LeopardAppTest.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 65723695GD;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LeopardAppTest/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.picovoice.LeopardAppTest;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		1E00654327CFEF02006FF6E9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A628417A52824080EC61AA1F /* Pods-LeopardAppTestUITests.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 65723695GD;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.picovoice.LeopardAppTestUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LeopardAppTest;
+			};
+			name = Debug;
+		};
+		1E00654427CFEF02006FF6E9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6BC50A1115F0683ED58A3282 /* Pods-LeopardAppTestUITests.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 65723695GD;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.picovoice.LeopardAppTestUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LeopardAppTest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1E00650D27CFEF00006FF6E9 /* Build configuration list for PBXProject "LeopardAppTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1E00653A27CFEF02006FF6E9 /* Debug */,
+				1E00653B27CFEF02006FF6E9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1E00653C27CFEF02006FF6E9 /* Build configuration list for PBXNativeTarget "LeopardAppTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1E00653D27CFEF02006FF6E9 /* Debug */,
+				1E00653E27CFEF02006FF6E9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1E00654227CFEF02006FF6E9 /* Build configuration list for PBXNativeTarget "LeopardAppTestUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1E00654327CFEF02006FF6E9 /* Debug */,
+				1E00654427CFEF02006FF6E9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1E00650A27CFEF00006FF6E9 /* Project object */;
+}

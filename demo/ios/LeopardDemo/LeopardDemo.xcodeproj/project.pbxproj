@@ -8,37 +8,19 @@
 
 /* Begin PBXBuildFile section */
 		32769079E5BC2BA141FA659F /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327695EA9D71F6A29C6D079A /* ViewModel.swift */; };
-		327693608DEE169684123990 /* test.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3276944A97818A612ED1D2C0 /* test.wav */; };
-		3276947B9CEB911537B1C647 /* leopard_params.pv in Resources */ = {isa = PBXBuildFile; fileRef = 3276985D3C3865B5EC13B467 /* leopard_params.pv */; };
 		3276967434C9CEBD0AF09237 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 327694975368499C3B7946DD /* Assets.xcassets */; };
 		327696B6A9132F948D8763C9 /* leopard_params.pv in Resources */ = {isa = PBXBuildFile; fileRef = 3276985D3C3865B5EC13B467 /* leopard_params.pv */; };
 		327698EADFD16D8F70823520 /* LeopardDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327697358B823E5B2EF0FA8C /* LeopardDemoApp.swift */; };
 		32769B2E1B2C5A2A897FFB10 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32769F3923C69C8C0C435CCF /* ContentView.swift */; };
-		32769D436A1FD396FF5710C7 /* LeopardDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3276967194B02CE009D52D3A /* LeopardDemoUITests.swift */; };
-		A5231861CA241F9F87807269 /* libPods-LeopardDemoUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6317D5AC3BB798341835D07F /* libPods-LeopardDemoUITests.a */; };
 		AF10BC13B27DBA6B733B192A /* libPods-LeopardDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CB997F06C7C673F9F2446D95 /* libPods-LeopardDemo.a */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		32769A76C9B8D1CED6353358 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 32769964E3C57B4A4BE3CC9E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 327696DE3A6139B4D33CA898;
-			remoteInfo = LeopardDemo;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		3276944A97818A612ED1D2C0 /* test.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = test.wav; path = ../../../../resources/audio_samples/test.wav; sourceTree = "<group>"; };
 		327694975368499C3B7946DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		327695EA9D71F6A29C6D079A /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
-		3276967194B02CE009D52D3A /* LeopardDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeopardDemoUITests.swift; sourceTree = "<group>"; };
 		327697358B823E5B2EF0FA8C /* LeopardDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeopardDemoApp.swift; sourceTree = "<group>"; };
 		3276985D3C3865B5EC13B467 /* leopard_params.pv */ = {isa = PBXFileReference; lastKnownFileType = file.pv; name = leopard_params.pv; path = ../../../../lib/common/leopard_params.pv; sourceTree = "<group>"; };
 		327699927E572962C40A7A04 /* LeopardDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LeopardDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		32769B28B14D2E3D61B4F202 /* LeopardDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LeopardDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		32769CFD1A229B5B30E40E82 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		32769E49F724E169E0E13E27 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		32769F3923C69C8C0C435CCF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		3B82BCD82CCC5303A602F516 /* Pods-LeopardDemoUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardDemoUITests.debug.xcconfig"; path = "Target Support Files/Pods-LeopardDemoUITests/Pods-LeopardDemoUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -50,14 +32,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		32769C64A8AF05CC4C733278 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A5231861CA241F9F87807269 /* libPods-LeopardDemoUITests.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		32769FD78B69EE3D028A9BD8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -83,25 +57,15 @@
 			children = (
 				32769B87809678D96B1C6C55 /* Products */,
 				32769C17C8FD0599F872D3D1 /* LeopardDemo */,
-				32769DC759AF253C5D8638CF /* LeopardDemoUITests */,
 				AED451108802979154B4E395 /* Pods */,
 				152DF7E2EA2DFC4CD7EB46DC /* Frameworks */,
 			);
-			sourceTree = "<group>";
-		};
-		327698AFD86752520459D3B0 /* test_resources */ = {
-			isa = PBXGroup;
-			children = (
-				32769C92D5EEC244AFCC1A04 /* audio */,
-			);
-			name = test_resources;
 			sourceTree = "<group>";
 		};
 		32769B87809678D96B1C6C55 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				327699927E572962C40A7A04 /* LeopardDemo.app */,
-				32769B28B14D2E3D61B4F202 /* LeopardDemoUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -119,24 +83,6 @@
 			path = LeopardDemo;
 			sourceTree = "<group>";
 		};
-		32769C92D5EEC244AFCC1A04 /* audio */ = {
-			isa = PBXGroup;
-			children = (
-				3276944A97818A612ED1D2C0 /* test.wav */,
-			);
-			name = audio;
-			sourceTree = "<group>";
-		};
-		32769DC759AF253C5D8638CF /* LeopardDemoUITests */ = {
-			isa = PBXGroup;
-			children = (
-				3276967194B02CE009D52D3A /* LeopardDemoUITests.swift */,
-				327698AFD86752520459D3B0 /* test_resources */,
-				32769CFD1A229B5B30E40E82 /* Info.plist */,
-			);
-			path = LeopardDemoUITests;
-			sourceTree = "<group>";
-		};
 		AED451108802979154B4E395 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -151,26 +97,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3276935E3038CD1E69CAFB3A /* LeopardDemoUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3276906172E41814E4CA2C6F /* Build configuration list for PBXNativeTarget "LeopardDemoUITests" */;
-			buildPhases = (
-				2172BB6D2000DA4DE3DE7F19 /* [CP] Check Pods Manifest.lock */,
-				32769A79AA816BDEA6A4070B /* Sources */,
-				32769C64A8AF05CC4C733278 /* Frameworks */,
-				3276991C0EFBE7A2F1D6222B /* Resources */,
-				A3162763673B9B2CDDCA9699 /* [CP] Embed Pods Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				327697DB333A5CCB453F8B5B /* PBXTargetDependency */,
-			);
-			name = LeopardDemoUITests;
-			productName = LeopardDemoUITests;
-			productReference = 32769B28B14D2E3D61B4F202 /* LeopardDemoUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 		327696DE3A6139B4D33CA898 /* LeopardDemo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 32769440EBAF1B96C25C64E5 /* Build configuration list for PBXNativeTarget "LeopardDemo" */;
@@ -198,10 +124,6 @@
 			attributes = {
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
-					3276935E3038CD1E69CAFB3A = {
-						DevelopmentTeam = 65723695GD;
-						TestTargetID = 327696DE3A6139B4D33CA898;
-					};
 					327696DE3A6139B4D33CA898 = {
 						DevelopmentTeam = 65723695GD;
 						ProvisioningStyle = Automatic;
@@ -222,7 +144,6 @@
 			projectRoot = "";
 			targets = (
 				327696DE3A6139B4D33CA898 /* LeopardDemo */,
-				3276935E3038CD1E69CAFB3A /* LeopardDemoUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -237,40 +158,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3276991C0EFBE7A2F1D6222B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				327693608DEE169684123990 /* test.wav in Resources */,
-				3276947B9CEB911537B1C647 /* leopard_params.pv in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		2172BB6D2000DA4DE3DE7F19 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-LeopardDemoUITests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		6B8F74027D329047EE376040 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -287,24 +177,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-LeopardDemo/Pods-LeopardDemo-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A3162763673B9B2CDDCA9699 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-LeopardDemoUITests/Pods-LeopardDemoUITests-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Leopard-iOS/PvLeopard.framework/PvLeopard",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PvLeopard.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-LeopardDemoUITests/Pods-LeopardDemoUITests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		EEEBC400C3F382C9ADB47297 /* [CP] Check Pods Manifest.lock */ = {
@@ -332,14 +204,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		32769A79AA816BDEA6A4070B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				32769D436A1FD396FF5710C7 /* LeopardDemoUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		32769E8C15D0D566DE02D742 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -351,14 +215,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		327697DB333A5CCB453F8B5B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 327696DE3A6139B4D33CA898 /* LeopardDemo */;
-			targetProxy = 32769A76C9B8D1CED6353358 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		32769487371C1880F7B21CB3 /* Release */ = {
@@ -474,44 +330,6 @@
 			};
 			name = Release;
 		};
-		327698F63FA3E6D4756713F8 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = F33333AE1B947FF5FFB3E9E7 /* Pods-LeopardDemoUITests.release.xcconfig */;
-			buildSettings = {
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 65723695GD;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = LeopardDemoUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = picovoice.LeopardDemoUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = LeopardDemo;
-			};
-			name = Release;
-		};
-		32769BEC59A8D1B677F2F9D9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3B82BCD82CCC5303A602F516 /* Pods-LeopardDemoUITests.debug.xcconfig */;
-			buildSettings = {
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 65723695GD;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = LeopardDemoUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = picovoice.LeopardDemoUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = LeopardDemo;
-			};
-			name = Debug;
-		};
 		32769C8460A4DF8298266514 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -579,15 +397,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3276906172E41814E4CA2C6F /* Build configuration list for PBXNativeTarget "LeopardDemoUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				32769BEC59A8D1B677F2F9D9 /* Debug */,
-				327698F63FA3E6D4756713F8 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		32769440EBAF1B96C25C64E5 /* Build configuration list for PBXNativeTarget "LeopardDemo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
