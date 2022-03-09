@@ -72,7 +72,7 @@ pip3 install pvleoparddemo
 Run the following in the terminal:
 
 ```bash
-leopard_demo_file --access_key ${ACCESS_KEY} --audio_paths ${AUIDO_PATH}
+leopard_demo_file --access_key ${ACCESS_KEY} --audio_paths ${AUDIO_PATH}
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
