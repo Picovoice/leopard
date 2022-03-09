@@ -47,7 +47,7 @@ AccessKey also verifies that your usage is within the limits of your account. Ev
 Run the following in the terminal:
 
 ```console
-leopard_demo_file --access_key ${ACCESS_KEY} --audio_paths ${AUIDO_PATH}
+leopard_demo_file --access_key ${ACCESS_KEY} --audio_paths ${AUDIO_PATH}
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
