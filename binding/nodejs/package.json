@@ -1,6 +1,6 @@
 {
   "name": "@picovoice/leopard-node",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Picovoice Leopard Node.js binding",
   "main": "index.js",
   "scripts": {

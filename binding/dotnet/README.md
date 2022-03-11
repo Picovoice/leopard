@@ -52,7 +52,7 @@ dotnet add package Leopard
 ## AccessKey
 
 Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` acts as your credentials when using Leopard SDKs.
-You can get your `AccessKey` for free. Make sure to keep your `AccessKey` secret. 
+You can get your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
 Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get your `AccessKey`.
 
 ## Usage
@@ -72,7 +72,7 @@ Console.Write(handle.ProcessFile(audioPath));
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)). Finally, when done release the resources using `handle.Dispose()`.
 
-The model file contains the parameters for the Leopard engine. You may create bespoke language models using [Picovoice Console](https://picovoice.ai/console/) and then pass in the relevant file.
+The model file contains the parameters for the Leopard engine. You may create bespoke language models using [Picovoice Console](https://console.picovoice.ai/) and then pass in the relevant file.
 
 ```csharp
 using Pv;

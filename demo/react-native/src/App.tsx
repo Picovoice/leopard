@@ -50,7 +50,7 @@ type State = {
 
 export default class App extends Component<Props, State> {
   _leopard?: Leopard;
-  _accessKey: string = '${YOUR_ACCESS_KEY_HERE}'; // AccessKey obtained from Picovoice Console (https://picovoice.ai/console/)
+  _accessKey: string = '${YOUR_ACCESS_KEY_HERE}'; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
 
   _recorder: Recorder = new Recorder();
   _voiceProcessor?: VoiceProcessor;
