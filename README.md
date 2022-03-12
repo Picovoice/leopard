@@ -308,7 +308,7 @@ Create an instance of the engine and transcribe an audio file:
 ```java
 import ai.picovoice.leopard.*;
 
-final String accessKey = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://picovoice.ai/console/)
+final String accessKey = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
 final String modelPath = "${MODEL_FILE}";
 try {
     Leopard handle = new Leopard.Builder(accessKey).setModelPath(modelPath).build(appContext);
@@ -361,7 +361,7 @@ Create an instance of the engine and transcribe an audio file:
 ```dart
 import 'package:leopard/leopard.dart';
 
-const accessKey = "{ACCESS_KEY}"  // AccessKey obtained from Picovoice Console (https://picovoice.ai/console/)
+const accessKey = "{ACCESS_KEY}"  // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
 
 try {
     Leopard _leopard = await Leopard.create(accessKey, '{LEOPARD_MODEL_PATH}');

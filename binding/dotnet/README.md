@@ -51,14 +51,9 @@ dotnet add package Leopard
 
 ## AccessKey
 
-AccessKey is your authentication and authorization token for deploying Picovoice SDKs, including Leopard. Anyone who is
-using Picovoice needs to have a valid AccessKey. You must keep your AccessKey secret. You would need internet
-connectivity to validate your AccessKey with Picovoice license servers even though the voice recognition is running 100%
-offline.
-
-AccessKey also verifies that your usage is within the limits of your account. Everyone who signs up for
-[Picovoice Console](https://console.picovoice.ai/) receives the `Free Tier` usage rights described
-[here](https://picovoice.ai/pricing/). If you wish to increase your limits, you can purchase a subscription plan.
+Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` acts as your credentials when using Leopard SDKs.
+You can get your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
+Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get your `AccessKey`.
 
 ## Usage
 
@@ -77,7 +72,7 @@ Console.Write(handle.ProcessFile(audioPath));
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)). Finally, when done release the resources using `handle.Dispose()`.
 
-The model file contains the parameters for the Leopard engine. You may create bespoke language models using [Picovoice Console](https://picovoice.ai/console/) and then pass in the relevant file.
+The model file contains the parameters for the Leopard engine. You may create bespoke language models using [Picovoice Console](https://console.picovoice.ai/) and then pass in the relevant file.
 
 ```csharp
 using Pv;

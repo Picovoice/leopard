@@ -35,6 +35,12 @@ dependencies {
 }
 ```
 
+## AccessKey
+
+Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` acts as your credentials when using Leopard SDKs.
+You can get your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
+Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get your `AccessKey`.
+
 ## Usage
 
 Add the Leopard model file to your Android application by:
@@ -47,7 +53,7 @@ Create an instance of the engine with the Leopard Builder class by passing in th
 ```java
 import ai.picovoice.leopard.*;
 
-final String accessKey = "..."; // AccessKey provided by Picovoice Console (https://picovoice.ai/console/)
+final String accessKey = "..."; // AccessKey provided by Picovoice Console (https://console.picovoice.ai/)
 final String modelPath = "${MODEL_FILE}";
 try {
     Leopard handle = new Leopard.Builder(accessKey).setModelPath(modelPath).build(appContext);
