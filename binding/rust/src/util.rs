@@ -91,8 +91,7 @@ fn base_library_path() -> PathBuf {
             PathBuf::from("jetson/cortex-a57-aarch64/libpv_leopard.so")
         },
         _ => {
-            eprintln!("WARNING: Please be advised that this device is not officially supported by Picovoice.\nFalling back to the armv6-based (Raspberry Pi Zero) library. This is not tested nor optimal.\nFor the model, use Raspberry Pi's models");
-            PathBuf::from("raspberry-pi/arm11/libpv_leopard.so")
+            panic!("This device is not officially supported by Picovoice.\n");
         }
     }
 }

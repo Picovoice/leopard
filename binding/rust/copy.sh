@@ -11,7 +11,7 @@ mkdir -p ./data/resources/keyword_files
 echo "Copying Model File ..."
 cp -r ../../lib/common ./data/lib/
 
-for platform in linux mac raspberry-pi windows
+for platform in linux mac raspberry-pi jetson windows
 do
     echo "Copying Resource & Library Files for $platform ..."
     cp -r ../../lib/$platform ./data/lib/
