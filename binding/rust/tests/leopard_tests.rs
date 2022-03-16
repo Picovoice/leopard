@@ -42,6 +42,7 @@ mod tests {
             result.unwrap(),
             "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL"
         )
+        
     }
 
     #[test]
