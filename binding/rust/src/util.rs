@@ -89,7 +89,7 @@ fn base_library_path() -> PathBuf {
         }
         machine if JETSON_MACHINES.contains(&machine) => {
             PathBuf::from("jetson/cortex-a57-aarch64/libpv_leopard.so")
-        },
+        }
         _ => {
             panic!("This device is not officially supported by Picovoice.\n");
         }

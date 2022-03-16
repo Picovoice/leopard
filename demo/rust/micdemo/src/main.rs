@@ -9,10 +9,10 @@
     specific language governing permissions and limitations under the License.
 */
 
-use std::{io, process, thread};
 use std::io::stdout;
 use std::io::Write;
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::{io, process, thread};
 
 use clap::{App, Arg, ArgGroup};
 use ctrlc;
@@ -21,20 +21,14 @@ use pv_recorder::RecorderBuilder;
 
 static RECORDING: AtomicBool = AtomicBool::new(false);
 
-fn leopard_demo(
-    audio_device_index: i32,
-    access_key: &str,
-    model_path: Option<&str>,
-) {
+fn leopard_demo(audio_device_index: i32, access_key: &str, model_path: Option<&str>) {
     let mut leopard_builder = LeopardBuilder::new(access_key);
 
     if let Some(model_path) = model_path {
         leopard_builder.model_path(model_path);
     }
 
-    let leopard = leopard_builder
-        .init()
-        .expect("Failed to create Leopard");
+    let leopard = leopard_builder.init().expect("Failed to create Leopard");
 
     let recorder = RecorderBuilder::new()
         .device_index(audio_device_index)
@@ -56,7 +50,9 @@ fn leopard_demo(
 
         print!(">>> Press 'Enter' to start: ");
         stdout().flush().expect("Failed to flush");
-        io::stdin().read_line(&mut input).expect("Failed to read input");
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read input");
         RECORDING.store(true, Ordering::SeqCst);
 
         let leopard = leopard.clone();
@@ -77,7 +73,9 @@ fn leopard_demo(
 
         print!(">>> Recording ... Press 'Enter' to stop: ");
         stdout().flush().expect("Failed to flush");
-        io::stdin().read_line(&mut input).expect("Failed to read input");
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read input");
         RECORDING.store(false, Ordering::SeqCst);
 
         let transcript = transcript_handle.join().unwrap();
@@ -104,37 +102,34 @@ fn main() {
     let matches = App::new("Picovoice Leopard Rust Mic Demo")
         .group(
             ArgGroup::with_name("actions_group")
-            .arg("access_key")
-            .arg("show_audio_devices")
-            .required(true)
-            .multiple(true)
+                .arg("access_key")
+                .arg("show_audio_devices")
+                .required(true)
+                .multiple(true),
         )
         .arg(
             Arg::with_name("access_key")
                 .long("access_key")
                 .value_name("ACCESS_KEY")
                 .help("AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)")
-                .takes_value(true)
+                .takes_value(true),
         )
         .arg(
             Arg::with_name("model_path")
-            .long("model_path")
-            .value_name("PATH")
-            .help("Path to the file containing model parameter.")
-            .takes_value(true)
+                .long("model_path")
+                .value_name("PATH")
+                .help("Path to the file containing model parameter.")
+                .takes_value(true),
         )
         .arg(
             Arg::with_name("audio_device_index")
-            .long("audio_device_index")
-            .value_name("INDEX")
-            .help("Index of input audio device.")
-            .takes_value(true)
-            .default_value("-1")
+                .long("audio_device_index")
+                .value_name("INDEX")
+                .help("Index of input audio device.")
+                .takes_value(true)
+                .default_value("-1"),
         )
-        .arg(
-            Arg::with_name("show_audio_devices")
-            .long("show_audio_devices")
-        )
+        .arg(Arg::with_name("show_audio_devices").long("show_audio_devices"))
         .get_matches();
 
     if matches.is_present("show_audio_devices") {
@@ -153,9 +148,5 @@ fn main() {
         .value_of("access_key")
         .expect("AccessKey is REQUIRED for Leopard operation");
 
-    leopard_demo(
-        audio_device_index,
-        access_key,
-        model_path,
-    );
+    leopard_demo(audio_device_index, access_key, model_path);
 }

@@ -11,11 +11,11 @@
 
 #[cfg(test)]
 mod tests {
+    use itertools::Itertools;
     use rodio::{source::Source, Decoder};
     use std::env;
     use std::fs::File;
     use std::io::BufReader;
-    use itertools::Itertools;
 
     use leopard::LeopardBuilder;
 
@@ -33,7 +33,9 @@ mod tests {
         let audio_file = BufReader::new(File::open(&audio_path).expect(&audio_path));
         let source = Decoder::new(audio_file).unwrap();
 
-        let leopard = LeopardBuilder::new(access_key).init().expect("Unable to create Leopard");
+        let leopard = LeopardBuilder::new(access_key)
+            .init()
+            .expect("Unable to create Leopard");
 
         assert_eq!(leopard.sample_rate(), source.sample_rate());
         let result = leopard.process(&source.collect_vec());
@@ -42,7 +44,6 @@ mod tests {
             result.unwrap(),
             "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL"
         )
-        
     }
 
     #[test]
@@ -56,7 +57,9 @@ mod tests {
             "/../../resources/audio_samples/test.wav",
         );
 
-        let leopard = LeopardBuilder::new(access_key).init().expect("Unable to create Leopard");
+        let leopard = LeopardBuilder::new(access_key)
+            .init()
+            .expect("Unable to create Leopard");
         let result = leopard.process_file(&audio_path);
 
         assert_eq!(
@@ -70,7 +73,9 @@ mod tests {
         let access_key = env::var("PV_ACCESS_KEY")
             .expect("Pass the AccessKey in using the PV_ACCESS_KEY env variable");
 
-        let leopard = LeopardBuilder::new(access_key).init().expect("Unable to create Leopard");
+        let leopard = LeopardBuilder::new(access_key)
+            .init()
+            .expect("Unable to create Leopard");
 
         assert_ne!(leopard.version(), "")
     }

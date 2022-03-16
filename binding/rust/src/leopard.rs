@@ -10,18 +10,18 @@
 */
 
 use std::cmp::PartialEq;
-use std::ffi::{CStr, CString};
 use std::ffi::OsStr;
+use std::ffi::{CStr, CString};
 use std::path::{Path, PathBuf};
 use std::ptr::addr_of_mut;
 use std::sync::Arc;
 
 use libc::{c_char, c_void};
-use libloading::{Library, Symbol};
 #[cfg(unix)]
 use libloading::os::unix::Symbol as RawSymbol;
 #[cfg(windows)]
 use libloading::os::windows::Symbol as RawSymbol;
+use libloading::{Library, Symbol};
 
 use crate::util::{pathbuf_to_cstring, pv_library_path, pv_model_path};
 
@@ -109,7 +109,7 @@ impl LeopardBuilder {
         Self {
             access_key: access_key.into(),
             model_path: pv_model_path(),
-            library_path: pv_library_path()
+            library_path: pv_library_path(),
         }
     }
 
@@ -129,11 +129,7 @@ impl LeopardBuilder {
     }
 
     pub fn init(&self) -> Result<Leopard, LeopardError> {
-        let inner = LeopardInner::init(
-            &self.access_key,
-            &self.library_path,
-            &self.model_path,
-        );
+        let inner = LeopardInner::init(&self.access_key, &self.library_path, &self.model_path);
         match inner {
             Ok(inner) => Ok(Leopard {
                 inner: Arc::new(inner),
@@ -189,10 +185,7 @@ fn check_fn_call_status(status: PvStatus, function_name: &str) -> Result<(), Leo
         PvStatus::SUCCESS => Ok(()),
         _ => Err(LeopardError::new(
             LeopardErrorStatus::LibraryError(status),
-            format!(
-                "Function '{}' in the leopard library failed",
-                function_name
-            ),
+            format!("Function '{}' in the leopard library failed", function_name),
         )),
     }
 }
@@ -280,8 +273,7 @@ impl LeopardInner {
         // safe, because we don't use the raw symbols after this function
         // anymore.
         let (sample_rate, version) = unsafe {
-            let pv_leopard_init =
-                load_library_fn::<PvLeopardInitFn>(&lib, b"pv_leopard_init")?;
+            let pv_leopard_init = load_library_fn::<PvLeopardInitFn>(&lib, b"pv_leopard_init")?;
             let pv_sample_rate = load_library_fn::<PvSampleRateFn>(&lib, b"pv_sample_rate")?;
             let pv_leopard_version =
                 load_library_fn::<PvLeopardVersionFn>(&lib, b"pv_leopard_version")?;
@@ -318,24 +310,27 @@ impl LeopardInner {
         if pcm.len() == 0 {
             return Err(LeopardError::new(
                 LeopardErrorStatus::FrameLengthError,
-                format!(
-                    "Audio data must not be empty"
-                ),
+                format!("Audio data must not be empty"),
             ));
         }
 
-        let transcript: String;
+        let mut transcript = String::new();
         unsafe {
             let mut transcript_ptr: *mut c_char = std::ptr::null_mut();
 
-            let status = (self.vtable.pv_leopard_process)(self.cleopard, pcm.as_ptr(), pcm.len() as i32, addr_of_mut!(transcript_ptr));
+            let status = (self.vtable.pv_leopard_process)(
+                self.cleopard,
+                pcm.as_ptr(),
+                pcm.len() as i32,
+                addr_of_mut!(transcript_ptr),
+            );
 
             check_fn_call_status(status, "pv_leopard_process")?;
 
             transcript = String::from(CStr::from_ptr(transcript_ptr).to_str().map_err(|_| {
                 LeopardError::new(
                     LeopardErrorStatus::LibraryError(PvStatus::RUNTIME_ERROR),
-                    "Failed to convert transcript string"
+                    "Failed to convert transcript string",
                 )
             })?);
 
@@ -356,23 +351,32 @@ impl LeopardInner {
             ));
         }
 
-        let transcript: String;
+        let mut transcript = String::new();
         let pv_audio_path = pathbuf_to_cstring(&audio_path);
         unsafe {
             let mut transcript_ptr: *mut c_char = std::ptr::null_mut();
 
-            let status = (self.vtable.pv_leopard_process_file)(self.cleopard, pv_audio_path.as_ptr(), addr_of_mut!(transcript_ptr));
+            let status = (self.vtable.pv_leopard_process_file)(
+                self.cleopard,
+                pv_audio_path.as_ptr(),
+                addr_of_mut!(transcript_ptr),
+            );
 
             if status != PvStatus::SUCCESS {
-                let extension = audio_path.as_ref().extension().unwrap_or(OsStr::new("")).to_str().unwrap_or("");
+                let extension = audio_path
+                    .as_ref()
+                    .extension()
+                    .unwrap_or(OsStr::new(""))
+                    .to_str()
+                    .unwrap_or("");
                 if !VALID_EXTENSIONS.contains(&extension) {
                     return Err(LeopardError::new(
                         LeopardErrorStatus::ArgumentError,
                         format!(
                             "Specified file with extension '{}' is not supported",
                             extension
-                        )
-                    ))
+                        ),
+                    ));
                 }
 
                 check_fn_call_status(status, "pv_leopard_process_file")?;
@@ -381,7 +385,7 @@ impl LeopardInner {
             transcript = String::from(CStr::from_ptr(transcript_ptr).to_str().map_err(|_| {
                 LeopardError::new(
                     LeopardErrorStatus::LibraryError(PvStatus::RUNTIME_ERROR),
-                    "Failed to convert transcript string"
+                    "Failed to convert transcript string",
                 )
             })?);
 

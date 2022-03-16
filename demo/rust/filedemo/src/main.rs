@@ -14,20 +14,14 @@ use std::path::PathBuf;
 use clap::{App, Arg};
 use leopard::LeopardBuilder;
 
-fn leopard_demo(
-    input_audio_path: PathBuf,
-    access_key: &str,
-    model_path: Option<&str>,
-) {
+fn leopard_demo(input_audio_path: PathBuf, access_key: &str, model_path: Option<&str>) {
     let mut leopard_builder = LeopardBuilder::new(access_key);
 
     if let Some(model_path) = model_path {
         leopard_builder.model_path(model_path);
     }
 
-    let leopard = leopard_builder
-        .init()
-        .expect("Failed to create Leopard");
+    let leopard = leopard_builder.init().expect("Failed to create Leopard");
 
     let transcript = leopard.process_file(input_audio_path).unwrap();
     println!("{}", transcript);
@@ -37,11 +31,11 @@ fn main() {
     let matches = App::new("Picovoice Leopard Rust File Demo")
         .arg(
             Arg::with_name("input_audio_path")
-            .long("input_audio_path")
-            .value_name("PATH")
-            .help("Path to input audio file (mono, WAV, 16-bit, 16kHz).")
-            .takes_value(true)
-            .required(true)
+                .long("input_audio_path")
+                .value_name("PATH")
+                .help("Path to input audio file (mono, WAV, 16-bit, 16kHz).")
+                .takes_value(true)
+                .required(true),
         )
         .arg(
             Arg::with_name("access_key")
@@ -53,10 +47,10 @@ fn main() {
         )
         .arg(
             Arg::with_name("model_path")
-            .long("model_path")
-            .value_name("PATH")
-            .help("Path to the file containing model parameter.")
-            .takes_value(true)
+                .long("model_path")
+                .value_name("PATH")
+                .help("Path to the file containing model parameter.")
+                .takes_value(true),
         )
         .get_matches();
 
@@ -68,9 +62,5 @@ fn main() {
         .value_of("access_key")
         .expect("AccessKey is REQUIRED for Leopard operation");
 
-    leopard_demo(
-        input_audio_path,
-        access_key,
-        model_path,
-    );
+    leopard_demo(input_audio_path, access_key, model_path);
 }
