@@ -34,12 +34,17 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: sudo apt install libasound2-dev -y
 
+    - name: Rust build micdemo
+      run: cargo build --verbose
+      working-directory: demo/rust/micdemo
+
     - name: Rust build filedemo
       run: cargo build --verbose
       working-directory: demo/rust/filedemo
 
     - name: Test
       run: cargo run --release -- --access_key ${{secrets.PV_VALID_ACCESS_KEY}} --audio_paths ../../../resources/audio_samples/test.wav
+      working-directory: demo/rust/filedemo
 
   build-self-hosted:
     runs-on: ${{ matrix.machine }}
@@ -55,6 +60,14 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: sudo apt install libasound2-dev -y
 
+    - name: Rust build micdemo
+      run: cargo build --verbose
+      working-directory: demo/rust/micdemo
+
     - name: Rust build filedemo
       run: cargo build --verbose
+      working-directory: demo/rust/filedemo
+
+    - name: Test
+      run: cargo run --release -- --access_key ${{secrets.PV_VALID_ACCESS_KEY}} --audio_paths ../../../resources/audio_samples/test.wav
       working-directory: demo/rust/filedemo
