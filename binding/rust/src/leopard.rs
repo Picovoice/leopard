@@ -65,6 +65,7 @@ type PvLeopardProcessFileFn = unsafe extern "C" fn(
     transcript: *mut *mut c_char,
 ) -> PvStatus;
 type PvLeopardDeleteFn = unsafe extern "C" fn(object: *mut CLeopard);
+type PvFreeFn = unsafe extern "C" fn(*mut c_void);
 
 #[derive(Clone, Debug)]
 pub enum LeopardErrorStatus {
@@ -200,6 +201,7 @@ struct LeopardInnerVTable {
     pv_leopard_process: RawSymbol<PvLeopardProcessFn>,
     pv_leopard_process_file: RawSymbol<PvLeopardProcessFileFn>,
     pv_leopard_delete: RawSymbol<PvLeopardDeleteFn>,
+    pv_free: RawSymbol<PvFreeFn>,
 
     _lib_guard: Library,
 }
@@ -212,6 +214,7 @@ impl LeopardInnerVTable {
                 pv_leopard_process: load_library_fn(&lib, b"pv_leopard_process")?,
                 pv_leopard_process_file: load_library_fn(&lib, b"pv_leopard_process_file")?,
                 pv_leopard_delete: load_library_fn(&lib, b"pv_leopard_delete")?,
+                pv_free: load_library_fn(&lib, b"pv_free")?,
 
                 _lib_guard: lib,
             })
@@ -336,7 +339,7 @@ impl LeopardInner {
                 )
             })?);
 
-            libc::free(transcript_ptr as *mut c_void);
+            (self.vtable.pv_free)(transcript_ptr as *mut c_void);
         };
 
         Ok(transcript)
@@ -382,7 +385,7 @@ impl LeopardInner {
                 )
             })?);
 
-            libc::free(transcript_ptr as *mut c_void);
+            (self.vtable.pv_free)(transcript_ptr as *mut c_void);
         };
 
         Ok(transcript)
