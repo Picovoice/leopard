@@ -10,21 +10,20 @@
 */
 
 use std::cmp::PartialEq;
-use std::ffi::OsStr;
 use std::ffi::{CStr, CString};
+use std::ffi::OsStr;
 use std::path::{Path, PathBuf};
 use std::ptr::addr_of_mut;
 use std::sync::Arc;
 
 use libc::{c_char, c_void};
 use libloading::{Library, Symbol};
-
-use crate::util::{pathbuf_to_cstring, pv_library_path, pv_model_path};
-
 #[cfg(unix)]
 use libloading::os::unix::Symbol as RawSymbol;
 #[cfg(windows)]
 use libloading::os::windows::Symbol as RawSymbol;
+
+use crate::util::{pathbuf_to_cstring, pv_library_path, pv_model_path};
 
 #[repr(C)]
 struct CLeopard {}

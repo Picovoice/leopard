@@ -26,7 +26,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 
 First you will need [Rust and Cargo](https://rustup.rs/) installed on your system.
 
-To add the porcupine library into your app, add `pv_leopard` to your apps `Cargo.toml` manifest:
+To add the leopard library into your app, add `pv_leopard` to your apps `Cargo.toml` manifest:
 ```toml
 [dependencies]
 pv_leopard = "*"

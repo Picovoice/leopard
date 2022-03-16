@@ -9,9 +9,10 @@
     specific language governing permissions and limitations under the License.
 */
 
+use std::path::PathBuf;
+
 use clap::{App, Arg};
 use leopard::LeopardBuilder;
-use std::path::PathBuf;
 
 fn leopard_demo(
     input_audio_path: PathBuf,

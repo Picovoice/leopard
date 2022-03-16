@@ -10,13 +10,14 @@
 */
 
 use std::{io, process, thread};
-use std::io::Write;
 use std::io::stdout;
+use std::io::Write;
+use std::sync::atomic::{AtomicBool, Ordering};
+
 use clap::{App, Arg, ArgGroup};
 use ctrlc;
-use leopard::{LeopardBuilder};
+use leopard::LeopardBuilder;
 use pv_recorder::RecorderBuilder;
-use std::sync::atomic::{AtomicBool, Ordering};
 
 static RECORDING: AtomicBool = AtomicBool::new(false);
 
@@ -100,7 +101,7 @@ fn show_audio_devices() {
 }
 
 fn main() {
-    let matches = App::new("Picovoice Porcupine Rust Mic Demo")
+    let matches = App::new("Picovoice Leopard Rust Mic Demo")
         .group(
             ArgGroup::with_name("actions_group")
             .arg("access_key")
@@ -150,7 +151,7 @@ fn main() {
 
     let access_key = matches
         .value_of("access_key")
-        .expect("AccessKey is REQUIRED for Porcupine operation");
+        .expect("AccessKey is REQUIRED for Leopard operation");
 
     leopard_demo(
         audio_device_index,
