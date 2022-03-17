@@ -18,9 +18,10 @@ Leopard is an on-device speech-to-text engine. Leopard is:
   - Raspberry Pi (4, 3)
   - NVIDIA Jetson Nano
 
-## Requirements
+## Compatibility
 
-- .NET Core 3.1
+- Rust 1.54+
+- Runs on Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64), Raspberry Pi (4, 3), and NVIDIA Jetson Nano.
 
 ## Installation
 
@@ -56,7 +57,9 @@ use leopard::LeopardBuilder;
 let access_key = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
 
 let leopard: Leopard = LeopardBuilder::new(access_key).init().expect("Unable to create Leopard");
-println!("{}", leopard.process_file("${AUDIO_PATH}"))
+if let Ok(transcript) = leopard.process_file("${AUDIO_PATH}") {
+    println!("{}", transcript);
+}
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and

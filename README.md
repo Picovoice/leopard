@@ -35,6 +35,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [React Native](#react-native-demo)
         - [Java](#java-demo)
         - [.NET](#net-demo)
+        - [Rust](#rust-demo)
     - [SDKs](#sdks)
         - [Python](#python)
         - [C](#c)
@@ -46,6 +47,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [React Native](#react-native)
         - [Java](#java)
         - [.NET](#net)
+        - [Rust](#rust)
     - [Releases](#releases)
 
 ## AccessKey
@@ -122,11 +124,14 @@ Install the demo package:
 yarn global add @picovoice/leopard-node-demo
 ```
 
-With a working microphone connected to your device, run the following in the terminal:
+Run the following in the terminal:
 
 ```console
-leopard-mic-demo --access_key ${ACCESS_KEY}
+leopard-file-demo --access_key ${ACCESS_KEY} --input_audio_file_path ${AUDIO_PATH}
 ```
+
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
+wish to transcribe.
 
 For more information about Node.js demos go to [demo/nodejs](/demo/nodejs).
 
@@ -200,16 +205,32 @@ For more information about Java demos go to [demo/java](/demo/java).
 [Leopard .NET demo](/demo/dotnet) is a command-line application that lets you choose between running Leopard on an audio
 file or on real-time microphone input.
 
-Make sure there is a working microphone connected to your device. From [demo/dotnet/LeopardDemo](/demo/dotnet/LeopardDemo)
-run the following in the terminal:
+From [demo/dotnet/LeopardDemo](/demo/dotnet/LeopardDemo) run the following in the terminal:
 
 ```console
-dotnet run -c MicDemo.Release -- --access_key ${ACCESS_KEY}
+dotnet run -c FileDemo.Release -- --access_key ${ACCESS_KEY} --input_audio_path ${AUDIO_PATH}
 ```
 
-Replace `${ACCESS_KEY}` with your Picovoice `AccessKey`.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
+wish to transcribe.
 
 For more information about .NET demos, go to [demo/dotnet](/demo/dotnet).
+
+### Rust Demo
+
+[Leopard Rustdemo](/demo/rust) is a command-line application that lets you choose between running Leopard on an audio
+file or on real-time microphone input.
+
+From [demo/rust/micdemo](/demo/rust/micdemo) run the following in the terminal:
+
+```console
+carogu run --release -- --access_key ${ACCESS_KEY} --input_audio_path ${AUDIO_PATH}
+```
+
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
+wish to transcribe.
+
+For more information about Rust demos, go to [demo/rust](/demo/rust).
 
 ## SDKs
 
@@ -481,6 +502,31 @@ Console.Write(handle.ProcessFile(audioPath));
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)). Finally, when done release the resources using `handle.Dispose()`.
+
+### Rust
+
+First you will need [Rust and Cargo](https://rustup.rs/) installed on your system.
+
+To add the leopard library into your app, add `pv_leopard` to your app's `Cargo.toml` manifest:
+```toml
+[dependencies]
+pv_leopard = "*"
+```
+
+Create an instance of the engine using `LeopardBuilder` instance and transcribe an audio file:
+
+```rust
+use leopard::LeopardBuilder;
+
+let access_key = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
+let leopard: Leopard = LeopardBuilder::new(access_key).init().expect("Unable to create Leopard");
+
+if let Ok(transcript) = leopard.process_file("/absolute/path/to/audio_file") {
+    println!("{}", transcript);
+}
+```
+
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)).
 
 ## Releases
 
