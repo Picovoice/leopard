@@ -314,8 +314,7 @@ impl LeopardInner {
             ));
         }
 
-        let mut transcript = String::new();
-        unsafe {
+        let transcript = unsafe {
             let mut transcript_ptr: *mut c_char = std::ptr::null_mut();
 
             let status = (self.vtable.pv_leopard_process)(
@@ -327,14 +326,17 @@ impl LeopardInner {
 
             check_fn_call_status(status, "pv_leopard_process")?;
 
-            transcript = String::from(CStr::from_ptr(transcript_ptr).to_str().map_err(|_| {
-                LeopardError::new(
-                    LeopardErrorStatus::LibraryError(PvStatus::RUNTIME_ERROR),
-                    "Failed to convert transcript string",
-                )
-            })?);
+            let transcript =
+                String::from(CStr::from_ptr(transcript_ptr).to_str().map_err(|_| {
+                    LeopardError::new(
+                        LeopardErrorStatus::LibraryError(PvStatus::RUNTIME_ERROR),
+                        "Failed to convert transcript string",
+                    )
+                })?);
 
             (self.vtable.pv_free)(transcript_ptr as *mut c_void);
+
+            transcript
         };
 
         Ok(transcript)
@@ -351,9 +353,8 @@ impl LeopardInner {
             ));
         }
 
-        let mut transcript = String::new();
         let pv_audio_path = pathbuf_to_cstring(&audio_path);
-        unsafe {
+        let transcript = unsafe {
             let mut transcript_ptr: *mut c_char = std::ptr::null_mut();
 
             let status = (self.vtable.pv_leopard_process_file)(
@@ -382,14 +383,17 @@ impl LeopardInner {
                 check_fn_call_status(status, "pv_leopard_process_file")?;
             }
 
-            transcript = String::from(CStr::from_ptr(transcript_ptr).to_str().map_err(|_| {
-                LeopardError::new(
-                    LeopardErrorStatus::LibraryError(PvStatus::RUNTIME_ERROR),
-                    "Failed to convert transcript string",
-                )
-            })?);
+            let transcript =
+                String::from(CStr::from_ptr(transcript_ptr).to_str().map_err(|_| {
+                    LeopardError::new(
+                        LeopardErrorStatus::LibraryError(PvStatus::RUNTIME_ERROR),
+                        "Failed to convert transcript string",
+                    )
+                })?);
 
             (self.vtable.pv_free)(transcript_ptr as *mut c_void);
+
+            transcript
         };
 
         Ok(transcript)
