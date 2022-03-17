@@ -221,7 +221,7 @@ For more information about .NET demos, go to [demo/dotnet](/demo/dotnet).
 [Leopard Rustdemo](/demo/rust) is a command-line application that lets you choose between running Leopard on an audio
 file or on real-time microphone input.
 
-From [demo/rust/micdemo](/demo/rust/micdemo) run the following in the terminal:
+From [demo/rust/filedemo](/demo/rust/filedemo) run the following in the terminal:
 
 ```console
 carogu run --release -- --access_key ${ACCESS_KEY} --input_audio_path ${AUDIO_PATH}
