@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             String modelPath = "leopard_params.pv";
-            leopard = new Leopard.Builder(ACCESS_KEY).setModelPath(modelPath).build(getApplicationContext());
+            leopard = new Leopard.Builder().setAccessKey(ACCESS_KEY).setModelPath(modelPath).build(getApplicationContext());
         } catch (LeopardInvalidArgumentException e) {
             displayError(String.format("(%s)\n Ensure your AccessKey '%s' is valid", e.getMessage(), ACCESS_KEY));
         } catch (LeopardActivationException e) {
