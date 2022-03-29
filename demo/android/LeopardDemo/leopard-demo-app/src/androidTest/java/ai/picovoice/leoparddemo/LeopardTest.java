@@ -78,7 +78,7 @@ public class LeopardTest {
 
     @Test
     public void testTranscribeAudioFile() throws LeopardException {
-        Leopard leopard = new Leopard.Builder(accessKey)
+        Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
                 .setModelPath(defaultModelPath)
                 .build(appContext);
 
@@ -92,7 +92,7 @@ public class LeopardTest {
 
     @Test
     public void testTranscribeAudioData() throws Exception {
-        Leopard leopard = new Leopard.Builder(accessKey)
+        Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
             .setModelPath(defaultModelPath)
             .build(appContext);
 
@@ -111,7 +111,7 @@ public class LeopardTest {
 
     @Test
     public void getVersion() throws LeopardException {
-        Leopard leopard = new Leopard.Builder(accessKey)
+        Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
             .setModelPath(defaultModelPath)
             .build(appContext);
 
@@ -122,7 +122,7 @@ public class LeopardTest {
 
     @Test
     public void getSampleRate() throws LeopardException {
-        Leopard leopard = new Leopard.Builder(accessKey)
+        Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
             .setModelPath(defaultModelPath)
             .build(appContext);
 

@@ -112,7 +112,7 @@ Then, using [Xcode](https://developer.apple.com/xcode/), open the generated `Leo
 
 ### Android Demo
 
-Using Android Studio, open [demo/android/LeopardDemo](/demo/android/LeopardDemo) as an Android project and then run the application. 
+Using Android Studio, open [demo/android/LeopardDemo](/demo/android/LeopardDemo) as an Android project and then run the application.
 
 Replace `"${YOUR_ACCESS_KEY_HERE}"` in the file [MainActivity.java](/demo/android/leopard-demo-app/src/main/java/ai/picovoice/leoparddemo/MainActivity.java) with your `AccessKey`.
 
@@ -151,7 +151,7 @@ flutter run
 
 ### Go Demo
 
-The demo requires `cgo`, which on Windows may mean that you need to install a gcc compiler like [Mingw](http://mingw-w64.org/doku.php) to build it properly. 
+The demo requires `cgo`, which on Windows may mean that you need to install a gcc compiler like [Mingw](http://mingw-w64.org/doku.php) to build it properly.
 
 From [demo/go](/demo/go) run the following command from the terminal to build and run the file demo:
 
@@ -180,7 +180,7 @@ For iOS:
 
 ```console
 yarn ios-install        # sets up environment
-yarn ios-run 
+yarn ios-run
 ```
 
 ### Java Demo
@@ -288,7 +288,7 @@ Finally, when done be sure to release resources acquired using `pv_leopard_delet
 
 ### iOS
 
-The Leopard iOS binding is available via [CocoaPods](https://cocoapods.org/pods/Leopard-iOS). To import it into your iOS project, add the following line to your Podfile and run `pod install`: 
+The Leopard iOS binding is available via [CocoaPods](https://cocoapods.org/pods/Leopard-iOS). To import it into your iOS project, add the following line to your Podfile and run `pod install`:
 
 ```ruby
 pod 'Leopard-iOS'
@@ -308,7 +308,7 @@ let leopard = Leopard(accessKey: "${ACCESS_KEY}", modelPath: modelPath)
 do {
     let audioPath = Bundle(for: type(of: self)).path(forResource: "${AUDIO_FILE_NAME}", ofType: "${AUDIO_FILE_EXTENSION}")
     print(leopard.process(audioPath))
-} catch let error as LeopardError { 
+} catch let error as LeopardError {
 } catch { }
 ```
 
@@ -319,7 +319,7 @@ Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FIL
 To include the package in your Android project, ensure you have included `mavenCentral()` in your top-level `build.gradle` file and then add the following to your app's `build.gradle`:
 
 ```groovy
-dependencies {    
+dependencies {
     implementation 'ai.picovoice:leopard-android:${LATEST_VERSION}'
 }
 ```
@@ -332,7 +332,7 @@ import ai.picovoice.leopard.*;
 final String accessKey = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
 final String modelPath = "${MODEL_FILE}";
 try {
-    Leopard handle = new Leopard.Builder(accessKey).setModelPath(modelPath).build(appContext);
+    Leopard handle = new Leopard.Builder().setAccessKey(accessKey).setModelPath(modelPath).build(appContext);
 
     File audioFile = new File("${AUDIO_FILE_PATH}");
     String transcript = handle.processFile(audioFile.getAbsolutePath());

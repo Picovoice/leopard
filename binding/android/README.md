@@ -56,7 +56,7 @@ import ai.picovoice.leopard.*;
 final String accessKey = "..."; // AccessKey provided by Picovoice Console (https://console.picovoice.ai/)
 final String modelPath = "${MODEL_FILE}";
 try {
-    Leopard handle = new Leopard.Builder(accessKey).setModelPath(modelPath).build(appContext);
+    Leopard handle = new Leopard.Builder().setAccessKey(accessKey).setModelPath(modelPath).build(appContext);
 } catch (LeopardException ex) { }
 ```
 

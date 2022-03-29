@@ -46,7 +46,7 @@ public class LeopardModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void create(String accessKey, String modelPath, Promise promise) {
     try {
-      Leopard leopard = new Leopard.Builder(accessKey)
+      Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
               .setModelPath(modelPath.isEmpty() ? null : modelPath)
               .build(reactContext);
       leopardPool.put(String.valueOf(System.identityHashCode(leopard)), leopard);

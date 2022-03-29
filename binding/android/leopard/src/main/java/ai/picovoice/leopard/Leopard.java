@@ -84,7 +84,7 @@ public class Leopard {
     /**
      * Processes given audio data and returns its transcription.
      *
-     * @param pcm Absolute path to the audio file. The file needs to have a sample rate equal to or greater
+     * @param path Absolute path to the audio file. The file needs to have a sample rate equal to or greater
      *                than {@link #getSampleRate()}. The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`,
      *                `Vorbis`, `WAV`, and `WebM`.
      * @return Inferred transcription.
@@ -121,10 +121,6 @@ public class Leopard {
         private String accessKey = null;
         private String modelPath = null;
 
-        public Builder(String accessKey) {
-            this.accessKey = accessKey;
-        }
-
         public Builder setAccessKey(String accessKey) {
             this.accessKey = accessKey;
             return this;
@@ -136,6 +132,9 @@ public class Leopard {
         }
 
         public Leopard build(Context context) throws LeopardException {
+            if (accessKey == null || this.accessKey.equals("")) {
+                throw new LeopardInvalidArgumentException("No AccessKey was provided to Leopard");
+            }
 
             if (modelPath == null) {
                 throw new LeopardInvalidArgumentException("ModelPath must not be null");
@@ -151,10 +150,6 @@ public class Leopard {
                         throw new LeopardIOException(ex);
                     }
                 }
-            }
-
-            if (accessKey == null) {
-                throw new LeopardInvalidArgumentException("AccessKey must not be null");
             }
 
             return new Leopard(accessKey, modelPath);
