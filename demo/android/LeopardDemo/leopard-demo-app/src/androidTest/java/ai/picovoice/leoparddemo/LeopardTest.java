@@ -29,14 +29,15 @@ import org.junit.runner.RunWith;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.file.Files;
 import java.util.Arrays;
 
 import ai.picovoice.leopard.Leopard;
@@ -78,7 +79,7 @@ public class LeopardTest {
 
     @Test
     public void testTranscribeAudioFile() throws LeopardException {
-        Leopard leopard = new Leopard.Builder(accessKey)
+        Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
                 .setModelPath(defaultModelPath)
                 .build(appContext);
 
@@ -92,12 +93,20 @@ public class LeopardTest {
 
     @Test
     public void testTranscribeAudioData() throws Exception {
-        Leopard leopard = new Leopard.Builder(accessKey)
+        Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
             .setModelPath(defaultModelPath)
             .build(appContext);
 
         File audioFile = new File(testResourcesPath, "audio/test.wav");
-        byte[] rawData = Files.readAllBytes(audioFile.toPath());
+
+        FileInputStream audioInputStream = new FileInputStream(audioFile);
+        ByteArrayOutputStream audioByteBuffer = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        for (int length; (length = audioInputStream.read(buffer)) != -1; ) {
+            audioByteBuffer.write(buffer, 0, length);
+        }
+        byte[] rawData = audioByteBuffer.toByteArray();
+
         short[] samples = new short[rawData.length / 2];
         ByteBuffer pcmBuff = ByteBuffer.wrap(rawData).order(ByteOrder.LITTLE_ENDIAN);
         pcmBuff.asShortBuffer().get(samples);
@@ -111,7 +120,7 @@ public class LeopardTest {
 
     @Test
     public void getVersion() throws LeopardException {
-        Leopard leopard = new Leopard.Builder(accessKey)
+        Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
             .setModelPath(defaultModelPath)
             .build(appContext);
 
@@ -122,7 +131,7 @@ public class LeopardTest {
 
     @Test
     public void getSampleRate() throws LeopardException {
-        Leopard leopard = new Leopard.Builder(accessKey)
+        Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
             .setModelPath(defaultModelPath)
             .build(appContext);
 
