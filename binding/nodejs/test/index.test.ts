@@ -10,18 +10,18 @@
 //
 "use strict";
 
-const Leopard = require("./index.js");
-const fs = require("fs");
-const path = require("path");
-const WaveFile = require("wavefile").WaveFile;
+import { Leopard, LeopardInvalidArgumentError } from "../src";
+import * as fs from "fs";
+import * as path from "path";
+import { WaveFile } from "wavefile";
 
-const { PvArgumentError } = require("./errors");
-const { getPlatform, getSystemLibraryPath } = require("./platforms");
+import { getSystemLibraryPath } from "../src/platforms";
 
 const MODEL_PATH = "./lib/common/leopard_params.pv";
 
-const WAV_PATH = "../../resources/audio_samples/test.wav";
-const TRANSCRIPT = "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL"
+const WAV_PATH = "../../../resources/audio_samples/test.wav";
+const TRANSCRIPT =
+  "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL";
 
 const libraryPath = getSystemLibraryPath();
 
@@ -48,7 +48,7 @@ describe("Defaults", () => {
     const waveBuffer = fs.readFileSync(waveFilePath);
     const waveAudioFile = new WaveFile(waveBuffer);
 
-    const pcm = waveAudioFile.getSamples(false, Int16Array)
+    const pcm: any = waveAudioFile.getSamples(false, Int16Array);
 
     let transcript = leopardEngine.process(pcm);
 
@@ -59,10 +59,9 @@ describe("Defaults", () => {
 
   test("Empty AccessKey", () => {
     expect(() => {
-      let leopardEngine = new Leopard('');
-    }).toThrow(PvArgumentError);
+      new Leopard("");
+    }).toThrow(LeopardInvalidArgumentError);
   });
-
 });
 
 describe("manual paths", () => {
@@ -78,10 +77,7 @@ describe("manual paths", () => {
   });
 
   test("manual model and library path", () => {
-    let leopardEngine = new Leopard(
-      ACCESS_KEY, 
-      MODEL_PATH,
-      libraryPath);
+    let leopardEngine = new Leopard(ACCESS_KEY, MODEL_PATH, libraryPath);
 
     const waveFilePath = path.join(__dirname, WAV_PATH);
     let transcript = leopardEngine.processFile(waveFilePath);

@@ -13,10 +13,9 @@
 
 const { program } = require("commander");
 const readline = require("readline");
-const Leopard = require("@picovoice/leopard-node");
+const { Leopard, LeopardActivationLimitReachedError } = require("@picovoice/leopard-node");
 const PvRecorder = require("@picovoice/pvrecorder-node");
 
-const { PvStatusActivationLimitReached } = require("@picovoice/leopard-node/errors");
 const PV_RECORDER_FRAME_LENGTH = 2048;
 
 program
@@ -102,7 +101,7 @@ async function micDemo() {
     try {
       console.log(engineInstance.process(audioFrameInt16));
     } catch (err) {
-      if (err instanceof PvStatusActivationLimitReached) {
+      if (err instanceof LeopardActivationLimitReachedError) {
         console.error(`AccessKey '${access_key}' has reached it's processing limit.`);
       } else {
         console.error(err);
