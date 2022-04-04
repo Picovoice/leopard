@@ -26,7 +26,6 @@ export class LeopardActivationLimitReached extends LeopardError {}
 export class LeopardActivationThrottled extends LeopardError {}
 export class LeopardActivationRefused extends LeopardError {}
 
-
 export function pvStatusToException(pvStatus: PvStatus, errorMessage: string) {
   switch (pvStatus) {
     case PvStatus.OUT_OF_MEMORY:

@@ -30,11 +30,11 @@ const VALID_AUDIO_EXTENSIONS = [
   ".opus",
   ".vorbis",
   ".wav",
-  ".webm"
+  ".webm",
 ];
 
-type LeopardHandleAndStatus = { handle: any, status: PvStatus };
-type TranscriptAndStatus = { transcript: string, status: PvStatus };
+type LeopardHandleAndStatus = { handle: any; status: PvStatus };
+type TranscriptAndStatus = { transcript: string; status: PvStatus };
 
 /**
  * Node.js binding for Leopard speech-to-text engine.
@@ -57,7 +57,6 @@ export default class Leopard {
    * @param {string} libraryPath the path to the Leopard dynamic library (.node extension)
    */
   constructor(accessKey: string, modelPath?: string, libraryPath?: string) {
-
     if (
       accessKey === null ||
       accessKey === undefined ||
@@ -81,7 +80,9 @@ export default class Leopard {
     }
 
     if (!fs.existsSync(modelPath)) {
-      throw new LeopardInvalidArgumentError(`File not found at 'modelPath': ${modelPath}`);
+      throw new LeopardInvalidArgumentError(
+        `File not found at 'modelPath': ${modelPath}`
+      );
     }
 
     const pvLeopard = require(libraryPath);
@@ -128,7 +129,6 @@ export default class Leopard {
    * @returns {string} Inferred transcription.
    */
   process(pcm: Int16Array): string {
-
     if (
       this._handle === 0 ||
       this._handle === null ||
@@ -142,7 +142,9 @@ export default class Leopard {
         `PCM array provided to 'Leopard.process()' is undefined or null`
       );
     } else if (pcm.length === 0) {
-      throw new LeopardInvalidArgumentError(`PCM array provided to 'Leopard.process()' is empty`);
+      throw new LeopardInvalidArgumentError(
+        `PCM array provided to 'Leopard.process()' is empty`
+      );
     }
 
     let transcriptAndStatus: TranscriptAndStatus | null = null;
@@ -152,7 +154,7 @@ export default class Leopard {
         pcm,
         pcm.length
       );
-    } catch (err:any) {
+    } catch (err: any) {
       pvStatusToException(<PvStatus>err.code, err);
     }
 
@@ -173,7 +175,6 @@ export default class Leopard {
    * @returns {string} Inferred transcription.
    */
   processFile(audioPath: string): string {
-
     if (
       this._handle === 0 ||
       this._handle === null ||
@@ -190,15 +191,26 @@ export default class Leopard {
 
     let transcriptAndStatus: TranscriptAndStatus | null = null;
     try {
-      transcriptAndStatus = this._pvLeopard.process_file(this._handle, audioPath);
-    } catch (err:any) {
+      transcriptAndStatus = this._pvLeopard.process_file(
+        this._handle,
+        audioPath
+      );
+    } catch (err: any) {
       pvStatusToException(<PvStatus>err.code, err);
     }
 
     const status = transcriptAndStatus!.status;
     if (status !== PvStatus.SUCCESS) {
-      if (status === PvStatus.INVALID_ARGUMENT && !VALID_AUDIO_EXTENSIONS.includes(path.extname(audioPath.toLowerCase()))) {
-        pvStatusToException(status, `Specified file with extension '${path.extname(audioPath.toLowerCase())}' is not supported`);
+      if (
+        status === PvStatus.INVALID_ARGUMENT &&
+        !VALID_AUDIO_EXTENSIONS.includes(path.extname(audioPath.toLowerCase()))
+      ) {
+        pvStatusToException(
+          status,
+          `Specified file with extension '${path.extname(
+            audioPath.toLowerCase()
+          )}' is not supported`
+        );
       }
       pvStatusToException(status, "Leopard failed to process the audio file");
     }
@@ -215,7 +227,7 @@ export default class Leopard {
     if (this._handle !== 0) {
       try {
         this._pvLeopard.delete(this._handle);
-      } catch (err:any) {
+      } catch (err: any) {
         pvStatusToException(<PvStatus>err.code, err);
       }
       this._handle = 0;
