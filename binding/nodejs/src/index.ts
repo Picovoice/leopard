@@ -37,7 +37,7 @@ const VALID_AUDIO_EXTENSIONS = [
 
 /**
  * Node.js binding for Leopard speech-to-text engine.
- * 
+ *
  * Performs the calls to the Leopard node library. Does some basic parameter validation to prevent
  * errors occurring in the library layer. Provides clearer error messages in native JavaScript.
  */

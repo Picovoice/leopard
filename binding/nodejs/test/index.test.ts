@@ -10,13 +10,13 @@
 //
 "use strict";
 
-const Leopard = require("./index.js");
+const Leopard = require("../src");
 const fs = require("fs");
 const path = require("path");
 const WaveFile = require("wavefile").WaveFile;
 
 const { PvArgumentError } = require("./errors");
-const { getPlatform, getSystemLibraryPath } = require("./platforms");
+const { getPlatform, getSystemLibraryPath } = require("../src/platforms");
 
 const MODEL_PATH = "./lib/common/leopard_params.pv";
 
@@ -79,7 +79,7 @@ describe("manual paths", () => {
 
   test("manual model and library path", () => {
     let leopardEngine = new Leopard(
-      ACCESS_KEY, 
+      ACCESS_KEY,
       MODEL_PATH,
       libraryPath);
 
