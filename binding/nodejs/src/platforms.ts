@@ -41,7 +41,7 @@ const SUPPORTED_NODEJS_SYSTEMS = new Set([
   SYSTEM_WINDOWS,
 ]);
 
-const LIBRARY_PATH_PREFIX = "lib/";
+const LIBRARY_PATH_PREFIX = "../lib/";
 const SYSTEM_TO_LIBRARY_PATH = new Map();
 SYSTEM_TO_LIBRARY_PATH.set(
   `${SYSTEM_MAC}/${X86_64}`,
