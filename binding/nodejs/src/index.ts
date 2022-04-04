@@ -10,6 +10,34 @@
 //
 "use strict";
 
-import Leopard from "./leopard"
+import Leopard from "./leopard";
+import {
+  LeopardError,
+  LeopardOutOfMemoryError,
+  LeopardIoError,
+  LeopardInvalidArgumentError,
+  LeopardStopIterationError,
+  LeopardKeyError,
+  LeopardInvalidStateError,
+  LeopardRuntimeError,
+  LeopardActivationError,
+  LeopardActivationLimitReached,
+  LeopardActivationThrottled,
+  LeopardActivationRefused,
+} from "./errors";
 
-export { Leopard }
+export {
+  Leopard,
+  LeopardError,
+  LeopardOutOfMemoryError,
+  LeopardIoError,
+  LeopardInvalidArgumentError,
+  LeopardStopIterationError,
+  LeopardKeyError,
+  LeopardInvalidStateError,
+  LeopardRuntimeError,
+  LeopardActivationError,
+  LeopardActivationLimitReached,
+  LeopardActivationThrottled,
+  LeopardActivationRefused,
+};

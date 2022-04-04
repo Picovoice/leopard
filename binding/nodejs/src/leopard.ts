@@ -21,7 +21,7 @@ import {
 
 import { getSystemLibraryPath } from "./platforms";
 
-const DEFAULT_MODEL_PATH = "lib/common/leopard_params.pv";
+const DEFAULT_MODEL_PATH = "../lib/common/leopard_params.pv";
 
 const VALID_AUDIO_EXTENSIONS = [
   ".flac",

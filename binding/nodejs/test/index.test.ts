@@ -10,15 +10,14 @@
 //
 "use strict";
 
-import Leopard from "../src/leopard";
+import { Leopard, LeopardInvalidArgumentError } from "../src";
 import * as fs from "fs";
 import * as path from "path";
 import { WaveFile } from "wavefile";
 
-import { LeopardInvalidArgumentError } from "../src/errors";
 import { getSystemLibraryPath } from "../src/platforms";
 
-const MODEL_PATH = "../lib/common/leopard_params.pv";
+const MODEL_PATH = "./lib/common/leopard_params.pv";
 
 const WAV_PATH = "../../../resources/audio_samples/test.wav";
 const TRANSCRIPT =
