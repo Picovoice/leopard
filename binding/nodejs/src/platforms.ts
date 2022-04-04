@@ -80,7 +80,7 @@ SYSTEM_TO_LIBRARY_PATH.set(
   `${PLATFORM_WINDOWS}/amd64/pv_leopard.node`
 );
 
-function absoluteLibraryPath(libraryPath) {
+function absoluteLibraryPath(libraryPath: string) {
   return path.resolve(__dirname, LIBRARY_PATH_PREFIX, libraryPath);
 }
 
@@ -108,7 +108,7 @@ function getLinuxPlatform() {
   }
 }
 
-function getLinuxMachine(arch) {
+function getLinuxMachine(arch: string) {
   let archInfo = "";
   if (arch == ARM_64) {
     archInfo = ARM_CPU_64;
@@ -127,7 +127,7 @@ function getLinuxMachine(arch) {
   }
 }
 
-function getPlatform() {
+export function getPlatform() {
   const system = os.platform();
   const arch = os.arch();
 
@@ -150,7 +150,7 @@ function getPlatform() {
   throw `System ${system}/${arch} is not supported by this library.`;
 }
 
-function getSystemLibraryPath() {
+export function getSystemLibraryPath() {
   const system = os.platform();
   const arch = os.arch();
 
@@ -201,6 +201,3 @@ function getSystemLibraryPath() {
     `System ${system}/${arch} is not supported by this library.`
   );
 }
-
-exports.getPlatform = getPlatform;
-exports.getSystemLibraryPath = getSystemLibraryPath;

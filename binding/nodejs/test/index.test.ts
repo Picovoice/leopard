@@ -10,13 +10,14 @@
 //
 "use strict";
 
-const Leopard = require("../src");
-const fs = require("fs");
-const path = require("path");
-const WaveFile = require("wavefile").WaveFile;
+import Leopard from "../src/leopard";
+import * as fs from "fs";
+import * as path from "path";
+import { WaveFile } from "wavefile";
 
-const { PvArgumentError } = require("./errors");
-const { getPlatform, getSystemLibraryPath } = require("../src/platforms");
+import "../src/errors";
+import {LeopardInvalidArgumentError} from "../src/errors";
+const { getSystemLibraryPath } = require("../src/platforms");
 
 const MODEL_PATH = "./lib/common/leopard_params.pv";
 
@@ -48,7 +49,7 @@ describe("Defaults", () => {
     const waveBuffer = fs.readFileSync(waveFilePath);
     const waveAudioFile = new WaveFile(waveBuffer);
 
-    const pcm = waveAudioFile.getSamples(false, Int16Array)
+    const pcm: any = waveAudioFile.getSamples(false, Int16Array)
 
     let transcript = leopardEngine.process(pcm);
 
@@ -59,8 +60,8 @@ describe("Defaults", () => {
 
   test("Empty AccessKey", () => {
     expect(() => {
-      let leopardEngine = new Leopard('');
-    }).toThrow(PvArgumentError);
+      new Leopard('');
+    }).toThrow(LeopardInvalidArgumentError);
   });
 
 });
