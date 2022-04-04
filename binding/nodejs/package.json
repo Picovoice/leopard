@@ -2,7 +2,7 @@
   "name": "@picovoice/leopard-node",
   "version": "1.0.2",
   "description": "Picovoice Leopard Node.js binding",
-  "main": "dist/index.ts",
+  "main": "dist/index.js",
   "types": "dist/types/index.d.ts",
   "scripts": {
     "build": "npm-run-all --parallel build:**",
