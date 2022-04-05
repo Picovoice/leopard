@@ -9,6 +9,9 @@ Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` ac
 You can get your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
 Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get your `AccessKey`.
 
+## Requirements
+- Node.js 12+
+
 ## Usage
 
 To launch locally, run the following:
