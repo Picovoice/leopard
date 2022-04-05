@@ -23,25 +23,22 @@ app.post('/rss-transcribe', async (req, res) => {
 
   const podcastAudioUrl = feed.items[0].enclosure.url
   console.log("Fetching file from " + podcastAudioUrl)
-  let dlResponse = await axios.get(podcastAudioUrl, {responseType: "stream"})
+  let dlResponse = await axios.get(podcastAudioUrl, { responseType: "arraybuffer" })
   console.log("File obtained.")
 
   console.log("Writing data to local file...")
   const fileName = `${Math.random().toString(36).substr(2, 5)}.mp3`
-  const f = fs.createWriteStream(fileName)
-  dlResponse.data.pipe(f);
-  f.on('finish', () => {
-    console.log("File write complete")
+  fs.writeFileSync(fileName, dlResponse.data)
+  console.log("File write complete")
 
-    console.log("Transcribing audio...")
-    const leo = new Leopard("Tw4jothrMMLyRYQ793yD/XF3DeithcbeNVsYlNN0Dc1vY26suWNOkg==")
-    const transcript = leo.processFile(fileName)
-    leo.release()
+  console.log("Transcribing audio...")
+  const leo = new Leopard("Tw4jothrMMLyRYQ793yD/XF3DeithcbeNVsYlNN0Dc1vY26suWNOkg==")
+  const transcript = leo.processFile(fileName)
+  leo.release()
+  fs.unlinkSync(fileName)
+  console.log("Transcription complete")
 
-    fs.unlinkSync(fileName)
-    console.log("Transcription complete")
-    res.send(transcript)
-  })
+  res.send(transcript)
 });
 
 module.exports = app;
