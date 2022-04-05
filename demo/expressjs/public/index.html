@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="stylesheets/style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RSS Transcribe</title>
+</head>
+<body>
+<h2>RSS Transcribe <img src="images/rss.svg" alt="rss" id="rssIcon"/></h2>
+
+<h3>Transcribe the latest episode of your favourite podcast!</h3>
+<form id="rssForm">
+  <label>
+    Enter an RSS feed
+    <input type="text" name="rss" id="rssInput" value="" />
+  </label>
+  <input type="submit" id="transcribeBtn" value="Transcribe">
+</form>
+
+<span id="loadingContainer">
+  <img src="images/loading.gif" alt="loading" id="loadingGif"/>
+  Fetching and transcribing audio... This could take several minutes.
+</span>
+<pre></pre>
+<script src="script/script.js" charset="utf-8"></script>
+</body>
+</html>
