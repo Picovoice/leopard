@@ -8,3 +8,13 @@ latest episode of a given podcast.
 Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` acts as your credentials when using Leopard SDKs.
 You can get your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
 Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get your `AccessKey`.
+
+## Usage
+
+To launch locally, run the following:
+```console
+yarn
+yarn start
+```
+
+Visit [http://localhost:3000](http://localhost:3000) to use the application.
