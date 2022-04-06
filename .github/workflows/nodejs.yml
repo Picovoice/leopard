@@ -32,13 +32,13 @@ jobs:
         node-version: [14.x, 16.x]
         include:
         - os: ubuntu-latest
-          init_performance_threshold_sec: 2.6
-          proc_performance_threshold_sec: 0.8
+          init_performance_threshold_sec: 3.0
+          proc_performance_threshold_sec: 0.9
         - os: windows-latest
-          init_performance_threshold_sec: 2.5
+          init_performance_threshold_sec: 3.0
           proc_performance_threshold_sec: 0.9
         - os: macos-latest
-          init_performance_threshold_sec: 2.5
+          init_performance_threshold_sec: 3.0
           proc_performance_threshold_sec: 0.9
 
     steps:
