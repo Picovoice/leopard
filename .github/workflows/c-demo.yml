@@ -51,8 +51,8 @@ jobs:
           platform: windows
           arch: amd64
           ext: dll
-          init_performance_threshold_sec: 0.1
-          proc_performance_threshold_sec: 0.1
+          init_performance_threshold_sec: 2.4
+          proc_performance_threshold_sec: 0.8
         - os: macos-latest
           platform: mac
           arch: x86_64
@@ -110,7 +110,7 @@ jobs:
         - machine: jetson
           platform: jetson
           arch: cortex-a57-aarch64
-          init_performance_threshold_sec: 5.4
+          init_performance_threshold_sec: 6.0
           proc_performance_threshold_sec: 2.1
 
     steps:
