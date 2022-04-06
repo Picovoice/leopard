@@ -57,7 +57,7 @@ jobs:
           platform: mac
           arch: x86_64
           ext: dylib
-          init_performance_threshold_sec: 2.4
+          init_performance_threshold_sec: 2.6
           proc_performance_threshold_sec: 0.8
 
     steps:
