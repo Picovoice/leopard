@@ -85,20 +85,22 @@ static void print_dl_error(const char *message) {
 }
 
 static struct option long_options[] = {
-        {"library_path",              required_argument, NULL, 'l'},
-        {"model_path",                required_argument, NULL, 'm'},
-        {"access_key",                required_argument, NULL, 'a'},
-        {"performance_threshold_sec", optional_argument, NULL, 'p'},
+        {"library_path",                   required_argument, NULL, 'l'},
+        {"model_path",                     required_argument, NULL, 'm'},
+        {"access_key",                     required_argument, NULL, 'a'},
+        {"init_performance_threshold_sec", optional_argument, NULL, 'i'},
+        {"proc_performance_threshold_sec", optional_argument, NULL, 'p'},
 };
 
 int main(int argc, char **argv) {
     const char *access_key = NULL;
     const char *library_path = NULL;
     const char *model_path = NULL;
-    double performance_threshold_sec = 0;
+    double init_performance_threshold_sec = 0;
+    double proc_performance_threshold_sec = 0;
 
     int opt;
-    while ((opt = getopt_long(argc, argv, "a:l:m:p:", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "a:l:m:i:p:", long_options, NULL)) != -1) {
         switch (opt) {
             case 'a':
                 access_key = optarg;
@@ -109,8 +111,11 @@ int main(int argc, char **argv) {
             case 'm':
                 model_path = optarg;
                 break;
+            case 'i':
+                init_performance_threshold_sec = strtod(optarg, NULL);
+                break;
             case 'p':
-                performance_threshold_sec = strtod(optarg, NULL);
+                proc_performance_threshold_sec = strtod(optarg, NULL);
                 break;
             default:
                 break;
@@ -198,11 +203,18 @@ int main(int argc, char **argv) {
 
     fprintf(stdout, "proc took %.2f sec\n", proc_sec);
 
-    if (performance_threshold_sec > 0) {
-        const double total_cpu_time_sec = init_sec + proc_sec;
-        if (total_cpu_time_sec > performance_threshold_sec) {
-            fprintf(stderr, "Expected threshold (%.3fs), process took (%.3fs)\n", performance_threshold_sec,
-                    total_cpu_time_sec);
+    if (init_performance_threshold_sec > 0) {
+        if (init_sec > init_performance_threshold_sec) {
+            fprintf(stderr, "Expected threshold (%.3fs), init took (%.3fs)\n", init_performance_threshold_sec,
+                    init_sec);
+            exit(1);
+        }
+    }
+
+    if (proc_performance_threshold_sec > 0) {
+        if (proc_sec > proc_performance_threshold_sec) {
+            fprintf(stderr, "Expected threshold (%.3fs), process took (%.3fs)\n", proc_performance_threshold_sec,
+                    proc_sec);
             exit(1);
         }
     }

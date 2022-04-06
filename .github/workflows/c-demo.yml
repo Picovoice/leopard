@@ -45,17 +45,20 @@ jobs:
           platform: linux
           arch: x86_64
           ext: so
-          performance_threshold_sec: 3.4
+          init_performance_threshold_sec: 0.1
+          proc_performance_threshold_sec: 0.1
         - os: windows-latest
           platform: windows
           arch: amd64
           ext: dll
-          performance_threshold_sec: 3.0
+          init_performance_threshold_sec: 0.1
+          proc_performance_threshold_sec: 0.1
         - os: macos-latest
           platform: mac
           arch: x86_64
           ext: dylib
-          performance_threshold_sec: 3.7
+          init_performance_threshold_sec: 0.1
+          proc_performance_threshold_sec: 0.1
 
     steps:
       - uses: actions/checkout@v2
@@ -74,7 +77,8 @@ jobs:
           access_key: ${{ secrets.PV_VALID_ACCESS_KEY }}
           library_path: ../../lib/${{ matrix.platform }}/${{ matrix.arch }}/libpv_leopard.${{ matrix.ext }}
           model_path: ../../lib/common/leopard_params.pv
-          performance_threshold_sec: ${{ matrix.performance_threshold_sec }}
+          init_performance_threshold_sec: ${{ matrix.init_performance_threshold_sec }}
+          proc_performance_threshold_sec: ${{ matrix.proc_performance_threshold_sec }}
   
   build-demo-self-hosted:
     runs-on: ${{ matrix.machine }}
@@ -86,23 +90,28 @@ jobs:
         - machine: rpi3-32
           platform: raspberry-pi
           arch: cortex-a53
-          performance_threshold_sec: 11.1
+          init_performance_threshold_sec: 0.1
+          proc_performance_threshold_sec: 0.1
         - machine: rpi3-64
           platform: raspberry-pi
           arch: cortex-a53-aarch64
-          performance_threshold_sec: 12.5
+          init_performance_threshold_sec: 0.1
+          proc_performance_threshold_sec: 0.1
         - machine: rpi4-32
           platform: raspberry-pi
           arch: cortex-a72
-          performance_threshold_sec: 7.4
+          init_performance_threshold_sec: 0.1
+          proc_performance_threshold_sec: 0.1
         - machine: rpi4-64
           platform: raspberry-pi
           arch: cortex-a72-aarch64
-          performance_threshold_sec: 7.1
+          init_performance_threshold_sec: 0.1
+          proc_performance_threshold_sec: 0.1
         - machine: jetson
           platform: jetson
           arch: cortex-a57-aarch64
-          performance_threshold_sec: 7.7     
+          init_performance_threshold_sec: 0.1
+          proc_performance_threshold_sec: 0.1
 
     steps:
       - uses: actions/checkout@v2
@@ -121,4 +130,5 @@ jobs:
           access_key: ${{ secrets.PV_VALID_ACCESS_KEY }}
           library_path: ../../lib/${{ matrix.platform }}/${{ matrix.arch }}/libpv_leopard.so
           model_path: ../../lib/common/leopard_params.pv
-          performance_threshold_sec: ${{ matrix.performance_threshold_sec }}
+          init_performance_threshold_sec: ${{ matrix.init_performance_threshold_sec }}
+          proc_performance_threshold_sec: ${{ matrix.proc_performance_threshold_sec }}
