@@ -1,0 +1,124 @@
+name: C Demos
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/c-demos.yml'
+      - 'demo/c/**'
+      - '!demo/c/README.md'
+      - 'include/**'
+      - 'lib/common/**'
+      - 'lib/linux/**'
+      - 'lib/jetson/**'
+      - 'lib/mac/**'
+      - 'lib/raspberry-pi/**'
+      - 'lib/windows/**'
+  pull_request:
+    branches: [master]
+    paths:
+      - '.github/workflows/c-demos.yml'
+      - 'demo/c/**'
+      - '!demo/c/README.md'
+      - 'include/**'
+      - 'lib/common/**'
+      - 'lib/linux/**'
+      - 'lib/jetson/**'
+      - 'lib/mac/**'
+      - 'lib/raspberry-pi/**'
+      - 'lib/windows/**'
+
+defaults:
+  run:
+    working-directory: demo/c
+
+jobs:
+  build-demo-github-hosted:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+        - os: ubuntu-latest
+          platform: linux
+          arch: x86_64
+          ext: so
+          performance_threshold_sec: 0.5
+        - os: windows-latest
+          platform: windows
+          arch: amd64
+          ext: dll
+          performance_threshold_sec: 0.5
+        - os: macos-latest
+          platform: mac
+          arch: x86_64
+          ext: dylib
+          performance_threshold_sec: 0.5
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Create build directory
+        run: cmake -B ./build
+
+      - name: Build filedemo
+        run: cmake --build ./build
+      
+      - uses: ./.github/actions/c-demo
+        name: Run demo
+        with:
+          access_key: ${{ secrets.PV_VALID_ACCESS_KEY }}
+          library_path: ../../lib/${{ matrix.platform }}/${{ matrix.arch }}/libpv_leopard.${{ matrix.ext }}
+          model_path: ../../lib/common/leopard_params.pv
+          performance_threshold_sec: ${{ matrix.performance_threshold_sec }}
+  
+  build-filedemo-self-hosted:
+    runs-on: ${{ matrix.machine }}
+
+    strategy:
+      matrix:
+        machine: [rpi3-32, rpi3-64, rpi4-32, rpi4-64, jetson]
+        include:        
+        - machine: rpi3-32
+          platform: raspberry-pi
+          arch: cortex-a53
+          performance_threshold_sec: 2.0
+        - machine: rpi3-64
+          platform: raspberry-pi
+          arch: cortex-a53-aarch64
+          performance_threshold_sec: 2.5
+        - machine: rpi4-32
+          platform: raspberry-pi
+          arch: cortex-a72
+          performance_threshold_sec: 1.5
+        - machine: rpi4-64
+          platform: raspberry-pi
+          arch: cortex-a72-aarch64
+          performance_threshold_sec: 1.5
+        - machine: jetson
+          platform: jetson
+          arch: cortex-a57-aarch64
+          performance_threshold_sec: 2.0        
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Create build directory
+        run: cmake -B ./build
+
+      - name: Build filedemo
+        run: cmake --build ./build
+      
+      - uses: ./.github/actions/c-demo
+        name: Run demo
+        with:
+          access_key: ${{ secrets.PV_VALID_ACCESS_KEY }}
+          library_path: ../../lib/${{ matrix.platform }}/${{ matrix.arch }}/libpv_leopard.${{ matrix.ext }}
+          model_path: ../../lib/common/leopard_params.pv
+          performance_threshold_sec: ${{ matrix.performance_threshold_sec }}
