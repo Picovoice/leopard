@@ -102,7 +102,7 @@ jobs:
         - machine: rpi4-32
           platform: raspberry-pi
           arch: cortex-a72
-          init_performance_threshold_sec: 5.8
+          init_performance_threshold_sec: 6.2
           proc_performance_threshold_sec: 2.2
         - machine: rpi4-64
           platform: raspberry-pi
