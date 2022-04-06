@@ -46,11 +46,11 @@ jobs:
           LeopardAppTestUITests/LeopardAppTestUITests.swift
       
       - name: Inject Init Performance Threshold
-        run: sed -i '.bak' 's:{INIT_PERFORMANCE_THRESHOLD_SEC}:0.5:'
+        run: sed -i '.bak' 's:{INIT_PERFORMANCE_THRESHOLD_SEC}:7.5:'
           LeopardAppTestUITests/LeopardAppTestUITests.swift
       
       - name: Inject Process Performance Threshold
-        run: sed -i '.bak' 's:{PROC_PERFORMANCE_THRESHOLD_SEC}:0.5:'
+        run: sed -i '.bak' 's:{PROC_PERFORMANCE_THRESHOLD_SEC}:2.5:'
           LeopardAppTestUITests/LeopardAppTestUITests.swift
 
       - name: XCode Build

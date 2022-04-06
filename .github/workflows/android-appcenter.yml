@@ -50,10 +50,10 @@ jobs:
       run: echo pvTestingAccessKey="${{secrets.PV_VALID_ACCESS_KEY}}" >> local.properties
     
     - name: Inject Init Performance Threshold
-      run: echo initPerformanceThresholdSec="0.5" >> local.properties
+      run: echo initPerformanceThresholdSec="7.5" >> local.properties
     
     - name: Inject Process Performance Threshold
-      run: echo procPerformanceThresholdSec="0.5" >> local.properties
+      run: echo procPerformanceThresholdSec="2.5" >> local.properties
 
     - name: Build app
       run: ./gradlew assembleDebug

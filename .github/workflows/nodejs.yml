@@ -71,13 +71,13 @@ jobs:
           init_performance_threshold_sec: 9.0
           proc_performance_threshold_sec: 3.4
         - machine: rpi3-64
-          init_performance_threshold_sec: 10.7
+          init_performance_threshold_sec: 11.7
           proc_performance_threshold_sec: 3.6
         - machine: rpi4-32
-          init_performance_threshold_sec: 6.0
+          init_performance_threshold_sec: 6.5
           proc_performance_threshold_sec: 2.2
         - machine: rpi4-64
-          init_performance_threshold_sec: 6.1
+          init_performance_threshold_sec: 6.5
           proc_performance_threshold_sec: 2.1
         - machine: jetson
           init_performance_threshold_sec: 7.0
