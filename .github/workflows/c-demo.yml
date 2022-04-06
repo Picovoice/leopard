@@ -95,7 +95,7 @@ jobs:
         - machine: rpi3-64
           platform: raspberry-pi
           arch: cortex-a53-aarch64
-          init_performance_threshold_sec: 9.5
+          init_performance_threshold_sec: 9.8
           proc_performance_threshold_sec: 3.5
         - machine: rpi4-32
           platform: raspberry-pi

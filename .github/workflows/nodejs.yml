@@ -32,8 +32,8 @@ jobs:
         node-version: [14.x, 16.x]
         include:
         - os: ubuntu-latest
-          init_performance_threshold_sec: 0.5
-          proc_performance_threshold_sec: 0.5
+          init_performance_threshold_sec: 2.6
+          proc_performance_threshold_sec: 0.8
         - os: windows-latest
           init_performance_threshold_sec: 0.5
           proc_performance_threshold_sec: 0.5
@@ -72,14 +72,14 @@ jobs:
           init_performance_threshold_sec: 0.5
           proc_performance_threshold_sec: 0.5
         - machine: rpi4-32
-          init_performance_threshold_sec: 0.5
-          proc_performance_threshold_sec: 0.5
+          init_performance_threshold_sec: 6.0
+          proc_performance_threshold_sec: 2.2
         - machine: rpi4-64
-          init_performance_threshold_sec: 0.5
-          proc_performance_threshold_sec: 0.5
+          init_performance_threshold_sec: 6.1
+          proc_performance_threshold_sec: 2.1
         - machine: jetson
-          init_performance_threshold_sec: 0.5
-          proc_performance_threshold_sec: 0.5
+          init_performance_threshold_sec: 5.9
+          proc_performance_threshold_sec: 2.2
 
     steps:
     - uses: actions/checkout@v2
