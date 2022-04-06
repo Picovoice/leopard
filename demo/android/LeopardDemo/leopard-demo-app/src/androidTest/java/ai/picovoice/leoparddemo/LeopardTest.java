@@ -42,6 +42,7 @@ import java.util.Arrays;
 
 import ai.picovoice.leopard.Leopard;
 import ai.picovoice.leopard.LeopardException;
+
 import static org.junit.Assert.assertTrue;
 
 
@@ -138,6 +139,45 @@ public class LeopardTest {
         assertTrue(leopard.getSampleRate() > 0);
 
         leopard.delete();
+    }
+
+    @Test
+    public void testPerformance() throws Exception {
+        String initThresholdString = appContext.getString(R.string.initPerformanceThresholdSec);
+        String procThresholdString = appContext.getString(R.string.procPerformanceThresholdSec);
+        Assume.assumeNotNull(initThresholdString);
+        Assume.assumeNotNull(procThresholdString);
+        Assume.assumeFalse(initThresholdString.equals(""));
+        Assume.assumeFalse(procThresholdString.equals(""));
+
+        double initPerformanceThresholdSec = Double.parseDouble(initThresholdString);
+        double procPerformanceThresholdSec = Double.parseDouble(procThresholdString);
+
+        long beforeInit = System.nanoTime();
+        Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
+                .setModelPath(defaultModelPath)
+                .build(appContext);
+        long afterInit = System.nanoTime();
+
+        File audioFile = new File(testResourcesPath, "audio/test.wav");
+
+        long beforeProc = System.nanoTime();
+        String result = leopard.processFile(audioFile.getAbsolutePath());
+        long beforeProc = System.nanoTime();
+        leopard.delete();
+
+        double totalSecInit = Math.round(((double) (afterInit - beforeInit)) * 1e-6) / 1000.0;
+        double totalSecProc = Math.round(((double) (afterProc - beforeProc)) * 1e-6) / 1000.0;
+        System.out.println("Init took " + totalSecInit + "s");
+        System.out.println("Process took " + totalSecProc + "s");        
+        assertTrue(
+                String.format("Expected threshold (%.3fs), init took (%.3fs)", initPerformanceThresholdSec, totalSecInit),
+                totalSecInit <= initPerformanceThresholdSec
+        );
+        assertTrue(
+                String.format("Expected threshold (%.3fs), process took (%.3fs)", procPerformanceThresholdSec, totalSecProc),
+                totalSecProc <= procPerformanceThresholdSec
+        );
     }
 
     private void extractAssetsRecursively(String path) throws IOException {

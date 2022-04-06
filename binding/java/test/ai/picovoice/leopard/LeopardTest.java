@@ -128,8 +128,8 @@ public class LeopardTest {
 
         double totalSecInit = Math.round(((double) (afterInit - beforeInit)) * 1e-6) / 1000.0;
         double totalSecProc = Math.round(((double) (afterProc - beforeProc)) * 1e-6) / 1000.0;
-        System.out.println(totalSecInit);
-        System.out.println(totalSecProc);
+        System.out.println("Init took " + totalSecInit + "s");
+        System.out.println("Process took " + totalSecProc + "s");
 
         assertTrue(
                 totalSecInit <= this.initPerformanceThresholdSec,

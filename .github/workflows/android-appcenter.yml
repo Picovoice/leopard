@@ -48,6 +48,12 @@ jobs:
 
     - name: Inject AccessKey
       run: echo pvTestingAccessKey="${{secrets.PV_VALID_ACCESS_KEY}}" >> local.properties
+    
+    - name: Inject Init Performance Threshold
+      run: echo initPerformanceThresholdSec="0.5" >> local.properties
+    
+    - name: Inject Process Performance Threshold
+      run: echo procPerformanceThresholdSec="0.5" >> local.properties
 
     - name: Build app
       run: ./gradlew assembleDebug
