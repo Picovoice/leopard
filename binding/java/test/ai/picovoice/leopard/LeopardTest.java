@@ -33,7 +33,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class LeopardTest {
     private Leopard leopard;
     private String accessKey = System.getProperty("pvTestingAccessKey");
+    
+    private double initPerformanceThresholdSec;
+    private double procPerformanceThresholdSec;
+
     private final String referenceTranscript = "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL";
+
+    RhinoTest() {
+        try {
+            initPerformanceThresholdSec = Double.parseDouble(System.getProperty("initPerformanceThresholdSec"));
+            procPerformanceThresholdSec = Double.parseDouble(System.getProperty("procPerformanceThresholdSec"));
+        } catch (Exception e) {
+            initPerformanceThresholdSec = 0f;
+            procPerformanceThresholdSec = 0f;
+        }
+    }
 
     @AfterEach
     void tearDown() {
@@ -91,5 +105,38 @@ public class LeopardTest {
         String transcript = leopard.processFile(audioFilePath);
 
         assertTrue(transcript.equals(referenceTranscript));
+    }
+
+    @Test
+    @DisabledIf("systemProperty.get('initPerformanceThresholdSec') == null || systemProperty.get('initPerformanceThresholdSec') == '' || systemProperty.get('procPerformanceThresholdSec') == null || systemProperty.get('procPerformanceThresholdSec') == ''")
+    void testPerformance() throws Exception {
+        
+        long beforeInit = System.nanoTime();
+        leopard = new Leopard.Builder()
+                    .setAccessKey(accessKey)
+                    .build();
+        long afterInit = System.nanoTime();
+
+        String audioFilePath = Paths.get(System.getProperty("user.dir"))
+            .resolve("../../resources/audio_samples/test.wav")
+            .toString();
+
+        long beforeProc = System.nanoTime();
+        String transcript = leopard.processFile(audioFilePath);
+        long afterProc = System.nanoTime();
+
+        double totalSecInit = Math.round(((double) (afterInit - beforeInit)) * 1e-6) / 1000.0;
+        double totalSecProc = Math.round(((double) (afterProc - beforeProc)) * 1e-6) / 1000.0;
+        System.out.println(totalSecInit);
+        System.out.println(totalSecProc);
+
+        assertTrue(
+                totalSecInit <= this.initPerformanceThresholdSec,
+                String.format("Expected threshold (%.3fs), init took (%.3fs)", this.initPerformanceThresholdSec, totalSecInit)
+        );
+        assertTrue(
+                totalSecProc <= this.procPerformanceThresholdSec,
+                String.format("Expected threshold (%.3fs), process took (%.3fs)", this.procPerformanceThresholdSec, totalSecProc)
+        );
     }
 }
