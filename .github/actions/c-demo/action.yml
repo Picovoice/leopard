@@ -10,7 +10,7 @@ inputs:
   init_performance_threshold_sec:
     required: false
     type: number
-  proc_performance_threshold_sec:
+  process_performance_threshold_sec:
     required: false
     type: number
 
@@ -23,7 +23,7 @@ runs:
       -l ${{ inputs.library_path }}
       -m ${{ inputs.model_path }} 
       ../../resources/audio_samples/test.wav
-    if: "${{ inputs.init_performance_threshold_sec == '' }} && ${{ inputs.proc_performance_threshold_sec == '' }}"
+    if: "${{ inputs.init_performance_threshold_sec == '' || inputs.process_performance_threshold_sec == ''}}"
     working-directory: demo/c
     shell: bash
 
@@ -35,7 +35,7 @@ runs:
       -i ${{ inputs.init_performance_threshold_sec }}
       -p ${{ inputs.proc_performance_threshold_sec }}
       ../../resources/audio_samples/test.wav
-    if: "${{ inputs.init_performance_threshold_sec != '' }} && ${{ inputs.proc_performance_threshold_sec != '' }}"
+    if: "${{ inputs.init_performance_threshold_sec != '' && inputs.process_performance_threshold_sec != ''}}"
     working-directory: demo/c
     shell: bash
   
