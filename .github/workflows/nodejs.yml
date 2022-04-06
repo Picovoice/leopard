@@ -30,6 +30,16 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: [14.x, 16.x]
+        include:
+        - os: ubuntu-latest
+          init_performance_threshold_sec: 0.5
+          proc_performance_threshold_sec: 0.5
+        - os: windows-latest
+          init_performance_threshold_sec: 0.5
+          proc_performance_threshold_sec: 0.5
+        - os: macos-latest
+          init_performance_threshold_sec: 0.5
+          proc_performance_threshold_sec: 0.5
 
     steps:
     - uses: actions/checkout@v2
@@ -46,7 +56,9 @@ jobs:
       run: yarn install
 
     - name: Test
-      run: yarn test --access_key=${{secrets.PV_VALID_ACCESS_KEY}}
+      run: yarn test --access_key=${{secrets.PV_VALID_ACCESS_KEY}} \
+        --init_performance_threshold_sec=${{matrix.init_performance_threshold_sec}} \
+        --proc_performance_threshold_sec=${{matrix.proc_performance_threshold_sec}}
 
   build-self-hosted:
     runs-on: ${{ matrix.machine }}
@@ -54,6 +66,22 @@ jobs:
     strategy:
       matrix:
         machine: [rpi3-32, rpi3-64, rpi4-32, rpi4-64, jetson]
+        include:
+        - machine: rpi3-32
+          init_performance_threshold_sec: 0.5
+          proc_performance_threshold_sec: 0.5
+        - machine: rpi3-64
+          init_performance_threshold_sec: 0.5
+          proc_performance_threshold_sec: 0.5
+        - machine: rpi4-32
+          init_performance_threshold_sec: 0.5
+          proc_performance_threshold_sec: 0.5
+        - machine: rpi4-64
+          init_performance_threshold_sec: 0.5
+          proc_performance_threshold_sec: 0.5
+        - machine: jetson
+          init_performance_threshold_sec: 0.5
+          proc_performance_threshold_sec: 0.5
 
     steps:
     - uses: actions/checkout@v2
@@ -65,4 +93,6 @@ jobs:
       run: yarn install
 
     - name: Test
-      run: yarn test --access_key=${{secrets.PV_VALID_ACCESS_KEY}}
+      run: yarn test --access_key=${{secrets.PV_VALID_ACCESS_KEY}} \
+        --init_performance_threshold_sec=${{matrix.init_performance_threshold_sec}} \
+        --proc_performance_threshold_sec=${{matrix.proc_performance_threshold_sec}}
