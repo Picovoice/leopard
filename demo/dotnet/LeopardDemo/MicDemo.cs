@@ -75,11 +75,17 @@ namespace LeopardDemo
                         audioFrame.AddRange(pcm);
                     }
                     recorder.Stop();
-                }, token);
-
-                Console.Read();
+                });
+                
+                string s = Console.ReadLine();
+                if (s == null)
+                {
+                    break;
+                }
 
                 tokenSource.Cancel();
+                recordingTask.Wait();
+
                 short[] pcm = audioFrame.ToArray();
 
                 Console.WriteLine(">>> Processing ... \n");
@@ -94,7 +100,7 @@ namespace LeopardDemo
             }
         }
 
-         /// <summary>
+        /// <summary>
         /// Lists available audio input devices.
         /// </summary>
         public static void ShowAudioDevices()
