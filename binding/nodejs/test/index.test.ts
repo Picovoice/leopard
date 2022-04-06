@@ -122,8 +122,8 @@ describe_if(
 
     let totalInit = Number(((afterInit - beforeInit) / 1000).toFixed(3));
     let totalProc = Number(((afterProc - beforeProc) / 1000).toFixed(3));
-    console.log(totalInit);
-    console.log(totalProc);
+    console.log(`Init took ${totalInit}s`);
+    console.log(`Process took ${totalProc}s`);
     expect(totalInit).toBeLessThanOrEqual(INIT_PERFORMANCE_THRESHOLD_SEC);
     expect(totalProc).toBeLessThanOrEqual(PROC_PERFORMANCE_THRESHOLD_SEC);
   });
