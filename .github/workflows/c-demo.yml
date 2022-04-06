@@ -50,7 +50,7 @@ jobs:
           platform: windows
           arch: amd64
           ext: dll
-          performance_threshold_sec: 0.5
+          performance_threshold_sec: 3.0
         - os: macos-latest
           platform: mac
           arch: x86_64
