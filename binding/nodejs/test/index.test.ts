@@ -120,8 +120,10 @@ describe_if(
 
     leopardEngine.release();
 
-    let totalInit = Number((afterInit - beforeInit) / 1000).toFixed(3);
-    let totalProc = Number((afterProc - beforeProc) / 1000).toFixed(3);
+    let totalInit = Number(((afterInit - beforeInit) / 1000).toFixed(3));
+    let totalProc = Number(((afterProc - beforeProc) / 1000).toFixed(3));
+    console.log(totalInit);
+    console.log(totalProc);
     expect(totalInit).toBeLessThanOrEqual(INIT_PERFORMANCE_THRESHOLD_SEC);
     expect(totalProc).toBeLessThanOrEqual(PROC_PERFORMANCE_THRESHOLD_SEC);
   });
