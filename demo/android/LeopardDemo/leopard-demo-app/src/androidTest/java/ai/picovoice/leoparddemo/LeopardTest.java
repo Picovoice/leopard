@@ -163,7 +163,8 @@ public class LeopardTest {
 
         long beforeProc = System.nanoTime();
         String result = leopard.processFile(audioFile.getAbsolutePath());
-        long beforeProc = System.nanoTime();
+        long afterProc = System.nanoTime();
+        
         leopard.delete();
 
         double totalSecInit = Math.round(((double) (afterInit - beforeInit)) * 1e-6) / 1000.0;
