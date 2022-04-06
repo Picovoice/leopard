@@ -45,7 +45,7 @@ jobs:
           platform: linux
           arch: x86_64
           ext: so
-          performance_threshold_sec: 0.5
+          performance_threshold_sec: 2.9
         - os: windows-latest
           platform: windows
           arch: amd64
@@ -65,7 +65,7 @@ jobs:
       - name: Create build directory
         run: cmake -B ./build
 
-      - name: Build filedemo
+      - name: Build demo
         run: cmake --build ./build
       
       - uses: ./.github/actions/c-demo
@@ -112,13 +112,13 @@ jobs:
       - name: Create build directory
         run: cmake -B ./build
 
-      - name: Build filedemo
+      - name: Build demo
         run: cmake --build ./build
       
       - uses: ./.github/actions/c-demo
         name: Run demo
         with:
           access_key: ${{ secrets.PV_VALID_ACCESS_KEY }}
-          library_path: ../../lib/${{ matrix.platform }}/${{ matrix.arch }}/libpv_leopard.${{ matrix.ext }}
+          library_path: ../../lib/${{ matrix.platform }}/${{ matrix.arch }}/libpv_leopard.so
           model_path: ../../lib/common/leopard_params.pv
           performance_threshold_sec: ${{ matrix.performance_threshold_sec }}
