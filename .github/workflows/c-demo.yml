@@ -57,8 +57,8 @@ jobs:
           platform: mac
           arch: x86_64
           ext: dylib
-          init_performance_threshold_sec: 0.1
-          proc_performance_threshold_sec: 0.1
+          init_performance_threshold_sec: 2.4
+          proc_performance_threshold_sec: 0.8
 
     steps:
       - uses: actions/checkout@v2
