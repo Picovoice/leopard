@@ -55,7 +55,7 @@ jobs:
           platform: mac
           arch: x86_64
           ext: dylib
-          performance_threshold_sec: 3.0
+          performance_threshold_sec: 3.7
 
     steps:
       - uses: actions/checkout@v2
@@ -90,7 +90,7 @@ jobs:
         - machine: rpi3-64
           platform: raspberry-pi
           arch: cortex-a53-aarch64
-          performance_threshold_sec: 2.5
+          performance_threshold_sec: 12.5
         - machine: rpi4-32
           platform: raspberry-pi
           arch: cortex-a72
