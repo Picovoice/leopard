@@ -39,7 +39,7 @@ public class LeopardTest {
 
     private final String referenceTranscript = "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL";
 
-    RhinoTest() {
+    LeopardTest() {
         try {
             initPerformanceThresholdSec = Double.parseDouble(System.getProperty("initPerformanceThresholdSec"));
             procPerformanceThresholdSec = Double.parseDouble(System.getProperty("procPerformanceThresholdSec"));
