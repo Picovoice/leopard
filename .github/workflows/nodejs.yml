@@ -38,8 +38,8 @@ jobs:
           init_performance_threshold_sec: 0.5
           proc_performance_threshold_sec: 0.5
         - os: macos-latest
-          init_performance_threshold_sec: 0.5
-          proc_performance_threshold_sec: 0.5
+          init_performance_threshold_sec: 2.5
+          proc_performance_threshold_sec: 0.9
 
     steps:
     - uses: actions/checkout@v2
@@ -78,7 +78,7 @@ jobs:
           init_performance_threshold_sec: 6.1
           proc_performance_threshold_sec: 2.1
         - machine: jetson
-          init_performance_threshold_sec: 5.9
+          init_performance_threshold_sec: 7.0
           proc_performance_threshold_sec: 2.2
 
     steps:
