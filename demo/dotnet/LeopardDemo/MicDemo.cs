@@ -76,7 +76,7 @@ namespace LeopardDemo
                     }
                     recorder.Stop();
                 });
-                
+
                 string s = Console.ReadLine();
                 if (s == null)
                 {
