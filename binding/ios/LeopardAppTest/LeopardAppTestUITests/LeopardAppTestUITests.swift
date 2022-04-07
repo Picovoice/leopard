@@ -74,13 +74,13 @@ class LeopardAppTestUITests: XCTestCase {
     }
 
     func testPerformance() throws {
-        try XCTSkipIf(initThresholdString == "{INIT_PERFORMANCE_THRESHOLD_SEC}")
-        try XCTSkipIf(procThresholdString == "{PROC_PERFORMANCE_THRESHOLD_SEC}")
+        XCTAssertFalse(initThresholdString == "{INIT_PERFORMANCE_THRESHOLD_SEC}")
+        XCTAssertFalse(procThresholdString == "{PROC_PERFORMANCE_THRESHOLD_SEC}")
 
-        let initPerformanceThresholdSec = Double(initThresholdString)        
+        let initPerformanceThresholdSec = Double(initThresholdString)
         let procPerformanceThresholdSec = Double(procThresholdString)
-        try XCTSkipIf(initPerformanceThresholdSec == nil)
-        try XCTSkipIf(procPerformanceThresholdSec == nil)
+        XCTAssertFalse(initPerformanceThresholdSec == nil)
+        XCTAssertFalse(procPerformanceThresholdSec == nil)
 
         let bundle = Bundle(for: type(of: self))
         let modelURL = bundle.url(forResource: "leopard_params", withExtension: "pv")!
