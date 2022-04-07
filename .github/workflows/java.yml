@@ -67,10 +67,10 @@ jobs:
         machine: [rpi3-32, rpi3-64, rpi4-32, rpi4-64, jetson]
         include:        
         - machine: rpi3-32
-          init_performance_threshold_sec: 9.1
+          init_performance_threshold_sec: 11.0
           proc_performance_threshold_sec: 3.4
         - machine: rpi3-64
-          init_performance_threshold_sec: 12.8
+          init_performance_threshold_sec: 16.0
           proc_performance_threshold_sec: 3.6
         - machine: rpi4-32
           init_performance_threshold_sec: 8.0

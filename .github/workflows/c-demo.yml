@@ -52,13 +52,13 @@ jobs:
           platform: windows
           arch: amd64
           ext: dll
-          init_performance_threshold_sec: 2.4
+          init_performance_threshold_sec: 3.0
           proc_performance_threshold_sec: 0.8
         - os: macos-latest
           platform: mac
           arch: x86_64
           ext: dylib
-          init_performance_threshold_sec: 2.6
+          init_performance_threshold_sec: 3.0
           proc_performance_threshold_sec: 0.8
 
     steps:
@@ -97,7 +97,7 @@ jobs:
         - machine: rpi3-64
           platform: raspberry-pi
           arch: cortex-a53-aarch64
-          init_performance_threshold_sec: 12.8
+          init_performance_threshold_sec: 15.0
           proc_performance_threshold_sec: 3.6
         - machine: rpi4-32
           platform: raspberry-pi
