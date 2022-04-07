@@ -46,11 +46,11 @@ jobs:
           LeopardAppTestUITests/LeopardAppTestUITests.swift
       
       - name: Inject Init Performance Threshold
-        run: sed -i '.bak' 's:{INIT_PERFORMANCE_THRESHOLD_SEC}:7.5:'
+        run: sed -i '.bak' 's:{INIT_PERFORMANCE_THRESHOLD_SEC}:0.5:'
           LeopardAppTestUITests/LeopardAppTestUITests.swift
       
       - name: Inject Process Performance Threshold
-        run: sed -i '.bak' 's:{PROC_PERFORMANCE_THRESHOLD_SEC}:2.5:'
+        run: sed -i '.bak' 's:{PROC_PERFORMANCE_THRESHOLD_SEC}:.5:'
           LeopardAppTestUITests/LeopardAppTestUITests.swift
 
       - name: XCode Build
@@ -66,7 +66,7 @@ jobs:
         run: appcenter test run xcuitest 
           --token ${{secrets.APPCENTERAPITOKEN}}
           --app "Picovoice/Leopard-iOS" 
-          --devices "Picovoice/ios-min-max"
+          --devices "Picovoice/ios-single"
           --test-series "leopard-ios" 
           --locale "en_US" 
           --build-dir ddp/Build/Products/Debug-iphoneos
