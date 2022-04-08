@@ -73,10 +73,10 @@ jobs:
       - name: XCode Build
         run: xcrun xcodebuild build-for-testing 
           -configuration Debug 
-          -workspace OctopusAppTest.xcworkspace
+          -workspace LeopardAppTest.xcworkspace 
           -sdk iphoneos 
           -scheme PerformanceTest
-          -derivedDataPath ddp
+          -derivedDataPath ddp 
           CODE_SIGNING_ALLOWED=NO
 
       - name: Run tests on AppCenter
