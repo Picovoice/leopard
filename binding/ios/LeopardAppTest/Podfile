@@ -8,3 +8,7 @@ end
 target 'LeopardAppTestUITests' do
   pod 'Leopard-iOS', '~> 1.0.0'
 end
+
+target 'PerformanceTest' do
+  pod 'Leopard-iOS', '~> 1.0.0'
+end

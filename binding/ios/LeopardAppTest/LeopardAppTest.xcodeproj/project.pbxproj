@@ -16,11 +16,22 @@
 		1E00653727CFEF02006FF6E9 /* LeopardAppTestUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E00653627CFEF02006FF6E9 /* LeopardAppTestUITests.swift */; };
 		1E00654827CFF55C006FF6E9 /* test.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1E00654727CFF55C006FF6E9 /* test.wav */; };
 		1E00654A27CFF571006FF6E9 /* leopard_params.pv in Resources */ = {isa = PBXBuildFile; fileRef = 1E00654927CFF571006FF6E9 /* leopard_params.pv */; };
+		1E5B7B1A2800E2B200F8BDDB /* PerformanceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5B7B192800E2B200F8BDDB /* PerformanceTest.swift */; };
+		1E5B7B1E2800E2DA00F8BDDB /* test.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1E5B7B1D2800E2DA00F8BDDB /* test.wav */; };
+		1E5B7B202800E2E300F8BDDB /* leopard_params.pv in Resources */ = {isa = PBXBuildFile; fileRef = 1E5B7B1F2800E2E300F8BDDB /* leopard_params.pv */; };
 		988C1BA31269C05D013AD6A7 /* libPods-LeopardAppTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FAAD60C0B3177B883F765BC5 /* libPods-LeopardAppTest.a */; };
+		D11291200B4D3E65A731FC42 /* libPods-PerformanceTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EE8F0242E678B7596CC8AD9 /* libPods-PerformanceTest.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		1E00653327CFEF02006FF6E9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1E00650A27CFEF00006FF6E9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1E00651127CFEF00006FF6E9;
+			remoteInfo = LeopardAppTest;
+		};
+		1E5B7B0A2800E21D00F8BDDB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1E00650A27CFEF00006FF6E9 /* Project object */;
 			proxyType = 1;
@@ -42,11 +53,18 @@
 		1E00654727CFF55C006FF6E9 /* test.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = test.wav; path = ../../../../resources/audio_samples/test.wav; sourceTree = "<group>"; };
 		1E00654927CFF571006FF6E9 /* leopard_params.pv */ = {isa = PBXFileReference; lastKnownFileType = file; name = leopard_params.pv; path = ../../../../lib/common/leopard_params.pv; sourceTree = "<group>"; };
 		1E00658727CFF9A9006FF6E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1E5B7B172800E21D00F8BDDB /* PerformanceTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PerformanceTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1E5B7B192800E2B200F8BDDB /* PerformanceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTest.swift; sourceTree = "<group>"; };
+		1E5B7B1B2800E2C500F8BDDB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1E5B7B1D2800E2DA00F8BDDB /* test.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = test.wav; path = ../../../../resources/audio_samples/test.wav; sourceTree = "<group>"; };
+		1E5B7B1F2800E2E300F8BDDB /* leopard_params.pv */ = {isa = PBXFileReference; lastKnownFileType = file; name = leopard_params.pv; path = ../../../../lib/common/leopard_params.pv; sourceTree = "<group>"; };
+		20078BFE90B01B8113FA2EE6 /* Pods-PerformanceTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PerformanceTest.release.xcconfig"; path = "Target Support Files/Pods-PerformanceTest/Pods-PerformanceTest.release.xcconfig"; sourceTree = "<group>"; };
 		6BC50A1115F0683ED58A3282 /* Pods-LeopardAppTestUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardAppTestUITests.release.xcconfig"; path = "Target Support Files/Pods-LeopardAppTestUITests/Pods-LeopardAppTestUITests.release.xcconfig"; sourceTree = "<group>"; };
+		89189649899039BDEE96F78D /* Pods-PerformanceTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PerformanceTest.debug.xcconfig"; path = "Target Support Files/Pods-PerformanceTest/Pods-PerformanceTest.debug.xcconfig"; sourceTree = "<group>"; };
 		8B0DF9298098D5CC4E1923F1 /* Pods-LeopardAppTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardAppTest.release.xcconfig"; path = "Target Support Files/Pods-LeopardAppTest/Pods-LeopardAppTest.release.xcconfig"; sourceTree = "<group>"; };
+		9EE8F0242E678B7596CC8AD9 /* libPods-PerformanceTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PerformanceTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A628417A52824080EC61AA1F /* Pods-LeopardAppTestUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardAppTestUITests.debug.xcconfig"; path = "Target Support Files/Pods-LeopardAppTestUITests/Pods-LeopardAppTestUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		ABC7F42231559CA8C0EAB4FF /* Pods-LeopardAppTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardAppTest.debug.xcconfig"; path = "Target Support Files/Pods-LeopardAppTest/Pods-LeopardAppTest.debug.xcconfig"; sourceTree = "<group>"; };
-		B668EC1ABCFC88724E7BD315 /* libPods-LeopardAppTestUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LeopardAppTestUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAAD60C0B3177B883F765BC5 /* libPods-LeopardAppTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LeopardAppTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -67,6 +85,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1E5B7B0E2800E21D00F8BDDB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D11291200B4D3E65A731FC42 /* libPods-PerformanceTest.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -74,7 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				FAAD60C0B3177B883F765BC5 /* libPods-LeopardAppTest.a */,
-				B668EC1ABCFC88724E7BD315 /* libPods-LeopardAppTestUITests.a */,
+				9EE8F0242E678B7596CC8AD9 /* libPods-PerformanceTest.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -82,6 +108,7 @@
 		1E00650927CFEF00006FF6E9 = {
 			isa = PBXGroup;
 			children = (
+				1E5B7B182800E2A100F8BDDB /* PerformanceTest */,
 				1E00651427CFEF00006FF6E9 /* LeopardAppTest */,
 				1E00653527CFEF02006FF6E9 /* LeopardAppTestUITests */,
 				1E00651327CFEF00006FF6E9 /* Products */,
@@ -95,6 +122,7 @@
 			children = (
 				1E00651227CFEF00006FF6E9 /* LeopardAppTest.app */,
 				1E00653227CFEF02006FF6E9 /* LeopardAppTestUITests.xctest */,
+				1E5B7B172800E21D00F8BDDB /* PerformanceTest.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -123,6 +151,17 @@
 			path = LeopardAppTestUITests;
 			sourceTree = "<group>";
 		};
+		1E5B7B182800E2A100F8BDDB /* PerformanceTest */ = {
+			isa = PBXGroup;
+			children = (
+				1E5B7B192800E2B200F8BDDB /* PerformanceTest.swift */,
+				1E5B7B1B2800E2C500F8BDDB /* Info.plist */,
+				1E5B7B1D2800E2DA00F8BDDB /* test.wav */,
+				1E5B7B1F2800E2E300F8BDDB /* leopard_params.pv */,
+			);
+			path = PerformanceTest;
+			sourceTree = "<group>";
+		};
 		F86E3070BA0AB1892EFF0BA0 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -130,6 +169,8 @@
 				8B0DF9298098D5CC4E1923F1 /* Pods-LeopardAppTest.release.xcconfig */,
 				A628417A52824080EC61AA1F /* Pods-LeopardAppTestUITests.debug.xcconfig */,
 				6BC50A1115F0683ED58A3282 /* Pods-LeopardAppTestUITests.release.xcconfig */,
+				89189649899039BDEE96F78D /* Pods-PerformanceTest.debug.xcconfig */,
+				20078BFE90B01B8113FA2EE6 /* Pods-PerformanceTest.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -176,6 +217,26 @@
 			productReference = 1E00653227CFEF02006FF6E9 /* LeopardAppTestUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		1E5B7B082800E21D00F8BDDB /* PerformanceTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1E5B7B142800E21D00F8BDDB /* Build configuration list for PBXNativeTarget "PerformanceTest" */;
+			buildPhases = (
+				1E5B7B0B2800E21D00F8BDDB /* [CP] Check Pods Manifest.lock */,
+				1E5B7B0C2800E21D00F8BDDB /* Sources */,
+				1E5B7B0E2800E21D00F8BDDB /* Frameworks */,
+				1E5B7B102800E21D00F8BDDB /* Resources */,
+				1E5B7B132800E21D00F8BDDB /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1E5B7B092800E21D00F8BDDB /* PBXTargetDependency */,
+			);
+			name = PerformanceTest;
+			productName = LeopardAppTestUITests;
+			productReference = 1E5B7B172800E21D00F8BDDB /* PerformanceTest.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -191,6 +252,9 @@
 					};
 					1E00653127CFEF02006FF6E9 = {
 						CreatedOnToolsVersion = 13.2.1;
+						TestTargetID = 1E00651127CFEF00006FF6E9;
+					};
+					1E5B7B082800E21D00F8BDDB = {
 						TestTargetID = 1E00651127CFEF00006FF6E9;
 					};
 				};
@@ -210,6 +274,7 @@
 			targets = (
 				1E00651127CFEF00006FF6E9 /* LeopardAppTest */,
 				1E00653127CFEF02006FF6E9 /* LeopardAppTestUITests */,
+				1E5B7B082800E21D00F8BDDB /* PerformanceTest */,
 			);
 		};
 /* End PBXProject section */
@@ -234,6 +299,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1E5B7B102800E21D00F8BDDB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1E5B7B1E2800E2DA00F8BDDB /* test.wav in Resources */,
+				1E5B7B202800E2E300F8BDDB /* leopard_params.pv in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -252,6 +326,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-LeopardAppTest/Pods-LeopardAppTest-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		1E5B7B0B2800E21D00F8BDDB /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-PerformanceTest-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		1E5B7B132800E21D00F8BDDB /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PerformanceTest/Pods-PerformanceTest-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PerformanceTest/Pods-PerformanceTest-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PerformanceTest/Pods-PerformanceTest-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		28D5E5B53AE578A39EF43803 /* [CP] Embed Pods Frameworks */ = {
@@ -335,6 +448,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1E5B7B0C2800E21D00F8BDDB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1E5B7B1A2800E2B200F8BDDB /* PerformanceTest.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -342,6 +463,11 @@
 			isa = PBXTargetDependency;
 			target = 1E00651127CFEF00006FF6E9 /* LeopardAppTest */;
 			targetProxy = 1E00653327CFEF02006FF6E9 /* PBXContainerItemProxy */;
+		};
+		1E5B7B092800E21D00F8BDDB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1E00651127CFEF00006FF6E9 /* LeopardAppTest */;
+			targetProxy = 1E5B7B0A2800E21D00F8BDDB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -583,6 +709,52 @@
 			};
 			name = Release;
 		};
+		1E5B7B152800E21D00F8BDDB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 89189649899039BDEE96F78D /* Pods-PerformanceTest.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 65723695GD;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.picovoice.LeopardAppTestUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LeopardAppTest;
+			};
+			name = Debug;
+		};
+		1E5B7B162800E21D00F8BDDB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 20078BFE90B01B8113FA2EE6 /* Pods-PerformanceTest.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 65723695GD;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.picovoice.LeopardAppTestUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LeopardAppTest;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -609,6 +781,15 @@
 			buildConfigurations = (
 				1E00654327CFEF02006FF6E9 /* Debug */,
 				1E00654427CFEF02006FF6E9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1E5B7B142800E21D00F8BDDB /* Build configuration list for PBXNativeTarget "PerformanceTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1E5B7B152800E21D00F8BDDB /* Debug */,
+				1E5B7B162800E21D00F8BDDB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
