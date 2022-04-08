@@ -68,23 +68,18 @@ jobs:
         machine: [rpi3-32, rpi3-64, rpi4-32, rpi4-64, jetson]
         include:
         - machine: rpi3-32
-          num_test_iterations: 20
           init_performance_threshold_sec: 7.6
           proc_performance_threshold_sec: 3.3
         - machine: rpi3-64
-          num_test_iterations: 20
           init_performance_threshold_sec: 8.4
           proc_performance_threshold_sec: 3.3
         - machine: rpi4-32
-          num_test_iterations: 20
           init_performance_threshold_sec: 5.7
           proc_performance_threshold_sec: 2.1
         - machine: rpi4-64
-          num_test_iterations: 20
           init_performance_threshold_sec: 5.1
           proc_performance_threshold_sec: 2.0
         - machine: jetson
-          num_test_iterations: 20
           init_performance_threshold_sec: 5.1
           proc_performance_threshold_sec: 2.0
 
@@ -96,7 +91,7 @@ jobs:
       run: bash machine-state.sh
 
     - name: Test
-      run: python3 test_leopard_perf.py ${{secrets.PV_VALID_ACCESS_KEY}} ${{matrix.num_test_iterations}} ${{matrix.init_performance_threshold_sec}} ${{matrix.proc_performance_threshold_sec}}
+      run: python3 test_leopard_perf.py ${{secrets.PV_VALID_ACCESS_KEY}} 20 ${{matrix.init_performance_threshold_sec}} ${{matrix.proc_performance_threshold_sec}}
 
     - name: Machine state after
       working-directory: resources/scripts
