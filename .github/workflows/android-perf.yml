@@ -75,12 +75,12 @@ jobs:
       run: ./gradlew assembleAndroidTest
     
     - name: Run tests on AppCenter
-      run: appcenter test run espresso 
+      run: appcenter test run espresso
         --token ${{secrets.APPCENTERAPITOKEN}}
-        --app "Picovoice/Octopus-Android"
-        --devices "Picovoice/${{ matrix.device }}" 
-        --app-path octopus-demo-app/build/outputs/apk/debug/octopus-demo-app-debug.apk
-        --test-series "octopus-android"
-        --locale "en_US" 
-        --build-dir octopus-demo-app/build/outputs/apk/androidTest/debug
+        --app "Picovoice/Leopard-Android"
+        --devices "Picovoice/${{ matrix.device }}"
+        --app-path leopard-demo-app/build/outputs/apk/debug/leopard-demo-app-debug.apk
+        --test-series "leopard-android"
+        --locale "en_US"
+        --build-dir leopard-demo-app/build/outputs/apk/androidTest/debug
 
