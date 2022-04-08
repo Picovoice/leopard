@@ -57,7 +57,7 @@ jobs:
         python-version: '3.10'
 
     - name: Test
-      run: python test_leopard_perf.py ${{secrets.PV_VALID_ACCESS_KEY}} 50 ${{matrix.init_performance_threshold_sec}} ${{matrix.proc_performance_threshold_sec}}
+      run: python3 test_leopard_perf.py ${{secrets.PV_VALID_ACCESS_KEY}} 50 ${{matrix.init_performance_threshold_sec}} ${{matrix.proc_performance_threshold_sec}}
 
   perf-self-hosted:
     runs-on: ${{ matrix.machine }}
@@ -96,7 +96,7 @@ jobs:
       run: bash machine-state.sh
 
     - name: Test
-      run: python test_leopard_perf.py ${{secrets.PV_VALID_ACCESS_KEY}} ${{matrix.num_test_iterations}} ${{matrix.init_performance_threshold_sec}} ${{matrix.proc_performance_threshold_sec}}
+      run: python3 test_leopard_perf.py ${{secrets.PV_VALID_ACCESS_KEY}} ${{matrix.num_test_iterations}} ${{matrix.init_performance_threshold_sec}} ${{matrix.proc_performance_threshold_sec}}
 
     - name: Machine state after
       working-directory: resources/scripts
