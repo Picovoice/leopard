@@ -79,12 +79,11 @@ jobs:
           -derivedDataPath ddp 
           CODE_SIGNING_ALLOWED=NO
 
-      - name: Run tests on AppCenter
-        run: appcenter test run espresso
+      - name: Run Tests on AppCenter
+        run: appcenter test run xcuitest 
           --token ${{secrets.APPCENTERAPITOKEN}}
-          --app "Picovoice/Leopard-Android"
+          --app "Picovoice/Leopard-iOS" 
           --devices "Picovoice/${{ matrix.device }}"
-          --app-path leopard-demo-app/build/outputs/apk/debug/leopard-demo-app-debug.apk
-          --test-series "leopard-android"
-          --locale "en_US"
-          --build-dir leopard-demo-app/build/outputs/apk/androidTest/debug
+          --test-series "leopard-ios" 
+          --locale "en_US" 
+          --build-dir ddp/Build/Products/Debug-iphoneos
