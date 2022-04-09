@@ -22,7 +22,7 @@ class LeopardPerformanceTestCase(unittest.TestCase):
     ACCESS_KEY = sys.argv[1]
     NUM_TEST_ITERATIONS = int(sys.argv[2])
     INIT_PERFORMANCE_THRESHOLD_SEC = float(sys.argv[3])
-    PROC_PERFORMANCE_THRESHOLD_SEC = float(sys.argv[3])
+    PROC_PERFORMANCE_THRESHOLD_SEC = float(sys.argv[4])
     AUDIO_PATH = os.path.join(os.path.dirname(__file__), '../../resources/audio_samples/test.wav')
 
     def test_performance_init(self):
@@ -66,7 +66,7 @@ class LeopardPerformanceTestCase(unittest.TestCase):
 
         avg_perf = sum(perf_results) / self.NUM_TEST_ITERATIONS
         print("Average proc performance: %s" % avg_perf)
-        self.assertLess(avg_perf, self.INIT_PERFORMANCE_THRESHOLD_SEC)
+        self.assertLess(avg_perf, self.PROC_PERFORMANCE_THRESHOLD_SEC)
 
 
 if __name__ == '__main__':
