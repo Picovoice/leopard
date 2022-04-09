@@ -8,7 +8,7 @@ on:
       - 'binding/nodejs/test/perf.test.ts'
       - 'lib/common/**'
       - 'lib/node/**'
-      - '.github/workflows/nodejs.yml'
+      - '.github/workflows/nodejs-perf.yml'
 
   pull_request:
     branches: [ master ]
@@ -16,7 +16,7 @@ on:
       - 'binding/nodejs/test/perf.test.ts'
       - 'lib/common/**'
       - 'lib/node/**'
-      - '.github/workflows/nodejs.yml'
+      - '.github/workflows/nodejs-perf.yml'
 
 defaults:
   run:
