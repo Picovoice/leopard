@@ -11,7 +11,7 @@
 "use strict";
 
 import { Leopard } from "../src";
-import path from "path";
+import * as path from "path";
 import { performance } from "perf_hooks";
 
 const WAV_PATH = "../../../resources/audio_samples/test.wav";
