@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name = 'Leopard-iOS'
   s.module_name = 'Leopard'
-  s.version = '1.0.0'
+  s.version = '1.0.1'
   s.license = {:type => 'Apache 2.0'}
   s.summary = 'iOS SDK for Picovoice\'s Leopard speech-to-text engine.'
   s.description = 
