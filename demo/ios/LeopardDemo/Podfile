@@ -2,5 +2,5 @@ source 'https://cdn.cocoapods.org/'
 platform :ios, '9.0'
 
 target 'LeopardDemo' do
-  pod 'Leopard-iOS', '~> 1.0.0'
+  pod 'Leopard-iOS', '~> 1.0.1'
 end
