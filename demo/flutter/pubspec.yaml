@@ -14,7 +14,7 @@ dependencies:
 
   flutter_voice_processor: ^1.0.6
 
-  leopard_flutter: ^1.0.0
+  leopard_flutter: ^1.0.2
   
 dev_dependencies:
   flutter_test:

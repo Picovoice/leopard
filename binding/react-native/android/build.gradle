@@ -120,5 +120,5 @@ repositories {
 dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
-  implementation 'ai.picovoice:leopard-android:1.0.1'
+  implementation 'ai.picovoice:leopard-android:1.0.4'
 }
