@@ -14,7 +14,7 @@
 const { program } = require("commander");
 const fs = require("fs");
 
-const { Leopard, LeopardActivationLimitReachedError } = require("@picovoice/leopard-node");
+const { Leopard, LeopardActivationLimitReached } = require("@picovoice/leopard-node");
 
 
 program
@@ -57,7 +57,7 @@ function fileDemo() {
   try {
     console.log(engineInstance.processFile(audioPath));
   } catch (err) {
-    if (err instanceof LeopardActivationLimitReachedError) {
+    if (err instanceof LeopardActivationLimitReached) {
       console.error(`AccessKey '${access_key}' has reached it's processing limit.`);
     } else {
       console.error(err);

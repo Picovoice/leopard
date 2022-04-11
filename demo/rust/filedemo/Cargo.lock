@@ -135,9 +135,9 @@ dependencies = [
 
 [[package]]
 name = "pv_leopard"
-version = "1.0.0"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "13022f3d3db0fcdfd3dcfc15eb35654a006735e568ec141662563d5c7f3e3384"
+checksum = "b234ac537798f2950a62402635d2aa09ee7dfc0c220d7407f09d8ac6ca1c1e0b"
 dependencies = [
  "libc",
  "libloading",
@@ -145,7 +145,7 @@ dependencies = [
 
 [[package]]
 name = "pv_leopard_filedemo"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "chrono",
  "clap",
