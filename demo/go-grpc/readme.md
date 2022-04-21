@@ -1,4 +1,4 @@
-# Leopard microservice demo 
+# Leopard microservice demo with gRPC
 
 Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
@@ -33,6 +33,7 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 ### Server
 
+Start the server first by running the following command from the demo folder:
 ```console
 go run server.go \
 --access_key "${ACCESS_KEY}"
@@ -42,6 +43,8 @@ Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_
 wish to transcribe.
 
 ### Client
+
+While the server is up, make a transcription request:
 
 ```console
 ```console
