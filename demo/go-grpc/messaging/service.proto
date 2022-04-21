@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package messaging;
+option go_package = "go-grpc/messaging";
+
+message Chunk {
+  bytes Content = 1;
+}
+
+enum StatusCode {
+  Unknown = 0;
+  Ok = 1;
+  Failed = 2;
+}
+
+message transcriptResponse {
+  string transcript = 1;
+//  StatusCode Code = 2;
+}
+
+service LeopardService {
+  rpc GetTranscriptionFile(stream Chunk) returns (transcriptResponse) {}
+}
