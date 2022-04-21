@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 	"io"
 	"leopardgogrpc/messaging"
@@ -25,13 +24,11 @@ func runTranscriptionFile(client messaging.LeopardServiceClient, filePath string
 		buf     []byte
 		n       int
 		file    *os.File
-		//status  *messaging.UploadStatus
 	)
 
 	file, err = os.Open(filePath)
 	if err != nil {
-		err = errors.Wrapf(err, "failed to open file %s", filePath)
-		return
+		return err
 	}
 	defer file.Close()
 
@@ -52,15 +49,12 @@ func runTranscriptionFile(client messaging.LeopardServiceClient, filePath string
 				err = nil
 				continue
 			}
-
-			err = errors.Wrapf(err, "errored while copying from file to buf")
-			return
+			return err
 		}
 
 		err = stream.Send(&messaging.Chunk{Content: buf[:n]})
 		if err != nil {
-			err = errors.Wrapf(err, "failed to send chunk via stream")
-			return
+			return err
 		}
 	}
 

@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	leopard "github.com/Picovoice/leopard/binding/go"
+	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"io"
 	"leopardgogrpc/messaging"
@@ -19,44 +20,55 @@ var (
 
 type leopardServer struct {
 	accessKey string
-	audio     []byte
 }
 
 func (s *leopardServer) GetTranscriptionFile(stream messaging.LeopardService_GetTranscriptionFileServer) (err error) {
+	id := uuid.New()
+	is_done := false
+
+	log.Printf("Received a new request (ID: %s)", id.String())
+	defer log.Printf("Returned a response to the request (ID: %s)", id.String())
 	engine := leopard.Leopard{AccessKey: s.accessKey}
 	error := engine.Init()
 	if error != nil {
-		log.Fatalf("Failed to initialize: %v\n", err)
+		log.Printf("Failed to initialize: %v\n", err)
+		is_done = true
 	}
 	defer engine.Delete()
 
-	for {
+	var audio []byte = make([]byte, 0)
+	var transcription string = ""
+	var statusCode messaging.StatusCode = messaging.StatusCode_Failed
+
+	for !is_done {
 		audioFileChunk, err := stream.Recv()
 		if err == io.EOF {
 			f, err := os.CreateTemp("", "sample")
 			if err != nil {
 				log.Fatalf("Failed to create a temp file: %v\n", err)
+				break
 			}
 			defer os.Remove(f.Name())
-			_, err = f.Write(s.audio)
+			_, err = f.Write(audio)
 			if err != nil {
-				log.Fatalf("Failed to write into the temp file: %v\n", err)
+				log.Printf("Failed to write into the temp file: %v\n", err)
+				break
 			}
-			transcription, err := engine.ProcessFile(f.Name())
+			transcription, err = engine.ProcessFile(f.Name())
 			if err != nil {
-				log.Fatalf("Failed to transcript the audio: %v\n", err)
+				log.Printf("Failed to transcript the audio: %v\n", err)
+				break
 			}
-			return stream.SendAndClose(&messaging.TranscriptResponse{
-				Transcript: transcription,
-			})
-			s.audio = nil
+			statusCode = messaging.StatusCode_Ok
+			is_done = true
 		} else {
-			s.audio = append(s.audio, audioFileChunk.Content...)
-		}
-		if err != nil {
-			return err
+			audio = append(audio, audioFileChunk.Content...)
 		}
 	}
+	return stream.SendAndClose(&messaging.TranscriptResponse{
+		Transcript: transcription,
+		Code:       statusCode,
+	})
 }
 
 func newServer(accessKey string) *leopardServer {

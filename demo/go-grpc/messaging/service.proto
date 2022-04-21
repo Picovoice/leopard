@@ -15,7 +15,7 @@ enum StatusCode {
 
 message transcriptResponse {
   string transcript = 1;
-//  StatusCode Code = 2;
+  StatusCode Code = 2;
 }
 
 service LeopardService {
