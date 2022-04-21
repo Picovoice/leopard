@@ -56,8 +56,6 @@ func (s *leopardServer) GetTranscriptionFile(stream messaging.LeopardService_Get
 		if err != nil {
 			return err
 		}
-		fmt.Println("len:", len(s.audio))
-
 	}
 }
 
