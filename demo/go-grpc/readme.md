@@ -39,8 +39,7 @@ go run server.go \
 --access_key "${ACCESS_KEY}"
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
-wish to transcribe.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console.
 
 ### Client
 
@@ -49,5 +48,7 @@ While the server is up, make a transcription request:
 ```console
 ```console
 go run client.go \
---audio_file "${AUDIO_PATH}"
+--input_audio "${AUDIO_PATH}"
 ``````
+
+Replace `${AUDIO_PATH}` with a path to an audio file you wish to transcribe.
