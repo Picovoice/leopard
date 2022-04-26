@@ -1,22 +1,6 @@
 # Leopard microservice demo with gRPC
 
-Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
-
-## Leopard
-
-Leopard is an on-device speech-to-text engine. Leopard is:
-
-- Private; All voice processing runs locally.
-- Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
-- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
-- Cross-Platform:
-    - Linux (x86_64)
-    - macOS (x86_64, arm64)
-    - Windows (x86_64)
-    - Android
-    - iOS
-    - Raspberry Pi (4, 3)
-    - NVIDIA Jetson Nano
+A demo application that demonstrates how to implement a lightweight transcription microservice with gRPC using Picovoice Leopard. In this project, the client sends an audio file to the server via gRPC and gets back the transcript.
 
 ## Compatibility
 
@@ -45,7 +29,6 @@ Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console.
 
 While the server is up, make a transcription request:
 
-```console
 ```console
 go run client.go \
 --input_audio "${AUDIO_PATH}"
