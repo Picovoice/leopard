@@ -51,7 +51,9 @@
       writeStatus("Leopard is loading. Please wait...");
 
       const wasm_base64 = await urlContentToDataUri("./pv_leopard.wasm")
-      leopard = await Leopard.create(accessKey, wasm_base64)
+      const model_base64 = await urlContentToDataUri("./leopard_params.pv")
+      leopard = await Leopard.create(accessKey, wasm_base64, model_base64)
+
       writeStatus(`Leopard loaded. Leopard version: ${leopard.version}`)
 
       const fileSelector = document.getElementById("file-selector");

@@ -2733,6 +2733,8 @@ var LeopardWeb = (function (exports) {
 
       _defineProperty$1(this, "_transcriptionAddressAddress", void 0);
 
+      _defineProperty$1(this, "_malloc", void 0);
+
       Leopard._sampleRate = handleWasm.sampleRate;
       Leopard._version = handleWasm.version;
       this._pvLeopardDelete = handleWasm.pvLeopardDelete;
@@ -2740,7 +2742,9 @@ var LeopardWeb = (function (exports) {
       this._pvStatusToString = handleWasm.pvStatusToString;
       this._wasmMemory = handleWasm.memory;
       this._objectAddress = handleWasm.objectAddress;
-      this._alignedAlloc = handleWasm.aligned_alloc;
+      this._alignedAlloc = handleWasm.aligned_alloc; // @ts-ignore
+
+      this._malloc = handleWasm.malloc;
       this._transcriptionAddressAddress = handleWasm.transcriptionAddressAddress;
       this._memoryBuffer = new Int16Array(handleWasm.memory.buffer);
       this._memoryBufferUint8 = new Uint8Array(handleWasm.memory.buffer);
@@ -2777,6 +2781,31 @@ var LeopardWeb = (function (exports) {
 
         return release;
       }()
+    }, {
+      key: "testMalloc",
+      value: function () {
+        var _testMalloc = _asyncToGenerator$1( /*#__PURE__*/regenerator$1.mark(function _callee2(mem) {
+          return regenerator$1.wrap(function _callee2$(_context2) {
+            while (1) {
+              switch (_context2.prev = _context2.next) {
+                case 0:
+                  _context2.next = 2;
+                  return this._malloc(mem);
+
+                case 2:
+                case "end":
+                  return _context2.stop();
+              }
+            }
+          }, _callee2, this);
+        }));
+
+        function testMalloc(_x) {
+          return _testMalloc.apply(this, arguments);
+        }
+
+        return testMalloc;
+      }()
       /**
        * Processes a frame of audio. The required sample rate can be retrieved from '.sampleRate' and the length
        * of frame (number of audio samples per frame) can be retrieved from '.frameLength'. The audio needs to be
@@ -2789,30 +2818,30 @@ var LeopardWeb = (function (exports) {
     }, {
       key: "process",
       value: function () {
-        var _process = _asyncToGenerator$1( /*#__PURE__*/regenerator$1.mark(function _callee3(pcm) {
+        var _process = _asyncToGenerator$1( /*#__PURE__*/regenerator$1.mark(function _callee4(pcm) {
           var _this = this;
 
           var inputBufferAddress, returnPromise;
-          return regenerator$1.wrap(function _callee3$(_context3) {
+          return regenerator$1.wrap(function _callee4$(_context4) {
             while (1) {
-              switch (_context3.prev = _context3.next) {
+              switch (_context4.prev = _context4.next) {
                 case 0:
                   if (pcm instanceof Int16Array) {
-                    _context3.next = 2;
+                    _context4.next = 2;
                     break;
                   }
 
                   throw new Error("The argument 'pcm' must be provided as an Int16Array");
 
                 case 2:
-                  _context3.next = 4;
+                  _context4.next = 4;
                   return this._alignedAlloc(Int16Array.BYTES_PER_ELEMENT, pcm.length * Int16Array.BYTES_PER_ELEMENT);
 
                 case 4:
-                  inputBufferAddress = _context3.sent;
+                  inputBufferAddress = _context4.sent;
 
                   if (!(inputBufferAddress === 0)) {
-                    _context3.next = 7;
+                    _context4.next = 7;
                     break;
                   }
 
@@ -2820,67 +2849,67 @@ var LeopardWeb = (function (exports) {
 
                 case 7:
                   returnPromise = new Promise(function (resolve, reject) {
-                    _this._processMutex.runExclusive( /*#__PURE__*/_asyncToGenerator$1( /*#__PURE__*/regenerator$1.mark(function _callee2() {
+                    _this._processMutex.runExclusive( /*#__PURE__*/_asyncToGenerator$1( /*#__PURE__*/regenerator$1.mark(function _callee3() {
                       var status, memoryBuffer, transcriptionAddress, transcription;
-                      return regenerator$1.wrap(function _callee2$(_context2) {
+                      return regenerator$1.wrap(function _callee3$(_context3) {
                         while (1) {
-                          switch (_context2.prev = _context2.next) {
+                          switch (_context3.prev = _context3.next) {
                             case 0:
                               _this._memoryBuffer.set(pcm, inputBufferAddress / Int16Array.BYTES_PER_ELEMENT);
 
-                              _context2.next = 3;
+                              _context3.next = 3;
                               return _this._pvLeopardProcess(_this._objectAddress, inputBufferAddress, pcm.length, _this._transcriptionAddressAddress);
 
                             case 3:
-                              status = _context2.sent;
+                              status = _context3.sent;
 
                               if (!(status !== PV_STATUS_SUCCESS)) {
-                                _context2.next = 16;
+                                _context3.next = 16;
                                 break;
                               }
 
                               memoryBuffer = new Uint8Array(_this._wasmMemory.buffer);
-                              _context2.t0 = Error;
-                              _context2.t1 = "process failed with status ";
-                              _context2.t2 = arrayBufferToStringAtIndex;
-                              _context2.t3 = memoryBuffer;
-                              _context2.next = 12;
+                              _context3.t0 = Error;
+                              _context3.t1 = "process failed with status ";
+                              _context3.t2 = arrayBufferToStringAtIndex;
+                              _context3.t3 = memoryBuffer;
+                              _context3.next = 12;
                               return _this._pvStatusToString(status);
 
                             case 12:
-                              _context2.t4 = _context2.sent;
-                              _context2.t5 = (0, _context2.t2)(_context2.t3, _context2.t4);
-                              _context2.t6 = _context2.t1.concat.call(_context2.t1, _context2.t5);
-                              throw new _context2.t0(_context2.t6);
+                              _context3.t4 = _context3.sent;
+                              _context3.t5 = (0, _context3.t2)(_context3.t3, _context3.t4);
+                              _context3.t6 = _context3.t1.concat.call(_context3.t1, _context3.t5);
+                              throw new _context3.t0(_context3.t6);
 
                             case 16:
                               transcriptionAddress = _this._memoryBufferView.getInt32(_this._transcriptionAddressAddress, true);
                               transcription = arrayBufferToStringAtIndex(_this._memoryBufferUint8, transcriptionAddress);
-                              return _context2.abrupt("return", transcription);
+                              return _context3.abrupt("return", transcription);
 
                             case 19:
                             case "end":
-                              return _context2.stop();
+                              return _context3.stop();
                           }
                         }
-                      }, _callee2);
+                      }, _callee3);
                     }))).then(function (result) {
                       resolve(result);
                     })["catch"](function (error) {
                       reject(error);
                     });
                   });
-                  return _context3.abrupt("return", returnPromise);
+                  return _context4.abrupt("return", returnPromise);
 
                 case 9:
                 case "end":
-                  return _context3.stop();
+                  return _context4.stop();
               }
             }
-          }, _callee3, this);
+          }, _callee4, this);
         }));
 
-        function process(_x) {
+        function process(_x2) {
           return _process.apply(this, arguments);
         }
 
@@ -2897,7 +2926,7 @@ var LeopardWeb = (function (exports) {
         return Leopard._sampleRate;
       }
       /**
-       * Creates an instance of the the Picovoice Leopard voice activity detection (VAD) engine.
+       * Creates an instance of the Picovoice Leopard voice activity detection (VAD) engine.
        * Behind the scenes, it requires the WebAssembly code to load and initialize before
        * it can create an instance.
        *
@@ -2910,14 +2939,14 @@ var LeopardWeb = (function (exports) {
     }], [{
       key: "create",
       value: function () {
-        var _create = _asyncToGenerator$1( /*#__PURE__*/regenerator$1.mark(function _callee5(accessKey, wasmBase64) {
+        var _create = _asyncToGenerator$1( /*#__PURE__*/regenerator$1.mark(function _callee6(accessKey, wasmBase64, model) {
           var returnPromise;
-          return regenerator$1.wrap(function _callee5$(_context5) {
+          return regenerator$1.wrap(function _callee6$(_context6) {
             while (1) {
-              switch (_context5.prev = _context5.next) {
+              switch (_context6.prev = _context6.next) {
                 case 0:
                   if (isAccessKeyValid(accessKey)) {
-                    _context5.next = 2;
+                    _context6.next = 2;
                     break;
                   }
 
@@ -2925,42 +2954,48 @@ var LeopardWeb = (function (exports) {
 
                 case 2:
                   returnPromise = new Promise(function (resolve, reject) {
-                    Leopard._leopardMutex.runExclusive( /*#__PURE__*/_asyncToGenerator$1( /*#__PURE__*/regenerator$1.mark(function _callee4() {
-                      var wasmOutput;
-                      return regenerator$1.wrap(function _callee4$(_context4) {
+                    Leopard._leopardMutex.runExclusive( /*#__PURE__*/_asyncToGenerator$1( /*#__PURE__*/regenerator$1.mark(function _callee5() {
+                      var pvStorage, wasmOutput;
+                      return regenerator$1.wrap(function _callee5$(_context5) {
                         while (1) {
-                          switch (_context4.prev = _context4.next) {
+                          switch (_context5.prev = _context5.next) {
                             case 0:
-                              _context4.next = 2;
+                              pvStorage = getPvStorage(); // @ts-ignore
+
+                              _context5.next = 3;
+                              return pvStorage.setItem("modelPath", model);
+
+                            case 3:
+                              _context5.next = 5;
                               return Leopard.initWasm(accessKey.trim(), wasmBase64);
 
-                            case 2:
-                              wasmOutput = _context4.sent;
-                              return _context4.abrupt("return", new Leopard(wasmOutput));
+                            case 5:
+                              wasmOutput = _context5.sent;
+                              return _context5.abrupt("return", new Leopard(wasmOutput));
 
-                            case 4:
+                            case 7:
                             case "end":
-                              return _context4.stop();
+                              return _context5.stop();
                           }
                         }
-                      }, _callee4);
+                      }, _callee5);
                     }))).then(function (result) {
                       resolve(result);
                     })["catch"](function (error) {
                       reject(error);
                     });
                   });
-                  return _context5.abrupt("return", returnPromise);
+                  return _context6.abrupt("return", returnPromise);
 
                 case 4:
                 case "end":
-                  return _context5.stop();
+                  return _context6.stop();
               }
             }
-          }, _callee5);
+          }, _callee6);
         }));
 
-        function create(_x2, _x3) {
+        function create(_x3, _x4, _x5) {
           return _create.apply(this, arguments);
         }
 
@@ -2969,24 +3004,25 @@ var LeopardWeb = (function (exports) {
     }, {
       key: "initWasm",
       value: function () {
-        var _initWasm = _asyncToGenerator$1( /*#__PURE__*/regenerator$1.mark(function _callee6(accessKey, wasmBase64) {
-          var memory, memoryBufferUint8, exports, aligned_alloc, pv_leopard_version, pv_leopard_process, pv_leopard_delete, pv_leopard_init, pv_status_to_string, pv_sample_rate, transcriptionAddressAddress, objectAddressAddress, accessKeyAddress, i, status, memoryBufferView, objectAddress, sampleRate, versionAddress, version;
-          return regenerator$1.wrap(function _callee6$(_context6) {
+        var _initWasm = _asyncToGenerator$1( /*#__PURE__*/regenerator$1.mark(function _callee7(accessKey, wasmBase64) {
+          var memory, memoryBufferUint8, exports, aligned_alloc, pv_leopard_version, pv_leopard_process, pv_leopard_delete, pv_leopard_init, pv_status_to_string, pv_sample_rate, transcriptionAddressAddress, objectAddressAddress, accessKeyAddress, i, modelPath, modelPathAddress, _i, status, memoryBufferView, objectAddress, sampleRate, versionAddress, version;
+
+          return regenerator$1.wrap(function _callee7$(_context7) {
             while (1) {
-              switch (_context6.prev = _context6.next) {
+              switch (_context7.prev = _context7.next) {
                 case 0:
                   // A WebAssembly page has a constant size of 64KiB. -> 1MiB ~= 16 pages
                   // minimum memory requirements for init: 3 pages
                   memory = new WebAssembly.Memory({
-                    initial: 6000,
-                    maximum: 10000
+                    initial: 5484
                   });
                   memoryBufferUint8 = new Uint8Array(memory.buffer);
-                  _context6.next = 4;
+                  _context7.next = 4;
                   return buildWasm(memory, wasmBase64);
 
                 case 4:
-                  exports = _context6.sent;
+                  exports = _context7.sent;
+                  console.log(exports);
                   aligned_alloc = exports.aligned_alloc;
                   pv_leopard_version = exports.pv_leopard_version;
                   pv_leopard_process = exports.pv_leopard_process;
@@ -2994,92 +3030,113 @@ var LeopardWeb = (function (exports) {
                   pv_leopard_init = exports.pv_leopard_init;
                   pv_status_to_string = exports.pv_status_to_string;
                   pv_sample_rate = exports.pv_sample_rate;
-                  _context6.next = 14;
+                  _context7.next = 15;
                   return aligned_alloc(Uint8Array.BYTES_PER_ELEMENT, Uint8Array.BYTES_PER_ELEMENT);
 
-                case 14:
-                  transcriptionAddressAddress = _context6.sent;
+                case 15:
+                  transcriptionAddressAddress = _context7.sent;
 
                   if (!(transcriptionAddressAddress === 0)) {
-                    _context6.next = 17;
+                    _context7.next = 18;
                     break;
                   }
 
                   throw new Error('malloc failed: Cannot allocate memory');
 
-                case 17:
-                  _context6.next = 19;
+                case 18:
+                  _context7.next = 20;
                   return aligned_alloc(Int32Array.BYTES_PER_ELEMENT, Int32Array.BYTES_PER_ELEMENT);
 
-                case 19:
-                  objectAddressAddress = _context6.sent;
+                case 20:
+                  objectAddressAddress = _context7.sent;
 
                   if (!(objectAddressAddress === 0)) {
-                    _context6.next = 22;
+                    _context7.next = 23;
                     break;
                   }
 
                   throw new Error('malloc failed: Cannot allocate memory');
 
-                case 22:
-                  _context6.next = 24;
+                case 23:
+                  _context7.next = 25;
                   return aligned_alloc(Uint8Array.BYTES_PER_ELEMENT, (accessKey.length + 1) * Uint8Array.BYTES_PER_ELEMENT);
 
-                case 24:
-                  accessKeyAddress = _context6.sent;
+                case 25:
+                  accessKeyAddress = _context7.sent;
 
                   if (!(accessKeyAddress === 0)) {
-                    _context6.next = 27;
+                    _context7.next = 28;
                     break;
                   }
 
                   throw new Error('malloc failed: Cannot allocate memory');
 
-                case 27:
+                case 28:
                   for (i = 0; i < accessKey.length; i++) {
                     memoryBufferUint8[accessKeyAddress + i] = accessKey.charCodeAt(i);
                   }
 
                   memoryBufferUint8[accessKeyAddress + accessKey.length] = 0;
-                  _context6.next = 31;
-                  return pv_leopard_init(accessKeyAddress, objectAddressAddress);
+                  modelPath = "modelPath";
+                  _context7.next = 33;
+                  return aligned_alloc(Uint8Array.BYTES_PER_ELEMENT, (modelPath.length + 1) * Uint8Array.BYTES_PER_ELEMENT);
 
-                case 31:
-                  status = _context6.sent;
+                case 33:
+                  modelPathAddress = _context7.sent;
 
-                  if (!(status !== PV_STATUS_SUCCESS)) {
-                    _context6.next = 43;
+                  if (!(modelPathAddress === 0)) {
+                    _context7.next = 36;
                     break;
                   }
 
-                  _context6.t0 = Error;
-                  _context6.t1 = "'pv_leopard_init' failed with status ";
-                  _context6.t2 = arrayBufferToStringAtIndex;
-                  _context6.t3 = memoryBufferUint8;
-                  _context6.next = 39;
+                  throw new Error('malloc failed: Cannot allocate memory');
+
+                case 36:
+                  for (_i = 0; _i < modelPath.length; _i++) {
+                    memoryBufferUint8[modelPathAddress + _i] = modelPath.charCodeAt(_i);
+                  }
+
+                  memoryBufferUint8[modelPathAddress + modelPath.length] = 0;
+                  _context7.next = 40;
+                  return pv_leopard_init(accessKeyAddress, modelPathAddress, objectAddressAddress);
+
+                case 40:
+                  status = _context7.sent;
+
+                  if (!(status !== PV_STATUS_SUCCESS)) {
+                    _context7.next = 52;
+                    break;
+                  }
+
+                  _context7.t0 = Error;
+                  _context7.t1 = "'pv_leopard_init' failed with status ";
+                  _context7.t2 = arrayBufferToStringAtIndex;
+                  _context7.t3 = memoryBufferUint8;
+                  _context7.next = 48;
                   return pv_status_to_string(status);
 
-                case 39:
-                  _context6.t4 = _context6.sent;
-                  _context6.t5 = (0, _context6.t2)(_context6.t3, _context6.t4);
-                  _context6.t6 = _context6.t1.concat.call(_context6.t1, _context6.t5);
-                  throw new _context6.t0(_context6.t6);
+                case 48:
+                  _context7.t4 = _context7.sent;
+                  _context7.t5 = (0, _context7.t2)(_context7.t3, _context7.t4);
+                  _context7.t6 = _context7.t1.concat.call(_context7.t1, _context7.t5);
+                  throw new _context7.t0(_context7.t6);
 
-                case 43:
+                case 52:
                   memoryBufferView = new DataView(memory.buffer);
                   objectAddress = memoryBufferView.getInt32(objectAddressAddress, true);
-                  _context6.next = 47;
+                  _context7.next = 56;
                   return pv_sample_rate();
 
-                case 47:
-                  sampleRate = _context6.sent;
-                  _context6.next = 50;
+                case 56:
+                  sampleRate = _context7.sent;
+                  _context7.next = 59;
                   return pv_leopard_version();
 
-                case 50:
-                  versionAddress = _context6.sent;
+                case 59:
+                  versionAddress = _context7.sent;
                   version = arrayBufferToStringAtIndex(memoryBufferUint8, versionAddress);
-                  return _context6.abrupt("return", {
+                  return _context7.abrupt("return", {
+                    malloc: exports.malloc,
                     aligned_alloc: aligned_alloc,
                     memory: memory,
                     objectAddress: objectAddress,
@@ -3091,15 +3148,15 @@ var LeopardWeb = (function (exports) {
                     transcriptionAddressAddress: transcriptionAddressAddress
                   });
 
-                case 53:
+                case 62:
                 case "end":
-                  return _context6.stop();
+                  return _context7.stop();
               }
             }
-          }, _callee6);
+          }, _callee7);
         }));
 
-        function initWasm(_x4, _x5) {
+        function initWasm(_x6, _x7) {
           return _initWasm.apply(this, arguments);
         }
 
@@ -3109,8 +3166,6 @@ var LeopardWeb = (function (exports) {
 
     return Leopard;
   }();
-
-  _defineProperty$1(Leopard, "_frameLength", void 0);
 
   _defineProperty$1(Leopard, "_sampleRate", void 0);
 

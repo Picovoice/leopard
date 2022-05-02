@@ -6,14 +6,14 @@ import {
   aligned_alloc_type,
   buildWasm,
   arrayBufferToStringAtIndex,
-  isAccessKeyValid
-} from '@picovoice/web-utils';
+  isAccessKeyValid, getPvStorage
+} from "@picovoice/web-utils";
 
 /**
  * WebAssembly function types
  */
 
-type pv_leopard_init_type = (accessKey: number, object: number) => Promise<number>;
+type pv_leopard_init_type = (accessKey: number, modelPath: number, object: number) => Promise<number>;
 type pv_leopard_process_type = (object: number, pcm: number, num_samples: number, transcription: number) => Promise<number>;
 type pv_leopard_delete_type = (object: number) => Promise<void>;
 type pv_status_to_string_type = (status: number) => Promise<number>
@@ -53,9 +53,10 @@ export class Leopard {
   private _alignedAlloc: CallableFunction;
   private _transcriptionAddressAddress: number;
 
-  private static _frameLength: number;
   private static _sampleRate: number;
   private static _version: string;
+
+  private _malloc: CallableFunction;
 
   private static _leopardMutex = new Mutex();
 
@@ -70,6 +71,8 @@ export class Leopard {
     this._wasmMemory = handleWasm.memory;
     this._objectAddress = handleWasm.objectAddress;
     this._alignedAlloc = handleWasm.aligned_alloc;
+    // @ts-ignore
+    this._malloc = handleWasm.malloc;
     this._transcriptionAddressAddress = handleWasm.transcriptionAddressAddress;
 
     this._memoryBuffer = new Int16Array(handleWasm.memory.buffer);
@@ -83,6 +86,10 @@ export class Leopard {
    */
   public async release(): Promise<void> {
     await this._pvLeopardDelete(this._objectAddress);
+  }
+
+  public async testMalloc(mem: number): Promise<void> {
+    await this._malloc(mem);
   }
 
   /**
@@ -163,7 +170,7 @@ export class Leopard {
   }
 
   /**
-   * Creates an instance of the the Picovoice Leopard voice activity detection (VAD) engine.
+   * Creates an instance of the Picovoice Leopard voice activity detection (VAD) engine.
    * Behind the scenes, it requires the WebAssembly code to load and initialize before
    * it can create an instance.
    *
@@ -172,13 +179,16 @@ export class Leopard {
    *
    * @returns An instance of the Leopard engine.
    */
-  public static async create(accessKey: string, wasmBase64: string): Promise<Leopard> {
+  public static async create(accessKey: string, wasmBase64: string, model: string): Promise<Leopard> {
     if (!isAccessKeyValid(accessKey)) {
       throw new Error('Invalid AccessKey');
     }
     const returnPromise = new Promise<Leopard>((resolve, reject) => {
       Leopard._leopardMutex
       .runExclusive(async () => {
+        const pvStorage = getPvStorage();
+        // @ts-ignore
+        await pvStorage.setItem("modelPath", model);
         const wasmOutput = await Leopard.initWasm(accessKey.trim(), wasmBase64);
         return new Leopard(wasmOutput);
       })
@@ -195,11 +205,12 @@ export class Leopard {
   private static async initWasm(accessKey: string, wasmBase64: string): Promise<any> {
     // A WebAssembly page has a constant size of 64KiB. -> 1MiB ~= 16 pages
     // minimum memory requirements for init: 3 pages
-    const memory = new WebAssembly.Memory({ initial: 6000, maximum: 10000 });
+    const memory = new WebAssembly.Memory({ initial: 5484 });
 
     const memoryBufferUint8 = new Uint8Array(memory.buffer);
 
     const exports = await buildWasm(memory, wasmBase64);
+    console.log(exports)
 
     const aligned_alloc = exports.aligned_alloc as aligned_alloc_type;
     const pv_leopard_version = exports.pv_leopard_version as pv_leopard_version_type;
@@ -239,7 +250,22 @@ export class Leopard {
     }
     memoryBufferUint8[accessKeyAddress + accessKey.length] = 0;
 
-    const status = await pv_leopard_init(accessKeyAddress, objectAddressAddress);
+    const modelPath = "modelPath"
+    const modelPathAddress = await aligned_alloc(
+      Uint8Array.BYTES_PER_ELEMENT,
+      (modelPath.length + 1) * Uint8Array.BYTES_PER_ELEMENT
+    );
+
+    if (modelPathAddress === 0) {
+      throw new Error('malloc failed: Cannot allocate memory');
+    }
+
+    for (let i = 0; i < modelPath.length; i++) {
+      memoryBufferUint8[modelPathAddress + i] = modelPath.charCodeAt(i);
+    }
+    memoryBufferUint8[modelPathAddress + modelPath.length] = 0;
+
+    const status = await pv_leopard_init(accessKeyAddress, modelPathAddress, objectAddressAddress);
     if (status !== PV_STATUS_SUCCESS) {
       throw new Error(
         `'pv_leopard_init' failed with status ${arrayBufferToStringAtIndex(
@@ -259,6 +285,7 @@ export class Leopard {
     );
 
     return {
+      malloc: exports.malloc,
       aligned_alloc,
       memory: memory,
       objectAddress: objectAddress,
