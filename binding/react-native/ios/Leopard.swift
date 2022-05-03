@@ -22,7 +22,7 @@ class PvLeopard: NSObject {
         do {
             let leopard = try Leopard(
                 accessKey: accessKey,
-                modelPath: try getResourcePath(modelPath))
+                modelPath: modelPath)
 
             let handle: String = String(describing: leopard)
             leopardPool[handle] = leopard
@@ -74,7 +74,7 @@ class PvLeopard: NSObject {
                  resolver resolve:RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock) -> Void {
         do {
             if let leopard = leopardPool[handle] {
-                let result = try leopard.processFile(try getResourcePath(audioPath))
+                let result = try leopard.processFile(audioPath)
                 resolve(result)
             } else {
                 let (code, message) = errorToCodeAndMessage(LeopardRuntimeError("Invalid handle provided to Leopard 'process'"))
@@ -87,20 +87,6 @@ class PvLeopard: NSObject {
             let (code, message) = errorToCodeAndMessage(LeopardError(error.localizedDescription))
             reject(code, message, nil)
         }
-    }
-
-    private func getResourcePath(_ filePath: String) throws -> String {
-        if (!FileManager.default.fileExists(atPath: filePath)) {
-            if let resourcePath = Bundle(for: type(of: self)).resourceURL?.appendingPathComponent(filePath).path {
-                if (FileManager.default.fileExists(atPath: resourcePath)) {
-                    return resourcePath
-                }
-            }
-
-            throw LeopardIOError("Could not find file at path '\(filePath)'. If this is a packaged asset, ensure you have added it to your xcode project.")
-        }
-
-        return filePath
     }
 
     private func errorToCodeAndMessage(_ error: LeopardError) -> (String, String) {
