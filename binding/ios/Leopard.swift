@@ -115,7 +115,7 @@ public class Leopard {
         } catch let error as LeopardInvalidArgumentError {
             let fileExtension = (audioPath as NSString).pathExtension.lowercased()
             if !Leopard.supportedAudioTypes.contains(fileExtension) {
-                throw LeopardInvalidArgumentError("File with extension '\(fileExtension)' is not supported")
+                throw LeopardInvalidArgumentError("Audio file with format '\(fileExtension)' is not supported")
             } else {
                 throw error
             }
