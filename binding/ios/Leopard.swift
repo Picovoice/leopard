@@ -29,13 +29,14 @@ public class Leopard {
             throw LeopardInvalidArgumentError("AccessKey is required for Leopard initialization")
         }
 
-        if !FileManager().fileExists(atPath: modelPath) {
-            throw LeopardInvalidArgumentError("Model file at does not exist '\(modelPath)'")
+        var modelPathArg = modelPath
+        if !FileManager().fileExists(atPath: modelPathArg) {
+            modelPathArg = try getResourcePath(modelPathArg)
         }
 
         let status = pv_leopard_init(
                 accessKey,
-                modelPath,
+                modelPathArg,
                 &handle)
         try checkStatus(status, "Leopard init failed")
     }
@@ -102,17 +103,22 @@ public class Leopard {
             throw LeopardInvalidStateError("Leopard must be initialized before processing")
         }
 
-        if !Leopard.supportedAudioTypes.contains((audioPath as NSString).pathExtension.lowercased()) {
-            throw LeopardInvalidArgumentError("File provided is not supported")
-        }
-
-        if !FileManager().fileExists(atPath: audioPath) {
-            throw LeopardInvalidArgumentError("Could not find the audio file at \(audioPath)")
+        var audioPathArg = audioPath
+        if !FileManager().fileExists(atPath: audioPathArg) {
+            audioPathArg = try getResourcePath(audioPathArg)
         }
 
         var cTranscript: UnsafeMutablePointer<Int8>?
-        let status = pv_leopard_process_file(self.handle, audioPath, &cTranscript)
-        try checkStatus(status, "Leopard process failed")
+        let status = pv_leopard_process_file(self.handle, audioPathArg, &cTranscript)
+        do {
+            try checkStatus(status, "Leopard process failed")
+        } catch let error as LeopardInvalidArgumentError {
+            if !Leopard.supportedAudioTypes.contains((audioPath as NSString).pathExtension.lowercased()) {
+                throw LeopardInvalidArgumentError("File provided is not supported")
+            } else {
+                throw error
+            }
+        }
 
         let transcript = String(cString: cTranscript!)
         cTranscript?.deallocate()
@@ -134,6 +140,22 @@ public class Leopard {
         }
 
         return try self.processFile(audioURL.path)
+    }
+
+    /// Given a path, return the full path to the resource.
+    ///
+    /// - Parameters:
+    ///   - filePath: relative path of a file in the bundle.
+    /// - Throws: LeopardIOError
+    /// - Returns: The full path of the resource.
+    private func getResourcePath(_ filePath: String) throws -> String {
+        if let resourcePath = Bundle(for: type(of: self)).resourceURL?.appendingPathComponent(filePath).path {
+            if (FileManager.default.fileExists(atPath: resourcePath)) {
+                return resourcePath
+            }
+        }
+
+        throw LeopardIOError("Could not find file at path '\(filePath)'. If this is a packaged asset, ensure you have added it to your xcode project.")
     }
 
     private func checkStatus(_ status: pv_status_t, _ message: String) throws {
