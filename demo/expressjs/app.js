@@ -32,7 +32,7 @@ app.post('/rss-transcribe', async (req, res) => {
   console.log("File write complete")
 
   console.log("Transcribing audio...")
-  const leo = new Leopard("Tw4jothrMMLyRYQ793yD/XF3DeithcbeNVsYlNN0Dc1vY26suWNOkg==")
+  const leo = new Leopard("${YOUR ACCESS KEY HERE}")
   const transcript = leo.processFile(fileName)
   leo.release()
   fs.unlinkSync(fileName)
