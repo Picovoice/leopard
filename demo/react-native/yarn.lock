@@ -1049,10 +1049,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@picovoice/leopard-react-native@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@picovoice/leopard-react-native/-/leopard-react-native-1.0.2.tgz#a83e95716965298c89efcc6d29c456e458320b5b"
-  integrity sha512-9jeeUTIc890KdALMGOJnWwa1H616wioySwVc6zYnwpcj2tYCRAN5JKo6+xs8GtSXB4zrKfvKa5mPWK1udNKS6A==
+"@picovoice/leopard-react-native@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@picovoice/leopard-react-native/-/leopard-react-native-1.0.3.tgz#e84794acbe59913207b675317e89ecaa646f2d35"
+  integrity sha512-EiMz8HDYM0kil++88s9elBqtiPD8esMdV7xKkk2LwezjhFpfC0vnGDPNL0fjmw9bRhKEEIJqlzwKyfazX7Ld4w==
 
 "@picovoice/react-native-voice-processor@^1.0.4":
   version "1.0.4"
