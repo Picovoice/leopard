@@ -1,11 +1,4 @@
-github.com/Picovoice/leopard/binding/go v1.0.2 h1:2+eqcxxfkxTFVdzgJTHXKwBJF+VxOL/DEDzDyH10vus=
-github.com/Picovoice/leopard/binding/go v1.0.2/go.mod h1:5kaEg9ZcH2dLkrX/H1xMVF6QFM7l3vd9GKxeXSanA8s=
 github.com/Picovoice/leopard/binding/go v1.0.3 h1:K7zelpUBZP/vivHmpjLLGGsH93cbUO6q80N78Q8fBHU=
 github.com/Picovoice/leopard/binding/go v1.0.3/go.mod h1:5kaEg9ZcH2dLkrX/H1xMVF6QFM7l3vd9GKxeXSanA8s=
-github.com/Picovoice/pvrecorder/sdk/go v1.0.2 h1:UMgGSRjT5ro3DmncOYu6aiCikQp9pZlR3MPQa6QatEo=
-github.com/Picovoice/pvrecorder/sdk/go v1.0.2/go.mod h1:vkNmQAJCFgKBhSfqdff3OuxvXVpIuwv48odGc3ki83M=
 github.com/Picovoice/pvrecorder/sdk/go v1.1.0 h1:QuNOaiHJckfwrVvDQqf08/R08H5UewLpW6ds/2Zf4w8=
 github.com/Picovoice/pvrecorder/sdk/go v1.1.0/go.mod h1:IoSKWuM28e0wWzVSn7B4WvHWmOpcPg85JdwlueTJgGk=
-golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
-golang.org/x/sys v0.0.0-20220209214540-3681064d5158 h1:rm+CHSpPEEW2IsXUib1ThaHIjuBVZjxNgSKmBLFfD4c=
-golang.org/x/sys v0.0.0-20220209214540-3681064d5158/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
