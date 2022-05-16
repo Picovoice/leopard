@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Pv;
+using System;
 
 namespace LeopardTest
 {
@@ -46,12 +47,9 @@ namespace LeopardTest
         }
 
         [ClassInitialize]
-        public static void ClassInitialize(TestContext testContext)
+        public static void ClassInitialize(TestContext _)
         {
-            if (testContext.Properties.Contains("pvTestAccessKey"))
-            {
-               ACCESS_KEY = testContext.Properties["pvTestAccessKey"].ToString();
-            }
+            ACCESS_KEY = Environment.GetEnvironmentVariable("ACCESS_KEY");
         }
 
         [TestMethod]

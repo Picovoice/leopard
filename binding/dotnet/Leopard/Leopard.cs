@@ -61,35 +61,35 @@ namespace Pv
             return libHandle;
         }
 #endif
-        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
         private static extern PvStatus pv_leopard_init(
-            string accessKey,
-            string modelPath,
+            IntPtr accessKey,
+            IntPtr modelPath,
             out IntPtr handle);
 
-        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
         private static extern Int32 pv_sample_rate();
 
-        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
         private static extern void pv_leopard_delete(IntPtr handle);
 
-        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
         private static extern PvStatus pv_leopard_process(
             IntPtr handle,
             Int16[] pcm,
             Int32 pcmLength,
             out IntPtr transcriptPtr);
 
-        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
         private static extern PvStatus pv_leopard_process_file(
             IntPtr handle,
-            string audioPath,
+            IntPtr audioPath,
             out IntPtr transcriptPtr);
 
-        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr pv_leopard_version();
 
-        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
         private static extern void pv_free(IntPtr memoryPtr);
 
         /// <summary>
@@ -128,16 +128,23 @@ namespace Pv
                 throw new LeopardIOException($"Couldn't find model file at '{modelPath}'");
             }
 
+            IntPtr accessKeyPtr = Utils.GetPtrFromUtf8String(accessKey);
+            IntPtr modelPathPtr = Utils.GetPtrFromUtf8String(modelPath);
+
             PvStatus status = pv_leopard_init(
-                accessKey,
-                modelPath,
+                accessKeyPtr,
+                modelPathPtr,
                 out _libraryPointer);
+
+            Marshal.FreeHGlobal(accessKeyPtr);
+            Marshal.FreeHGlobal(modelPathPtr);
+
             if (status != PvStatus.SUCCESS)
             {
                 throw PvStatusToException(status);
             }
 
-            Version = Marshal.PtrToStringAnsi(pv_leopard_version());
+            Version = Utils.GetUtf8StringFromPtr(pv_leopard_version());
             SampleRate = pv_sample_rate();
         }
 
@@ -158,13 +165,13 @@ namespace Pv
             }
 
             IntPtr transcriptPtr = IntPtr.Zero;
-            PvStatus status = pv_leopard_process(_libraryPointer, pcm, (Int32) pcm.Length, out transcriptPtr);
+            PvStatus status = pv_leopard_process(_libraryPointer, pcm, (Int32)pcm.Length, out transcriptPtr);
             if (status != PvStatus.SUCCESS)
             {
                 throw PvStatusToException(status, "Leopard failed to process the audio frame.");
             }
 
-            string transcript = Marshal.PtrToStringAnsi(transcriptPtr);
+            string transcript = Utils.GetUtf8StringFromPtr(transcriptPtr);
             pv_free(transcriptPtr);
             return transcript;
         }
@@ -186,14 +193,19 @@ namespace Pv
                 throw new LeopardIOException($"Couldn't find audio file at '{audioPath}'");
             }
 
+            IntPtr audioPathPtr = Utils.GetPtrFromUtf8String(audioPath);
+
             IntPtr transcriptPtr = IntPtr.Zero;
-            PvStatus status = pv_leopard_process_file(_libraryPointer, audioPath, out transcriptPtr);
+            PvStatus status = pv_leopard_process_file(_libraryPointer, audioPathPtr, out transcriptPtr);
+
+            Marshal.FreeHGlobal(audioPathPtr);
+
             if (status != PvStatus.SUCCESS)
             {
                 throw PvStatusToException(status, "Leopard failed to process the audio file.");
             }
 
-            string transcript = Marshal.PtrToStringAnsi(transcriptPtr);
+            string transcript = Utils.GetUtf8StringFromPtr(transcriptPtr);
             pv_free(transcriptPtr);
             return transcript;
         }
