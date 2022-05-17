@@ -3,9 +3,9 @@
 
 
 "@picovoice/leopard-node@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@picovoice/leopard-node/-/leopard-node-1.0.2.tgz#8fa73dfbd64590c59412dec55e540160bf37dbd5"
-  integrity sha512-80Nt5uvIktyOims90VSXvuBg/qRlBd6oX2dRBglIidCCABqr8hwvvOcvFg5G3Pql7LTdQMqcML5KgwMgwLaNbQ==
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@picovoice/leopard-node/-/leopard-node-1.0.4.tgz#4b6914848c86d9e7550c4e63f9a1d15ca23e8c61"
+  integrity sha512-Z7PFA18eaDgZRGO0FtpS9mz/q1ADa923Ilb5BNeHktO9AaakSXfAyEvzpp1A7v+acDN8ktimxt9C51NA7aAjog==
 
 accepts@~1.3.5:
   version "1.3.8"
