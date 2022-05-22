@@ -66,24 +66,29 @@ def main():
     url = args.url
     transcript_path = args.transcript_path
     work_folder = args.work_folder
+    retain_webm = args.retain_webm
 
     print(f'Initializing Leopard with AccessKey `{access_key}`')
     leopard = pvleopard.create(access_key=access_key)
 
     webm_path = download(url=url, folder=work_folder)
 
-    anime = ProgressAnimation(f'Transcribing `{url}`')
-    anime.start()
-    transcript = leopard.process_file(webm_path)
-    anime.stop()
+    try:
+        anime = ProgressAnimation(f'Transcribing `{url}`')
+        anime.start()
+        transcript = leopard.process_file(webm_path)
+        anime.stop()
 
-    if os.path.exists(transcript_path):
-        os.remove(transcript_path)
+        if os.path.exists(transcript_path):
+            os.remove(transcript_path)
 
-    print(f'Saving transcription into `{transcript_path}`')
-    with open(transcript_path, 'w') as f:
-        f.write(transcript)
-        f.write('\n')
+        print(f'Saving transcription into `{transcript_path}`')
+        with open(transcript_path, 'w') as f:
+            f.write(transcript)
+            f.write('\n')
+    finally:
+        if not retain_webm:
+            os.remove(webm_path)
 
 
 if __name__ == '__main__':
