@@ -23,11 +23,11 @@ Transcribe a YouTube video:
 ```console
 python3 demo/python-youtube/main.py \
 --access-key ${ACCESS_KEY} \
---url ${YOUTUBE_VIDEO_URL} \
+--url ${URL} \
 --transcript-path ${TRANSCRIPT_PATH}
 ```
 
 Replace `${ACCESS_KEY}` with your own obtained from [Picovoice Console](https://console.picovoice.ai/). Replace
-`${YOUTUBE_VIDEO_URL}` with the URL to a video (not a playlist or channel). A video URL on YouTube should look like
-this: `https://www.youtube.com/watch?v=${VIDEO_UUID}`. `${TRANSCRIPT_PATH}` is the path to the file where transcription
+`${URL}` with the URL to a video (not a playlist or channel). A video URL on YouTube should look like this:
+`https://www.youtube.com/watch?v=${VIDEO_UUID}`. `${TRANSCRIPT_PATH}` is the path to the file where transcription
 is saved to.
