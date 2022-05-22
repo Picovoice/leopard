@@ -9,12 +9,11 @@ from pytube import YouTube
 
 
 class ProgressAnimation(Thread):
-    def __init__(self, prefix: str, step_sec: float = 0.1, suffix: str = '') -> None:
+    def __init__(self, prefix: str, step_sec: float = 0.19) -> None:
         super().__init__()
 
         self._prefix = prefix
         self._step_sec = step_sec
-        self._suffix = suffix
         self._frames = (
             ".  ",
             ".. ",
@@ -23,20 +22,22 @@ class ProgressAnimation(Thread):
             "  .",
             "   "
         )
-        self._done = False
+        self._stop = False
 
     def run(self) -> None:
-        self._done = False
         while True:
             for frame in self._frames:
-                if self._done:
-                    sys.stdout.write(f'\r{" " * (len(self._prefix) + 1 + len(frame))}\r{self._suffix}')
+                if self._stop:
+                    sys.stdout.write(f'\r{" " * (len(self._prefix) + 1 + len(frame))}\r')
+                    self._stop = False
                     return
                 sys.stdout.write(f'\r{self._prefix} {frame}')
                 time.sleep(self._step_sec)
 
     def stop(self) -> None:
-        self._done = True
+        self._stop = True
+        while self._stop:
+            pass
 
 
 def download(url: str, folder: str) -> str:
@@ -71,7 +72,7 @@ def main():
 
     webm_path = download(url=url, folder=work_folder)
 
-    anime = ProgressAnimation(f'Transcribing `{url}`', suffix='\n')
+    anime = ProgressAnimation(f'Transcribing `{url}`')
     anime.start()
     transcript = leopard.process_file(webm_path)
     anime.stop()
