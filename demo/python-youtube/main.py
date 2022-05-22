@@ -40,19 +40,6 @@ class ProgressAnimation(Thread):
             pass
 
 
-def download(url: str, folder: str) -> str:
-    webm_path = os.path.join(folder, f'{url.split("watch?v=")[1]}.webm')
-    if not os.path.exists(webm_path):
-        anime = ProgressAnimation(f'Downloading `{url}`')
-        anime.start()
-        youtube = YouTube(url)
-        audio_stream = youtube.streams.filter(only_audio=True, audio_codec='opus').order_by('bitrate').last()
-        audio_stream.download(output_path=folder, filename=os.path.basename(webm_path), skip_existing=True)
-        anime.stop()
-
-    return webm_path
-
-
 def main():
     parser = ArgumentParser()
     parser.add_argument('--access-key', required=True)
@@ -61,31 +48,40 @@ def main():
     parser.add_argument('--work-folder', default=os.path.expanduser('~/'))
     parser.add_argument('--retain-webm', action='store_true')
     args = parser.parse_args()
-
     access_key = args.access_key
     url = args.url
     transcript_path = args.transcript_path
     work_folder = args.work_folder
     retain_webm = args.retain_webm
 
-    print(f'Initializing Leopard with AccessKey `{access_key}`')
+    anime = ProgressAnimation(f'Initializing Leopard with AccessKey `{access_key}`')
+    anime.start()
     leopard = pvleopard.create(access_key=access_key)
+    anime.stop()
 
-    webm_path = download(url=url, folder=work_folder)
+    webm_path = os.path.join(work_folder, f'{url.split("watch?v=")[1]}.webm')
+    anime = ProgressAnimation(f'Downloading `{url}`')
+    anime.start()
+    youtube = YouTube(url)
+    audio_stream = youtube.streams.filter(only_audio=True, audio_codec='opus').order_by('bitrate').last()
+    audio_stream.download(output_path=work_folder, filename=os.path.basename(webm_path), skip_existing=True)
+    anime.stop()
 
     try:
         anime = ProgressAnimation(f'Transcribing `{url}`')
         anime.start()
+        start_sec = time.time()
         transcript = leopard.process_file(webm_path)
+        proc_sec = time.time() - start_sec
         anime.stop()
+        print(f"Transcribed `{youtube.length}` seconds in `{proc_sec:.2f}` seconds")
 
         if os.path.exists(transcript_path):
             os.remove(transcript_path)
-
-        print(f'Saving transcription into `{transcript_path}`')
         with open(transcript_path, 'w') as f:
             f.write(transcript)
             f.write('\n')
+        print(f'Saved transcription into `{transcript_path}`')
     finally:
         if not retain_webm:
             os.remove(webm_path)
