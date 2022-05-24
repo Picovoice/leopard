@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
     const char *model_path = NULL;
 
     int opt;
-    while ((opt = getopt(argc, argv, "a:m:")) != -1) {
+    while ((opt = getopt(argc, argv, "a:l:m:")) != -1) {
         switch (opt) {
             case 'a':
                 access_key = optarg;
@@ -106,60 +106,58 @@ int main(int argc, char **argv) {
         }
     }
 
-    if (!(access_key && model_path && (optind < argc))) {
+    if (!(access_key && library_path && model_path && (optind < argc))) {
         fprintf(stderr, "usage: -a ACCESS_KEY -l LIBRARY_PATH -m MODEL_PATH audio_path0 audio_path1 ...\n");
         exit(1);
     }
 
-//    void *dl_handle = open_dl(library_path);
-//    if (!dl_handle) {
-//        fprintf(stderr, "failed to load library at `%s`.\n", library_path);
-//        exit(1);
-//    }
-//
-//    const char *(*pv_status_to_string_func)(pv_status_t) = load_symbol(dl_handle, "pv_status_to_string");
-//    if (!pv_status_to_string_func) {
-//        print_dl_error("failed to load `pv_status_to_string`");
-//        exit(1);
-//    }
-//
-//    const int32_t (*pv_sample_rate_func)() = load_symbol(dl_handle, "pv_sample_rate");
-//    if (!pv_sample_rate_func) {
-//        print_dl_error("failed to load `pv_sample_rate`");
-//        exit(1);
-//    }
-//
-//    pv_status_t (*pv_leopard_init_func)(const char *, const char *, pv_leopard_t **) =
-//    load_symbol(dl_handle, "pv_leopard_init");
-//    if (!pv_leopard_init_func) {
-//        print_dl_error("failed to load `pv_leopard_init`");
-//        exit(1);
-//    }
-//
-//    void (*pv_leopard_delete_func)(pv_leopard_t *) = load_symbol(dl_handle, "pv_leopard_delete");
-//    if (!pv_leopard_delete_func) {
-//        print_dl_error("failed to load `pv_leopard_delete`");
-//        exit(1);
-//    }
-//
-//    pv_status_t (*pv_leopard_process_file_func)(pv_leopard_t *, const char *, char **) =
-//    load_symbol(dl_handle, "pv_leopard_process_file");
-//    if (!pv_leopard_process_file_func) {
-//        print_dl_error("failed to load `pv_leopard_process_file`");
-//        exit(1);
-//    }
+    void *dl_handle = open_dl(library_path);
+    if (!dl_handle) {
+        fprintf(stderr, "failed to load library at `%s`.\n", library_path);
+        exit(1);
+    }
+
+    const char *(*pv_status_to_string_func)(pv_status_t) = load_symbol(dl_handle, "pv_status_to_string");
+    if (!pv_status_to_string_func) {
+        print_dl_error("failed to load `pv_status_to_string`");
+        exit(1);
+    }
+
+    const int32_t (*pv_sample_rate_func)() = load_symbol(dl_handle, "pv_sample_rate");
+    if (!pv_sample_rate_func) {
+        print_dl_error("failed to load `pv_sample_rate`");
+        exit(1);
+    }
+
+    pv_status_t (*pv_leopard_init_func)(const char *, const char *, pv_leopard_t **) =
+    load_symbol(dl_handle, "pv_leopard_init");
+    if (!pv_leopard_init_func) {
+        print_dl_error("failed to load `pv_leopard_init`");
+        exit(1);
+    }
+
+    void (*pv_leopard_delete_func)(pv_leopard_t *) = load_symbol(dl_handle, "pv_leopard_delete");
+    if (!pv_leopard_delete_func) {
+        print_dl_error("failed to load `pv_leopard_delete`");
+        exit(1);
+    }
+
+    pv_status_t (*pv_leopard_process_file_func)(pv_leopard_t *, const char *, char **) =
+    load_symbol(dl_handle, "pv_leopard_process_file");
+    if (!pv_leopard_process_file_func) {
+        print_dl_error("failed to load `pv_leopard_process_file`");
+        exit(1);
+    }
 
     struct timeval before;
     gettimeofday(&before, NULL);
 
     pv_leopard_t *leopard = NULL;
-    pv_status_t status = pv_leopard_init(access_key, model_path, &leopard);
+    pv_status_t status = pv_leopard_init_func(access_key, model_path, &leopard);
     if (status != PV_STATUS_SUCCESS) {
-        fprintf(stderr, "failed to init with `%s`.\n", pv_status_to_string(status));
+        fprintf(stderr, "failed to init with `%s`.\n", pv_status_to_string_func(status));
         exit(1);
     }
-
-    return 0;
 
     struct timeval after;
     gettimeofday(&after, NULL);
@@ -173,9 +171,9 @@ int main(int argc, char **argv) {
         gettimeofday(&before, NULL);
 
         char *transcript = NULL;
-        status = pv_leopard_process_file(leopard, argv[i], &transcript);
+        status = pv_leopard_process_file_func(leopard, argv[i], &transcript);
         if (status != PV_STATUS_SUCCESS) {
-            fprintf(stderr, "failed to process with `%s`.\n", pv_status_to_string(status));
+            fprintf(stderr, "failed to process with `%s`.\n", pv_status_to_string_func(status));
             exit(1);
         }
 
@@ -189,8 +187,8 @@ int main(int argc, char **argv) {
 
     fprintf(stdout, "proc took %.2f sec\n", proc_sec);
 
-    pv_leopard_delete(leopard);
-//    close_dl(dl_handle);
+    pv_leopard_delete_func(leopard);
+    close_dl(dl_handle);
 
     return 0;
 }

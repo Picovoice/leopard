@@ -51,7 +51,7 @@ def run_unit_test_selenium(url, access_key, absolute_audio_file):
     driver.get(url)
     assert "unit test" in driver.title
 
-    wait = WebDriverWait(driver, 10)
+    wait = WebDriverWait(driver, 60)
 
     driver.find_element_by_id("audioFile").send_keys(absolute_audio_file)
     wait.until(EC.visibility_of_element_located((By.ID, "audioLoaded")))
@@ -87,7 +87,7 @@ def main():
 
     absolute_audio_file = os.path.abspath(args.audio_file)
 
-    simple_server = SimpleHttpServer(port=4005, path=os.path.join(os.path.dirname(__file__)))
+    simple_server = SimpleHttpServer(port=4005, path=os.path.join(os.path.dirname(__file__), '..'))
     test_url = f'{simple_server.base_url}/test/index.html'
     simple_server.start()
     time.sleep(4)

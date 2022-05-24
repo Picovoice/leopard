@@ -9,5 +9,5 @@ include_directories("${PROJECT_SOURCE_DIR}/../../include")
 add_executable(leopard_demo leopard_demo.c)
 
 if (NOT WIN32)
-    target_link_libraries(leopard_demo dl ${PROJECT_SOURCE_DIR}/libpv_leopard.so)
+    target_link_libraries(leopard_demo dl)
 endif()
