@@ -1,136 +1,200 @@
-<!--
-  Copyright 2021 Picovoice Inc.
-  You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
-  file accompanying this source.
-  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
-  an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
-  specific language governing permissions and limitations under the License.
--->
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <script src="index.js"></script>
+  <title>Unit test - LeopardWeb</title>
+  <script src="../dist/iife/index.js"></script>
+  <script src="./leopard_params.js"></script>
   <script type="application/javascript">
-    const Leopard = LeopardWeb.Leopard
-    let leopard
+    const expected = "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL";
+    let pcm = null;
 
-    var audioContext = new (window.AudioContext || window.webKitAudioContext)(
-      { sampleRate: 16000 }
-    );
+    window.onload = function () {
+      const audioContext = new (window.AudioContext || window.webKitAudioContext)(
+              {sampleRate: 16000}
+      );
 
-    function writeStatus(status) {
-      console.log(status);
-      document.getElementById("status").innerHTML = status;
-    }
+      function readAudioFile(selectedFile, callback) {
+        let reader = new FileReader();
+        reader.onload = function (ev) {
+          let wavBytes = reader.result;
+          audioContext.decodeAudioData(wavBytes, callback);
+        };
+        reader.readAsArrayBuffer(selectedFile);
+      }
 
-    function readAudioFile(selectedFile, callback) {
-      let reader = new FileReader();
-      reader.onload = function(ev) {
-        let wavBytes = reader.result;
-        audioContext.decodeAudioData(wavBytes, callback);
-      };
-      reader.readAsArrayBuffer(selectedFile);
-    }
-
-    function urlContentToDataUri(url){
-      return fetch(url)
-        .then( response => response.blob() )
-        .then( blob => new Promise( callback =>{
-          let reader = new FileReader();
-          reader.onload = function() {
-            let dataUrl = reader.result;
-            let base64 = dataUrl.split(',')[1];
-            callback(base64);
-          };
-          reader.readAsDataURL(blob);
-        }) ) ;
-    }
-
-    async function startLeopard(accessKey) {
-      writeStatus("Leopard is loading. Please wait...");
-
-      const wasm_base64 = await urlContentToDataUri("./pv_leopard.wasm")
-      const model_base64 = await urlContentToDataUri("./leopard_params.pv")
-      leopard = await Leopard.create(accessKey, wasm_base64, model_base64)
-
-      writeStatus(`Leopard loaded. Leopard version: ${leopard.version}`)
-
-      const fileSelector = document.getElementById("file-selector");
+      const fileSelector = document.getElementById("audioFile");
       fileSelector.addEventListener("change", (event) => {
+        document.getElementById("audioLoaded").style.display = "none";
+
+        writeMessage("Loading audio file...");
         const fileList = event.target.files;
-        readAudioFile(fileList[0], async (audioBuffer) => {
+        readAudioFile(fileList[0], (audioBuffer) => {
           const f32PCM = audioBuffer.getChannelData(0);
           const i16PCM = new Int16Array(f32PCM.length);
 
           const INT16_MAX = 32767;
           const INT16_MIN = -32768;
           i16PCM.set(
-            f32PCM.map((f) => {
-              let i = Math.trunc(f * INT16_MAX);
-              if (f > INT16_MAX) i = INT16_MAX;
-              if (f < INT16_MIN) i = INT16_MIN;
-              return i;
-            })
+                  f32PCM.map((f) => {
+                    let i = Math.trunc(f * INT16_MAX);
+                    if (f > INT16_MAX) i = INT16_MAX;
+                    if (f < INT16_MIN) i = INT16_MIN;
+                    return i;
+                  })
           );
-
-          const transcription = await leopard.process(i16PCM)
-          document.getElementById('result').innerText = transcription
+          pcm = i16PCM;
+          document.getElementById("audioLoaded").style.display = "block";
+          writeMessage("Loading audio file... done!");
         });
       });
     }
+
+    function writeMessage(message) {
+      console.log(message);
+      let p = document.createElement("p");
+      let text = document.createTextNode(message);
+      p.appendChild(text);
+      document.body.appendChild(p);
+    }
+
+    function assertEquals(expected, actual, failureMessage) {
+      if (expected !== actual) {
+        throw new Error(failureMessage);
+      }
+    }
+
+    async function startTest() {
+      document.getElementById("testComplete").style.display = "none";
+      let is_failed = undefined
+
+      writeMessage("Starting test...");
+
+      const accessKey = document.getElementById("accessKey").value;
+
+      if (!pcm) {
+        writeMessage("Audio file not provided...");
+        return
+      }
+
+      try {
+        writeMessage("Checking Leopard 'fromPublicDirectory'");
+        let handle = await LeopardWeb.Leopard.fromPublicDirectory(accessKey, "leopard_params.pv", "leopard_model", true);
+        let transcription = await handle.process(pcm);
+        assertEquals(expected, transcription, 'Failed to transcribe audio file');
+        handle.release()
+        writeMessage("Checking Leopard 'fromPublicDirectory'... done!");
+
+        writeMessage("Checking Leopard 'fromBase64'");
+        handle = await LeopardWeb.Leopard.fromBase64(accessKey, leopardParams, "leopard_model", true);
+        transcription = await handle.process(pcm);
+        assertEquals(expected, transcription, 'Failed to transcribe audio file');
+        handle.release()
+        writeMessage("Checking Leopard 'fromBase64'... done!");
+
+        writeMessage("Checking LeopardWorker 'fromPublicDirectory'");
+        handle = await LeopardWeb.LeopardWorker.fromPublicDirectory(accessKey, "leopard_params.pv", "leopard_model", true);
+        transcription = await handle.process(pcm);
+        assertEquals(expected, transcription, 'Failed to transcribe audio file');
+        handle.release()
+        writeMessage("Checking LeopardWorker 'fromPublicDirectory'... done!");
+
+        writeMessage("Checking LeopardWorker 'fromBase64'");
+        handle = await LeopardWeb.LeopardWorker.fromBase64(accessKey, leopardParams, "leopard_model", true);
+        transcription = await handle.process(pcm);
+        assertEquals(expected, transcription, 'Failed to transcribe audio file');
+        handle.release()
+        writeMessage("Checking LeopardWorker 'fromBase64'... done!");
+
+        writeMessage("Checking invalid public path");
+        is_failed = false
+        try {
+          await LeopardWeb.Leopard.fromPublicDirectory(accessKey, "invalid", "leopard_model", true);
+        } catch (e) {
+          is_failed = true;
+        }
+        assertEquals(true, is_failed, 'Failed to handle invalid path');
+
+        is_failed = false
+        try {
+          await LeopardWeb.LeopardWorker.fromPublicDirectory(accessKey, "invalid", "leopard_model", true);
+        } catch (e) {
+          is_failed = true;
+        }
+        assertEquals(true, is_failed, 'Failed to handle invalid path');
+        writeMessage("Checking invalid public path... done!");
+
+        writeMessage("Checking invalid base64 string");
+        is_failed = false
+        try {
+          await LeopardWeb.Leopard.fromBase64(accessKey, "invalid", "leopard_model", true);
+        } catch (e) {
+          is_failed = true;
+        }
+        assertEquals(true, is_failed, 'Failed to handle invalid base64 string');
+
+        is_failed = false
+        try {
+          await LeopardWeb.LeopardWorker.fromBase64(accessKey, "invalid", "leopard_model", true);
+        } catch (e) {
+          is_failed = true;
+        }
+        assertEquals(true, is_failed, 'Failed to handle invalid base64 string');
+        writeMessage("Checking invalid base64 string... done!");
+
+        writeMessage("Checking invalid access key");
+        is_failed = false
+        try {
+          await LeopardWeb.Leopard.fromPublicDirectory("invalid", "leopard_params.pv");
+        } catch (e) {
+          is_failed = true;
+        }
+        assertEquals(true, is_failed, 'Failed to handle invalid access key');
+
+        is_failed = false
+        try {
+          await LeopardWeb.LeopardWorker.fromPublicDirectory("invalid", "leopard_params.pv");
+        } catch (e) {
+          is_failed = true;
+        }
+        assertEquals(true, is_failed, 'Failed to handle invalid access key');
+        writeMessage("Checking invalid access key... done!");
+
+        writeMessage("Test passed!")
+      } catch (error) {
+        writeMessage(error);
+        writeMessage("Test failed!")
+      } finally {
+        document.getElementById("testComplete").style.display = "block";
+      }
+    }
   </script>
-  <style>
-      table {
-          margin-top: 2rem;
-          display: inline-block;
-          overflow: auto;
-      }
-
-      table {
-          border-collapse: separate;
-      }
-
-      td {
-          text-align: right;
-          vertical-align: middle;
-      }
-
-      tr:nth-child(even) {
-          background: #eee;
-      }
-  </style>
 </head>
 
 <body>
-  <h1>Leopard Web Demo - Worker</h1>
-  <p>
-    This demo uses Leopard for Web to create an Leopard Web Worker that can
-    index and search audio files. For details, look at your browser's console.
-  </p>
-  <label for="accessKey"
-  >AccessKey provided by
-    <a href="https://picovoice.ai/console/">Picovoice Console</a>:</label
-  >
-  <input type="text" id="accessKey" name="accessKey" />
-  <input
-    type="button"
-    id="submit"
-    value="Start Leopard"
-    onclick="startLeopard(document.getElementById('accessKey').value)"
-  />
-  <hr />
+<h1>Leopard web binding test</h1>
+<p>After entering the AccessKey and audio file, click the "Test Leopard" button. For the result, refer to the
+  browser console.</p>
 
-  <div id="dashboard">
-    <div>
-      <p>Select audio file:</p>
-      <input type="file" id="file-selector" />
-    </div>
-    <br />
-  </div>
+<p>
+  <label for="accessKey">AccessKey string obtained from
+    <a href="https://picovoice.ai/console/">Picovoice Console</a>:</label>
+  <input type="text" id="accessKey" name="accessKey"/>
+</p>
 
-  <div id="status"></div>
-  <br />
-  <p id="result"></p>
+<p>
+  <label for="audioFile">Select audio file located on
+    {PROJECT_ROOT}/resources/audio_samples/test.wav:</label>
+  <input type="file" id="audioFile" name="audioFile" accept="audio/*"/>
+</p>
+
+<input type="button" id="sumbit" value="Test Leopard" onclick="startTest()"/>
+
+<br>
+
+<h4 id="audioLoaded" style="display: none;">Audio file loaded!</h4>
+<h4 id="testComplete" style="display: none;">Test Complete!</h4>
+<hr/>
 </body>
+
 </html>

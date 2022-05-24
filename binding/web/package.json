@@ -1,6 +1,21 @@
 {
   "name": "@picovoice/leopard-web",
-  "version": "1.0.0",
+  "description": "Leopard Speech-to-Text engine for web browsers (via WebAssembly)",
+  "author": "Picovoice Inc",
+  "license": "Apache-2.0",
+  "version": "0.1.0-beta",
+  "keywords": [
+    "leopard",
+    "web",
+    "voice",
+    "speech",
+    "recognition",
+    "ai",
+    "speech-to-text",
+    "transcription",
+    "offline",
+    "dom"
+  ],
   "entry": "src/index.ts",
   "module": "dist/esm/index.js",
   "iife": "dist/iife/index.js",
@@ -13,17 +28,22 @@
     "prepack": "npm-run-all build",
     "start": "cross-env TARGET='debug' rollup --config --watch",
     "watch": "rollup --config --watch",
-    "format": "prettier --write \"**/*.{js,ts,json}\""
+    "format": "prettier --write \"**/*.{js,ts,json}\"",
+    "copywasm": "node scripts/copy_wasm.js",
+    "setup-test": "cp ../../lib/common/leopard_params.pv ./test && npx pvbase64 -i ./test/leopard_params.pv -o ./test/leopard_params.js"
   },
   "dependencies": {
-    "@babel/core": "^7",
+    "@picovoice/web-utils": "^1.1.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.0",
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "@babel/runtime": "^7.17.9",
-    "@picovoice/web-utils": "^1.0.0",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-commonjs": "^18.1.0",
     "@rollup/plugin-node-resolve": "^11.2.1",
+    "@rollup/pluginutils": "^4.2.1",
     "@typescript-eslint/eslint-plugin": "^5.19.0",
     "@typescript-eslint/parser": "^5.19.0",
     "async-mutex": "^0.3.2",
@@ -37,5 +57,8 @@
     "rollup-plugin-web-worker-loader": "^1.6.1",
     "tslib": "^2.3.1",
     "typescript": "^4.6.3"
+  },
+  "engines": {
+    "node": ">=14"
   }
 }

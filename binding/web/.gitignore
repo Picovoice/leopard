@@ -1,2 +1,5 @@
 node_modules
 dist
+lib/pv_leopard.wasm
+test/leopard_params.js
+test/leopard_params.pv
