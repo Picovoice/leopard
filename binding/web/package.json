@@ -29,6 +29,7 @@
     "start": "cross-env TARGET='debug' rollup --config --watch",
     "watch": "rollup --config --watch",
     "format": "prettier --write \"**/*.{js,ts,json}\"",
+    "postinstall": "yarn copywasm",
     "copywasm": "node scripts/copy_wasm.js",
     "setup-test": "cp ../../lib/common/leopard_params.pv ./test && npx pvbase64 -i ./test/leopard_params.pv -o ./test/leopard_params.js"
   },
