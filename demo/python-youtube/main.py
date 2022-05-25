@@ -56,18 +56,20 @@ def main():
     parser.add_argument('--access-key', required=True)
     parser.add_argument('--url', required=True)
     parser.add_argument('--transcript-path', required=True)
+    parser.add_argument('--model-path', default=None)
     parser.add_argument('--work-folder', default=os.path.expanduser('~/'))
     parser.add_argument('--retain-webm', action='store_true')
     args = parser.parse_args()
     access_key = args.access_key
     url = args.url
     transcript_path = args.transcript_path
+    model_path = args.model_path
     work_folder = args.work_folder
     retain_webm = args.retain_webm
 
     anime = ProgressAnimation(f'Initializing Leopard with AccessKey `{access_key}`')
     anime.start()
-    leopard = pvleopard.create(access_key=access_key)
+    leopard = pvleopard.create(access_key=access_key, model_path=model_path)
     anime.stop()
 
     webm_path = os.path.join(work_folder, f'{url.split("watch?v=")[1]}.webm')
