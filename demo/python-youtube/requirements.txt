@@ -1,0 +1,2 @@
+pvleopard==1.0.6
+pytube==12.1.0
