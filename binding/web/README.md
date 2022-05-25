@@ -133,6 +133,14 @@ const transcription = await handle.process(getAudioData());
 console.log(transcription);
 ```
 
+For processing using worker, you may consider transferring the buffer instead for performance:
+
+```typescript
+const pcm = new Int16Array();
+const transcription = await handle.process(pcm, true, (data) => {pcm = data});
+console.log(transcription)
+```
+
 #### Clean Up
 
 Clean up used resources by `Leopard` or `LeopardWorker`:

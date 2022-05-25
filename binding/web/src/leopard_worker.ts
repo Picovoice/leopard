@@ -159,6 +159,8 @@ export class LeopardWorker {
    * @param pcm Frame of audio with properties described above.
    * @param transfer Flag to indicate if the buffer should be transferred or not. If set to true,
    * an input from buffer array will be transferred to the worker.
+   * @param transferCB Optional callback containing a new Int16Array with contents from 'pcm'. Use this callback
+   * to reset the input pcm when using transfer.
    * @return The transcription.
    */
   public process(pcm: Int16Array, transfer = false, transferCB?: (data: Int16Array) => void): Promise<string> {
@@ -166,7 +168,7 @@ export class LeopardWorker {
       this._worker.onmessage = (event: MessageEvent<LeopardWorkerProcessResponse>): void => {
         switch (event.data.command) {
           case "ok":
-            if (transferCB && event.data.pcm) {
+            if (transfer && transferCB && event.data.pcm) {
               transferCB(new Int16Array(event.data.pcm.buffer));
             }
             resolve(event.data.transcription);
