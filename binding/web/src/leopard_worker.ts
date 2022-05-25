@@ -11,7 +11,7 @@
 
 import { base64ToUint8Array, PvFile } from "@picovoice/web-utils";
 
-import PvWorker from "web-worker:./leopard.ts";
+import PvWorker from "web-worker:./leopard_worker_handler.ts";
 
 import {
   LeopardWorkerInitResponse,
@@ -156,14 +156,19 @@ export class LeopardWorker {
    * Processes audio in a worker. The required sample rate can be retrieved from '.sampleRate'.
    * The audio needs to be 16-bit linearly-encoded. Furthermore, the engine operates on single-channel audio.
    *
-   * @param pcm A frame of audio with properties described above.
+   * @param pcm Frame of audio with properties described above.
+   * @param transfer Flag to indicate if the buffer should be transferred or not. If set to true,
+   * an input from buffer array will be transferred to the worker.
    * @return The transcription.
    */
-  public process(pcm: Int16Array): Promise<string> {
+  public process(pcm: Int16Array, transfer = false, transferCB?: (data: Int16Array) => void): Promise<string> {
     const returnPromise: Promise<string> = new Promise((resolve, reject) => {
       this._worker.onmessage = (event: MessageEvent<LeopardWorkerProcessResponse>): void => {
         switch (event.data.command) {
           case "ok":
+            if (transferCB && event.data.pcm) {
+              transferCB(new Int16Array(event.data.pcm.buffer));
+            }
             resolve(event.data.transcription);
             break;
           case "failed":
@@ -177,10 +182,13 @@ export class LeopardWorker {
       };
     });
 
+    const transferable = (transfer) ? [pcm.buffer] : [];
+
     this._worker.postMessage({
       command: "process",
-      pcm: pcm
-    });
+      pcm: pcm,
+      transfer: transfer
+    }, transferable);
 
     return returnPromise;
   }

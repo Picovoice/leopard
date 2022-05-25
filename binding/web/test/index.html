@@ -106,6 +106,15 @@
         handle.release()
         writeMessage("Checking LeopardWorker 'fromBase64'... done!");
 
+        writeMessage("Checking LeopardWorker 'transfer buffer'");
+        handle = await LeopardWeb.LeopardWorker.fromPublicDirectory(accessKey, "leopard_params.pv");
+        const defaultLen = pcm.length;
+        transcription = await handle.process(pcm, true, (data) => {pcm = data});
+        assertEquals(expected, transcription, 'Failed to transcribe audio file');
+        assertEquals(pcm.length, defaultLen, 'Buffer failed to transfer');
+        handle.release()
+        writeMessage("Checking LeopardWorker 'transfer buffer'... done!");
+
         writeMessage("Checking invalid public path");
         is_failed = false
         try {
