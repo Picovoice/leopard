@@ -74,8 +74,18 @@ npx pvbase64 -h
 
 ### Usage
 
+#### Init options
+
 Leopard saves and caches your model file in IndexedDB to be used by Web Assembly. Use a different `modelPath` variable
-to hold multiple model values and set the `forceWrite` value to true to force re-save the model file.
+to hold multiple models and set the `forceWrite` value to true to force re-save a model file.
+
+```typescript
+// these are default
+const options = {
+  modelPath: "leopard_params",
+  forceWrite: false
+}
+```
 
 #### Initialize in Main Thread
 
@@ -84,7 +94,8 @@ Use `Leopard` to initialize from public directory:
 ```typescript
 const handle = await Leopard.fromPublicDirectory(
   ${ACCESS_KEY},
-  ${MODEL_FILE_RELATIVE_TO_PUBLIC_DIRECTORY}
+  ${MODEL_FILE_RELATIVE_TO_PUBLIC_DIRECTORY},
+  options // optional options
 );
 ```
 
@@ -95,7 +106,8 @@ import leopardParams from "${PATH_TO_BASE64_LEOPARD_PARAMS}";
 
 const handle = await Leopard.fromBase64(
   ${ACCESS_KEY},
-  leopardParams
+  leopardParams,
+  options // optional options
 )
 ```
 
@@ -106,7 +118,8 @@ Use `LeopardWorker` to initialize from public directory:
 ```typescript
 const handle = await LeopardWorker.fromPublicDirectory(
   ${ACCESS_KEY},
-  ${MODEL_FILE_RELATIVE_TO_PUBLIC_DIRECTORY}
+  ${MODEL_FILE_RELATIVE_TO_PUBLIC_DIRECTORY},
+  options // optional options
 );
 ```
 
@@ -117,7 +130,8 @@ import leopardParams from "${PATH_TO_BASE64_LEOPARD_PARAMS}";
 
 const handle = await LeopardWorker.fromBase64(
   ${ACCESS_KEY},
-  leopardParams
+  leopardParams,
+  options // optional options
 )
 ```
 
@@ -137,7 +151,10 @@ For processing using worker, you may consider transferring the buffer instead fo
 
 ```typescript
 const pcm = new Int16Array();
-const transcription = await handle.process(pcm, true, (data) => {pcm = data});
+const transcription = await handle.process(pcm, {
+  transfer: true,
+  transferCB: (data) => {pcm = data}
+});
 console.log(transcription)
 ```
 

@@ -9,6 +9,13 @@
   specific language governing permissions and limitations under the License.
 */
 
+export type LeopardInputConfig = {
+  /** @defaultValue 'leopard_model' */
+  modelPath?: string;
+  /** @defaultValue false */
+  forceWrite?: boolean;
+}
+
 export type LeopardWorkerInitRequest = {
   command: 'init';
   accessKey: string;
