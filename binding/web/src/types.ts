@@ -25,7 +25,7 @@ export type LeopardWorkerInitRequest = {
 
 export type LeopardWorkerProcessRequest = {
   command: 'process';
-  pcm: Int16Array;
+  inputFrame: Int16Array;
   transfer: boolean;
 };
 
@@ -52,7 +52,7 @@ export type LeopardWorkerInitResponse = LeopardWorkerFailureResponse | {
 export type LeopardWorkerProcessResponse = LeopardWorkerFailureResponse | {
   command: 'ok';
   transcription: string;
-  pcm?: Int16Array;
+  inputFrame?: Int16Array;
 };
 
 export type LeopardWorkerReleaseResponse = LeopardWorkerFailureResponse | {

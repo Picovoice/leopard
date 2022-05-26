@@ -48,24 +48,26 @@ self.onmessage = async function (
       break;
     case 'process':
       // eslint-disable-next-line no-case-declarations
-      const transferable = (event.data.transfer) ? [event.data.pcm.buffer] : [];
+      const transferable = (event.data.transfer) ? [event.data.inputFrame.buffer] : [];
       if (leopard === null) {
         self.postMessage({
           command: "error",
-          message: "Leopard not initialized"
+          message: "Leopard not initialized",
+          inputFrame: event.data.inputFrame
         }, transferable);
         return;
       }
       try {
         self.postMessage({
           command: "ok",
-          transcription: await leopard.process(event.data.pcm),
-          pcm: (event.data.transfer) ? event.data.pcm : undefined
+          transcription: await leopard.process(event.data.inputFrame),
+          inputFrame: (event.data.transfer) ? event.data.inputFrame : undefined
         }, transferable);
       } catch (e: any) {
         self.postMessage({
           command: "error",
-          message: e.message
+          message: e.message,
+          inputFrame: event.data.inputFrame
         }, transferable);
       }
       break;
