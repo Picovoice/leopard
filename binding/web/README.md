@@ -4,7 +4,7 @@
 
 The Picovoice Leopard library for web browsers, powered by WebAssembly.
 
-This library processes always-listening voice commands in-browser, offline. All processing is done via WebAssembly and Workers in a separate thread.
+This library transcribes audio samples in-browser, offline. All processing is done via WebAssembly and Workers in a separate thread.
 
 Looking for Leopard on NodeJS? See the [@picovoice/leopard-node](https://www.npmjs.com/package/@picovoice/leopard-node) package.
 
@@ -14,7 +14,7 @@ Looking for Leopard on NodeJS? See the [@picovoice/leopard-node](https://www.npm
 - Firefox
 - Safari
 
-This library requires several modern browser features: WebAssembly, Web Workers, IndexedDB and promises. Internet Explorer will _not_ work.
+This library requires several modern browser features: WebAssembly, Web Workers, IndexedDB and Promise. Internet Explorer will _not_ work.
 
 ## Installation & Usage
 
@@ -40,8 +40,9 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 ### Leopard Models
 
-Leopard requires a model file on initialization. Get a custom model file from [Picovoice Console](https://console.picovoice.ai/cat)
+Leopard requires a model file on initialization. Create a custom model file from [Picovoice Console](https://console.picovoice.ai/cat)
 or you can use the [default model file](/lib/common/leopard_params.pv).
+
 For the web packages, there are two methods to initialize Leopard.
 
 #### Public Directory
@@ -76,7 +77,7 @@ npx pvbase64 -h
 
 #### Init options
 
-Leopard saves and caches your model file in IndexedDB to be used by Web Assembly. Use a different `modelPath` variable
+Leopard saves and caches your model file in IndexedDB to be used by WebAssembly. Use a different `modelPath` variable
 to hold multiple models and set the `forceWrite` value to true to force re-save a model file.
 
 ```typescript

@@ -26,13 +26,13 @@ self.onmessage = async function (
     case 'init':
       if (leopard !== null) {
         self.postMessage({
-          command: "failed",
+          command: "error",
           message: "Leopard already initialized"
         });
         return;
       }
-      Leopard.setWasm(event.data.wasm);
       try {
+        Leopard.setWasm(event.data.wasm);
         leopard = await Leopard.create(event.data.accessKey, event.data.modelPath);
         self.postMessage({
           command: "ok",
@@ -51,7 +51,7 @@ self.onmessage = async function (
       const transferable = (event.data.transfer) ? [event.data.pcm.buffer] : [];
       if (leopard === null) {
         self.postMessage({
-          command: "failed",
+          command: "error",
           message: "Leopard not initialized"
         }, transferable);
         return;
