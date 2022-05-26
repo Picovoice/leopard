@@ -177,11 +177,11 @@ export class LeopardWorker {
 
     const returnPromise: Promise<string> = new Promise((resolve, reject) => {
       this._worker.onmessage = (event: MessageEvent<LeopardWorkerProcessResponse>): void => {
+        if (transfer && transferCB && event.data.inputFrame) {
+          transferCB(new Int16Array(event.data.inputFrame.buffer));
+        }
         switch (event.data.command) {
           case "ok":
-            if (transfer && transferCB && event.data.pcm) {
-              transferCB(new Int16Array(event.data.pcm.buffer));
-            }
             resolve(event.data.transcription);
             break;
           case "failed":
@@ -199,7 +199,7 @@ export class LeopardWorker {
 
     this._worker.postMessage({
       command: "process",
-      pcm: pcm,
+      inputFrame: pcm,
       transfer: transfer
     }, transferable);
 
