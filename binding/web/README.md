@@ -82,7 +82,7 @@ to hold multiple models and set the `forceWrite` value to true to force re-save 
 ```typescript
 // these are default
 const options = {
-  modelPath: "leopard_params",
+  modelPath: "leopard_model",
   forceWrite: false
 }
 ```
