@@ -41,6 +41,7 @@ export type LeopardWorkerRequest =
 export type LeopardWorkerFailureResponse = {
   command: 'failed' | 'error';
   message: string;
+  inputFrame?: Int16Array;
 };
 
 export type LeopardWorkerInitResponse = LeopardWorkerFailureResponse | {
