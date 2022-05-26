@@ -34,7 +34,7 @@
     "setup-test": "cp ../../lib/common/leopard_params.pv ./test && npx pvbase64 -i ./test/leopard_params.pv -o ./test/leopard_params.js"
   },
   "dependencies": {
-    "@picovoice/web-utils": "^1.1.2"
+    "@picovoice/web-utils": "^1.1.3"
   },
   "devDependencies": {
     "@babel/core": "^7.18.0",

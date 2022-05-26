@@ -86,7 +86,7 @@
         writeMessage("Checking Leopard 'fromPublicDirectory'... done!");
 
         writeMessage("Checking Leopard 'fromBase64'");
-        handle = await LeopardWeb.Leopard.fromBase64(accessKey, leopardParams, { forceWrite: true });
+        handle = await LeopardWeb.Leopard.fromBase64(accessKey, modelParams, { forceWrite: true });
         transcription = await handle.process(pcm);
         assertEquals(expected, transcription, 'Failed to transcribe audio file');
         handle.release()
@@ -100,7 +100,7 @@
         writeMessage("Checking LeopardWorker 'fromPublicDirectory'... done!");
 
         writeMessage("Checking LeopardWorker 'fromBase64'");
-        handle = await LeopardWeb.LeopardWorker.fromBase64(accessKey, leopardParams, { forceWrite: true });
+        handle = await LeopardWeb.LeopardWorker.fromBase64(accessKey, modelParams, { forceWrite: true });
         transcription = await handle.process(pcm);
         assertEquals(expected, transcription, 'Failed to transcribe audio file');
         handle.release()
