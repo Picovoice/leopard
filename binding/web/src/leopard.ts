@@ -40,7 +40,7 @@ type pv_leopard_version_type = () => Promise<number>;
 */
 
 type LeopardWasmOutput = {
-  aligned_alloc: CallableFunction;
+  aligned_alloc: aligned_alloc_type;
   memory: WebAssembly.Memory;
   pvFree: pv_free_type;
   objectAddress: number;
@@ -305,8 +305,8 @@ export class Leopard {
     const pv_sample_rate = exports.pv_sample_rate as pv_sample_rate_type;
 
     const transcriptionAddressAddress = await aligned_alloc(
-      Uint8Array.BYTES_PER_ELEMENT,
-      Uint8Array.BYTES_PER_ELEMENT
+      Int32Array.BYTES_PER_ELEMENT,
+      Int32Array.BYTES_PER_ELEMENT
     );
     if (transcriptionAddressAddress === 0) {
       throw new Error('malloc failed: Cannot allocate memory');
