@@ -262,7 +262,9 @@ export class Leopard {
             this._memoryBufferUint8,
             transcriptionAddress
           );
+
           await this._pvFree(transcriptionAddress);
+          await this._pvFree(inputBufferAddress);
 
           return transcription;
         })
