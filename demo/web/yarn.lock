@@ -2,15 +2,17 @@
 # yarn lockfile v1
 
 
-"@picovoice/leopard-web@../../binding/web":
+"@picovoice/leopard-web@^0.1.0-beta":
   version "0.1.0-beta"
+  resolved "https://registry.yarnpkg.com/@picovoice/leopard-web/-/leopard-web-0.1.0-beta.tgz#d4cc4be3affe7fbc34ee0c3f90d84d9669d90dd1"
+  integrity sha512-zyNHmB4LjqSwDkXbK4dGmzXZqO0uWynCK1jcUE6JvpzonlvZqgm1V7aHHylGeOXseZtX6dF62l2umEaKGXigwg==
   dependencies:
-    "@picovoice/web-utils" "^1.1.4"
+    "@picovoice/web-utils" "^1.1.5"
 
-"@picovoice/web-utils@^1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@picovoice/web-utils/-/web-utils-1.1.4.tgz#10f200078cc117c0eddbf58c33370abc98868bf1"
-  integrity sha512-ZGrGyubw+h5cT/uwQvyRlEjRqitY3c+hLywp3lwZDv89reTagvHMnHvGgaIujGQvr1F3thBsLXnF+/jsm6NkJg==
+"@picovoice/web-utils@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@picovoice/web-utils/-/web-utils-1.1.5.tgz#eaa634feb04b3cd159085ce44db485d8bf59b0a3"
+  integrity sha512-vfRBaqGPdwTsgnA9ZbdxG5UwzrGQj38KQY4U7baVwPZnx9WEXa9L5wUM9W/jHBbWO1YFQLWVsqoS82Ot2i0fmQ==
   dependencies:
     commander "^9.2.0"
 
