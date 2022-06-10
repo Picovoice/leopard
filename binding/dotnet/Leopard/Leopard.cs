@@ -47,13 +47,13 @@ namespace Pv
 
         static Leopard()
         {
-#if NETCOREAPP3_1
+#if NETCOREAPP3_1_OR_GREATER
             NativeLibrary.SetDllImportResolver(typeof(Leopard).Assembly, ImportResolver);
 #endif
             DEFAULT_MODEL_PATH = Utils.PvModelPath();
         }
 
-#if NETCOREAPP3_1
+#if NETCOREAPP3_1_OR_GREATER
         private static IntPtr ImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
         {
             IntPtr libHandle = IntPtr.Zero;
@@ -97,10 +97,10 @@ namespace Pv
         /// </summary>
         /// <param name="accessKey">AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).</param>
         /// <param name="modelPath">
-        /// Absolute path to the file containing model parameters. If not set it will be set to the 
+        /// Absolute path to the file containing model parameters. If not set it will be set to the
         /// default location.
         /// </param>
-        /// <returns>An instance of Leopard Speech-to-Text engine.</returns>                             
+        /// <returns>An instance of Leopard Speech-to-Text engine.</returns>
         public static Leopard Create(string accessKey, string modelPath = null)
         {
             return new Leopard(accessKey, modelPath ?? DEFAULT_MODEL_PATH);
@@ -111,9 +111,9 @@ namespace Pv
         /// </summary>
         /// <param name="accessKey">AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).</param>
         /// <param name="modelPath">
-        /// Absolute path to the file containing model parameters. If not set it will be set to the 
+        /// Absolute path to the file containing model parameters. If not set it will be set to the
         /// default location.
-        /// </param>       
+        /// </param>
         private Leopard(
             string accessKey,
             string modelPath)

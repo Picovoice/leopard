@@ -24,6 +24,10 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 
 ## Compatibility
 
+Platform compatible with .NET 6.0+:
+
+- macOS (arm64)
+
 Platform compatible with .NET Framework 4.6.1+:
 
 - Windows (x86_64)
