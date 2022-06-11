@@ -20,7 +20,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 
 ## Requirements
 
-- .NET Core 3.1
+- .NET 6.0
 
 ## Compatibility
 
@@ -40,6 +40,10 @@ Platforms compatible with .NET Core 3.1+:
   - 3 (32 and 64 bit)
   - 4 (32 and 64 bit)
 - NVIDIA Jetson Nano
+
+Platform compatible with .NET 6.0+:
+
+- macOS (arm64)
 
 ## Installation
 
