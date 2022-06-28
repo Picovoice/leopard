@@ -67,13 +67,21 @@ task copyBeagleboneLib(type: Copy) {
     from('../../lib/java/beaglebone/libpv_leopard_jni.so') into "${outputDir}/leopard/lib/java/beaglebone/"
 }
 
+task copyTasks(type: GradleBuild) {
+    tasks = ['copyDefaultModel',
+             'copyLinuxLib',
+             'copyMacLib',
+             'copyWindowsLib',
+             'copyRPiLib',
+             'copyJetsonLib']
+}
+
 jar {
-    dependsOn 'copyDefaultModel'
-    dependsOn 'copyLinuxLib'
-    dependsOn 'copyMacLib'
-    dependsOn 'copyWindowsLib'
-    dependsOn 'copyRPiLib'
-    dependsOn 'copyJetsonLib'
+    dependsOn 'copyTasks'
+}
+
+javadoc {
+    dependsOn 'copyTasks'
 }
 
 if (file("${rootDir}/publish-mavencentral.gradle").exists()) {
