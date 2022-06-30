@@ -131,6 +131,8 @@ export class LeopardWorker {
   private static async create(accessKey: string, modelPath: string): Promise<LeopardWorker> {
     const worker = new PvWorker();
     const returnPromise: Promise<LeopardWorker> = new Promise((resolve, reject) => {
+      // @ts-ignore - block from GC
+      this.worker = worker;
       worker.onmessage = (event: MessageEvent<LeopardWorkerInitResponse>): void => {
         switch (event.data.command) {
           case "ok":
