@@ -14,11 +14,13 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	leopard "github.com/Picovoice/leopard/binding/go"
-	pvrecorder "github.com/Picovoice/pvrecorder/sdk/go"
 	"log"
 	"os"
 	"os/signal"
+	"path/filepath"
+
+	leopard "github.com/Picovoice/leopard/binding/go"
+	pvrecorder "github.com/Picovoice/pvrecorder/sdk/go"
 )
 
 func readFrames(recorder *pvrecorder.PvRecorder, data *[]int16, stopCh chan struct{}, stoppedCh chan struct{}) {
@@ -39,6 +41,7 @@ func readFrames(recorder *pvrecorder.PvRecorder, data *[]int16, stopCh chan stru
 
 func main() {
 	accessKeyArg := flag.String("access_key", "", "AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)")
+	libraryPathArg := flag.String("library_path", "", "Path to Leopard's dynamic library file")
 	modelPathArg := flag.String("model_path", "", "Path to Leopard model file")
 	audioDeviceIndex := flag.Int("audio_device_index", -1, "Index of capture device to use.")
 	showAudioDevices := flag.Bool("show_audio_devices", false, "Display all available capture devices")
@@ -51,7 +54,26 @@ func main() {
 
 	l := leopard.Leopard{
 		AccessKey: *accessKeyArg,
-		ModelPath: *modelPathArg,
+	}
+
+	// validate library path
+	if *libraryPathArg != "" {
+		libraryPath, _ := filepath.Abs(*libraryPathArg)
+		if _, err := os.Stat(libraryPath); os.IsNotExist(err) {
+			log.Fatalf("Could not find library file at %s", libraryPath)
+		}
+
+		l.LibraryPath = libraryPath
+	}
+
+	// validate model
+	if *modelPathArg != "" {
+		modelPath, _ := filepath.Abs(*modelPathArg)
+		if _, err := os.Stat(modelPath); os.IsNotExist(err) {
+			log.Fatalf("Could not find model file at %s", modelPath)
+		}
+
+		l.ModelPath = modelPath
 	}
 
 	err := l.Init()
