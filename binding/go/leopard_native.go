@@ -133,79 +133,93 @@ import (
 	"unsafe"
 )
 
-// private vars
-var (
-	lib = C.open_dl(C.CString(libName))
+type nativeLeopardInterface interface {
+	nativeInit(*Leopard)
+	nativeProcess(*Leopard, []int)
+	nativeProcessFile(*Leopard, string)
+	nativeDelete(*Leopard)
+	nativeSampleRate()
+	nativeVersion()
+}
+type nativeLeopardType struct {
+	libraryHandle               unsafe.Pointer
+	pv_leopard_init_ptr         unsafe.Pointer
+	pv_leopard_process_ptr      unsafe.Pointer
+	pv_leopard_process_file_ptr unsafe.Pointer
+	pv_leopard_delete_ptr       unsafe.Pointer
+	pv_leopard_version_ptr      unsafe.Pointer
+	pv_sample_rate_ptr          unsafe.Pointer
+}
 
-	pv_leopard_init_ptr         = C.load_symbol(lib, C.CString("pv_leopard_init"))
-	pv_leopard_process_ptr      = C.load_symbol(lib, C.CString("pv_leopard_process"))
-	pv_leopard_process_file_ptr = C.load_symbol(lib, C.CString("pv_leopard_process_file"))
-	pv_leopard_delete_ptr       = C.load_symbol(lib, C.CString("pv_leopard_delete"))
-	pv_leopard_version_ptr      = C.load_symbol(lib, C.CString("pv_leopard_version"))
-	pv_sample_rate_ptr          = C.load_symbol(lib, C.CString("pv_sample_rate"))
-)
-
-func (nl nativeLeopardType) nativeInit(leopard *Leopard) (status PvStatus) {
+func (nl *nativeLeopardType) nativeInit(leopard *Leopard) (status PvStatus) {
 	var (
-		accessKeyC = C.CString(leopard.AccessKey)
-		modelPathC = C.CString(leopard.ModelPath)
-		ptrC       = make([]unsafe.Pointer, 1)
+		accessKeyC   = C.CString(leopard.AccessKey)
+		libraryPathC = C.CString(leopard.LibraryPath)
+		modelPathC   = C.CString(leopard.ModelPath)
 	)
 	defer C.free(unsafe.Pointer(accessKeyC))
+	defer C.free(unsafe.Pointer(libraryPathC))
 	defer C.free(unsafe.Pointer(modelPathC))
 
+	nl.libraryHandle = C.open_dl(libraryPathC)
+	nl.pv_leopard_init_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_leopard_init"))
+	nl.pv_leopard_process_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_leopard_process"))
+	nl.pv_leopard_process_file_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_leopard_process_file"))
+	nl.pv_leopard_delete_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_leopard_delete"))
+	nl.pv_leopard_version_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_leopard_version"))
+	nl.pv_sample_rate_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_sample_rate"))
+
 	var ret = C.pv_leopard_init_wrapper(
-		pv_leopard_init_ptr,
+		nl.pv_leopard_init_ptr,
 		accessKeyC,
 		modelPathC,
-		&ptrC[0])
+		&leopard.handle)
 
-	leopard.handle = uintptr(ptrC[0])
 	return PvStatus(ret)
 }
 
-func (nl nativeLeopardType) nativeDelete(leopard *Leopard) {
-	C.pv_leopard_delete_wrapper(pv_leopard_delete_ptr,
-		unsafe.Pointer(leopard.handle))
+func (nl *nativeLeopardType) nativeDelete(leopard *Leopard) {
+	C.pv_leopard_delete_wrapper(nl.pv_leopard_delete_ptr,
+		leopard.handle)
 }
 
-func (nl nativeLeopardType) nativeProcess(leopard *Leopard, pcm []int16) (status PvStatus, transcript string) {
-	var transcriptPtr uintptr
+func (nl *nativeLeopardType) nativeProcess(leopard *Leopard, pcm []int16) (status PvStatus, transcript string) {
+	var transcriptPtr unsafe.Pointer
 
-	var ret = C.pv_leopard_process_wrapper(pv_leopard_process_ptr,
-		unsafe.Pointer(leopard.handle),
+	var ret = C.pv_leopard_process_wrapper(nl.pv_leopard_process_ptr,
+		leopard.handle,
 		(*C.int16_t)(unsafe.Pointer(&pcm[0])),
 		(C.int32_t)(len(pcm)),
 		(**C.char)(unsafe.Pointer(&transcriptPtr)))
 
-	transcript = C.GoString((*C.char)(unsafe.Pointer(transcriptPtr)))
-	C.free(unsafe.Pointer(transcriptPtr))
+	transcript = C.GoString((*C.char)(transcriptPtr))
+	C.free(transcriptPtr)
 
 	return PvStatus(ret), transcript
 }
 
-func (nl nativeLeopardType) nativeProcessFile(leopard *Leopard, audioPath string) (status PvStatus, transcript string) {
+func (nl *nativeLeopardType) nativeProcessFile(leopard *Leopard, audioPath string) (status PvStatus, transcript string) {
 	var (
-		transcriptPtr uintptr
+		transcriptPtr unsafe.Pointer
 		audioPathC    = C.CString(audioPath)
 	)
 	defer C.free(unsafe.Pointer(audioPathC))
 
-	var ret = C.pv_leopard_process_file_wrapper(pv_leopard_process_file_ptr,
-		unsafe.Pointer(leopard.handle),
+	var ret = C.pv_leopard_process_file_wrapper(nl.pv_leopard_process_file_ptr,
+		leopard.handle,
 		audioPathC,
 		(**C.char)(unsafe.Pointer(&transcriptPtr)))
 
-	transcript = C.GoString((*C.char)(unsafe.Pointer(transcriptPtr)))
-	C.free(unsafe.Pointer(transcriptPtr))
+	transcript = C.GoString((*C.char)(transcriptPtr))
+	C.free(transcriptPtr)
 
 	return PvStatus(ret), transcript
 }
 
-func (nl nativeLeopardType) nativeSampleRate() (sampleRate int) {
-	return int(C.pv_leopard_sample_rate_wrapper(pv_sample_rate_ptr))
+func (nl *nativeLeopardType) nativeSampleRate() (sampleRate int) {
+	return int(C.pv_leopard_sample_rate_wrapper(nl.pv_sample_rate_ptr))
 }
 
-func (nl nativeLeopardType) nativeVersion() (version string) {
-	return C.GoString(C.pv_leopard_version_wrapper(pv_leopard_version_ptr))
+func (nl *nativeLeopardType) nativeVersion() (version string) {
+	return C.GoString(C.pv_leopard_version_wrapper(nl.pv_leopard_version_ptr))
 }

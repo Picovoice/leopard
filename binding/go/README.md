@@ -4,7 +4,7 @@ Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
 Leopard is an on-device speech-to-text engine. Leopard is:
 
-- Private; All voice processing runs locally. 
+- Private; All voice processing runs locally.
 - Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
 - Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
@@ -61,4 +61,4 @@ Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://co
 
 ## Demos
 
-Check out the Leopard Go demos [here](/demo/go).
+Check out the Leopard Go demos [here](https://github.com/Picovoice/leopard/tree/master/demo/go).
