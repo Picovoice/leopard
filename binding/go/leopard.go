@@ -28,6 +28,7 @@ import (
 	"runtime"
 	"strings"
 )
+import "unsafe"
 
 //go:embed embedded
 var embeddedFS embed.FS
@@ -67,24 +68,17 @@ func (e *LeopardError) Error() string {
 // Leopard struct
 type Leopard struct {
 	// handle for leopard instance in C
-	handle uintptr
+	handle unsafe.Pointer
 
 	// AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).
 	AccessKey string
 
+	// Absolute path to the Leopard's dynamic library.
+	LibraryPath string
+
 	// Absolute path to the file containing model parameters.
 	ModelPath string
 }
-
-type nativeLeopardInterface interface {
-	nativeInit(*Leopard)
-	nativeProcess(*Leopard, []int)
-	nativeProcessFile(*Leopard, string)
-	nativeDelete(*Leopard)
-	nativeSampleRate()
-	nativeVersion()
-}
-type nativeLeopardType struct{}
 
 // private vars
 var (
@@ -92,7 +86,7 @@ var (
 	extractionDir = filepath.Join(os.TempDir(), "leopard")
 
 	defaultModelFile = extractDefaultModel()
-	libName          = extractLib()
+	defaultLibPath   = extractLib()
 	nativeLeopard    = nativeLeopardType{}
 
 	validExtensions = getExtensions()
@@ -100,10 +94,10 @@ var (
 
 var (
 	// Audio sample rate accepted by Picovoice.
-	SampleRate = nativeLeopard.nativeSampleRate()
+	SampleRate int
 
 	// Leopard version
-	Version = nativeLeopard.nativeVersion()
+	Version string
 )
 
 // Init function for Leopard. Must be called before attempting process
@@ -112,6 +106,16 @@ func (leopard *Leopard) Init() error {
 		return &LeopardError{
 			INVALID_ARGUMENT,
 			"No AccessKey provided to Leopard"}
+	}
+
+	if leopard.LibraryPath == "" {
+		leopard.LibraryPath = defaultLibPath
+	}
+
+	if _, err := os.Stat(leopard.LibraryPath); os.IsNotExist(err) {
+		return &LeopardError{
+			INVALID_ARGUMENT,
+			fmt.Sprintf("Specified library file could not be found at %s", leopard.LibraryPath)}
 	}
 
 	if leopard.ModelPath == "" {
@@ -131,12 +135,15 @@ func (leopard *Leopard) Init() error {
 			"Leopard init failed."}
 	}
 
+	SampleRate = nativeLeopard.nativeSampleRate()
+	Version = nativeLeopard.nativeVersion()
+
 	return nil
 }
 
 // Releases resources acquired by Leopard.
 func (leopard *Leopard) Delete() error {
-	if leopard.handle == 0 {
+	if leopard.handle == nil {
 		return &LeopardError{
 			INVALID_STATE,
 			"Leopard has not been initialized or has already been deleted"}
@@ -148,11 +155,11 @@ func (leopard *Leopard) Delete() error {
 
 // Processes a given audio data and returns its transcription.
 // The audio needs to have a sample rate equal to `.SampleRate` and be 16-bit
-// linearly-encoded. This function operates on single-channel audio. If you wish 
+// linearly-encoded. This function operates on single-channel audio. If you wish
 // to process data in a different sample rate or format consider using `ProcessFile`.
 // Returns the inferred transcription.
 func (leopard *Leopard) Process(pcm []int16) (string, error) {
-	if leopard.handle == 0 {
+	if leopard.handle == nil {
 		return "", &LeopardError{
 			INVALID_STATE,
 			"Leopard has not been initialized or has already been deleted"}
@@ -175,11 +182,11 @@ func (leopard *Leopard) Process(pcm []int16) (string, error) {
 }
 
 // Processes a given audio file and returns its transcription.
-// The file needs to have a sample rate equal to or greater than `SampleRate`. 
+// The file needs to have a sample rate equal to or greater than `SampleRate`.
 // The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`, `Vorbis`, `WAV`, and `WebM`.
 // Returns the inferred transcription.
 func (leopard *Leopard) ProcessFile(audioPath string) (string, error) {
-	if leopard.handle == 0 {
+	if leopard.handle == nil {
 		return "", &LeopardError{
 			INVALID_STATE,
 			"Leopard has not been initialized or has already been deleted"}
@@ -346,11 +353,11 @@ func extractFile(srcFile string, dstDir string) string {
 		log.Fatalf("%v", readErr)
 	}
 
-    srcHash := sha256sumBytes(bytes)
-    hashedDstDir := filepath.Join(dstDir, srcHash)
+	srcHash := sha256sumBytes(bytes)
+	hashedDstDir := filepath.Join(dstDir, srcHash)
 	extractedFilepath := filepath.Join(hashedDstDir, srcFile)
 
-    if _, err := os.Stat(extractedFilepath); errors.Is(err, os.ErrNotExist) {
+	if _, err := os.Stat(extractedFilepath); errors.Is(err, os.ErrNotExist) {
 		mkErr := os.MkdirAll(filepath.Dir(extractedFilepath), 0764)
 		if mkErr != nil {
 			log.Fatalf("%v", mkErr)
@@ -366,6 +373,6 @@ func extractFile(srcFile string, dstDir string) string {
 }
 
 func sha256sumBytes(bytes []byte) string {
-    sum := sha256.Sum256(bytes)
-    return hex.EncodeToString(sum[:])
+	sum := sha256.Sum256(bytes)
+	return hex.EncodeToString(sum[:])
 }
