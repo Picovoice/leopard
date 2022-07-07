@@ -2,7 +2,7 @@ import { Leopard } from "./leopard";
 import { LeopardWorker } from "./leopard_worker";
 
 import {
-  LeopardInputConfig,
+  LeopardConfig,
   LeopardWorkerInitRequest,
   LeopardWorkerProcessRequest,
   LeopardWorkerReleaseRequest,
@@ -21,7 +21,7 @@ LeopardWorker.setWasm(leopardWasm);
 
 export {
   Leopard,
-  LeopardInputConfig,
+  LeopardConfig,
   LeopardWorker,
   LeopardWorkerInitRequest,
   LeopardWorkerProcessRequest,

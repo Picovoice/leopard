@@ -14,7 +14,7 @@ import { base64ToUint8Array, PvFile } from "@picovoice/web-utils";
 import PvWorker from "web-worker:./leopard_worker_handler.ts";
 
 import {
-  LeopardInputConfig,
+  LeopardConfig, LeopardInitConfig,
   LeopardWorkerInitResponse,
   LeopardWorkerProcessResponse,
   LeopardWorkerReleaseResponse
@@ -58,21 +58,22 @@ export class LeopardWorker {
    * @param options.modelPath The path to save and use the model from. Use different names to use different models
    * across different Leopard instances.
    * @param options.forceWrite Flag to overwrite the model in storage even if it exists.
+   * @param options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
    *
    * @returns An instance of LeopardWorker.
    */
   public static async fromBase64(
     accessKey: string,
     modelBase64: string,
-    options: LeopardInputConfig = {}
+    options: LeopardConfig = {}
   ): Promise<LeopardWorker> {
-    const {modelPath = "leopard_model", forceWrite = false} = options;
+    const {modelPath = "leopard_model", forceWrite = false, ...rest} = options;
 
     if (!(await PvFile.exists(modelPath)) || forceWrite) {
       const pvFile = await PvFile.open(modelPath, "w");
       await pvFile.write(base64ToUint8Array(modelBase64));
     }
-    return this.create(accessKey, modelPath);
+    return this.create(accessKey, modelPath, rest);
   }
 
   /**
@@ -86,15 +87,16 @@ export class LeopardWorker {
    * @param options.modelPath The path to save and use the model from. Use different names to use different models
    * across different Leopard instances.
    * @param options.forceWrite Flag to overwrite the model in storage even if it exists.
+   * @param options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
    *
    * @returns An instance of LeopardWorker.
    */
   public static async fromPublicDirectory(
     accessKey: string,
     publicPath: string,
-    options: LeopardInputConfig = {}
+    options: LeopardConfig = {}
   ): Promise<LeopardWorker> {
-    const {modelPath = "leopard_model", forceWrite = false} = options;
+    const {modelPath = "leopard_model", forceWrite = false, ...rest} = options;
 
     if (!(await PvFile.exists(modelPath)) || forceWrite) {
       const pvFile = await PvFile.open(modelPath, "w");
@@ -105,7 +107,7 @@ export class LeopardWorker {
       const data = await response.arrayBuffer();
       await pvFile.write(new Uint8Array(data));
     }
-    return this.create(accessKey, modelPath);
+    return this.create(accessKey, modelPath, rest);
   }
 
   /**
@@ -125,10 +127,11 @@ export class LeopardWorker {
    *
    * @param accessKey AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
    * @param modelPath Path to the model saved in indexedDB.
+   * @param initConfig Flag to enable automatic punctuation insertion.
    *
    * @returns An instance of LeopardWorker.
    */
-  private static async create(accessKey: string, modelPath: string): Promise<LeopardWorker> {
+  private static async create(accessKey: string, modelPath: string, initConfig: LeopardInitConfig): Promise<LeopardWorker> {
     const worker = new PvWorker();
     const returnPromise: Promise<LeopardWorker> = new Promise((resolve, reject) => {
       // @ts-ignore - block from GC
@@ -153,6 +156,7 @@ export class LeopardWorker {
       command: "init",
       accessKey: accessKey,
       modelPath: modelPath,
+      initConfig: initConfig,
       wasm: this._wasm,
     });
 
