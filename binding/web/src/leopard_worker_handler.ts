@@ -76,6 +76,7 @@ self.onmessage = async function (
       if (leopard !== null) {
         await leopard.release();
         leopard = null;
+        close();
       }
       self.postMessage({
         command: "ok"
