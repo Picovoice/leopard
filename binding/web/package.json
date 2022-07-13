@@ -31,7 +31,7 @@
     "format": "prettier --write \"**/*.{js,ts,json}\"",
     "postinstall": "yarn copywasm",
     "copywasm": "node scripts/copy_wasm.js",
-    "setup-test": "cp ../../lib/common/leopard_params.pv ./test && npx pvbase64 -i ./test/leopard_params.pv -o ./test/leopard_params.js"
+    "setup-test": "cp ./lib/leopard_params.pv ./test && npx pvbase64 -i ./test/leopard_params.pv -o ./test/leopard_params.js"
   },
   "dependencies": {
     "@picovoice/web-utils": "^1.1.6"
