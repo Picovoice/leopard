@@ -14,7 +14,8 @@ import { base64ToUint8Array, PvFile } from "@picovoice/web-utils";
 import PvWorker from "web-worker:./leopard_worker_handler.ts";
 
 import {
-  LeopardInputConfig,
+  LeopardConfig,
+  LeopardInitConfig,
   LeopardWorkerInitResponse,
   LeopardWorkerProcessResponse,
   LeopardWorkerReleaseResponse
@@ -26,6 +27,7 @@ export class LeopardWorker {
   private readonly _sampleRate: number;
 
   private static _wasm: string;
+  private static _wasmSimd: string;
 
   private constructor(worker: Worker, version: string, sampleRate: number) {
     this._worker = worker;
@@ -58,21 +60,22 @@ export class LeopardWorker {
    * @param options.modelPath The path to save and use the model from. Use different names to use different models
    * across different Leopard instances.
    * @param options.forceWrite Flag to overwrite the model in storage even if it exists.
+   * @param options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
    *
    * @returns An instance of LeopardWorker.
    */
   public static async fromBase64(
     accessKey: string,
     modelBase64: string,
-    options: LeopardInputConfig = {}
+    options: LeopardConfig = {}
   ): Promise<LeopardWorker> {
-    const {modelPath = "leopard_model", forceWrite = false} = options;
+    const {modelPath = "leopard_model", forceWrite = false, ...rest} = options;
 
     if (!(await PvFile.exists(modelPath)) || forceWrite) {
       const pvFile = await PvFile.open(modelPath, "w");
       await pvFile.write(base64ToUint8Array(modelBase64));
     }
-    return this.create(accessKey, modelPath);
+    return this.create(accessKey, modelPath, rest);
   }
 
   /**
@@ -86,15 +89,16 @@ export class LeopardWorker {
    * @param options.modelPath The path to save and use the model from. Use different names to use different models
    * across different Leopard instances.
    * @param options.forceWrite Flag to overwrite the model in storage even if it exists.
+   * @param options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
    *
    * @returns An instance of LeopardWorker.
    */
   public static async fromPublicDirectory(
     accessKey: string,
     publicPath: string,
-    options: LeopardInputConfig = {}
+    options: LeopardConfig = {}
   ): Promise<LeopardWorker> {
-    const {modelPath = "leopard_model", forceWrite = false} = options;
+    const {modelPath = "leopard_model", forceWrite = false, ...rest} = options;
 
     if (!(await PvFile.exists(modelPath)) || forceWrite) {
       const pvFile = await PvFile.open(modelPath, "w");
@@ -105,7 +109,7 @@ export class LeopardWorker {
       const data = await response.arrayBuffer();
       await pvFile.write(new Uint8Array(data));
     }
-    return this.create(accessKey, modelPath);
+    return this.create(accessKey, modelPath, rest);
   }
 
   /**
@@ -119,16 +123,27 @@ export class LeopardWorker {
   }
 
   /**
+   * Set base64 wasm file with SIMD feature.
+   * @param wasmSimd Base64'd wasm file to use to initialize wasm.
+   */
+  public static setWasmSimd(wasmSimd: string): void {
+    if (this._wasmSimd === undefined) {
+      this._wasmSimd = wasmSimd;
+    }
+  }
+
+  /**
    * Creates a worker instance of the Picovoice Leopard Speech-to-Text engine.
    * Behind the scenes, it requires the WebAssembly code to load and initialize before
    * it can create an instance.
    *
    * @param accessKey AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
    * @param modelPath Path to the model saved in indexedDB.
+   * @param initConfig Flag to enable automatic punctuation insertion.
    *
    * @returns An instance of LeopardWorker.
    */
-  private static async create(accessKey: string, modelPath: string): Promise<LeopardWorker> {
+  private static async create(accessKey: string, modelPath: string, initConfig: LeopardInitConfig): Promise<LeopardWorker> {
     const worker = new PvWorker();
     const returnPromise: Promise<LeopardWorker> = new Promise((resolve, reject) => {
       // @ts-ignore - block from GC
@@ -153,7 +168,9 @@ export class LeopardWorker {
       command: "init",
       accessKey: accessKey,
       modelPath: modelPath,
+      initConfig: initConfig,
       wasm: this._wasm,
+      wasmSimd: this._wasmSimd,
     });
 
     return returnPromise;
@@ -234,5 +251,12 @@ export class LeopardWorker {
     });
 
     return returnPromise;
+  }
+
+  /**
+   * Terminates the active worker. Stops all requests being handled by worker.
+   */
+  public terminate(): void {
+    this._worker.terminate();
   }
 }

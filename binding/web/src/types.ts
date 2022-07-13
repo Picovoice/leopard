@@ -9,6 +9,11 @@
   specific language governing permissions and limitations under the License.
 */
 
+export type LeopardInitConfig = {
+  /** @defaultValue true */
+  enableAutomaticPunctuation?: boolean;
+}
+
 export type LeopardInputConfig = {
   /** @defaultValue 'leopard_model' */
   modelPath?: string;
@@ -16,11 +21,15 @@ export type LeopardInputConfig = {
   forceWrite?: boolean;
 }
 
+export type LeopardConfig = LeopardInitConfig & LeopardInputConfig;
+
 export type LeopardWorkerInitRequest = {
   command: 'init';
   accessKey: string;
   modelPath: string;
+  initConfig: LeopardInitConfig;
   wasm: string;
+  wasmSimd: string;
 };
 
 export type LeopardWorkerProcessRequest = {

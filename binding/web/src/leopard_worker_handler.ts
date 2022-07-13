@@ -33,7 +33,8 @@ self.onmessage = async function (
       }
       try {
         Leopard.setWasm(event.data.wasm);
-        leopard = await Leopard.create(event.data.accessKey, event.data.modelPath);
+        Leopard.setWasmSimd(event.data.wasmSimd);
+        leopard = await Leopard.create(event.data.accessKey, event.data.modelPath, event.data.initConfig);
         self.postMessage({
           command: "ok",
           version: leopard.version,
@@ -75,6 +76,7 @@ self.onmessage = async function (
       if (leopard !== null) {
         await leopard.release();
         leopard = null;
+        close();
       }
       self.postMessage({
         command: "ok"

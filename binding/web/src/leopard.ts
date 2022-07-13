@@ -13,6 +13,8 @@
 
 import { Mutex } from "async-mutex";
 
+import { simd } from "wasm-feature-detect";
+
 import {
   aligned_alloc_type,
   pv_free_type,
@@ -22,13 +24,13 @@ import {
   base64ToUint8Array,
   PvFile
 } from "@picovoice/web-utils";
-import {LeopardInputConfig} from "./types";
+import { LeopardConfig, LeopardInitConfig } from "./types";
 
 /**
  * WebAssembly function types
  */
 
-type pv_leopard_init_type = (accessKey: number, modelPath: number, object: number) => Promise<number>;
+type pv_leopard_init_type = (accessKey: number, modelPath: number, enableAutomaticPunctuation: number, object: number) => Promise<number>;
 type pv_leopard_process_type = (object: number, pcm: number, num_samples: number, transcription: number) => Promise<number>;
 type pv_leopard_delete_type = (object: number) => Promise<void>;
 type pv_status_to_string_type = (status: number) => Promise<number>
@@ -73,6 +75,7 @@ export class Leopard {
   private static _sampleRate: number;
   private static _version: string;
   private static _wasm: string;
+  private static _wasmSimd: string;
 
   private static _leopardMutex = new Mutex();
 
@@ -121,21 +124,22 @@ export class Leopard {
    * @param options.modelPath The path to save and use the model from. Use different names to use different models
    * across different Leopard instances.
    * @param options.forceWrite Flag to overwrite the model in storage even if it exists.
+   * @param options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
    *
    * @returns An instance of the Leopard engine.
    */
   public static async fromBase64(
     accessKey: string,
     modelBase64: string,
-    options: LeopardInputConfig = {}
+    options: LeopardConfig = {}
   ): Promise<Leopard> {
-    const {modelPath = "leopard_model", forceWrite = false} = options;
+    const {modelPath = "leopard_model", forceWrite = false, ...rest} = options;
 
     if (!(await PvFile.exists(modelPath)) || forceWrite) {
       const pvFile = await PvFile.open(modelPath, "w");
       await pvFile.write(base64ToUint8Array(modelBase64));
     }
-    return this.create(accessKey, modelPath);
+    return this.create(accessKey, modelPath, rest);
   }
 
   /**
@@ -149,15 +153,16 @@ export class Leopard {
    * @param options.modelPath The path to save and use the model from. Use different names to use different models
    * across different Leopard instances.
    * @param options.forceWrite Flag to overwrite the model in storage even if it exists.
+   * @param options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
    *
    * @returns An instance of the Leopard engine.
    */
   public static async fromPublicDirectory(
     accessKey: string,
     publicPath: string,
-    options: LeopardInputConfig = {}
+    options: LeopardConfig = {}
   ): Promise<Leopard> {
-    const {modelPath = "leopard_model", forceWrite = false} = options;
+    const {modelPath = "leopard_model", forceWrite = false, ...rest} = options;
 
     if (!(await PvFile.exists(modelPath)) || forceWrite) {
       const pvFile = await PvFile.open(modelPath, "w");
@@ -168,7 +173,7 @@ export class Leopard {
       const data = await response.arrayBuffer();
       await pvFile.write(new Uint8Array(data));
     }
-    return this.create(accessKey, modelPath);
+    return this.create(accessKey, modelPath, rest);
   }
 
   /**
@@ -182,23 +187,35 @@ export class Leopard {
   }
 
   /**
+   * Set base64 wasm file with SIMD feature.
+   * @param wasmSimd Base64'd wasm file to use to initialize wasm.
+   */
+  public static setWasmSimd(wasmSimd: string): void {
+    if (this._wasmSimd === undefined) {
+      this._wasmSimd = wasmSimd;
+    }
+  }
+
+  /**
    * Creates an instance of the Picovoice Leopard Speech-to-Text engine.
    * Behind the scenes, it requires the WebAssembly code to load and initialize before
    * it can create an instance.
    *
    * @param accessKey AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
    * @param modelPath Path to the model saved in indexedDB.
+   * @param initConfig Flag to enable automatic punctuation insertion.
    *
    * @returns An instance of the Leopard engine.
    */
-  public static async create(accessKey: string, modelPath: string): Promise<Leopard> {
+  public static async create(accessKey: string, modelPath: string, initConfig: LeopardInitConfig): Promise<Leopard> {
     if (!isAccessKeyValid(accessKey)) {
       throw new Error('Invalid AccessKey');
     }
     return new Promise<Leopard>((resolve, reject) => {
       Leopard._leopardMutex
         .runExclusive(async () => {
-          const wasmOutput = await Leopard.initWasm(accessKey.trim(), this._wasm, modelPath);
+          const isSimd = await simd();
+          const wasmOutput = await Leopard.initWasm(accessKey.trim(), (isSimd) ? this._wasmSimd : this._wasm, modelPath, initConfig);
           return new Leopard(wasmOutput);
         })
         .then((result: Leopard) => {
@@ -223,7 +240,7 @@ export class Leopard {
     }
 
     const inputBufferAddress = await this._alignedAlloc(
-      Int16Array.BYTES_PER_ELEMENT,
+      Int16Array,
       pcm.length * Int16Array.BYTES_PER_ELEMENT
     );
     if (inputBufferAddress === 0) {
@@ -237,7 +254,6 @@ export class Leopard {
             pcm,
             inputBufferAddress / Int16Array.BYTES_PER_ELEMENT
           );
-
           const status = await this._pvLeopardProcess(
             this._objectAddress,
             inputBufferAddress,
@@ -286,15 +302,16 @@ export class Leopard {
     await this._pvLeopardDelete(this._objectAddress);
   }
 
-  private static async initWasm(accessKey: string, wasmBase64: string, modelPath: string): Promise<any> {
+  private static async initWasm(accessKey: string, wasmBase64: string, modelPath: string, initConfig: LeopardInitConfig): Promise<any> {
+    const { enableAutomaticPunctuation = true } = initConfig;
+
     // A WebAssembly page has a constant size of 64KiB. -> 1MiB ~= 16 pages
     // minimum memory requirements for init: 5365 pages
-    const memory = new WebAssembly.Memory({ initial: 5365 });
+    const memory = new WebAssembly.Memory({ initial: 6000 });
 
     const memoryBufferUint8 = new Uint8Array(memory.buffer);
 
     const exports = await buildWasm(memory, wasmBase64);
-
     const aligned_alloc = exports.aligned_alloc as aligned_alloc_type;
     const pv_free = exports.pv_free as pv_free_type;
     const pv_leopard_version = exports.pv_leopard_version as pv_leopard_version_type;
@@ -348,7 +365,7 @@ export class Leopard {
     }
     memoryBufferUint8[modelPathAddress + modelPath.length] = 0;
 
-    const status = await pv_leopard_init(accessKeyAddress, modelPathAddress, objectAddressAddress);
+    const status = await pv_leopard_init(accessKeyAddress, modelPathAddress, (enableAutomaticPunctuation) ? 1 : 0, objectAddressAddress);
     if (status !== PV_STATUS_SUCCESS) {
       throw new Error(
         `'pv_leopard_init' failed with status ${arrayBufferToStringAtIndex(
@@ -368,7 +385,6 @@ export class Leopard {
     );
 
     return {
-      malloc: exports.malloc,
       aligned_alloc,
       memory: memory,
       pvFree: pv_free,

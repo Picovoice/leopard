@@ -78,13 +78,15 @@ npx pvbase64 -h
 #### Init options
 
 Leopard saves and caches your model file in IndexedDB to be used by WebAssembly. Use a different `modelPath` variable
-to hold multiple models and set the `forceWrite` value to true to force re-save a model file.
+to hold multiple models and set the `forceWrite` value to true to force re-save a model file. Set `enableAutomaticPunctuation`
+to false, if you do not wish to enable capitalization and punctuation in transcription.
 
 ```typescript
 // these are default
 const options = {
   modelPath: "leopard_model",
-  forceWrite: false
+  forceWrite: false,
+  enableAutomaticPunctuation: true
 }
 ```
 
@@ -165,6 +167,14 @@ Clean up used resources by `Leopard` or `LeopardWorker`:
 
 ```typescript
 await handle.release();
+```
+
+#### Terminate
+
+Terminate `LeopardWorker` instance:
+
+```typescript
+await handle.terminate();
 ```
 
 ## Build from source (IIFE + ESM outputs)
