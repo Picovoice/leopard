@@ -337,8 +337,8 @@ export class Leopard {
       throw new Error('malloc failed: Cannot allocate memory');
     }
 
-    const accessKeyAddress = await exports.malloc(
-      Uint8Array.BYTES_PER_ELEMENT *
+    const accessKeyAddress = await aligned_alloc(
+      Uint8Array.BYTES_PER_ELEMENT,
       (accessKey.length + 1) * Uint8Array.BYTES_PER_ELEMENT
     );
 
@@ -351,8 +351,8 @@ export class Leopard {
     }
     memoryBufferUint8[accessKeyAddress + accessKey.length] = 0;
 
-    const modelPathAddress = await exports.malloc(
-      Uint8Array.BYTES_PER_ELEMENT *
+    const modelPathAddress = await aligned_alloc(
+      Uint8Array.BYTES_PER_ELEMENT,
       (modelPath.length + 1) * Uint8Array.BYTES_PER_ELEMENT
     );
 
