@@ -26,6 +26,7 @@ export class LeopardWorker {
   private readonly _sampleRate: number;
 
   private static _wasm: string;
+  private static _wasmSimd: string;
 
   private constructor(worker: Worker, version: string, sampleRate: number) {
     this._worker = worker;
@@ -121,6 +122,16 @@ export class LeopardWorker {
   }
 
   /**
+   * Set base64 wasm file with SIMD feature.
+   * @param wasmSimd Base64'd wasm file to use to initialize wasm.
+   */
+  public static setWasmSimd(wasmSimd: string): void {
+    if (this._wasmSimd === undefined) {
+      this._wasmSimd = wasmSimd;
+    }
+  }
+
+  /**
    * Creates a worker instance of the Picovoice Leopard Speech-to-Text engine.
    * Behind the scenes, it requires the WebAssembly code to load and initialize before
    * it can create an instance.
@@ -158,6 +169,7 @@ export class LeopardWorker {
       modelPath: modelPath,
       initConfig: initConfig,
       wasm: this._wasm,
+      wasmSimd: this._wasmSimd,
     });
 
     return returnPromise;
@@ -238,5 +250,12 @@ export class LeopardWorker {
     });
 
     return returnPromise;
+  }
+
+  /**
+   * Terminates the active worker. Stops all requests being handled by worker.
+   */
+  public terminate(): void {
+    this._worker.terminate();
   }
 }

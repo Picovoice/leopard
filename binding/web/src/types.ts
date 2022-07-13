@@ -29,6 +29,7 @@ export type LeopardWorkerInitRequest = {
   modelPath: string;
   initConfig: LeopardInitConfig;
   wasm: string;
+  wasmSimd: string;
 };
 
 export type LeopardWorkerProcessRequest = {

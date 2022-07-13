@@ -82,6 +82,8 @@ def main():
     parser.add_argument(
         '--audio_file',
         required=True)
+    parser.add_argument(
+        '--init_performance_threshold_sec')
 
     args = parser.parse_args()
 

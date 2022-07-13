@@ -3,7 +3,7 @@
   "description": "Leopard Speech-to-Text engine for web browsers (via WebAssembly)",
   "author": "Picovoice Inc",
   "license": "Apache-2.0",
-  "version": "0.1.1-beta",
+  "version": "0.2.0-beta",
   "keywords": [
     "leopard",
     "web",
@@ -34,7 +34,7 @@
     "setup-test": "cp ../../lib/common/leopard_params.pv ./test && npx pvbase64 -i ./test/leopard_params.pv -o ./test/leopard_params.js"
   },
   "dependencies": {
-    "@picovoice/web-utils": "^1.1.5"
+    "@picovoice/web-utils": "^1.1.6"
   },
   "devDependencies": {
     "@babel/core": "^7.18.2",
@@ -57,7 +57,8 @@
     "rollup-plugin-typescript2": "^0.31.2",
     "rollup-plugin-web-worker-loader": "^1.6.1",
     "tslib": "^2.3.1",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.3",
+    "wasm-feature-detect": "^1.2.11"
   },
   "engines": {
     "node": ">=14"

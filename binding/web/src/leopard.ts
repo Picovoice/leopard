@@ -13,6 +13,8 @@
 
 import { Mutex } from "async-mutex";
 
+import { simd } from "wasm-feature-detect";
+
 import {
   aligned_alloc_type,
   pv_free_type,
@@ -73,6 +75,7 @@ export class Leopard {
   private static _sampleRate: number;
   private static _version: string;
   private static _wasm: string;
+  private static _wasmSimd: string;
 
   private static _leopardMutex = new Mutex();
 
@@ -184,6 +187,16 @@ export class Leopard {
   }
 
   /**
+   * Set base64 wasm file with SIMD feature.
+   * @param wasmSimd Base64'd wasm file to use to initialize wasm.
+   */
+  public static setWasmSimd(wasmSimd: string): void {
+    if (this._wasmSimd === undefined) {
+      this._wasmSimd = wasmSimd;
+    }
+  }
+
+  /**
    * Creates an instance of the Picovoice Leopard Speech-to-Text engine.
    * Behind the scenes, it requires the WebAssembly code to load and initialize before
    * it can create an instance.
@@ -201,7 +214,8 @@ export class Leopard {
     return new Promise<Leopard>((resolve, reject) => {
       Leopard._leopardMutex
         .runExclusive(async () => {
-          const wasmOutput = await Leopard.initWasm(accessKey.trim(), this._wasm, modelPath, initConfig);
+          const isSimd = await simd();
+          const wasmOutput = await Leopard.initWasm(accessKey.trim(), (isSimd) ? this._wasmSimd : this._wasm, modelPath, initConfig);
           return new Leopard(wasmOutput);
         })
         .then((result: Leopard) => {
