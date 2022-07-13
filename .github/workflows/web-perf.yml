@@ -62,5 +62,5 @@ jobs:
       run: yarn setup-test
 
     - name: Test
-      run: python test/selenium_test.py --access_key ${{secrets.PV_VALID_ACCESS_KEY}} --audio_file ../../resources/audio_samples/test.wav
+      run: python test/perf_test.py --access_key ${{secrets.PV_VALID_ACCESS_KEY}} --audio_file ../../resources/audio_samples/test.wav
         --init_performance_threshold_sec ${{ matrix.initPerformanceThresholdSec }} --proc_performance_threshold_sec ${{ matrix.procPerformanceThresholdSec }}

@@ -14,7 +14,8 @@ import { base64ToUint8Array, PvFile } from "@picovoice/web-utils";
 import PvWorker from "web-worker:./leopard_worker_handler.ts";
 
 import {
-  LeopardConfig, LeopardInitConfig,
+  LeopardConfig,
+  LeopardInitConfig,
   LeopardWorkerInitResponse,
   LeopardWorkerProcessResponse,
   LeopardWorkerReleaseResponse
