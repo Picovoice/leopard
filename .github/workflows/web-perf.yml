@@ -5,17 +5,11 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'binding/web/**'
-      - '!binding/web/README.md'
       - 'lib/wasm/**'
-      - '.github/workflows/web.yml'
   pull_request:
     branches: [ master ]
     paths:
-      - 'binding/web/**'
-      - '!binding/web/README.md'
       - 'lib/wasm/**'
-      - '.github/workflows/web.yml'
 
 defaults:
   run:
