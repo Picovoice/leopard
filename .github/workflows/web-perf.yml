@@ -1,4 +1,4 @@
-name: Web
+name: Web Performance
 
 on:
   workflow_dispatch:
