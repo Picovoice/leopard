@@ -1,7 +1,7 @@
 ---
 name: Documentation
-about: Issues around documentation of Porcupine
-title: Porcupine Documentation Issue
+about: Issues around documentation of Leopard
+title: Leopard Documentation Issue
 labels: documentation
 assignees: ''
 
