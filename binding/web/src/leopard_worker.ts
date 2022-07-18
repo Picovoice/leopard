@@ -50,6 +50,13 @@ export class LeopardWorker {
   }
 
   /**
+   * Get Leopard worker instance.
+   */
+  get worker(): Worker {
+    return this._worker;
+  }
+
+  /**
    * Creates a worker instance of the Picovoice Leopard Speech-to-Text engine using a base64'd string
    * of the model file. The model size is large, hence it will try to use the
    * existing one if it exists, otherwise saves the model in storage.
