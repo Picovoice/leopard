@@ -61,7 +61,7 @@ self.onmessage = async function (
       try {
         self.postMessage({
           command: "ok",
-          transcription: await leopard.process(event.data.inputFrame),
+          result: await leopard.process(event.data.inputFrame),
           inputFrame: (event.data.transfer) ? event.data.inputFrame : undefined
         }, transferable);
       } catch (e: any) {

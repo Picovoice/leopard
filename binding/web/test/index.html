@@ -7,6 +7,25 @@
   <script src="./leopard_params.js"></script>
   <script type="application/javascript">
     const expected = "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel.";
+    const expectedWords = [
+      {word: 'Mr'       , startSec: 0.576, endSec: 0.800},
+      {word: 'quilter'  , startSec: 0.864, endSec: 1.184},
+      {word: 'is'       , startSec: 1.312, endSec: 1.376},
+      {word: 'the'      , startSec: 1.440, endSec: 1.503},
+      {word: 'apostle'  , startSec: 1.568, endSec: 2.080},
+      {word: 'of'       , startSec: 2.176, endSec: 2.240},
+      {word: 'the'      , startSec: 2.304, endSec: 2.336},
+      {word: 'middle'   , startSec: 2.400, endSec: 2.592},
+      {word: 'classes'  , startSec: 2.688, endSec: 3.168},
+      {word: 'and'      , startSec: 3.360, endSec: 3.456},
+      {word: 'we'       , startSec: 3.520, endSec: 3.552},
+      {word: 'are'      , startSec: 3.648, endSec: 3.648},
+      {word: 'glad'     , startSec: 3.744, endSec: 4.032},
+      {word: 'to'       , startSec: 4.096, endSec: 4.160},
+      {word: 'welcome'  , startSec: 4.223, endSec: 4.576},
+      {word: 'his'      , startSec: 4.672, endSec: 4.832},
+      {word: 'gospel'   , startSec: 4.928, endSec: 5.376},
+    ];
     let pcm = null;
 
     window.onload = function () {
@@ -64,6 +83,31 @@
       }
     }
 
+    function assertDeepEquals(expected, actual, epsilon=0.001) {
+      expected.forEach(obj => {
+        Object.keys(obj).forEach((key, i) => {
+          const e = expected[i];
+          const a = actual[i];
+          if (a[key] === undefined) {
+            throw new Error(`'actual' value does not have key '${key}'`);
+          }
+          if (typeof e[key] !== typeof a[key]) {
+            throw new Error(`type mismatch`)
+          }
+          if (typeof e[key] === "string") {
+            if (e[key] !== a[key]) {
+              throw new Error(`value mismatch at index ${i}`)
+            }
+          }
+          if (typeof e[key] === "number") {
+            if (Math.abs(e[key] - a[key]) > epsilon) {
+              throw new Error(`value mismatch at index ${i}`)
+            }
+          }
+        });
+      });
+    }
+
     async function startTest() {
       document.getElementById("testComplete").style.display = "none";
       let is_failed = undefined
@@ -80,37 +124,43 @@
       try {
         writeMessage("Checking Leopard 'fromPublicDirectory'");
         let handle = await LeopardWeb.Leopard.fromPublicDirectory(accessKey, "leopard_params.pv", { forceWrite: true });
-        let transcription = await handle.process(pcm);
-        assertEquals(expected, transcription, 'Failed to transcribe audio file');
+        let result = await handle.process(pcm);
+        console.log(result)
+        assertEquals(expected, result.transcription, 'Failed to transcribe audio file');
+        assertDeepEquals(expectedWords, result.words);
         handle.release()
         writeMessage("Checking Leopard 'fromPublicDirectory'... done!");
 
         writeMessage("Checking Leopard 'fromBase64'");
         handle = await LeopardWeb.Leopard.fromBase64(accessKey, modelParams, { forceWrite: true });
-        transcription = await handle.process(pcm);
-        assertEquals(expected, transcription, 'Failed to transcribe audio file');
+        result = await handle.process(pcm);
+        assertEquals(expected, result.transcription, 'Failed to transcribe audio file');
+        assertDeepEquals(expectedWords, result.words);
         handle.release()
         writeMessage("Checking Leopard 'fromBase64'... done!");
 
         writeMessage("Checking LeopardWorker 'fromPublicDirectory'");
         handle = await LeopardWeb.LeopardWorker.fromPublicDirectory(accessKey, "leopard_params.pv", { forceWrite: true });
-        transcription = await handle.process(pcm);
-        assertEquals(expected, transcription, 'Failed to transcribe audio file');
+        result = await handle.process(pcm);
+        assertEquals(expected, result.transcription, 'Failed to transcribe audio file');
+        assertDeepEquals(expectedWords, result.words);
         handle.release()
         writeMessage("Checking LeopardWorker 'fromPublicDirectory'... done!");
 
         writeMessage("Checking LeopardWorker 'fromBase64'");
         handle = await LeopardWeb.LeopardWorker.fromBase64(accessKey, modelParams, { forceWrite: true });
-        transcription = await handle.process(pcm);
-        assertEquals(expected, transcription, 'Failed to transcribe audio file');
+        result = await handle.process(pcm);
+        assertEquals(expected, result.transcription, 'Failed to transcribe audio file');
+        assertDeepEquals(expectedWords, result.words);
         handle.release()
         writeMessage("Checking LeopardWorker 'fromBase64'... done!");
 
         writeMessage("Checking LeopardWorker 'transfer buffer'");
         handle = await LeopardWeb.LeopardWorker.fromPublicDirectory(accessKey, "leopard_params.pv");
         const defaultLen = pcm.length;
-        transcription = await handle.process(pcm, { transfer: true, transferCB: (data) => {pcm = data} });
-        assertEquals(expected, transcription, 'Failed to transcribe audio file');
+        result = await handle.process(pcm, { transfer: true, transferCB: (data) => {pcm = data} });
+        assertEquals(expected, result.transcription, 'Failed to transcribe audio file');
+        assertDeepEquals(expectedWords, result.words);
         assertEquals(pcm.length, defaultLen, 'Buffer failed to transfer');
         handle.release()
         writeMessage("Checking LeopardWorker 'transfer buffer'... done!");
