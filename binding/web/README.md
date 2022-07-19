@@ -79,8 +79,8 @@ npx pvbase64 -h
 
 Leopard saves and caches your model file in IndexedDB to be used by WebAssembly. Use a different `modelPath` variable
 to hold multiple models and set the `forceWrite` value to true to force re-save a model file. Set `enableAutomaticPunctuation`
-to false, if you do not wish to enable capitalization and punctuation in transcription. Increment version
-so the model is updated each time the model file (`.pv`) changes.
+to false, if you do not wish to enable capitalization and punctuation in transcription.
+If the model file (`.pv`) changes, `version` should be incremented to force the cached model to be updated.
 
 ```typescript
 // these are default
