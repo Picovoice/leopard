@@ -9,13 +9,13 @@
   specific language governing permissions and limitations under the License.
 */
 
-import { base64ToUint8Array, PvFile } from "@picovoice/web-utils";
+import { fromBase64, fromPublicDirectory } from "@picovoice/web-utils";
 
 import PvWorker from "web-worker:./leopard_worker_handler.ts";
 
 import {
   LeopardConfig,
-  LeopardInitConfig,
+  LeopardInitConfig, LeopardTranscription,
   LeopardWorkerInitResponse,
   LeopardWorkerProcessResponse,
   LeopardWorkerReleaseResponse
@@ -50,6 +50,13 @@ export class LeopardWorker {
   }
 
   /**
+   * Get Leopard worker instance.
+   */
+  get worker(): Worker {
+    return this._worker;
+  }
+
+  /**
    * Creates a worker instance of the Picovoice Leopard Speech-to-Text engine using a base64'd string
    * of the model file. The model size is large, hence it will try to use the
    * existing one if it exists, otherwise saves the model in storage.
@@ -60,6 +67,7 @@ export class LeopardWorker {
    * @param options.modelPath The path to save and use the model from. Use different names to use different models
    * across different Leopard instances.
    * @param options.forceWrite Flag to overwrite the model in storage even if it exists.
+   * @param options.version Leopard model version. Set to a higher number to update the model file.
    * @param options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
    *
    * @returns An instance of LeopardWorker.
@@ -69,12 +77,8 @@ export class LeopardWorker {
     modelBase64: string,
     options: LeopardConfig = {}
   ): Promise<LeopardWorker> {
-    const {modelPath = "leopard_model", forceWrite = false, ...rest} = options;
-
-    if (!(await PvFile.exists(modelPath)) || forceWrite) {
-      const pvFile = await PvFile.open(modelPath, "w");
-      await pvFile.write(base64ToUint8Array(modelBase64));
-    }
+    const {modelPath = "leopard_model", forceWrite = false, version = 1, ...rest} = options;
+    await fromBase64(modelPath, modelBase64, forceWrite, version);
     return this.create(accessKey, modelPath, rest);
   }
 
@@ -89,6 +93,7 @@ export class LeopardWorker {
    * @param options.modelPath The path to save and use the model from. Use different names to use different models
    * across different Leopard instances.
    * @param options.forceWrite Flag to overwrite the model in storage even if it exists.
+   * @param options.version Leopard model version. Set to a higher number to update the model file.
    * @param options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
    *
    * @returns An instance of LeopardWorker.
@@ -98,17 +103,8 @@ export class LeopardWorker {
     publicPath: string,
     options: LeopardConfig = {}
   ): Promise<LeopardWorker> {
-    const {modelPath = "leopard_model", forceWrite = false, ...rest} = options;
-
-    if (!(await PvFile.exists(modelPath)) || forceWrite) {
-      const pvFile = await PvFile.open(modelPath, "w");
-      const response = await fetch(publicPath);
-      if (!response.ok) {
-        throw new Error(`Failed to get model from '${publicPath}'`);
-      }
-      const data = await response.arrayBuffer();
-      await pvFile.write(new Uint8Array(data));
-    }
+    const {modelPath = "leopard_model", forceWrite = false, version = 1, ...rest} = options;
+    await fromPublicDirectory(modelPath, publicPath, forceWrite, version);
     return this.create(accessKey, modelPath, rest);
   }
 
@@ -191,17 +187,17 @@ export class LeopardWorker {
   public process(
     pcm: Int16Array,
     options : { transfer?: boolean, transferCB?: (data: Int16Array) => void } = {}
-  ): Promise<string> {
+  ): Promise<LeopardTranscription> {
     const { transfer = false, transferCB } = options;
 
-    const returnPromise: Promise<string> = new Promise((resolve, reject) => {
+    const returnPromise: Promise<LeopardTranscription> = new Promise((resolve, reject) => {
       this._worker.onmessage = (event: MessageEvent<LeopardWorkerProcessResponse>): void => {
         if (transfer && transferCB && event.data.inputFrame) {
           transferCB(new Int16Array(event.data.inputFrame.buffer));
         }
         switch (event.data.command) {
           case "ok":
-            resolve(event.data.transcription);
+            resolve(event.data.result);
             break;
           case "failed":
           case "error":

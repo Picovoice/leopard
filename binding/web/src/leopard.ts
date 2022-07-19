@@ -21,17 +21,18 @@ import {
   buildWasm,
   arrayBufferToStringAtIndex,
   isAccessKeyValid,
-  base64ToUint8Array,
-  PvFile
+  fromBase64,
+  fromPublicDirectory
 } from "@picovoice/web-utils";
-import { LeopardConfig, LeopardInitConfig } from "./types";
+
+import {LeopardInitConfig, LeopardConfig, LeopardTranscription, LeopardWord} from "./types";
 
 /**
  * WebAssembly function types
  */
 
 type pv_leopard_init_type = (accessKey: number, modelPath: number, enableAutomaticPunctuation: number, object: number) => Promise<number>;
-type pv_leopard_process_type = (object: number, pcm: number, num_samples: number, transcription: number) => Promise<number>;
+type pv_leopard_process_type = (object: number, pcm: number, numSamples: number, transcription: number, numWords: number, words: number) => Promise<number>;
 type pv_leopard_delete_type = (object: number) => Promise<void>;
 type pv_status_to_string_type = (status: number) => Promise<number>
 type pv_sample_rate_type = () => Promise<number>;
@@ -52,6 +53,8 @@ type LeopardWasmOutput = {
   sampleRate: number;
   version: string;
   transcriptionAddressAddress: number;
+  numWordsAddress: number;
+  wordsAddressAddress: number;
 };
 
 const PV_STATUS_SUCCESS = 10000;
@@ -61,7 +64,7 @@ export class Leopard {
   private readonly _pvLeopardProcess: pv_leopard_process_type;
   private readonly _pvStatusToString: pv_status_to_string_type;
 
-  private readonly _wasmMemory: WebAssembly.Memory;
+  private _wasmMemory?: WebAssembly.Memory;
   private _pvFree: pv_free_type;
   private readonly _memoryBuffer: Int16Array;
   private readonly _memoryBufferUint8: Uint8Array;
@@ -71,6 +74,8 @@ export class Leopard {
   private readonly _objectAddress: number;
   private readonly _alignedAlloc: CallableFunction;
   private readonly _transcriptionAddressAddress: number;
+  private readonly _numWordsAddress: number;
+  private readonly _wordsAddressAddress: number;
 
   private static _sampleRate: number;
   private static _version: string;
@@ -92,6 +97,8 @@ export class Leopard {
     this._objectAddress = handleWasm.objectAddress;
     this._alignedAlloc = handleWasm.aligned_alloc;
     this._transcriptionAddressAddress = handleWasm.transcriptionAddressAddress;
+    this._numWordsAddress = handleWasm.numWordsAddress;
+    this._wordsAddressAddress = handleWasm.wordsAddressAddress;
 
     this._memoryBuffer = new Int16Array(handleWasm.memory.buffer);
     this._memoryBufferUint8 = new Uint8Array(handleWasm.memory.buffer);
@@ -124,6 +131,7 @@ export class Leopard {
    * @param options.modelPath The path to save and use the model from. Use different names to use different models
    * across different Leopard instances.
    * @param options.forceWrite Flag to overwrite the model in storage even if it exists.
+   * @param options.version Leopard model version. Set to a higher number to update the model file.
    * @param options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
    *
    * @returns An instance of the Leopard engine.
@@ -133,12 +141,8 @@ export class Leopard {
     modelBase64: string,
     options: LeopardConfig = {}
   ): Promise<Leopard> {
-    const {modelPath = "leopard_model", forceWrite = false, ...rest} = options;
-
-    if (!(await PvFile.exists(modelPath)) || forceWrite) {
-      const pvFile = await PvFile.open(modelPath, "w");
-      await pvFile.write(base64ToUint8Array(modelBase64));
-    }
+    const {modelPath = "leopard_model", forceWrite = false, version = 1, ...rest} = options;
+    await fromBase64(modelPath, modelBase64, forceWrite, version);
     return this.create(accessKey, modelPath, rest);
   }
 
@@ -153,6 +157,7 @@ export class Leopard {
    * @param options.modelPath The path to save and use the model from. Use different names to use different models
    * across different Leopard instances.
    * @param options.forceWrite Flag to overwrite the model in storage even if it exists.
+   * @param options.version Leopard model version. Set to a higher number to update the model file.
    * @param options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
    *
    * @returns An instance of the Leopard engine.
@@ -162,17 +167,8 @@ export class Leopard {
     publicPath: string,
     options: LeopardConfig = {}
   ): Promise<Leopard> {
-    const {modelPath = "leopard_model", forceWrite = false, ...rest} = options;
-
-    if (!(await PvFile.exists(modelPath)) || forceWrite) {
-      const pvFile = await PvFile.open(modelPath, "w");
-      const response = await fetch(publicPath);
-      if (!response.ok) {
-        throw new Error(`Failed to get model from '${publicPath}'`);
-      }
-      const data = await response.arrayBuffer();
-      await pvFile.write(new Uint8Array(data));
-    }
+    const {modelPath = "leopard_model", forceWrite = false, version = 1, ...rest} = options;
+    await fromPublicDirectory(modelPath, publicPath, forceWrite, version);
     return this.create(accessKey, modelPath, rest);
   }
 
@@ -234,22 +230,26 @@ export class Leopard {
    * @param pcm A frame of audio with properties described above.
    * @return The transcription.
    */
-  public async process(pcm: Int16Array): Promise<string> {
+  public async process(pcm: Int16Array): Promise<LeopardTranscription> {
     if (!(pcm instanceof Int16Array)) {
       throw new Error("The argument 'pcm' must be provided as an Int16Array");
     }
 
-    const inputBufferAddress = await this._alignedAlloc(
-      Int16Array,
-      pcm.length * Int16Array.BYTES_PER_ELEMENT
-    );
-    if (inputBufferAddress === 0) {
-      throw new Error('malloc failed: Cannot allocate memory');
-    }
-
-    const returnPromise = new Promise<string>((resolve, reject) => {
+    const returnPromise = new Promise<LeopardTranscription>((resolve, reject) => {
       this._processMutex
         .runExclusive(async () => {
+          if (this._wasmMemory === undefined) {
+            throw new Error("Attempted to call Leopard process after release.");
+          }
+
+          const inputBufferAddress = await this._alignedAlloc(
+            Int16Array,
+            pcm.length * Int16Array.BYTES_PER_ELEMENT
+          );
+          if (inputBufferAddress === 0) {
+            throw new Error('malloc failed: Cannot allocate memory');
+          }
+
           this._memoryBuffer.set(
             pcm,
             inputBufferAddress / Int16Array.BYTES_PER_ELEMENT
@@ -258,7 +258,9 @@ export class Leopard {
             this._objectAddress,
             inputBufferAddress,
             pcm.length,
-            this._transcriptionAddressAddress
+            this._transcriptionAddressAddress,
+            this._numWordsAddress,
+            this._wordsAddressAddress
           );
           if (status !== PV_STATUS_SUCCESS) {
             const memoryBuffer = new Uint8Array(this._wasmMemory.buffer);
@@ -269,6 +271,7 @@ export class Leopard {
               )}`
             );
           }
+
           const transcriptionAddress = this._memoryBufferView.getInt32(
             this._transcriptionAddressAddress,
             true
@@ -279,12 +282,29 @@ export class Leopard {
             transcriptionAddress
           );
 
+          const numWords = this._memoryBufferView.getInt32(this._numWordsAddress, true);
+          const wordsAddress = this._memoryBufferView.getInt32(this._wordsAddressAddress, true);
+
+          let ptr = wordsAddress;
+          const words: LeopardWord[] = [];
+          for (let i = 0; i < numWords; i++) {
+            const wordAddress = this._memoryBufferView.getInt32(ptr, true);
+            const word = arrayBufferToStringAtIndex(this._memoryBufferUint8, wordAddress);
+            ptr += Uint32Array.BYTES_PER_ELEMENT;
+            const startSec = this._memoryBufferView.getFloat32(ptr, true);
+            ptr += Uint32Array.BYTES_PER_ELEMENT;
+            const endSec = this._memoryBufferView.getFloat32(ptr, true);
+            ptr += Uint32Array.BYTES_PER_ELEMENT;
+            words.push({word, startSec, endSec });
+          }
+
           await this._pvFree(transcriptionAddress);
+          await this._pvFree(wordsAddress);
           await this._pvFree(inputBufferAddress);
 
-          return transcription;
+          return { transcription, words };
         })
-        .then((result: string) => {
+        .then((result: LeopardTranscription) => {
           resolve(result);
         })
         .catch((error: any) => {
@@ -300,14 +320,16 @@ export class Leopard {
    */
   public async release(): Promise<void> {
     await this._pvLeopardDelete(this._objectAddress);
+    delete this._wasmMemory;
+    this._wasmMemory = undefined;
   }
 
   private static async initWasm(accessKey: string, wasmBase64: string, modelPath: string, initConfig: LeopardInitConfig): Promise<any> {
     const { enableAutomaticPunctuation = true } = initConfig;
 
     // A WebAssembly page has a constant size of 64KiB. -> 1MiB ~= 16 pages
-    // minimum memory requirements for init: 5365 pages
-    const memory = new WebAssembly.Memory({ initial: 6000 });
+    // minimum memory requirements for init: 3370 pages
+    const memory = new WebAssembly.Memory({ initial: 3370 });
 
     const memoryBufferUint8 = new Uint8Array(memory.buffer);
 
@@ -328,6 +350,23 @@ export class Leopard {
     if (transcriptionAddressAddress === 0) {
       throw new Error('malloc failed: Cannot allocate memory');
     }
+
+    const numWordsAddress = await aligned_alloc(
+      Int32Array.BYTES_PER_ELEMENT,
+      1
+    );
+    if (numWordsAddress === 0) {
+      throw new Error('malloc failed: Cannot allocate memory');
+    }
+
+    const wordsAddressAddress = await aligned_alloc(
+      Int32Array.BYTES_PER_ELEMENT,
+      Int32Array.BYTES_PER_ELEMENT
+    );
+    if (wordsAddressAddress === 0) {
+      throw new Error('malloc failed: Cannot allocate memory');
+    }
+
 
     const objectAddressAddress = await aligned_alloc(
       Int32Array.BYTES_PER_ELEMENT,
@@ -395,6 +434,8 @@ export class Leopard {
       sampleRate: sampleRate,
       version: version,
       transcriptionAddressAddress: transcriptionAddressAddress,
+      numWordsAddress: numWordsAddress,
+      wordsAddressAddress: wordsAddressAddress
     };
   }
 }

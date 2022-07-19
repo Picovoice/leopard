@@ -80,13 +80,15 @@ npx pvbase64 -h
 Leopard saves and caches your model file in IndexedDB to be used by WebAssembly. Use a different `modelPath` variable
 to hold multiple models and set the `forceWrite` value to true to force re-save a model file. Set `enableAutomaticPunctuation`
 to false, if you do not wish to enable capitalization and punctuation in transcription.
+If the model file (`.pv`) changes, `version` should be incremented to force the cached model to be updated.
 
 ```typescript
 // these are default
 const options = {
   modelPath: "leopard_model",
   forceWrite: false,
-  enableAutomaticPunctuation: true
+  enableAutomaticPunctuation: true,
+  version: 1
 }
 ```
 
@@ -140,25 +142,32 @@ const handle = await LeopardWorker.fromBase64(
 
 #### Process Audio Frames
 
+The process result is an object with:
+- `transcription`: A string containing the transcribed data.
+- `words`: A list of objects containing a `word`, `startSec`, and `endSec`. Each object indicates
+the start and end time of the word.
+
 ```typescript
 function getAudioData(): Int16Array {
   ... // function to get audio data
   return new Int16Array();
 }
 
-const transcription = await handle.process(getAudioData());
-console.log(transcription);
+const result = await handle.process(getAudioData());
+console.log(result.transcription);
+console.log(result.words);
 ```
 
 For processing using worker, you may consider transferring the buffer instead for performance:
 
 ```typescript
 const pcm = new Int16Array();
-const transcription = await handle.process(pcm, {
+const result = await handle.process(pcm, {
   transfer: true,
   transferCB: (data) => {pcm = data}
 });
-console.log(transcription)
+console.log(result.transcription);
+console.log(result.words);
 ```
 
 #### Clean Up
