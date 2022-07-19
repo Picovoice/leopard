@@ -41,7 +41,9 @@
             );
 
             writeMessage("Transcribing audio file...");
-            document.getElementById("result").innerHTML = await leopard.process(i16PCM, {transfer: true});
+            const { transcription, words } = await leopard.process(i16PCM, {transfer: true});
+            document.getElementById("result").innerHTML = transcription;
+            setWordTable(words);
             writeMessage("Transcribing audio file... done!");
           });
         });
@@ -101,7 +103,9 @@
           }
 
           writeMessage("Transcribing audio file...");
-          document.getElementById("result").innerHTML = await leopard.process(frames, {transfer: true});
+          const { transcription, words } = await leopard.process(frames, {transfer: true});
+          document.getElementById("result").innerHTML = transcription;
+          setWordTable(words);
           writeMessage("Transcribing audio file... done!");
         });
       }
@@ -109,6 +113,26 @@
       function writeMessage(message) {
         console.log(message);
         document.getElementById("status").innerHTML = message;
+      }
+
+      function setWordTable(words) {
+        let html = `
+          <tr>
+            <th>word</th>
+            <th>startSec</th>
+            <th>endSec</th>
+          </tr>
+        `;
+        words.forEach(obj => {
+          html += `
+            <tr>
+              <td>${obj.word}</td>
+              <td>${obj.startSec.toFixed(3)}</td>
+              <td>${obj.endSec.toFixed(3)}</td>
+            </tr>
+          `
+        });
+        document.getElementById("words").innerHTML = html;
       }
 
       async function startLeopard(accessKey) {
@@ -165,5 +189,7 @@
     <div id="status"></div>
     <br>
     <div id="result"></div>
+    <br>
+    <table id="words"></table>
   </body>
 </html>
