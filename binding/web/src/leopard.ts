@@ -243,7 +243,7 @@ export class Leopard {
           }
 
           const inputBufferAddress = await this._alignedAlloc(
-            Int16Array,
+            Int16Array.BYTES_PER_ELEMENT,
             pcm.length * Int16Array.BYTES_PER_ELEMENT
           );
           if (inputBufferAddress === 0) {
@@ -353,7 +353,7 @@ export class Leopard {
 
     const numWordsAddress = await aligned_alloc(
       Int32Array.BYTES_PER_ELEMENT,
-      1
+      Int32Array.BYTES_PER_ELEMENT
     );
     if (numWordsAddress === 0) {
       throw new Error('malloc failed: Cannot allocate memory');
