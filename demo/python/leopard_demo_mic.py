@@ -79,7 +79,7 @@ def main():
             try:
                 print(o.process(recorder.stop()))
             except LeopardActivationLimitError:
-                print(f"AccessKey '{args.access_key}' has reached it's processing limit.")
+                print("AccessKey '%s' has reached it's processing limit." % args.access_key)
             print()
             recorder = None
         else:
