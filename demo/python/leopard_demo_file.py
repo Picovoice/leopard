@@ -28,7 +28,7 @@ def main():
         for audio_path in args.audio_paths:
             print(o.process_file(audio_path))
     except LeopardActivationLimitError:
-        print(f"AccessKey '{args.access_key}' has reached it's processing limit.")
+        print("AccessKey '%s' has reached it's processing limit." % args.access_key)
 
 
 if __name__ == '__main__':

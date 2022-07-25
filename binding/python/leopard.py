@@ -189,7 +189,7 @@ class Leopard(object):
             if status is self.PicovoiceStatuses.INVALID_ARGUMENT:
                 if not audio_path.lower().endswith(self._VALID_EXTENSIONS):
                     raise self._PICOVOICE_STATUS_TO_EXCEPTION[status](
-                        f"Specified file with extension '{pathlib.Path(audio_path).suffix}' is not supported"
+                        "Specified file with extension '%s' is not supported" % pathlib.Path(audio_path).suffix
                     )
             raise self._PICOVOICE_STATUS_TO_EXCEPTION[status]()
 
