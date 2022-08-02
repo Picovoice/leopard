@@ -1,6 +1,6 @@
 name: leopard_flutter
 description: A Flutter plugin for Picovoice's Leopard Speech-to-Text engine
-version: 1.0.3
+version: 1.1.0
 homepage: https://picovoice.ai/
 repository: https://github.com/Picovoice/leopard/
 documentation: https://picovoice.ai/docs/leopard/
