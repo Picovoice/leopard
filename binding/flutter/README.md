@@ -7,7 +7,7 @@ Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally.
-- Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
+- Accurate [[1]](https://picovoice.ai/docs/benchmark/stt/#accuracy)
 - Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
     - Linux (x86_64)
@@ -61,7 +61,7 @@ On Android, open your AndroidManifest.xml and add the following line:
 
 Add the Leopard model file to your Flutter application by:
 
-1. Either creating a model in [Picovoice Console](https://console.picovoice.ai/) or using the default model in [/lib/common/leopard_params.pv](/lib/common/leopard_params.pv).
+1. Either creating a model in [Picovoice Console](https://console.picovoice.ai/) or using the [default model](https://github.com/Picovoice/leopard/tree/master/lib/common).
 2. Add the model file to an `assets` folder in your project directory.
 3. Then add it to your `pubspec.yaml`:
 ```yaml
@@ -76,7 +76,7 @@ String modelPath = "assets/leopard_model.pv";
 
 ## Usage
 
-An instance of `Leopard` is created by passing a model file path into its static constructor `create`:
+An instance of [`Leopard`](https://picovoice.ai/docs/api/leopard-flutter/#leopard) is created by passing a model file path into its static constructor `create`:
 
 ```dart
 import 'package:leopard_flutter/leopard.dart';
@@ -108,4 +108,4 @@ leopard.delete();
 
 ## Demo App
 
-For example usage refer to our [Flutter demo application](/demo/flutter).
+For example usage, refer to our [Flutter demo application](https://github.com/Picovoice/leopard/tree/master/demo/flutter).

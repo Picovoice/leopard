@@ -2,6 +2,8 @@ name: leopard_flutter
 description: A Flutter plugin for Picovoice's Leopard Speech-to-Text engine
 version: 1.0.3
 homepage: https://picovoice.ai/
+repository: https://github.com/Picovoice/leopard/
+documentation: https://picovoice.ai/docs/leopard/
 
 environment:
   sdk: ">=2.14.0 <3.0.0"
