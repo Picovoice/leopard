@@ -3,13 +3,13 @@ apply plugin: 'com.github.dcendents.android-maven'
 
 ext {
     PUBLISH_GROUP_ID = 'ai.picovoice'
-    PUBLISH_VERSION = '1.0.5'
+    PUBLISH_VERSION = '1.1.0'
     PUBLISH_ARTIFACT_ID = 'leopard-android'
 }
 
 android {
     compileSdkVersion defaultTargetSdkVersion
-    buildToolsVersion "30.0.3"
+    buildToolsVersion "31.0.0"
 
     defaultConfig {
         minSdkVersion 21

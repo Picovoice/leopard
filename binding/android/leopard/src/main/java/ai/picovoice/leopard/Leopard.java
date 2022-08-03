@@ -12,7 +12,6 @@
 package ai.picovoice.leopard;
 
 import android.content.Context;
-import android.content.res.Resources;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -20,9 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.regex.Pattern;
 
 /**
  * Android binding for Leopard Speech-to-Text engine.
@@ -38,17 +34,31 @@ public class Leopard {
     /**
      * Constructor.
      *
-     * @param accessKey AccessKey obtained from Picovoice Console
-     * @param modelPath Absolute path to the file containing Leopard model parameters.
+     * @param accessKey                  AccessKey obtained from Picovoice Console
+     * @param modelPath                  Absolute path to the file containing Leopard model parameters.
+     * @param enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
      * @throws LeopardException if there is an error while initializing Leopard.
      */
-    public Leopard(String accessKey, String modelPath) throws LeopardException {
-        handle = init(accessKey, modelPath);
+    public Leopard(
+            String accessKey,
+            String modelPath,
+            boolean enableAutomaticPunctuation) throws LeopardException {
+        handle = init(
+                accessKey,
+                modelPath,
+                enableAutomaticPunctuation);
     }
 
-    private static String extractResource(Context context, InputStream srcFileStream, String dstFilename) throws IOException {
-        InputStream is = new BufferedInputStream(srcFileStream, 256);
-        OutputStream os = new BufferedOutputStream(context.openFileOutput(dstFilename, Context.MODE_PRIVATE), 256);
+    private static String extractResource(
+            Context context,
+            InputStream srcFileStream,
+            String dstFilename) throws IOException {
+        InputStream is = new BufferedInputStream(
+                srcFileStream,
+                256);
+        OutputStream os = new BufferedOutputStream(
+                context.openFileOutput(dstFilename, Context.MODE_PRIVATE),
+                256);
         int r;
         while ((r = is.read()) != -1) {
             os.write(r);
@@ -74,10 +84,10 @@ public class Leopard {
      *            equal to {@link #getSampleRate()} and be 16-bit linearly-encoded. Furthermore,
      *            Leopard operates on single channel audio. If you wish to process data in a different
      *            sample rate or format consider using `.process_file`.
-     * @return Inferred transcription.
+     * @return LeopardTranscript object which contains the transcription results of the engine.
      * @throws LeopardException if there is an error while processing the audio frame.
      */
-    public String process(short[] pcm) throws LeopardException {
+    public LeopardTranscript process(short[] pcm) throws LeopardException {
         return process(handle, pcm, pcm.length);
     }
 
@@ -85,12 +95,12 @@ public class Leopard {
      * Processes given audio data and returns its transcription.
      *
      * @param path Absolute path to the audio file. The file needs to have a sample rate equal to or greater
-     *                than {@link #getSampleRate()}. The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`,
-     *                `Vorbis`, `WAV`, and `WebM`.
-     * @return Inferred transcription.
+     *             than {@link #getSampleRate()}. The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`,
+     *             `Vorbis`, `WAV`, and `WebM`.
+     * @return LeopardTranscript object which contains the transcription results of the engine.
      * @throws LeopardException if there is an error while processing the audio frame.
      */
-    public String processFile(String path) throws LeopardException {
+    public LeopardTranscript processFile(String path) throws LeopardException {
         return processFile(handle, path);
     }
 
@@ -108,26 +118,55 @@ public class Leopard {
      */
     public native String getVersion();
 
-    private native long init(String accessKey, String modelPath);
+    private native long init(
+            String accessKey,
+            String modelPath,
+            boolean enableAutomaticPunctuation);
 
     private native void delete(long object);
 
-    private native String process(long object, short[] pcm, int numSamples);
+    private native LeopardTranscript process(
+            long object,
+            short[] pcm,
+            int numSamples);
 
-    private native String processFile(long object, String path);
+    private native LeopardTranscript processFile(
+            long object,
+            String path);
 
     public static class Builder {
 
         private String accessKey = null;
         private String modelPath = null;
+        private boolean enableAutomaticPunctuation = false;
 
+        /**
+         * Setter the AccessKey
+         *
+         * @param accessKey AccessKey obtained from Picovoice Console
+         */
         public Builder setAccessKey(String accessKey) {
             this.accessKey = accessKey;
             return this;
         }
 
+        /**
+         * Setter for the absolute path to the file containing Leopard model parameters.
+         *
+         * @param modelPath Absolute path to the file containing Leopard model parameters.
+         */
         public Builder setModelPath(String modelPath) {
             this.modelPath = modelPath;
+            return this;
+        }
+
+        /**
+         * Setter for enabling automatic punctuation insertion
+         *
+         * @param enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
+         */
+        public Builder setEnableAutomaticPunctuation(boolean enableAutomaticPunctuation) {
+            this.enableAutomaticPunctuation = enableAutomaticPunctuation;
             return this;
         }
 
@@ -152,7 +191,10 @@ public class Leopard {
                 }
             }
 
-            return new Leopard(accessKey, modelPath);
+            return new Leopard(
+                    accessKey,
+                    modelPath,
+                    enableAutomaticPunctuation);
         }
     }
 }
