@@ -121,6 +121,7 @@
             <th>word</th>
             <th>startSec</th>
             <th>endSec</th>
+            <th>confidence</th>
           </tr>
         `;
         words.forEach(obj => {
@@ -129,6 +130,7 @@
               <td>${obj.word}</td>
               <td>${obj.startSec.toFixed(3)}</td>
               <td>${obj.endSec.toFixed(3)}</td>
+              <td>${obj.confidence.toFixed(3)}</td>
             </tr>
           `
         });

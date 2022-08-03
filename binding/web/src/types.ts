@@ -10,7 +10,7 @@
 */
 
 export type LeopardInitConfig = {
-  /** @defaultValue true */
+  /** @defaultValue false */
   enableAutomaticPunctuation?: boolean;
 }
 
@@ -29,6 +29,7 @@ export type LeopardWord = {
   word: string;
   startSec: number;
   endSec: number;
+  confidence: number;
 }
 
 export type LeopardTranscription = {

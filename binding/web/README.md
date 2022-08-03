@@ -1,7 +1,5 @@
 # leopard-web
 
-**NOTE**: This is a beta build.
-
 The Picovoice Leopard library for web browsers, powered by WebAssembly.
 
 This library transcribes audio samples in-browser, offline. All processing is done via WebAssembly and Workers in a separate thread.
@@ -79,15 +77,15 @@ npx pvbase64 -h
 
 Leopard saves and caches your model file in IndexedDB to be used by WebAssembly. Use a different `modelPath` variable
 to hold multiple models and set the `forceWrite` value to true to force re-save a model file. Set `enableAutomaticPunctuation`
-to false, if you do not wish to enable capitalization and punctuation in transcription.
+to true, if wish to enable capitalization and punctuation in transcription.
 If the model file (`.pv`) changes, `version` should be incremented to force the cached model to be updated.
 
 ```typescript
 // these are default
 const options = {
+  enableAutomaticPunctuation: false,
   modelPath: "leopard_model",
   forceWrite: false,
-  enableAutomaticPunctuation: true,
   version: 1
 }
 ```
