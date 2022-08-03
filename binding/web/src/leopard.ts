@@ -328,7 +328,6 @@ export class Leopard {
 
   private static async initWasm(accessKey: string, wasmBase64: string, modelPath: string, initConfig: LeopardInitConfig): Promise<any> {
     const { enableAutomaticPunctuation = false } = initConfig;
-    console.log(enableAutomaticPunctuation);
 
     // A WebAssembly page has a constant size of 64KiB. -> 1MiB ~= 16 pages
     // minimum memory requirements for init: 3370 pages

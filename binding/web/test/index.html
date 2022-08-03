@@ -8,23 +8,23 @@
   <script type="application/javascript">
     const expected = "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel.";
     const expectedWords = [
-      {word: 'Mr'       , startSec: 0.576, endSec: 0.800},
-      {word: 'quilter'  , startSec: 0.864, endSec: 1.184},
-      {word: 'is'       , startSec: 1.312, endSec: 1.376},
-      {word: 'the'      , startSec: 1.440, endSec: 1.503},
-      {word: 'apostle'  , startSec: 1.568, endSec: 2.080},
-      {word: 'of'       , startSec: 2.176, endSec: 2.240},
-      {word: 'the'      , startSec: 2.304, endSec: 2.336},
-      {word: 'middle'   , startSec: 2.400, endSec: 2.592},
-      {word: 'classes'  , startSec: 2.688, endSec: 3.168},
-      {word: 'and'      , startSec: 3.360, endSec: 3.456},
-      {word: 'we'       , startSec: 3.520, endSec: 3.552},
-      {word: 'are'      , startSec: 3.648, endSec: 3.648},
-      {word: 'glad'     , startSec: 3.744, endSec: 4.032},
-      {word: 'to'       , startSec: 4.096, endSec: 4.160},
-      {word: 'welcome'  , startSec: 4.223, endSec: 4.576},
-      {word: 'his'      , startSec: 4.672, endSec: 4.832},
-      {word: 'gospel'   , startSec: 4.928, endSec: 5.376},
+      {word: 'Mr'       , startSec: 0.576, endSec: 0.800, confidence: 0.954},
+      {word: 'quilter'  , startSec: 0.864, endSec: 1.184, confidence: 0.800},
+      {word: 'is'       , startSec: 1.312, endSec: 1.376, confidence: 0.956},
+      {word: 'the'      , startSec: 1.440, endSec: 1.503, confidence: 0.906},
+      {word: 'apostle'  , startSec: 1.568, endSec: 2.080, confidence: 0.809},
+      {word: 'of'       , startSec: 2.176, endSec: 2.240, confidence: 0.980},
+      {word: 'the'      , startSec: 2.304, endSec: 2.336, confidence: 0.984},
+      {word: 'middle'   , startSec: 2.400, endSec: 2.592, confidence: 0.968},
+      {word: 'classes'  , startSec: 2.688, endSec: 3.168, confidence: 0.976},
+      {word: 'and'      , startSec: 3.360, endSec: 3.456, confidence: 0.953},
+      {word: 'we'       , startSec: 3.520, endSec: 3.552, confidence: 0.958},
+      {word: 'are'      , startSec: 3.648, endSec: 3.648, confidence: 0.965},
+      {word: 'glad'     , startSec: 3.744, endSec: 4.032, confidence: 0.935},
+      {word: 'to'       , startSec: 4.096, endSec: 4.160, confidence: 0.969},
+      {word: 'welcome'  , startSec: 4.223, endSec: 4.576, confidence: 0.895},
+      {word: 'his'      , startSec: 4.672, endSec: 4.832, confidence: 0.964},
+      {word: 'gospel'   , startSec: 4.928, endSec: 5.376, confidence: 0.931},
     ];
     let pcm = null;
 
@@ -125,7 +125,7 @@
         writeMessage("Checking Leopard 'fromPublicDirectory'");
         let handle = await LeopardWeb.Leopard.fromPublicDirectory(accessKey, "leopard_params.pv", { forceWrite: true });
         let result = await handle.process(pcm);
-        console.log(result)
+        console.log(result.transcription)
         assertEquals(expected, result.transcription, 'Failed to transcribe audio file');
         assertDeepEquals(expectedWords, result.words);
         handle.release()
