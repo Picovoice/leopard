@@ -77,7 +77,7 @@ npx pvbase64 -h
 
 Leopard saves and caches your model file in IndexedDB to be used by WebAssembly. Use a different `modelPath` variable
 to hold multiple models and set the `forceWrite` value to true to force re-save a model file. Set `enableAutomaticPunctuation`
-to true, if wish to enable capitalization and punctuation in transcription.
+to true, if wish to enable punctuation in transcription.
 If the model file (`.pv`) changes, `version` should be incremented to force the cached model to be updated.
 
 ```typescript
@@ -142,8 +142,7 @@ const handle = await LeopardWorker.fromBase64(
 
 The process result is an object with:
 - `transcription`: A string containing the transcribed data.
-- `words`: A list of objects containing a `word`, `startSec`, and `endSec`. Each object indicates
-the start and end time of the word.
+- `words`: A list of objects containing a `word`, `startSec`, `endSec`, and `confidence`. Each object indicates the start, end time and confidence (between 0 and 1) of the word.
 
 ```typescript
 function getAudioData(): Int16Array {
