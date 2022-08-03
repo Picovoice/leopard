@@ -34,7 +34,9 @@ program
     Number,
     -1
   )
-  .option("-d, --show_audio_devices", "show the list of available devices");
+  .option("-s, --show_audio_devices", "show the list of available devices")
+  .option("-d, --disable_automatic_punctuation", "disable automatic punctuation")
+  .option("-v, --verbose", "verbose mode, prints metadata");
 
 if (process.argv.length < 1) {
   program.help();
@@ -49,6 +51,8 @@ async function micDemo() {
   let modelFilePath = program["model_file_path"];
   let audioDeviceIndex = program["audio_device_index"];
   let showAudioDevices = program["show_audio_devices"];
+  let disableAutomaticPunctuation = program["disable_automatic_punctuation"];
+  let verbose = program["verbose"];
 
   let showAudioDevicesDefined = showAudioDevices !== undefined;
 
@@ -65,7 +69,13 @@ async function micDemo() {
     process.exit();
   }
 
-  let engineInstance = new Leopard(accessKey, modelFilePath, libraryFilePath);
+  let engineInstance = new Leopard(
+      accessKey,
+      {
+        'modelPath': modelFilePath,
+        'libraryPath': libraryFilePath,
+        'enableAutomaticPunctuation': !disableAutomaticPunctuation
+      });
 
   const recorder = new PvRecorder(audioDeviceIndex, PV_RECORDER_FRAME_LENGTH);
 
@@ -99,10 +109,14 @@ async function micDemo() {
     recorder.stop();
     const audioFrameInt16 = new Int16Array(audioFrame);
     try {
-      console.log(engineInstance.process(audioFrameInt16));
+      const res = engineInstance.process(audioFrameInt16)
+      console.log(res.transcript);
+      if (verbose) {
+        console.table(res.words);
+      }
     } catch (err) {
       if (err instanceof LeopardActivationLimitReached) {
-        console.error(`AccessKey '${access_key}' has reached it's processing limit.`);
+        console.error(`AccessKey '${accessKey}' has reached it's processing limit.`);
       } else {
         console.error(err);
       }

@@ -31,6 +31,9 @@ program
     "absolute path to leopard dynamic library"
   )
   .option("-m, --model_file_path <string>", "absolute path to leopard model")
+  .option("-d, --disable_automatic_punctuation", "disable automatic punctuation")
+  .option("-v, --verbose", "verbose mode, prints metadata");
+
 
 if (process.argv.length < 2) {
   program.help();
@@ -39,14 +42,19 @@ program.parse(process.argv);
 
 function fileDemo() {
   let audioPath = program["input_audio_file_path"];
-  let access_key = program["access_key"]
+  let accessKey = program["access_key"]
   let libraryFilePath = program["library_file_path"];
   let modelFilePath = program["model_file_path"];
+  let disableAutomaticPunctuation = program["disable_automatic_punctuation"];
+  let verbose = program["verbose"];
 
   let engineInstance = new Leopard(
-    access_key,
-    modelFilePath,
-    libraryFilePath
+      accessKey,
+      {
+        'modelPath': modelFilePath,
+        'libraryPath': libraryFilePath,
+        'enableAutomaticPunctuation': !disableAutomaticPunctuation
+      }
   );
 
   if (!fs.existsSync(audioPath)) {
@@ -55,10 +63,14 @@ function fileDemo() {
   }
 
   try {
-    console.log(engineInstance.processFile(audioPath));
+    const res = engineInstance.processFile(audioPath);
+    console.log(res.transcript);
+    if (verbose) {
+      console.table(res.words);
+    }
   } catch (err) {
     if (err instanceof LeopardActivationLimitReached) {
-      console.error(`AccessKey '${access_key}' has reached it's processing limit.`);
+      console.error(`AccessKey '${accessKey}' has reached it's processing limit.`);
     } else {
       console.error(err);
     }

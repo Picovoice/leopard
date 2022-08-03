@@ -10,7 +10,10 @@
 //
 "use strict";
 
-import { Leopard, LeopardInvalidArgumentError } from "../src";
+import {
+  Leopard,
+  LeopardInvalidArgumentError } from "../src";
+
 import * as fs from "fs";
 import * as path from "path";
 import { WaveFile } from "wavefile";
@@ -21,7 +24,7 @@ const MODEL_PATH = "./lib/common/leopard_params.pv";
 
 const WAV_PATH = "../../../resources/audio_samples/test.wav";
 const TRANSCRIPT =
-  "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL";
+  "Mr quilter is the apostle of the middle classes and we are glad to welcome his gospel";
 
 const libraryPath = getSystemLibraryPath();
 
@@ -34,9 +37,9 @@ describe("Defaults", () => {
     let leopardEngine = new Leopard(ACCESS_KEY);
 
     const waveFilePath = path.join(__dirname, WAV_PATH);
-    let transcript = leopardEngine.processFile(waveFilePath);
+    let res = leopardEngine.processFile(waveFilePath);
 
-    expect(transcript).toBe(TRANSCRIPT);
+    expect(res.transcript).toBe(TRANSCRIPT);
 
     leopardEngine.release();
   });
@@ -50,9 +53,9 @@ describe("Defaults", () => {
 
     const pcm: any = waveAudioFile.getSamples(false, Int16Array);
 
-    let transcript = leopardEngine.process(pcm);
+    let res = leopardEngine.process(pcm);
 
-    expect(transcript).toBe(TRANSCRIPT);
+    expect(res.transcript).toBe(TRANSCRIPT);
 
     leopardEngine.release();
   });
@@ -66,23 +69,54 @@ describe("Defaults", () => {
 
 describe("manual paths", () => {
   test("manual model path", () => {
-    let leopardEngine = new Leopard(ACCESS_KEY, MODEL_PATH);
+    let leopardEngine = new Leopard(
+        ACCESS_KEY,
+        {'modelPath':MODEL_PATH});
 
     const waveFilePath = path.join(__dirname, WAV_PATH);
-    let transcript = leopardEngine.processFile(waveFilePath);
+    let res = leopardEngine.processFile(waveFilePath);
 
-    expect(transcript).toBe(TRANSCRIPT);
+    expect(res.transcript).toBe(TRANSCRIPT);
 
     leopardEngine.release();
   });
 
   test("manual model and library path", () => {
-    let leopardEngine = new Leopard(ACCESS_KEY, MODEL_PATH, libraryPath);
+    let leopardEngine = new Leopard(
+        ACCESS_KEY,
+        {'modelPath':MODEL_PATH, 'libraryPath':libraryPath, 'enableAutomaticPunctuation':false});
 
     const waveFilePath = path.join(__dirname, WAV_PATH);
-    let transcript = leopardEngine.processFile(waveFilePath);
+    let res = leopardEngine.processFile(waveFilePath);
 
-    expect(transcript).toBe(TRANSCRIPT);
+    expect(res.transcript).toBe(TRANSCRIPT);
+
+    leopardEngine.release();
+  });
+
+  test("Enable automatic punctuation", () => {
+    let leopardEngine = new Leopard(
+        ACCESS_KEY,
+        {'modelPath':MODEL_PATH, 'libraryPath':libraryPath, 'enableAutomaticPunctuation':true});
+
+    const waveFilePath = path.join(__dirname, WAV_PATH);
+    let res = leopardEngine.processFile(waveFilePath);
+
+    expect(res.transcript).toBe("Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel.");
+
+    leopardEngine.release();
+  });
+
+  test("Words info", () => {
+    let leopardEngine = new Leopard(ACCESS_KEY, {'modelPath':MODEL_PATH});
+
+    const waveFilePath = path.join(__dirname, WAV_PATH);
+    let res = leopardEngine.processFile(waveFilePath);
+    expect(res.words.length).toBe(17);
+    expect(res.words[0].word).toBe("Mr");
+    expect(res.words[0].startSec).toBeGreaterThan(0)
+    expect(res.words[0].endSec).toBeGreaterThan(res.words[0].startSec)
+    expect(res.words[0].confidence).toBeGreaterThan(0)
 
     leopardEngine.release();
   });
