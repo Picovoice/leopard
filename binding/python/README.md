@@ -47,7 +47,7 @@ for word in words:
       % (word.word, word.start_sec, word.end_sec, word.confidence))
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and
 `${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using
 `handle.delete()`.
 
