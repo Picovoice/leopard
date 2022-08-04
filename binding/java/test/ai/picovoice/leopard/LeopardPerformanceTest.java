@@ -31,11 +31,9 @@ public class LeopardPerformanceTest {
         long[] perfResults = new long[numTestIterations];
         for (int i = 0; i < numTestIterations; i++) {
             long before = System.nanoTime();
-            Leopard leopard = new Leopard(
-                    accessKey,
-                    Utils.getPackagedLibraryPath(),
-                    Utils.getPackagedModelPath()
-            );
+            Leopard leopard = new Leopard.Builder()
+                    .setAccessKey(accessKey)
+                    .build();
 
             long initTime = (System.nanoTime() - before);
             if (i > 0) {
@@ -59,11 +57,8 @@ public class LeopardPerformanceTest {
 
     @Test
     void procPerformance() throws Exception {
-        Leopard leopard = new Leopard(
-                accessKey,
-                Utils.getPackagedLibraryPath(),
-                Utils.getPackagedModelPath()
-        );
+        Leopard leopard = new Leopard.Builder()
+                .build();
 
         String audioFilePath = Paths.get(System.getProperty("user.dir"))
                 .resolve("../../resources/audio_samples/test.wav")
