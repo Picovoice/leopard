@@ -31,6 +31,19 @@ public class Leopard {
 
     private final long handle;
 
+    private final static String[] VALID_EXTENSIONS = {
+            "3gp",
+            "flac",
+            "m4a",
+            "mp3",
+            "mp4",
+            "ogg",
+            "opus",
+            "vorbis",
+            "wav",
+            "webm"
+    };
+
     /**
      * Constructor.
      *
@@ -95,13 +108,31 @@ public class Leopard {
      * Processes given audio data and returns its transcription.
      *
      * @param path Absolute path to the audio file. The file needs to have a sample rate equal to or greater
-     *             than {@link #getSampleRate()}. The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`,
-     *             `Vorbis`, `WAV`, and `WebM`.
+     *             than {@link #getSampleRate()}. The supported formats are: `3gp`, `flac`, `m4a`, `mp3`,
+     *             `ogg`, `opus`, `vorbis`, `wav`, and `webm`.
      * @return LeopardTranscript object which contains the transcription results of the engine.
      * @throws LeopardException if there is an error while processing the audio frame.
      */
     public LeopardTranscript processFile(String path) throws LeopardException {
-        return processFile(handle, path);
+        try {
+            return processFile(handle, path);
+        } catch (LeopardInvalidArgumentException e) {
+            boolean endsWithValidExt = false;
+            for(String ext : VALID_EXTENSIONS) {
+                if (path.endsWith(ext)) {
+                    endsWithValidExt = true;
+                    break;
+                }
+            }
+            if (!endsWithValidExt) {
+                throw new LeopardInvalidArgumentException(
+                        String.format(
+                                "Specified file '%s' is not in an accepted audio format. Valid formats are: %s",
+                                path,
+                                String.join(", ", VALID_EXTENSIONS)));
+            }
+            throw e;
+        }
     }
 
     /**
@@ -121,18 +152,18 @@ public class Leopard {
     private native long init(
             String accessKey,
             String modelPath,
-            boolean enableAutomaticPunctuation);
+            boolean enableAutomaticPunctuation) throws LeopardException;
 
     private native void delete(long object);
 
     private native LeopardTranscript process(
             long object,
             short[] pcm,
-            int numSamples);
+            int numSamples) throws LeopardException;
 
     private native LeopardTranscript processFile(
             long object,
-            String path);
+            String path) throws LeopardException;
 
     public static class Builder {
 
