@@ -52,8 +52,8 @@ class Recorder(Thread):
 def main():
     parser = ArgumentParser()
     parser.add_argument('--access_key', required=True)
-    parser.add_argument('--library_path', default=None)
     parser.add_argument('--model_path', default=None)
+    parser.add_argument('--library_path', default=None)
     parser.add_argument('--enable_automatic_punctuation', action='store_true')
     parser.add_argument('--verbose', action='store_true')
     args = parser.parse_args()
