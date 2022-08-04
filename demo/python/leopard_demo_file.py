@@ -20,6 +20,7 @@ def main():
     parser.add_argument('--model_path', default=None)
     parser.add_argument('--library_path', default=None)
     parser.add_argument('--enable_automatic_punctuation', action='store_true')
+    parser.add_argument('--verbose', action='store_true')
     parser.add_argument('--audio_paths', nargs='+', required=True)
     args = parser.parse_args()
 
@@ -31,7 +32,16 @@ def main():
 
     try:
         for audio_path in args.audio_paths:
-            print(o.process_file(audio_path))
+            transcript, words = o.process_file(audio_path)
+            print(transcript)
+            if args.verbose:
+                for word in words:
+                    print('{')
+                    print('  word: "%s",' % word.word)
+                    print('  start_sec: %.2f,' % word.start_sec)
+                    print('  end_sec: %.2f,' % word.end_sec)
+                    print('  confidence: %.2f,' % word.confidence)
+                    print('}')
     except LeopardActivationLimitError:
         print("AccessKey '%s' has reached it's processing limit." % args.access_key)
 
