@@ -31,20 +31,25 @@ cmake --build demo/c/build
 Running the demo without arguments prints the usage:
 
 ```console
-usage: -a ACCESS_KEY -l LIBRARY_PATH -m MODEL_PATH audio_path0 audio_path1 ...
+usage: -a ACCESS_KEY -l LIBRARY_PATH -m MODEL_PATH [-p] [-v] audio_path0 audio_path1 ...
 ```
 
 Run the command corresponding to your platform from the root of the repository. Replace `${ACCESS_KEY}` with yours
 obtained from [Picovoice Console](https://console.picovoice.ai/) and `${AUDIO_PATH}` with the path to an audio file you
 want to transcribe.
 
+Use the `-p` flag to disable automatic punctuation.
+
+Use the `-v` flag to enable the printing of word metadata.
+
+
 #### Linux (x86_64)
 
 ```console
 ./demo/c/build/leopard_demo \
 -a ${ACCESS_KEY} \
--l lib/linux/x86_64/libpv_leopard.so \
 -m lib/common/leopard_params.pv \
+-l lib/linux/x86_64/libpv_leopard.so \
 ${AUDIO_PATH}
 ```
 
@@ -53,8 +58,8 @@ ${AUDIO_PATH}
 ```console
 ./demo/c/build/leopard_demo \
 -a ${ACCESS_KEY} \
--l lib/mac/x86_64/libpv_leopard.dylib \
 -m lib/common/leopard_params.pv \
+-l lib/mac/x86_64/libpv_leopard.dylib \
 ${AUDIO_PATH}
 ```
 
@@ -63,8 +68,8 @@ ${AUDIO_PATH}
 ```console
 ./demo/c/build/leopard_demo \
 -a ${ACCESS_KEY} \
--l lib/mac/arm64/libpv_leopard.dylib \
 -m lib/common/leopard_params.pv \
+-l lib/mac/arm64/libpv_leopard.dylib \
 ${AUDIO_PATH}
 ```
 
@@ -75,8 +80,8 @@ Run using `Command Prompt`.
 ```console
 demo\\c\\build\\leopard_demo.exe ^
 -a ${ACCESS_KEY} ^
--l lib\\windows\\amd64\\libpv_leopard.dll ^
 -m lib\\common\\leopard_params.pv ^
+-l lib\\windows\\amd64\\libpv_leopard.dll ^
 ${AUDIO_PATH}
 ```
 
@@ -85,8 +90,8 @@ ${AUDIO_PATH}
 ```console
 ./demo/c/build/leopard_demo \
 -a ${ACCESS_KEY} \
--l lib/raspberry-pi/cortex-a72/libpv_leopard.so \
 -m lib/common/leopard_params.pv \
+-l lib/raspberry-pi/cortex-a72/libpv_leopard.so \
 ${AUDIO_PATH}
 ```
 
@@ -95,8 +100,8 @@ ${AUDIO_PATH}
 ```console
 ./demo/c/build/leopard_demo \
 -a ${ACCESS_KEY} \
--l lib/raspberry-pi/cortex-a72-aarch64/libpv_leopard.so \
 -m lib/common/leopard_params.pv \
+-l lib/raspberry-pi/cortex-a72-aarch64/libpv_leopard.so \
 ${AUDIO_PATH}
 ```
 
@@ -105,8 +110,8 @@ ${AUDIO_PATH}
 ```console
 ./demo/c/build/leopard_demo \
 -a ${ACCESS_KEY} \
--l lib/raspberry-pi/cortex-a53/libpv_leopard.so \
 -m lib/common/leopard_params.pv \
+-l lib/raspberry-pi/cortex-a53/libpv_leopard.so \
 ${AUDIO_PATH}
 ```
 
@@ -115,8 +120,8 @@ ${AUDIO_PATH}
 ```console
 ./demo/c/build/leopard_demo \
 -a ${ACCESS_KEY} \
--l lib/raspberry-pi/cortex-a53-aarch64/libpv_leopard.so \
 -m lib/common/leopard_params.pv \
+-l lib/raspberry-pi/cortex-a53-aarch64/libpv_leopard.so \
 ${AUDIO_PATH}
 ```
 
@@ -125,7 +130,7 @@ ${AUDIO_PATH}
 ```console
 ./demo/c/build/leopard_demo \
 -a ${ACCESS_KEY} \
--l lib/jetson/cortex-a57-aarch64/libpv_leopard.so \
 -m lib/common/leopard_params.pv \
+-l lib/jetson/cortex-a57-aarch64/libpv_leopard.so \
 ${AUDIO_PATH}
 ```
