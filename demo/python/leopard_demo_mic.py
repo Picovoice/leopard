@@ -54,9 +54,14 @@ def main():
     parser.add_argument('--access_key', required=True)
     parser.add_argument('--library_path', default=None)
     parser.add_argument('--model_path', default=None)
+    parser.add_argument('--enable_automatic_punctuation', action='store_true')
     args = parser.parse_args()
 
-    o = create(access_key=args.access_key, library_path=args.library_path, model_path=args.model_path)
+    o = create(
+        access_key=args.access_key,
+        model_path=args.model_path,
+        library_path=args.library_path,
+        enable_automatic_punctuation=args.enable_automatic_punctuation)
 
     recorder = None
 
