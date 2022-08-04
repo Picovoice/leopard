@@ -137,12 +137,12 @@ class Leopard(object):
         library = cdll.LoadLibrary(library_path)
 
         init_func = library.pv_leopard_init
-        init_func.argtypes = [c_char_p, c_char_p, c_bool, enable_automatic_punctuation, POINTER(POINTER(self.CLeopard))]
+        init_func.argtypes = [c_char_p, c_char_p, c_bool, POINTER(POINTER(self.CLeopard))]
         init_func.restype = self.PicovoiceStatuses
 
         self._handle = POINTER(self.CLeopard)()
 
-        status = init_func(access_key.encode(), model_path.encode(), byref(self._handle))
+        status = init_func(access_key.encode(), model_path.encode(), enable_automatic_punctuation, byref(self._handle))
         if status is not self.PicovoiceStatuses.SUCCESS:
             raise self._PICOVOICE_STATUS_TO_EXCEPTION[status]()
 
@@ -213,7 +213,7 @@ class Leopard(object):
         words = list()
         for i in range(num_words.value):
             word = self.Word(
-                word=c_words[i].word.value.decode('utf-8'),
+                word=c_words[i].word.decode('utf-8'),
                 start_sec=c_words[i].start_sec,
                 end_sec=c_words[i].end_sec,
                 confidence=c_words[i].confidence)
@@ -256,7 +256,7 @@ class Leopard(object):
         words = list()
         for i in range(num_words.value):
             word = self.Word(
-                word=c_words[i].word.value.decode('utf-8'),
+                word=c_words[i].word.decode('utf-8'),
                 start_sec=c_words[i].start_sec,
                 end_sec=c_words[i].end_sec,
                 confidence=c_words[i].confidence)
