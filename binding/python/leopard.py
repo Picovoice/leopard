@@ -11,8 +11,8 @@
 
 import os
 import pathlib
-from ctypes import *
 from collections import namedtuple
+from ctypes import *
 from enum import Enum
 from typing import *
 
@@ -98,7 +98,18 @@ class Leopard(object):
         PicovoiceStatuses.ACTIVATION_REFUSED: LeopardActivationRefusedError
     }
 
-    _VALID_EXTENSIONS = ('.flac', '.mp3', '.ogg', '.opus', '.wav', '.webm')
+    _VALID_EXTENSIONS = (
+        "3gp",
+        "flac",
+        "m4a",
+        "mp3",
+        "mp4",
+        "ogg",
+        "opus",
+        "vorbis",
+        "wav",
+        "webm",
+    )
 
     class CLeopard(Structure):
         pass
