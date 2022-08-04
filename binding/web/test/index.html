@@ -6,7 +6,8 @@
   <script src="../dist/iife/index.js"></script>
   <script src="./leopard_params.js"></script>
   <script type="application/javascript">
-    const expected = "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel.";
+    const expected = "Mr Quilter is the apostle of the middle classes and we are glad to welcome his gospel";
+    const expectedPunctuation = "Mr Quilter is the apostle of the middle classes and we are glad to welcome his gospel";
     const expectedWords = [
       {word: 'Mr'       , startSec: 0.576, endSec: 0.800, confidence: 0.954},
       {word: 'quilter'  , startSec: 0.864, endSec: 1.184, confidence: 0.800},
@@ -123,10 +124,9 @@
 
       try {
         writeMessage("Checking Leopard 'fromPublicDirectory'");
-        let handle = await LeopardWeb.Leopard.fromPublicDirectory(accessKey, "leopard_params.pv", { forceWrite: true });
+        let handle = await LeopardWeb.Leopard.fromPublicDirectory(accessKey, "leopard_params.pv", { forceWrite: true, enableAutomaticPunctuation: true });
         let result = await handle.process(pcm);
-        console.log(result.transcription)
-        assertEquals(expected, result.transcription, 'Failed to transcribe audio file');
+        assertEquals(expectedPunctuation, result.transcription, 'Failed to transcribe audio file');
         assertDeepEquals(expectedWords, result.words);
         handle.release()
         writeMessage("Checking Leopard 'fromPublicDirectory'... done!");
