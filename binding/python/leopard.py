@@ -191,7 +191,7 @@ class Leopard(object):
         :param pcm: Audio data. The audio needs to have a sample rate equal to `.sample_rate` and be 16-bit
         linearly-encoded. This function operates on single-channel audio. If you wish to process data in a different
         sample rate or format consider using `.process_file`.
-        :return: Inferred transcription.
+        :return: Inferred transcription and sequence of transcribed words and their associated metadata.
         """
 
         if len(pcm) == 0:
@@ -230,7 +230,7 @@ class Leopard(object):
 
         :param audio_path: Absolute path to the audio file. The file needs to have a sample rate equal to or greater
         than `.sample_rate`. The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`, `Vorbis`, `WAV`, and `WebM`.
-        :return: Inferred transcription.
+        :return: Inferred transcription and sequence of transcribed words and their associated metadata.
         """
 
         if not os.path.exists(audio_path):
