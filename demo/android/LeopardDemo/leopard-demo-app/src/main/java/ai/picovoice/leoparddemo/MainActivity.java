@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
     private Leopard leopard;
 
     private enum UIState {
-        INTRO,
         RECORDING,
         TRANSCRIBING,
         RESULTS,
