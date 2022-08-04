@@ -84,7 +84,7 @@
       }
     }
 
-    function assertDeepEquals(expected, actual, epsilon=0.001) {
+    function assertDeepEquals(expected, actual, epsilon=0.005) {
       expected.forEach(obj => {
         Object.keys(obj).forEach((key, i) => {
           const e = expected[i];
