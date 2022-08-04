@@ -33,7 +33,8 @@ mod tests {
         let audio_file = BufReader::new(File::open(&audio_path).expect(&audio_path));
         let source = Decoder::new(audio_file).unwrap();
 
-        let leopard = LeopardBuilder::new(access_key)
+        let leopard = LeopardBuilder::new()
+            .access_key(access_key)
             .init()
             .expect("Unable to create Leopard");
 
@@ -41,8 +42,37 @@ mod tests {
         let result = leopard.process(&source.collect_vec());
 
         assert_eq!(
-            result.unwrap(),
-            "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL"
+            result.unwrap().transcript,
+            "Mr quilter is the apostle of the middle classes and we are glad to welcome his gospel"
+        )
+    }
+
+    #[test]
+    fn test_process_punctuation() {
+        let access_key = env::var("PV_ACCESS_KEY")
+            .expect("Pass the AccessKey in using the PV_ACCESS_KEY env variable");
+
+        let audio_path = format!(
+            "{}{}",
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../resources/audio_samples/test.wav",
+        );
+
+        let audio_file = BufReader::new(File::open(&audio_path).expect(&audio_path));
+        let source = Decoder::new(audio_file).unwrap();
+
+        let leopard = LeopardBuilder::new()
+            .access_key(access_key)
+            .enable_automatic_punctuation(true)
+            .init()
+            .expect("Unable to create Leopard");
+
+        assert_eq!(leopard.sample_rate(), source.sample_rate());
+        let result = leopard.process(&source.collect_vec());
+
+        assert_eq!(
+            result.unwrap().transcript,
+            "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel."
         )
     }
 
@@ -57,14 +87,15 @@ mod tests {
             "/../../resources/audio_samples/test.wav",
         );
 
-        let leopard = LeopardBuilder::new(access_key)
+        let leopard = LeopardBuilder::new()
+            .access_key(access_key)
             .init()
             .expect("Unable to create Leopard");
         let result = leopard.process_file(&audio_path);
 
         assert_eq!(
-            result.unwrap(),
-            "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL"
+            result.unwrap().transcript,
+            "Mr quilter is the apostle of the middle classes and we are glad to welcome his gospel"
         )
     }
 
@@ -73,7 +104,8 @@ mod tests {
         let access_key = env::var("PV_ACCESS_KEY")
             .expect("Pass the AccessKey in using the PV_ACCESS_KEY env variable");
 
-        let leopard = LeopardBuilder::new(access_key)
+        let leopard = LeopardBuilder::new()
+            .access_key(access_key)
             .init()
             .expect("Unable to create Leopard");
 
