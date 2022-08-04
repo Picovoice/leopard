@@ -31,14 +31,14 @@ cmake --build demo/c/build
 Running the demo without arguments prints the usage:
 
 ```console
-usage: -a ACCESS_KEY -l LIBRARY_PATH -m MODEL_PATH [-p] [-v] audio_path0 audio_path1 ...
+usage: -a ACCESS_KEY -l LIBRARY_PATH -m MODEL_PATH [-d] [-v] audio_path0 audio_path1 ...
 ```
 
 Run the command corresponding to your platform from the root of the repository. Replace `${ACCESS_KEY}` with yours
 obtained from [Picovoice Console](https://console.picovoice.ai/) and `${AUDIO_PATH}` with the path to an audio file you
 want to transcribe.
 
-Use the `-p` flag to disable automatic punctuation.
+Use the `-d` flag to disable automatic punctuation.
 
 Use the `-v` flag to enable the printing of word metadata.
 
