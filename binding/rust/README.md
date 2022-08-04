@@ -57,13 +57,13 @@ use leopard::LeopardBuilder;
 let access_key = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
 
 let leopard: Leopard = LeopardBuilder::new(access_key).init().expect("Unable to create Leopard");
-if let Ok(transcript) = leopard.process_file("${AUDIO_PATH}") {
-    println!("{}", transcript);
+if let Ok(leopard_transcript) = leopard.process_file("${AUDIO_PATH}") {
+    println!("{}", leopard_transcript.transcript);
 }
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
-`${AUDIO_PATH}` to the path an audio file. 
+`${AUDIO_PATH}` to the path an audio file.
 
 The model file contains the parameters for the Leopard engine. You may create bespoke language models using [Picovoice Console](https://console.picovoice.ai/) and then pass in the relevant file.
 
