@@ -14,35 +14,97 @@ package ai.picovoice.leoparddemo;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Process;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import ai.picovoice.leopard.*;
+import ai.picovoice.leopard.Leopard;
+import ai.picovoice.leopard.LeopardActivationException;
+import ai.picovoice.leopard.LeopardActivationLimitException;
+import ai.picovoice.leopard.LeopardActivationRefusedException;
+import ai.picovoice.leopard.LeopardActivationThrottledException;
+import ai.picovoice.leopard.LeopardException;
+import ai.picovoice.leopard.LeopardInvalidArgumentException;
+import ai.picovoice.leopard.LeopardTranscript;
 
 public class MainActivity extends AppCompatActivity {
     private static final String ACCESS_KEY = "${YOUR_ACCESS_KEY_HERE}";
-
-    public static final int maxRecordingLength = 120;
+    private static final String MODEL_FILE = "leopard_params.pv";
+    private static final int maxRecordingLength = 120;
 
     private final MicrophoneReader microphoneReader = new MicrophoneReader();
-    final private ArrayList<Short> pcmData = new ArrayList<>();
-    public Leopard leopard;
+    private final ArrayList<Short> pcmData = new ArrayList<>();
+
+    private Leopard leopard;
+
+    private enum UIState {
+        INTRO,
+        RECORDING,
+        TRANSCRIBING,
+        RESULTS,
+        ERROR
+    }
+
+    private void setUIState(UIState state) {
+        runOnUiThread(() -> {
+            TextView errorText = findViewById(R.id.errorTextView);
+            TextView recordingTextView = findViewById(R.id.recordingTextView);
+            TextView transcriptTextView = findViewById(R.id.transcriptTextView);
+            ToggleButton recordButton = findViewById(R.id.recordButton);
+            LinearLayout verboseResultsLayout = findViewById(R.id.verboseResultsLayout);
+
+            switch (state) {
+                case RECORDING:
+                    errorText.setVisibility(View.INVISIBLE);
+                    verboseResultsLayout.setVisibility(View.INVISIBLE);
+                    transcriptTextView.setVisibility(View.INVISIBLE);
+                    recordingTextView.setText("Recording...");
+                    recordButton.setEnabled(true);
+                    break;
+                case TRANSCRIBING:
+                    errorText.setVisibility(View.INVISIBLE);
+                    verboseResultsLayout.setVisibility(View.INVISIBLE);
+                    transcriptTextView.setVisibility(View.INVISIBLE);
+                    recordingTextView.setText("Transcribing audio...");
+                    recordButton.setEnabled(false);
+                    break;
+                case RESULTS:
+                    errorText.setVisibility(View.INVISIBLE);
+                    verboseResultsLayout.setVisibility(View.VISIBLE);
+                    transcriptTextView.setVisibility(View.VISIBLE);
+                    recordButton.setEnabled(true);
+                    break;
+                case ERROR:
+                    verboseResultsLayout.setVisibility(View.INVISIBLE);
+                    transcriptTextView.setVisibility(View.INVISIBLE);
+                    recordButton.setEnabled(false);
+                    break;
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +112,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.leopard_demo);
 
         try {
-            String modelPath = "leopard_params.pv";
-            leopard = new Leopard.Builder().setAccessKey(ACCESS_KEY).setModelPath(modelPath).build(getApplicationContext());
+            leopard = new Leopard.Builder()
+                    .setAccessKey(ACCESS_KEY)
+                    .setModelPath(MODEL_FILE)
+                    .setEnableAutomaticPunctuation(true)
+                    .build(getApplicationContext());
         } catch (LeopardInvalidArgumentException e) {
             displayError(String.format("(%s)\n Ensure your AccessKey '%s' is valid", e.getMessage(), ACCESS_KEY));
         } catch (LeopardActivationException e) {
@@ -74,6 +139,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayError(String message) {
+        setUIState(UIState.ERROR);
+
         TextView errorText = findViewById(R.id.errorTextView);
         errorText.setText(message);
         errorText.setVisibility(View.VISIBLE);
@@ -98,8 +165,7 @@ public class MainActivity extends AppCompatActivity {
             ToggleButton toggleButton = findViewById(R.id.recordButton);
             toggleButton.toggle();
         } else {
-            TextView recordingTextView = findViewById(R.id.recordingTextView);
-            recordingTextView.setText("Recording...");
+            setUIState(UIState.RECORDING);
             microphoneReader.start();
         }
     }
@@ -107,8 +173,6 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
     public void onRecordClick(View view) {
         ToggleButton recordButton = findViewById(R.id.recordButton);
-        TextView recordingTextView = findViewById(R.id.recordingTextView);
-        TextView transcriptTextView = findViewById(R.id.transcriptTextView);
 
         if (leopard == null) {
             displayError("Leopard is not initialized");
@@ -116,35 +180,106 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        try {
-            if (recordButton.isChecked()) {
-                if (hasRecordPermission()) {
-                    microphoneReader.start();
-                } else {
-                    requestRecordPermission();
-                }
+        if (recordButton.isChecked()) {
+            if (hasRecordPermission()) {
+                microphoneReader.start();
             } else {
+                requestRecordPermission();
+            }
+        } else {
+            try {
                 microphoneReader.stop();
-                recordingTextView.setText("Transcribing, please wait...");
+            } catch (InterruptedException e) {
+                displayError("Audio stop command interrupted\n" + e);
+            }
 
+            setUIState(UIState.TRANSCRIBING);
+
+            new Thread(() -> {
                 short[] pcmDataArray = new short[pcmData.size()];
                 for (int i = 0; i < pcmData.size(); ++i) {
                     pcmDataArray[i] = pcmData.get(i);
                 }
 
-                long transcribeStart = System.currentTimeMillis();
-                String transcript = leopard.process(pcmDataArray);
-                long transcribeEnd = System.currentTimeMillis();
+                try {
+                    long transcribeStart = System.currentTimeMillis();
+                    LeopardTranscript transcript = leopard.process(pcmDataArray);
+                    long transcribeEnd = System.currentTimeMillis();
 
-                float transcribeTime = (transcribeEnd - transcribeStart) / 1000f;
+                    float transcribeTime = (transcribeEnd - transcribeStart) / 1000f;
 
-                transcriptTextView.setText(transcript);
-                recordingTextView.setText(String.format("Transcribed %d(s) of audio in %.1f(s).", pcmData.size() / leopard.getSampleRate(), transcribeTime));
+                    runOnUiThread(() -> {
+                        setUIState(UIState.RESULTS);
+
+                        TextView transcriptTextView = findViewById(R.id.transcriptTextView);
+                        transcriptTextView.setText(transcript.getTranscriptString());
+
+                        TextView recordingTextView = findViewById(R.id.recordingTextView);
+                        recordingTextView.setText(String.format(
+                                "Transcribed %d(s) of audio in %.1f(s).",
+                                pcmData.size() / leopard.getSampleRate(),
+                                transcribeTime));
+
+                        RecyclerView verboseResultsView = findViewById(R.id.verboseResultsView);
+                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
+                        verboseResultsView.setLayoutManager(linearLayoutManager);
+
+                        VerboseResultsViewAdaptor searchResultsViewAdaptor = new VerboseResultsViewAdaptor(
+                                getApplicationContext(),
+                                Arrays.asList(transcript.getWordArray()));
+                        verboseResultsView.setAdapter(searchResultsViewAdaptor);
+                    });
+                } catch (LeopardException e) {
+                    runOnUiThread(() -> displayError("Audio failed\n" + e));
+                }
+            }).start();
+        }
+    }
+
+    private static class VerboseResultsViewAdaptor extends RecyclerView.Adapter<VerboseResultsViewAdaptor.ViewHolder> {
+        final private List<LeopardTranscript.Word> data;
+        final private LayoutInflater inflater;
+
+        VerboseResultsViewAdaptor(Context context, List<LeopardTranscript.Word> data) {
+            this.inflater = LayoutInflater.from(context);
+            this.data = data;
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = inflater.inflate(R.layout.recyclerview_row, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @SuppressLint("DefaultLocale")
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            LeopardTranscript.Word word = data.get(position);
+            holder.word.setText(word.getWord());
+            holder.startSec.setText(String.format("%.2fs", word.getStartSec()));
+            holder.endSec.setText(String.format("%.2fs", word.getEndSec()));
+            holder.confidence.setText(String.format("%.0f%%", word.getConfidence() * 100));
+        }
+
+        @Override
+        public int getItemCount() {
+            return data.size();
+        }
+
+        public static class ViewHolder extends RecyclerView.ViewHolder {
+            TextView word;
+            TextView startSec;
+            TextView endSec;
+            TextView confidence;
+
+            ViewHolder(View itemView) {
+                super(itemView);
+                word = itemView.findViewById(R.id.word);
+                startSec = itemView.findViewById(R.id.startSec);
+                endSec = itemView.findViewById(R.id.endSec);
+                confidence = itemView.findViewById(R.id.confidence);
             }
-        } catch (InterruptedException e) {
-            displayError("Audio stop command interrupted\n" + e.toString());
-        } catch (LeopardException e) {
-            displayError("Audio failed\n" + e.toString());
         }
     }
 
