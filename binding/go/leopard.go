@@ -66,18 +66,43 @@ func (e *LeopardError) Error() string {
 }
 
 // Leopard struct
-type Leopard struct {
+type pvLeopard struct {
 	// handle for leopard instance in C
 	handle unsafe.Pointer
 
 	// AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).
 	AccessKey string
 
+	// Absolute path to the file containing model parameters.
+	ModelPath string
+
 	// Absolute path to the Leopard's dynamic library.
 	LibraryPath string
 
-	// Absolute path to the file containing model parameters.
-	ModelPath string
+	// Flag to enable automatic punctuation insertion.
+	EnableAutomaticPunctuation bool
+}
+
+type LeopardWord struct {
+	// Transcribed word
+	Word string
+
+	// Start of word in seconds.
+	StartSec float32
+
+	// End of word in seconds.
+	EndSec float32
+
+	// Transcription confidence. It is a number within [0, 1].
+	Confidence float32
+}
+
+type LeopardTranscript struct {
+	// Inferred transcription.
+	Transcript string
+
+	// Transcribed words and their associated metadata.
+	Words []LeopardWord
 }
 
 // private vars
@@ -100,12 +125,26 @@ var (
 	Version string
 )
 
+// Returns a Leopard struct with default parameters
+func NewLeopard(accessKey string) pvLeopard {
+	return pvLeopard{
+		AccessKey:                  accessKey,
+		ModelPath:                  defaultModelFile,
+		LibraryPath:                defaultLibPath,
+		EnableAutomaticPunctuation: false,
+	}
+}
+
 // Init function for Leopard. Must be called before attempting process
-func (leopard *Leopard) Init() error {
+func (leopard *pvLeopard) Init() error {
 	if leopard.AccessKey == "" {
 		return &LeopardError{
 			INVALID_ARGUMENT,
 			"No AccessKey provided to Leopard"}
+	}
+
+	if leopard.ModelPath == "" {
+		leopard.ModelPath = defaultModelFile
 	}
 
 	if leopard.LibraryPath == "" {
@@ -116,10 +155,6 @@ func (leopard *Leopard) Init() error {
 		return &LeopardError{
 			INVALID_ARGUMENT,
 			fmt.Sprintf("Specified library file could not be found at %s", leopard.LibraryPath)}
-	}
-
-	if leopard.ModelPath == "" {
-		leopard.ModelPath = defaultModelFile
 	}
 
 	if _, err := os.Stat(leopard.ModelPath); os.IsNotExist(err) {
@@ -142,7 +177,7 @@ func (leopard *Leopard) Init() error {
 }
 
 // Releases resources acquired by Leopard.
-func (leopard *Leopard) Delete() error {
+func (leopard *pvLeopard) Delete() error {
 	if leopard.handle == nil {
 		return &LeopardError{
 			INVALID_STATE,
@@ -158,62 +193,69 @@ func (leopard *Leopard) Delete() error {
 // linearly-encoded. This function operates on single-channel audio. If you wish
 // to process data in a different sample rate or format consider using `ProcessFile`.
 // Returns the inferred transcription.
-func (leopard *Leopard) Process(pcm []int16) (string, error) {
+func (leopard *pvLeopard) Process(pcm []int16) (LeopardTranscript, error) {
+	emptyResult := LeopardTranscript{
+		Transcript: "",
+		Words:      nil,
+	}
 	if leopard.handle == nil {
-		return "", &LeopardError{
+		return emptyResult, &LeopardError{
 			INVALID_STATE,
 			"Leopard has not been initialized or has already been deleted"}
 	}
 
 	if len(pcm) == 0 {
-		return "", &LeopardError{
+		return emptyResult, &LeopardError{
 			INVALID_ARGUMENT,
 			"Audio data must not be empty"}
 	}
 
-	ret, transcript := nativeLeopard.nativeProcess(leopard, pcm)
+	ret, result := nativeLeopard.nativeProcess(leopard, pcm)
 	if PvStatus(ret) != SUCCESS {
-		return "", &LeopardError{
+		return emptyResult, &LeopardError{
 			PvStatus(ret),
 			"Leopard process failed."}
 	}
 
-	return transcript, nil
+	return result, nil
 }
 
 // Processes a given audio file and returns its transcription.
-// The file needs to have a sample rate equal to or greater than `SampleRate`.
-// The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`, `Vorbis`, `WAV`, and `WebM`.
+// The supported formats are: `3gp (AMR)`, `FLAC`, `MP3`, `MP4/m4a (AAC)`, `Ogg`, `WAV`, `WebM`.
 // Returns the inferred transcription.
-func (leopard *Leopard) ProcessFile(audioPath string) (string, error) {
+func (leopard *pvLeopard) ProcessFile(audioPath string) (LeopardTranscript, error) {
+	emptyResult := LeopardTranscript{
+		Transcript: "",
+		Words:      nil,
+	}
 	if leopard.handle == nil {
-		return "", &LeopardError{
+		return emptyResult, &LeopardError{
 			INVALID_STATE,
 			"Leopard has not been initialized or has already been deleted"}
 	}
 
 	if _, err := os.Stat(audioPath); os.IsNotExist(err) {
-		return "", &LeopardError{
+		return emptyResult, &LeopardError{
 			INVALID_ARGUMENT,
 			fmt.Sprintf("Specified file could not be found at '%s'", audioPath)}
 	}
 
-	ret, transcript := nativeLeopard.nativeProcessFile(leopard, audioPath)
+	ret, result := nativeLeopard.nativeProcessFile(leopard, audioPath)
 	if ret != SUCCESS {
 		if ret == INVALID_ARGUMENT {
 			fileExtension := filepath.Ext(audioPath)
 			if !validExtensions.includes(fileExtension) {
-				return "", &LeopardError{
+				return emptyResult, &LeopardError{
 					INVALID_ARGUMENT,
 					fmt.Sprintf("Specified file with extension '%s' is not supported", fileExtension)}
 			}
 		}
-		return "", &LeopardError{
+		return emptyResult, &LeopardError{
 			PvStatus(ret),
 			"Leopard process failed."}
 	}
 
-	return transcript, nil
+	return result, nil
 }
 
 func pvStatusToString(status PvStatus) string {
@@ -253,7 +295,18 @@ func (le *leopardExts) includes(extension string) bool {
 }
 
 func getExtensions() leopardExts {
-	extensions := []string{".flac", ".mp3", ".ogg", ".opus", ".wav", ".webm"}
+	extensions := []string{
+		"3gp",
+		"flac",
+		"m4a",
+		"mp3",
+		"mp4",
+		"ogg",
+		"opus",
+		"vorbis",
+		"wav",
+		"webm",
+	}
 	exts := make(map[string]struct{})
 	for _, ext := range extensions {
 		exts[ext] = struct{}{}

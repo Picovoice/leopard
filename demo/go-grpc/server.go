@@ -28,7 +28,7 @@ func (s *leopardServer) GetTranscriptionFile(stream messaging.LeopardService_Get
 
     log.Printf("Received a new request (ID: %s)", id.String())
     defer log.Printf("Returned a response to the request (ID: %s)", id.String())
-    engine := leopard.Leopard{AccessKey: s.accessKey}
+    engine := leopard.NewLeopard(s.accessKey)
     error := engine.Init()
     if error != nil {
         log.Printf("Failed to initialize: %v\n", err)
@@ -37,7 +37,7 @@ func (s *leopardServer) GetTranscriptionFile(stream messaging.LeopardService_Get
     defer engine.Delete()
 
     var audio []byte = make([]byte, 0)
-    var transcription string = ""
+    var res leopard.LeopardTranscript
     var statusCode messaging.StatusCode = messaging.StatusCode_Failed
 
     for !is_done {
@@ -54,7 +54,7 @@ func (s *leopardServer) GetTranscriptionFile(stream messaging.LeopardService_Get
                 log.Printf("Failed to write into the temp file: %v\n", err)
                 break
             }
-            transcription, err = engine.ProcessFile(f.Name())
+            res, err = engine.ProcessFile(f.Name())
             if err != nil {
                 log.Printf("Failed to transcript the audio: %v\n", err)
                 break
@@ -66,7 +66,7 @@ func (s *leopardServer) GetTranscriptionFile(stream messaging.LeopardService_Get
         }
     }
     return stream.SendAndClose(&messaging.TranscriptResponse{
-        Transcript: transcription,
+        Transcript: res.Transcript,
         Code:       statusCode,
     })
 }
