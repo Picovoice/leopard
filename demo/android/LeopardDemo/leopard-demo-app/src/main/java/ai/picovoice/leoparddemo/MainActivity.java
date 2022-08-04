@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                     .setEnableAutomaticPunctuation(true)
                     .build(getApplicationContext());
         } catch (LeopardInvalidArgumentException e) {
-            displayError(String.format("(%s)\n Ensure your AccessKey '%s' is valid", e.getMessage(), ACCESS_KEY));
+            displayError(String.format("%s\nEnsure your AccessKey '%s' is valid", e.getMessage(), ACCESS_KEY));
         } catch (LeopardActivationException e) {
             displayError("AccessKey activation error");
         } catch (LeopardActivationLimitException e) {
@@ -182,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (recordButton.isChecked()) {
             if (hasRecordPermission()) {
+                setUIState(UIState.RECORDING);
                 microphoneReader.start();
             } else {
                 requestRecordPermission();
@@ -216,8 +217,8 @@ public class MainActivity extends AppCompatActivity {
 
                         TextView recordingTextView = findViewById(R.id.recordingTextView);
                         recordingTextView.setText(String.format(
-                                "Transcribed %d(s) of audio in %.1f(s).",
-                                pcmData.size() / leopard.getSampleRate(),
+                                "Transcribed %.1f(s) of audio in %.1f(s).",
+                                pcmData.size() / (float)leopard.getSampleRate(),
                                 transcribeTime));
 
                         RecyclerView verboseResultsView = findViewById(R.id.verboseResultsView);
