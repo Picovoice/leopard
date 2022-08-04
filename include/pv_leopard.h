@@ -60,15 +60,6 @@ typedef struct {
     float start_sec; /** Start of word in seconds. */
     float end_sec; /** End of word in seconds. */
     float confidence; /** Transcription confidence. It is a number within [0, 1]. */
-
-#ifdef __PV_DUMP__
-
-    int32_t num_phoneme;
-    float acoustic_cost;
-    float lm_cost;
-
-#endif
-
 } pv_word_t;
 
 /**
