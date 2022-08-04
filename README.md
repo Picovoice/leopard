@@ -519,10 +519,10 @@ Create an instance of the engine using `LeopardBuilder` instance and transcribe 
 use leopard::LeopardBuilder;
 
 let access_key = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
-let leopard: Leopard = LeopardBuilder::new(access_key).init().expect("Unable to create Leopard");
+let leopard: Leopard = LeopardBuilder::new().access_key(access_key).init().expect("Unable to create Leopard");
 
-if let Ok(transcript) = leopard.process_file("/absolute/path/to/audio_file") {
-    println!("{}", transcript);
+if let Ok(leopard_transcript) = leopard.process_file("/absolute/path/to/audio_file") {
+    println!("{}", leopard_transcript.transcript);
 }
 ```
 
