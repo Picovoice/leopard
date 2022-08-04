@@ -8,30 +8,30 @@
 */
 
 export type LeopardWord = {
-    /** Transcribed word. */
-    word: string;
-    /** Start of word in seconds. */
-    startSec: number;
-    /** End of word in seconds. */
-    endSec: number;
-    /** Transcription confidence. It is a number within [0, 1]. */
-    confidence: number;
+  /** Transcribed word. */
+  word: string;
+  /** Start of word in seconds. */
+  startSec: number;
+  /** End of word in seconds. */
+  endSec: number;
+  /** Transcription confidence. It is a number within [0, 1]. */
+  confidence: number;
 }
 
 export type LeopardTranscription = {
-    /** Inferred transcription. */
-    transcript: string;
-    /** Transcribed words and their associated metadata. */
-    words: LeopardWord[];
+  /** Inferred transcription. */
+  transcript: string;
+  /** Transcribed words and their associated metadata. */
+  words: LeopardWord[];
 }
 
 export type LeopardInitConfig = {
-    enableAutomaticPunctuation?: boolean;
+  enableAutomaticPunctuation?: boolean;
 }
 
 export type LeopardInputConfig = {
-    modelPath?: string;
-    libraryPath?: string;
+  modelPath?: string;
+  libraryPath?: string;
 }
 
 export type LeopardConfig = LeopardInitConfig & LeopardInputConfig;

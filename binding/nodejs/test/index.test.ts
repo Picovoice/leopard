@@ -12,13 +12,14 @@
 
 import {
   Leopard,
-  LeopardInvalidArgumentError } from "../src";
+  LeopardInvalidArgumentError
+} from "../src";
 
 import * as fs from "fs";
 import * as path from "path";
-import { WaveFile } from "wavefile";
+import {WaveFile} from "wavefile";
 
-import { getSystemLibraryPath } from "../src/platforms";
+import {getSystemLibraryPath} from "../src/platforms";
 
 const MODEL_PATH = "./lib/common/leopard_params.pv";
 
@@ -70,8 +71,8 @@ describe("Defaults", () => {
 describe("manual paths", () => {
   test("manual model path", () => {
     let leopardEngine = new Leopard(
-        ACCESS_KEY,
-        {'modelPath':MODEL_PATH});
+      ACCESS_KEY,
+      {'modelPath': MODEL_PATH});
 
     const waveFilePath = path.join(__dirname, WAV_PATH);
     let res = leopardEngine.processFile(waveFilePath);
@@ -83,8 +84,8 @@ describe("manual paths", () => {
 
   test("manual model and library path", () => {
     let leopardEngine = new Leopard(
-        ACCESS_KEY,
-        {'modelPath':MODEL_PATH, 'libraryPath':libraryPath, 'enableAutomaticPunctuation':false});
+      ACCESS_KEY,
+      {modelPath: MODEL_PATH, libraryPath: libraryPath, enableAutomaticPunctuation: false});
 
     const waveFilePath = path.join(__dirname, WAV_PATH);
     let res = leopardEngine.processFile(waveFilePath);
@@ -96,8 +97,8 @@ describe("manual paths", () => {
 
   test("Enable automatic punctuation", () => {
     let leopardEngine = new Leopard(
-        ACCESS_KEY,
-        {'modelPath':MODEL_PATH, 'libraryPath':libraryPath, 'enableAutomaticPunctuation':true});
+      ACCESS_KEY,
+      {modelPath: MODEL_PATH, libraryPath: libraryPath, enableAutomaticPunctuation: true});
 
     const waveFilePath = path.join(__dirname, WAV_PATH);
     let res = leopardEngine.processFile(waveFilePath);
@@ -108,7 +109,7 @@ describe("manual paths", () => {
   });
 
   test("Words info", () => {
-    let leopardEngine = new Leopard(ACCESS_KEY, {'modelPath':MODEL_PATH});
+    let leopardEngine = new Leopard(ACCESS_KEY, {modelPath: MODEL_PATH});
 
     const waveFilePath = path.join(__dirname, WAV_PATH);
     let res = leopardEngine.processFile(waveFilePath);

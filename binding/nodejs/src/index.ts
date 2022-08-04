@@ -30,11 +30,11 @@ import {
 } from "./errors";
 
 import {
-    LeopardConfig,
-    LeopardInitConfig,
-    LeopardInputConfig,
-    LeopardWord,
-    LeopardTranscription,
+  LeopardConfig,
+  LeopardInitConfig,
+  LeopardInputConfig,
+  LeopardWord,
+  LeopardTranscription,
 } from "./types";
 
 export {

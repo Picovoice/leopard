@@ -25,7 +25,7 @@ import {
   LeopardConfig
 } from "./types";
 
-import { getSystemLibraryPath } from "./platforms";
+import {getSystemLibraryPath} from "./platforms";
 
 const DEFAULT_MODEL_PATH = "../lib/common/leopard_params.pv";
 
@@ -69,8 +69,8 @@ export class Leopard {
    * @param {boolean} options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
    */
   constructor(
-      accessKey: string,
-      options: LeopardConfig = {}) {
+    accessKey: string,
+    options: LeopardConfig = {}) {
 
     if (
       accessKey === null ||
@@ -83,7 +83,8 @@ export class Leopard {
     const {
       modelPath = path.resolve(__dirname, DEFAULT_MODEL_PATH),
       libraryPath = getSystemLibraryPath(),
-      enableAutomaticPunctuation = false} = options;
+      enableAutomaticPunctuation = false
+    } = options;
 
     if (!fs.existsSync(libraryPath)) {
       throw new LeopardInvalidArgumentError(
