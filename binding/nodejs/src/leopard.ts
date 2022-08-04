@@ -83,8 +83,7 @@ export class Leopard {
     const {
       modelPath = path.resolve(__dirname, DEFAULT_MODEL_PATH),
       libraryPath = getSystemLibraryPath(),
-      enableAutomaticPunctuation = false
-    } = options;
+      enableAutomaticPunctuation = false} = options;
 
     if (!fs.existsSync(libraryPath)) {
       throw new LeopardInvalidArgumentError(
