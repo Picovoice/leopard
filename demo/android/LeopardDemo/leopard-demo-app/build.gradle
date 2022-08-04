@@ -69,7 +69,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation files('/home/ian/work/github/leopard/binding/android/leopard/build/outputs/aar/leopard-release.aar')
+    implementation 'ai.picovoice:leopard-android:1.1.0'
 
     // Espresso UI Testing
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
