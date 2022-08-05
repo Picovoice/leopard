@@ -15,7 +15,7 @@ public struct LeopardWord {
     public let endSec: Float
     public let confidence: Float
 
-    internal init(word: String, startSec: Float, endSec: Float, confidence: Float) {
+    public init(word: String, startSec: Float, endSec: Float, confidence: Float) {
         self.word = word
         self.startSec = startSec
         self.endSec = endSec
@@ -49,7 +49,7 @@ public class Leopard {
     ///   - modelPath: Absolute path to file containing model parameters.
     ///   - enableAutomaticPunctuation: Set to `true` to enable automatic punctuation insertion.
     /// - Throws: LeopardError
-    public init(accessKey: String, modelPath: String, enableAutomaticPunctuation: bool = false) throws {
+    public init(accessKey: String, modelPath: String, enableAutomaticPunctuation: Bool = false) throws {
 
         if accessKey.count == 0 {
             throw LeopardInvalidArgumentError("AccessKey is required for Leopard initialization")
@@ -75,8 +75,8 @@ public class Leopard {
     ///   - modelURL: URL file containing model parameters.
     ///   - enableAutomaticPunctuation: Set to `true` to enable automatic punctuation insertion.
     /// - Throws: LeopardError
-    public convenience init(accessKey: String, modelURL: URL, enableAutomaticPunctuation: bool = false) throws {
-        try self.init(accessKey: accessKey, modelPath: modelURL.path, enableAutomaticPunctuation)
+    public convenience init(accessKey: String, modelURL: URL, enableAutomaticPunctuation: Bool = false) throws {
+        try self.init(accessKey: accessKey, modelPath: modelURL.path, enableAutomaticPunctuation: enableAutomaticPunctuation)
     }
 
     deinit {
@@ -109,25 +109,25 @@ public class Leopard {
         }
 
         var cTranscript: UnsafeMutablePointer<Int8>?
-        var numWords: Int32
+        var numWords: Int32 = 0
         var cWords: UnsafeMutablePointer<pv_word_t>?
         let status = pv_leopard_process(
                 self.handle,
                 pcm,
                 Int32(pcm.count),
                 &cTranscript,
-                numWords,
+                &numWords,
                 &cWords)
         try checkStatus(status, "Leopard process failed")
 
         let transcript = String(cString: cTranscript!)
         cTranscript?.deallocate()
 
-        var words = [Word]()
+        var words = [LeopardWord]()
         if numWords > 0 {
-            for cWord in UnsafeBufferPointer(start: cWords, count: numWords) {
-                let word = Word(
-                        word: String(cString: cWords.word),
+            for cWord in UnsafeBufferPointer(start: cWords, count: Int(numWords)) {
+                let word = LeopardWord(
+                        word: String(cString: cWord.word),
                         startSec: Float(cWord.start_sec),
                         endSec: Float(cWord.end_sec),
                         confidence: Float(cWord.confidence)
@@ -158,13 +158,13 @@ public class Leopard {
         }
 
         var cTranscript: UnsafeMutablePointer<Int8>?
-        var numWords: Int32
+        var numWords: Int32 = 0
         var cWords: UnsafeMutablePointer<pv_word_t>?
         let status = pv_leopard_process_file(
                 self.handle,
                 audioPathArg,
                 &cTranscript,
-                numWords,
+                &numWords,
                 &cWords)
         do {
             try checkStatus(status, "Leopard process failed")
@@ -180,11 +180,11 @@ public class Leopard {
         let transcript = String(cString: cTranscript!)
         cTranscript?.deallocate()
 
-        var words = [Word]()
+        var words = [LeopardWord]()
         if numWords > 0 {
-            for cWord in UnsafeBufferPointer(start: cWords, count: numWords) {
-                let word = Word(
-                        word: String(cString: cWords.word),
+            for cWord in UnsafeBufferPointer(start: cWords, count: Int(numWords)) {
+                let word = LeopardWord(
+                        word: String(cString: cWord.word),
                         startSec: Float(cWord.start_sec),
                         endSec: Float(cWord.end_sec),
                         confidence: Float(cWord.confidence)

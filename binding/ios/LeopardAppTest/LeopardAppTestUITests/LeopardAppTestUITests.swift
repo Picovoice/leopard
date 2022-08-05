@@ -13,19 +13,38 @@ import Leopard
 
 class LeopardAppTestUITests: XCTestCase {
     let accessKey: String = "{TESTING_ACCESS_KEY_HERE}"
-    let transcript: String = "MR QUILTER IS THE APOSTLE OF THE MIDDLE CLASSES AND WE ARE GLAD TO WELCOME HIS GOSPEL"
+    let transcript: String = "Mr quilter is the apostle of the middle classes and we are glad to welcome his gospel"
+    let transcriptWithPunctuation: String = "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel.";
 
-    var leopard: Leopard?
+    let expectedWords = [
+        LeopardWord(word: "Mr", startSec: 0.58, endSec: 0.80, confidence: 0.95),
+        LeopardWord(word: "quilter", startSec: 0.86, endSec: 1.18, confidence: 0.80),
+        LeopardWord(word: "is", startSec: 1.31, endSec: 1.38, confidence: 0.96),
+        LeopardWord(word: "the", startSec: 1.44, endSec: 1.50, confidence: 0.90),
+        LeopardWord(word: "apostle", startSec: 1.57, endSec: 2.08, confidence: 0.79),
+        LeopardWord(word: "of", startSec: 2.18, endSec: 2.24, confidence: 0.98),
+        LeopardWord(word: "the", startSec: 2.30, endSec: 2.34, confidence: 0.98),
+        LeopardWord(word: "middle", startSec: 2.40, endSec: 2.59, confidence: 0.97),
+        LeopardWord(word: "classes", startSec: 2.69, endSec: 3.17, confidence: 0.98),
+        LeopardWord(word: "and", startSec: 3.36, endSec: 3.46, confidence: 0.95),
+        LeopardWord(word: "we", startSec: 3.52, endSec: 3.55, confidence: 0.96),
+        LeopardWord(word: "are", startSec: 3.65, endSec: 3.65, confidence: 0.97),
+        LeopardWord(word: "glad", startSec: 3.74, endSec: 4.03, confidence: 0.93),
+        LeopardWord(word: "to", startSec: 4.10, endSec: 4.16, confidence: 0.97),
+        LeopardWord(word: "welcome", startSec: 4.22, endSec: 4.58, confidence: 0.89),
+        LeopardWord(word: "his", startSec: 4.67, endSec: 4.83, confidence: 0.96),
+        LeopardWord(word: "gospel", startSec: 4.93, endSec: 5.38, confidence: 0.93),
+    ]
+
+    let modelURL = Bundle(for: LeopardAppTestUITests.self).url(forResource: "leopard_params", withExtension: "pv")!
 
     override func setUp() {
         super.setUp()
-        let modelURL = Bundle(for: type(of: self)).url(forResource: "leopard_params", withExtension: "pv")!
-        leopard = try? Leopard(accessKey: accessKey, modelURL: modelURL)
     }
 
     override func tearDown() {
         super.tearDown()
-        leopard?.delete()
+
     }
 
     override func setUpWithError() throws {
@@ -33,6 +52,10 @@ class LeopardAppTestUITests: XCTestCase {
     }
 
     func testProcess() throws {
+        let leopard = try? Leopard(
+                accessKey: accessKey,
+                modelURL: modelURL)
+
         let bundle = Bundle(for: type(of: self))
         let fileURL: URL = bundle.url(forResource: "test", withExtension: "wav")!
         let data = try Data(contentsOf: fileURL)
@@ -41,28 +64,88 @@ class LeopardAppTestUITests: XCTestCase {
             data.copyBytes(to: $0, from: 0..<data.count)
         }
 
-        let res = try leopard?.process(pcmBuffer)
-        XCTAssertEqual(transcript, res)
+        let result = try leopard!.process(pcmBuffer)
+        leopard!.delete()
+        XCTAssertEqual(transcript, result.transcript)
+
+        XCTAssertEqual(expectedWords.count, result.words.count)
+        for i in 0..<result.words.count {
+            XCTAssertEqual(result.words[i].word, expectedWords[i].word)
+            XCTAssertEqual(result.words[i].startSec, expectedWords[i].startSec, accuracy: 0.1)
+            XCTAssertEqual(result.words[i].endSec, expectedWords[i].endSec, accuracy: 0.1)
+            XCTAssertEqual(result.words[i].confidence, expectedWords[i].confidence, accuracy: 0.1)
+        }
     }
 
     func testProcessFile() throws {
+        let leopard = try? Leopard(
+                accessKey: accessKey,
+                modelURL: modelURL)
+
         let bundle = Bundle(for: type(of: self))
         let filePath: String = bundle.path(forResource: "test", ofType: "wav")!
 
-        let res = try leopard?.processFile(filePath)
-        XCTAssertEqual(transcript, res)
+        let result = try leopard!.processFile(filePath)
+        leopard!.delete()
+        XCTAssertEqual(transcript, result.transcript)
+
+        XCTAssertEqual(expectedWords.count, result.words.count)
+        for i in 0..<result.words.count {
+            XCTAssertEqual(result.words[i].word, expectedWords[i].word)
+            XCTAssertEqual(result.words[i].startSec, expectedWords[i].startSec, accuracy: 0.1)
+            XCTAssertEqual(result.words[i].endSec, expectedWords[i].endSec, accuracy: 0.1)
+            XCTAssertEqual(result.words[i].confidence, expectedWords[i].confidence, accuracy: 0.1)
+        }
     }
 
     func testProcessURL() throws {
+        let leopard = try? Leopard(
+                accessKey: accessKey,
+                modelURL: modelURL)
+
         let bundle = Bundle(for: type(of: self))
         let fileURL: URL = bundle.url(forResource: "test", withExtension: "wav")!
 
-        let res = try leopard?.processFile(fileURL)
-        XCTAssertEqual(transcript, res)
+        let result = try leopard!.processFile(fileURL)
+        leopard!.delete()
+        XCTAssertEqual(transcript, result.transcript)
+
+        XCTAssertEqual(expectedWords.count, result.words.count)
+        for i in 0..<result.words.count {
+            XCTAssertEqual(result.words[i].word, expectedWords[i].word)
+            XCTAssertEqual(result.words[i].startSec, expectedWords[i].startSec, accuracy: 0.1)
+            XCTAssertEqual(result.words[i].endSec, expectedWords[i].endSec, accuracy: 0.1)
+            XCTAssertEqual(result.words[i].confidence, expectedWords[i].confidence, accuracy: 0.1)
+        }
+    }
+
+    func testProcessWithPunctuation() throws {
+        let leopard = try? Leopard(
+                accessKey: accessKey,
+                modelURL: modelURL,
+                enableAutomaticPunctuation: true)
+
+        let bundle = Bundle(for: type(of: self))
+        let filePath: String = bundle.path(forResource: "test", ofType: "wav")!
+
+        let result = try leopard!.processFile(filePath)
+        leopard!.delete()
+        XCTAssertEqual(transcriptWithPunctuation, result.transcript)
+
+        XCTAssertEqual(expectedWords.count, result.words.count)
+        for i in 0..<result.words.count {
+            XCTAssertEqual(result.words[i].word, expectedWords[i].word)
+            XCTAssertEqual(result.words[i].startSec, expectedWords[i].startSec, accuracy: 0.1)
+            XCTAssertEqual(result.words[i].endSec, expectedWords[i].endSec, accuracy: 0.1)
+            XCTAssertEqual(result.words[i].confidence, expectedWords[i].confidence, accuracy: 0.1)
+        }
     }
 
     func testVersion() throws {
-        XCTAssertTrue(Leopard.version is String)
         XCTAssertGreaterThan(Leopard.version, "")
+    }
+
+    func testSampleRate() throws {
+        XCTAssertGreaterThan(Leopard.sampleRate, 0)
     }
 }

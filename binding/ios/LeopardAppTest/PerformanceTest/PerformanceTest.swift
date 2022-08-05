@@ -34,22 +34,26 @@ class PerformanceTest: XCTestCase {
         let modelURL = bundle.url(forResource: "leopard_params", withExtension: "pv")!
 
         var results: [Double] = []
-        for _ in 0...numTestIterations {
+        for i in 0...numTestIterations {
             var totalNSec = 0.0
 
             let before = CFAbsoluteTimeGetCurrent()
             let leopard = try? Leopard(accessKey: accessKey, modelURL: modelURL)
             let after = CFAbsoluteTimeGetCurrent()
             totalNSec += (after - before)
-            results.append(totalNSec)
+
+            // throw away first run to account for cold start
+            if i > 0 {
+                results.append(totalNSec)
+            }
             leopard?.delete()
         }
-        
+
         let avgNSec = results.reduce(0.0, +) / Double(numTestIterations)
         let avgSec = Double(round(avgNSec * 1000) / 1000)
         XCTAssertLessThanOrEqual(avgSec, initPerformanceThresholdSec!)
     }
-    
+
     func testProcessPerformance() throws {
         try XCTSkipIf(procThresholdString == "{PROC_PERFORMANCE_THRESHOLD_SEC}")
 
@@ -71,10 +75,14 @@ class PerformanceTest: XCTestCase {
             try leopard?.processFile(filePath)
             let after = CFAbsoluteTimeGetCurrent()
             totalNSec += (after - before)
-            results.append(totalNSec)
+
+            // throw away first run to account for cold start
+            if i > 0 {
+                results.append(totalNSec)
+            }
         }
         leopard?.delete()
-        
+
         let avgNSec = results.reduce(0.0, +) / Double(numTestIterations)
         let avgSec = Double(round(avgNSec * 1000) / 1000)
         XCTAssertLessThanOrEqual(avgSec, procPerformanceThresholdSec!)
