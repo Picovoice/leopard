@@ -15,12 +15,15 @@ package ai.picovoice.leoparddemo;
 import static org.junit.Assert.assertTrue;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.io.IOException;
 
 import ai.picovoice.leopard.Leopard;
 
@@ -29,12 +32,21 @@ public class PerformanceTest extends BaseTest {
 
     int numTestIterations = 30;
 
+    @Before
+    public void Setup() throws IOException {
+        super.Setup();
+        String iterationString = appContext.getString(R.string.numTestIterations);
+
+        try {
+            numTestIterations = Integer.parseInt(iterationString);
+        } catch (NumberFormatException ignored) { }
+    }
+
     @Test
     public void testInitPerformance() throws Exception {
         String initThresholdString = appContext.getString(R.string.initPerformanceThresholdSec);
         Assume.assumeNotNull(initThresholdString);
         Assume.assumeFalse(initThresholdString.equals(""));
-
         double initPerformanceThresholdSec = Double.parseDouble(initThresholdString);
 
         long totalNSec = 0;
