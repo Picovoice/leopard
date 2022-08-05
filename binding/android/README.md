@@ -7,16 +7,13 @@ Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally.
-- Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
-- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#results)
+- [Accurate](https://picovoice.ai/docs/benchmark/stt/)
+- [Compact and Computationally-Efficient](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
-    - Linux (x86_64)
-    - macOS (x86_64, arm64)
-    - Windows (x86_64)
-    - Android
-    - iOS
-    - Raspberry Pi (4, 3)
-    - NVIDIA Jetson Nano
+    - Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64)
+    - Android and iOS
+    - Chrome, Safari, Firefox, and Edge
+    - Raspberry Pi (4, 3) and NVIDIA Jetson Nano
 
 ## Compatibility
 
@@ -45,29 +42,42 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 Add the Leopard model file to your Android application by:
 
-1. Either creat a model in [Picovoice Console](https://console.picovoice.ai/) or get the default model in [/lib/common/leopard_params.pv](/lib/common/leopard_params.pv).
+1. Either create a model in [Picovoice Console](https://console.picovoice.ai/) or use the [default model](/lib/common).
 2. Add the model as a bundled resource by placing it under the `assets` directory of your Android application.
 
-Create an instance of the engine with the Leopard Builder class by passing in the Android app context:
+Create an instance of the engine with the Leopard Builder class by passing in the `accessKey`, `modelPath` and Android app context:
 
 ```java
 import ai.picovoice.leopard.*;
 
-final String accessKey = "..."; // AccessKey provided by Picovoice Console (https://console.picovoice.ai/)
+final String accessKey = "${ACCESS_KEY}"; // AccessKey provided by Picovoice Console (https://console.picovoice.ai/)
 final String modelPath = "${MODEL_FILE}";
 try {
-    Leopard handle = new Leopard.Builder().setAccessKey(accessKey).setModelPath(modelPath).build(appContext);
+    Leopard handle = new Leopard.Builder()
+        .setAccessKey(accessKey)
+        .setModelPath(modelPath)
+        .build(appContext);
 } catch (LeopardException ex) { }
 ```
 
-Transcribe an audio file either by in an absolute path to the file:
+Transcribe an audio file by providing the absolute path to the file:
 
 ```java
 File audioFile = new File("${AUDIO_FILE_PATH}");
-String transcript = handle.processFile(audioFile.getAbsolutePath());
+LeopardTranscript transcript = handle.processFile(audioFile.getAbsolutePath());
 ```
 
-When done resources have to be released explicitly:
+Supported audio file formats are `3gp (AMR)`, `FLAC`, `MP3`, `MP4/m4a (AAC)`, `Ogg`, `WAV` and `WebM`.
+
+Transcribe raw audio data (sample rate of 16 kHz, 16-bit linearly encoded and 1 channel):
+```java
+short[] getAudioData() {
+    // ...    
+}
+LeopardTranscript transcript = handle.process(getAudioData());
+```
+
+When done, release resources explicitly:
 
 ```java
 handle.delete();
@@ -75,4 +85,4 @@ handle.delete();
 
 ## Demo App
 
-For example usage refer to our [Android demo application](/demo/android).
+For example usage, refer to our [Android demo application](/demo/android).
