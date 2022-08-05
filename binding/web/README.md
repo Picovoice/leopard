@@ -1,4 +1,6 @@
-# Leopard Speech-to-Text Engine
+# Leopard Binding for Web
+
+## Leopard Speech-to-Text Engine
 
 Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
