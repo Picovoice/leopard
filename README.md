@@ -575,8 +575,8 @@ const leopard = await LeopardWorker.fromBase64(
   leopardParams
 );
 
-const { transcription, words } = await leopard.process(getAudioData());
-console.log(transcription);
+const { transcript, words } = await leopard.process(getAudioData());
+console.log(transcript);
 console.log(words);
 ```
 

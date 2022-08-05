@@ -41,8 +41,8 @@
             );
 
             writeMessage("Transcribing audio file...");
-            const {transcription, words} = await leopard.process(i16PCM, {transfer: true});
-            document.getElementById("result").innerHTML = transcription;
+            const {transcript, words} = await leopard.process(i16PCM, {transfer: true});
+            document.getElementById("result").innerHTML = transcript;
             setWordTable(words);
             writeMessage("Transcribing audio file... done!");
           });
@@ -103,8 +103,8 @@
           }
 
           writeMessage("Transcribing audio file...");
-          const {transcription, words} = await leopard.process(frames, {transfer: true});
-          document.getElementById("result").innerHTML = transcription;
+          const {transcript, words} = await leopard.process(frames, {transfer: true});
+          document.getElementById("result").innerHTML = transcript;
           setWordTable(words);
           writeMessage("Transcribing audio file... done!");
         });

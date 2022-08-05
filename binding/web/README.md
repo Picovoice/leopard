@@ -143,7 +143,7 @@ const handle = await LeopardWorker.fromBase64(
 #### Process Audio Frames
 
 The process result is an object with:
-- `transcription`: A string containing the transcribed data.
+- `transcript`: A string containing the transcribed data.
 - `words`: A list of objects containing a `word`, `startSec`, `endSec`, and `confidence`. Each object indicates the start, end time and confidence (between 0 and 1) of the word.
 
 ```typescript
@@ -153,7 +153,7 @@ function getAudioData(): Int16Array {
 }
 
 const result = await handle.process(getAudioData());
-console.log(result.transcription);
+console.log(result.transcript);
 console.log(result.words);
 ```
 
@@ -165,7 +165,7 @@ const result = await handle.process(pcm, {
   transfer: true,
   transferCB: (data) => {pcm = data}
 });
-console.log(result.transcription);
+console.log(result.transcript);
 console.log(result.words);
 ```
 
