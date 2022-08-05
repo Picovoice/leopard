@@ -34,7 +34,7 @@ import {
   LeopardInitOptions,
   LeopardInputOptions,
   LeopardWord,
-  LeopardTranscription,
+  LeopardTranscript,
 } from "./types";
 
 export {
@@ -54,6 +54,6 @@ export {
   LeopardOutOfMemoryError,
   LeopardRuntimeError,
   LeopardStopIterationError,
-  LeopardTranscription,
+  LeopardTranscript,
   LeopardWord,
 };

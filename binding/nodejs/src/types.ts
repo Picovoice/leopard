@@ -18,7 +18,7 @@ export type LeopardWord = {
   confidence: number;
 }
 
-export type LeopardTranscription = {
+export type LeopardTranscript = {
   /** Inferred transcription. */
   transcript: string;
   /** Transcribed words and their associated metadata. */

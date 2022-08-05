@@ -21,7 +21,7 @@ import {
 
 import {
   LeopardWord,
-  LeopardTranscription,
+  LeopardTranscript,
   LeopardOptions
 } from "./types";
 
@@ -138,9 +138,9 @@ export class Leopard {
    * @param {Int16Array} pcm Audio data. The audio needs to have a sample rate equal to `Leopard.sampleRate` and be 16-bit linearly-encoded.
    * This function operates on single-channel audio. If you wish to process data in a different
    * sample rate or format consider using `Leopard.processFile()`.
-   * @returns {LeopardTranscription} LeopardTranscript object which contains the transcription results of the engine.
+   * @returns {LeopardTranscript} LeopardTranscript object which contains the transcription results of the engine.
    */
-  process(pcm: Int16Array): LeopardTranscription {
+  process(pcm: Int16Array): LeopardTranscript {
     if (
       this._handle === 0 ||
       this._handle === null ||
@@ -187,9 +187,9 @@ export class Leopard {
    * @param {string} audioPath Absolute path to the audio file.
    * The file needs to have a sample rate equal to or greater than `.sampleRate`.
    * The supported formats are: `FLAC`, `MP3`, `Ogg`, `WAV`, `WebM`, `MP4/m4a (AAC)`, and `3gp (AMR)`
-   * @returns {LeopardTranscription} object which contains the transcription results of the engine.
+   * @returns {LeopardTranscript} object which contains the transcription results of the engine.
    */
-  processFile(audioPath: string): LeopardTranscription {
+  processFile(audioPath: string): LeopardTranscript {
     if (
       this._handle === 0 ||
       this._handle === null ||
