@@ -509,7 +509,7 @@ final String accessKey = "${ACCESS_KEY}";
 
 try {
     Leopard leopard = new Leopard.Builder().setAccessKey(accessKey).build();
-    String transcript = leopard.processFile("${AUDIO_PATH}");
+    LeopardTranscript result = leopard.processFile("${AUDIO_PATH}");
     leopard.delete();
 } catch (LeopardException ex) { }
 

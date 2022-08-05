@@ -58,6 +58,7 @@ public class LeopardPerformanceTest {
     @Test
     void procPerformance() throws Exception {
         Leopard leopard = new Leopard.Builder()
+                .setAccessKey(accessKey)
                 .build();
 
         String audioFilePath = Paths.get(System.getProperty("user.dir"))

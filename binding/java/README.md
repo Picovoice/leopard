@@ -56,7 +56,7 @@ try {
     Leopard leopard = new Leopard.Builder()
         .setAccessKey(accessKey)
         .build();
-    LeopardTranscript transcript = leopard.processFile("${AUDIO_PATH}");
+    LeopardTranscript result = leopard.processFile("${AUDIO_PATH}");
     leopard.delete();
 } catch (LeopardException ex) { }
 
