@@ -70,6 +70,8 @@ File audioFile = new File("${AUDIO_FILE_PATH}");
 LeopardTranscript transcript = handle.processFile(audioFile.getAbsolutePath());
 ```
 
+Supported audio file formats are `3gp (AMR)`, `FLAC`, `MP3`, `MP4/m4a (AAC)`, `Ogg`, `WAV` and `WebM`.
+
 Transcribe raw audio data (sample rate of 16 kHz, 16-bit linearly encoded and 1 channel):
 ```java
 short[] getAudioData() {
