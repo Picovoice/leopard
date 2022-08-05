@@ -36,6 +36,7 @@ import ai.picovoice.leopard.LeopardTranscript;
 public class LeopardTest extends BaseTest {
 
     private final String transcript = "Mr quilter is the apostle of the middle classes and we are glad to welcome his gospel";
+    private final String transcriptWithPunctuation = "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel.";
 
     @Test
     public void testTranscribeAudioFile() throws LeopardException {
@@ -48,6 +49,22 @@ public class LeopardTest extends BaseTest {
 
         LeopardTranscript result = leopard.processFile(audioFile.getAbsolutePath());
         assertEquals(transcript, result.getTranscriptString());
+
+        leopard.delete();
+    }
+
+    @Test
+    public void testTranscribeAudioFileWithPunctuation() throws LeopardException {
+        Leopard leopard = new Leopard.Builder()
+                .setAccessKey(accessKey)
+                .setModelPath(defaultModelPath)
+                .setEnableAutomaticPunctuation(true)
+                .build(appContext);
+
+        File audioFile = new File(testResourcesPath, "audio/test.wav");
+
+        LeopardTranscript result = leopard.processFile(audioFile.getAbsolutePath());
+        assertEquals(transcriptWithPunctuation, result.getTranscriptString());
 
         leopard.delete();
     }

@@ -29,8 +29,6 @@ public class Leopard {
         System.loadLibrary("pv_leopard");
     }
 
-    private final long handle;
-
     private final static String[] VALID_EXTENSIONS = {
             "3gp",
             "flac",
@@ -43,6 +41,8 @@ public class Leopard {
             "wav",
             "webm"
     };
+
+    private final long handle;
 
     /**
      * Constructor.
@@ -108,8 +108,8 @@ public class Leopard {
      * Processes given audio data and returns its transcription.
      *
      * @param path Absolute path to the audio file. The file needs to have a sample rate equal to or greater
-     *             than {@link #getSampleRate()}. The supported formats are: `3gp`, `flac`, `m4a`, `mp3`,
-     *             `ogg`, `opus`, `vorbis`, `wav`, and `webm`.
+     *             than {@link #getSampleRate()}. The supported formats are:
+     *             `FLAC`, `MP3`, `Ogg`, `WAV`, `WebM`, `MP4/m4a (AAC)`, and `3gp (AMR)`
      * @return LeopardTranscript object which contains the transcription results of the engine.
      * @throws LeopardException if there is an error while processing the audio frame.
      */
@@ -127,7 +127,7 @@ public class Leopard {
             if (!endsWithValidExt) {
                 throw new LeopardInvalidArgumentException(
                         String.format(
-                                "Specified file '%s' is not in an accepted audio format. Valid formats are: %s",
+                                "Specified file '%s' does not have an accepted file extension. Valid extensions are: %s",
                                 path,
                                 String.join(", ", VALID_EXTENSIONS)));
             }
