@@ -261,6 +261,7 @@ Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://co
 Create an instance of the engine and transcribe an audio file:
 
 ```c
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 

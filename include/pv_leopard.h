@@ -57,8 +57,8 @@ PV_API void pv_leopard_delete(pv_leopard_t *object);
  */
 typedef struct {
     const char *word; /** Transcribed word. */
-    float start_sec; /** Start of word in seconds. */
-    float end_sec; /** End of word in seconds. */
+    float start_sec;  /** Start of word in seconds. */
+    float end_sec;    /** End of word in seconds. */
     float confidence; /** Transcription confidence. It is a number within [0, 1]. */
 } pv_word_t;
 
@@ -91,7 +91,7 @@ PV_API pv_status_t pv_leopard_process(
  *
  * @param object Leopard object.
  * @param audio_path Absolute path to the audio file. The file needs to have a sample rate equal to or greater than
- * `pv_sample_rate()`. The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`, `Vorbis`, `WAV`, and `WebM`.
+ * `pv_sample_rate()`. The supported formats are: `3gp (AMR)`, `FLAC`, `MP3`, `MP4/m4a (AAC)`, `Ogg`, `WAV` and `WebM`.
  * @param[out] transcript Inferred transcription.
  * @param[out] num_words Number of transcribed words
  * @param[out] words Transcribed words and their associated metadata.
