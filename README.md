@@ -570,7 +570,7 @@ function getAudioData(): Int16Array {
   return new Int16Array();
 }
 
-const leopard = await Leopard.fromBase64(
+const leopard = await LeopardWorker.fromBase64(
   "${ACCESS_KEY}",
   leopardParams
 );
