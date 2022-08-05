@@ -25,13 +25,13 @@ export type LeopardTranscription = {
   words: LeopardWord[];
 }
 
-export type LeopardInitConfig = {
+export type LeopardInitOptions = {
   enableAutomaticPunctuation?: boolean;
 }
 
-export type LeopardInputConfig = {
+export type LeopardInputOptions = {
   modelPath?: string;
   libraryPath?: string;
 }
 
-export type LeopardConfig = LeopardInitConfig & LeopardInputConfig;
+export type LeopardOptions = LeopardInitOptions & LeopardInputOptions;

@@ -30,9 +30,9 @@ import {
 } from "./errors";
 
 import {
-  LeopardConfig,
-  LeopardInitConfig,
-  LeopardInputConfig,
+  LeopardOptions,
+  LeopardInitOptions,
+  LeopardInputOptions,
   LeopardWord,
   LeopardTranscription,
 } from "./types";
@@ -43,10 +43,10 @@ export {
   LeopardActivationLimitReached,
   LeopardActivationRefused,
   LeopardActivationThrottled,
-  LeopardConfig,
+  LeopardOptions,
   LeopardError,
-  LeopardInitConfig,
-  LeopardInputConfig,
+  LeopardInitOptions,
+  LeopardInputOptions,
   LeopardInvalidArgumentError,
   LeopardInvalidStateError,
   LeopardIoError,

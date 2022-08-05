@@ -22,7 +22,7 @@ import {
 import {
   LeopardWord,
   LeopardTranscription,
-  LeopardConfig
+  LeopardOptions
 } from "./types";
 
 import {getSystemLibraryPath} from "./platforms";
@@ -63,14 +63,14 @@ export class Leopard {
   /**
    * Creates an instance of Leopard.
    * @param {string} accessKey AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).
-   * @param {LeopardConfig} options Optional configuration arguments.
+   * @param {LeopardOptions} options Optional configuration arguments.
    * @param {string} options.modelPath The path to save and use the model from (.pv extension)
    * @param {string} options.libraryPath the path to the Leopard dynamic library (.node extension)
    * @param {boolean} options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
    */
   constructor(
     accessKey: string,
-    options: LeopardConfig = {}) {
+    options: LeopardOptions = {}) {
 
     if (
       accessKey === null ||
