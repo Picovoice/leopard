@@ -36,6 +36,7 @@ public class BaseTest {
 
     @Rule
     public ReportHelper reportHelper = Factory.getReportHelper();
+
     Context testContext;
     Context appContext;
     AssetManager assetManager;

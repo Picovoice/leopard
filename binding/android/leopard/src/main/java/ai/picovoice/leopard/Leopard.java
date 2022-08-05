@@ -8,7 +8,6 @@
     limitations under the License.
 */
 
-
 package ai.picovoice.leopard;
 
 import android.content.Context;
@@ -52,7 +51,7 @@ public class Leopard {
      * @param enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
      * @throws LeopardException if there is an error while initializing Leopard.
      */
-    public Leopard(
+    private Leopard(
             String accessKey,
             String modelPath,
             boolean enableAutomaticPunctuation) throws LeopardException {
@@ -118,7 +117,7 @@ public class Leopard {
             return processFile(handle, path);
         } catch (LeopardInvalidArgumentException e) {
             boolean endsWithValidExt = false;
-            for(String ext : VALID_EXTENSIONS) {
+            for (String ext : VALID_EXTENSIONS) {
                 if (path.endsWith(ext)) {
                     endsWithValidExt = true;
                     break;
