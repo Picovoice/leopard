@@ -25,7 +25,7 @@ import {
   fromPublicDirectory,
 } from '@picovoice/web-utils';
 
-import { LeopardOptions, LeopardTranscription, LeopardWord } from './types';
+import { LeopardOptions, LeopardTranscript, LeopardWord } from './types';
 
 /**
  * WebAssembly function types
@@ -230,12 +230,12 @@ export class Leopard {
    * @param pcm A frame of audio with properties described above.
    * @return The transcription.
    */
-  public async process(pcm: Int16Array): Promise<LeopardTranscription> {
+  public async process(pcm: Int16Array): Promise<LeopardTranscript> {
     if (!(pcm instanceof Int16Array)) {
       throw new Error('The argument \'pcm\' must be provided as an Int16Array');
     }
 
-    const returnPromise = new Promise<LeopardTranscription>((resolve, reject) => {
+    const returnPromise = new Promise<LeopardTranscript>((resolve, reject) => {
       this._processMutex
         .runExclusive(async () => {
           if (this._wasmMemory === undefined) {
@@ -306,7 +306,7 @@ export class Leopard {
 
           return { transcription, words };
         })
-        .then((result: LeopardTranscription) => {
+        .then((result: LeopardTranscript) => {
           resolve(result);
         })
         .catch((error: any) => {

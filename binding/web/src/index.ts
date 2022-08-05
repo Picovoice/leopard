@@ -4,7 +4,7 @@ import { LeopardWorker } from './leopard_worker';
 import {
   LeopardOptions,
   LeopardWord,
-  LeopardTranscription,
+  LeopardTranscript,
   LeopardWorkerInitRequest,
   LeopardWorkerProcessRequest,
   LeopardWorkerReleaseRequest,
@@ -28,7 +28,7 @@ export {
   Leopard,
   LeopardOptions,
   LeopardWord,
-  LeopardTranscription,
+  LeopardTranscript,
   LeopardWorker,
   LeopardWorkerInitRequest,
   LeopardWorkerProcessRequest,

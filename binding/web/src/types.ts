@@ -27,7 +27,7 @@ export type LeopardWord = {
   confidence: number;
 }
 
-export type LeopardTranscription = {
+export type LeopardTranscript = {
   transcription: string;
   words: LeopardWord[];
 }
@@ -70,7 +70,7 @@ export type LeopardWorkerInitResponse = LeopardWorkerFailureResponse | {
 
 export type LeopardWorkerProcessResponse = LeopardWorkerFailureResponse | {
   command: 'ok';
-  result: LeopardTranscription;
+  result: LeopardTranscript;
   inputFrame?: Int16Array;
 };
 

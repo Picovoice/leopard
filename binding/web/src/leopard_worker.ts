@@ -15,7 +15,7 @@ import PvWorker from 'web-worker:./leopard_worker_handler.ts';
 
 import {
   LeopardOptions,
-  LeopardTranscription,
+  LeopardTranscript,
   LeopardWorkerInitResponse,
   LeopardWorkerProcessResponse,
   LeopardWorkerReleaseResponse,
@@ -187,10 +187,10 @@ export class LeopardWorker {
   public process(
     pcm: Int16Array,
     options: { transfer?: boolean, transferCB?: (data: Int16Array) => void } = {},
-  ): Promise<LeopardTranscription> {
+  ): Promise<LeopardTranscript> {
     const { transfer = false, transferCB } = options;
 
-    const returnPromise: Promise<LeopardTranscription> = new Promise((resolve, reject) => {
+    const returnPromise: Promise<LeopardTranscript> = new Promise((resolve, reject) => {
       this._worker.onmessage = (event: MessageEvent<LeopardWorkerProcessResponse>): void => {
         if (transfer && transferCB && event.data.inputFrame) {
           transferCB(new Int16Array(event.data.inputFrame.buffer));
