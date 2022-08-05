@@ -14,8 +14,8 @@ import { fromBase64, fromPublicDirectory } from '@picovoice/web-utils';
 import PvWorker from 'web-worker:./leopard_worker_handler.ts';
 
 import {
-  LeopardConfig,
-  LeopardInitConfig, LeopardTranscription,
+  LeopardOptions,
+  LeopardTranscription,
   LeopardWorkerInitResponse,
   LeopardWorkerProcessResponse,
   LeopardWorkerReleaseResponse,
@@ -75,7 +75,7 @@ export class LeopardWorker {
   public static async fromBase64(
     accessKey: string,
     modelBase64: string,
-    options: LeopardConfig = {},
+    options: LeopardOptions = {},
   ): Promise<LeopardWorker> {
     const { modelPath = 'leopard_model', forceWrite = false, version = 1, ...rest } = options;
     await fromBase64(modelPath, modelBase64, forceWrite, version);
@@ -101,7 +101,7 @@ export class LeopardWorker {
   public static async fromPublicDirectory(
     accessKey: string,
     publicPath: string,
-    options: LeopardConfig = {},
+    options: LeopardOptions = {},
   ): Promise<LeopardWorker> {
     const { modelPath = 'leopard_model', forceWrite = false, version = 1, ...rest } = options;
     await fromPublicDirectory(modelPath, publicPath, forceWrite, version);
@@ -135,11 +135,11 @@ export class LeopardWorker {
    *
    * @param accessKey AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
    * @param modelPath Path to the model saved in indexedDB.
-   * @param initConfig Flag to enable automatic punctuation insertion.
+   * @param options Optional configuration arguments.
    *
    * @returns An instance of LeopardWorker.
    */
-  private static async create(accessKey: string, modelPath: string, initConfig: LeopardInitConfig): Promise<LeopardWorker> {
+  private static async create(accessKey: string, modelPath: string, options: LeopardOptions): Promise<LeopardWorker> {
     const worker = new PvWorker();
     const returnPromise: Promise<LeopardWorker> = new Promise((resolve, reject) => {
       // @ts-ignore - block from GC
@@ -164,7 +164,7 @@ export class LeopardWorker {
       command: 'init',
       accessKey: accessKey,
       modelPath: modelPath,
-      initConfig: initConfig,
+      options: options,
       wasm: this._wasm,
       wasmSimd: this._wasmSimd,
     });

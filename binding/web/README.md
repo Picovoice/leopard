@@ -1,10 +1,17 @@
-# leopard-web
+# Leopard Speech-to-Text Engine
 
-The Picovoice Leopard library for web browsers, powered by WebAssembly.
+Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
-This library transcribes audio samples in-browser, offline. All processing is done via WebAssembly and Workers in a separate thread.
+Leopard is an on-device speech-to-text engine. Leopard is:
 
-Looking for Leopard on NodeJS? See the [@picovoice/leopard-node](https://www.npmjs.com/package/@picovoice/leopard-node) package.
+- Private; All voice processing runs locally.
+- [Accurate](https://picovoice.ai/docs/benchmark/stt/)
+- [Compact and Computationally-Efficient](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
+- Cross-Platform:
+  - Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64)
+  - Android and iOS
+  - Chrome, Safari, Firefox, and Edge
+  - Raspberry Pi (4, 3) and NVIDIA Jetson Nano
 
 ## Compatibility
 
@@ -12,13 +19,9 @@ Looking for Leopard on NodeJS? See the [@picovoice/leopard-node](https://www.npm
 - Firefox
 - Safari
 
-This library requires several modern browser features: `WebAssembly`, `Web Workers`, `IndexedDB` and `Promise`. Internet Explorer will _not_ work.
-
-## Installation & Usage
+## Installation
 
 ### Package
-
-Install the [Leopard-Web package](https://www.npmjs.com/package/@picovoice/leopard-web) using `yarn`:
 
 ```console
 yarn add @picovoice/leopard-web
@@ -36,10 +39,7 @@ Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` ac
 You can get your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
 Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get your `AccessKey`.
 
-### Leopard Models
-
-Leopard requires a model file on initialization. Create a custom model file from [Picovoice Console](https://console.picovoice.ai/cat)
-or you can use the [default model file](https://github.com/Picovoice/leopard/blob/master/lib/common/leopard_params.pv).
+### Usage
 
 For the web packages, there are two methods to initialize Leopard.
 
@@ -70,8 +70,6 @@ run:
 ```console
 npx pvbase64 -h
 ```
-
-### Usage
 
 #### Init options
 
@@ -183,13 +181,6 @@ Terminate `LeopardWorker` instance:
 await handle.terminate();
 ```
 
-## Build from source (IIFE + ESM outputs)
+# Demo
 
-This library uses Rollup and TypeScript along with Babel and other popular rollup plugins. There are two outputs: an IIFE version intended for script tags / CDN usage, and a JavaScript module version intended for use with modern JavaScript/TypeScript development (e.g. Angular, Create React App, Webpack).
-
-```console
-yarn
-yarn build
-```
-
-The output will appear in the ./dist/ folder.
+For example usage refer to our [Web demo application](/demo/web).

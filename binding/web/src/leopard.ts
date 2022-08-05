@@ -25,7 +25,7 @@ import {
   fromPublicDirectory,
 } from '@picovoice/web-utils';
 
-import { LeopardInitConfig, LeopardConfig, LeopardTranscription, LeopardWord } from './types';
+import { LeopardOptions, LeopardTranscription, LeopardWord } from './types';
 
 /**
  * WebAssembly function types
@@ -139,7 +139,7 @@ export class Leopard {
   public static async fromBase64(
     accessKey: string,
     modelBase64: string,
-    options: LeopardConfig = {},
+    options: LeopardOptions = {},
   ): Promise<Leopard> {
     const { modelPath = 'leopard_model', forceWrite = false, version = 1, ...rest } = options;
     await fromBase64(modelPath, modelBase64, forceWrite, version);
@@ -165,7 +165,7 @@ export class Leopard {
   public static async fromPublicDirectory(
     accessKey: string,
     publicPath: string,
-    options: LeopardConfig = {},
+    options: LeopardOptions = {},
   ): Promise<Leopard> {
     const { modelPath = 'leopard_model', forceWrite = false, version = 1, ...rest } = options;
     await fromPublicDirectory(modelPath, publicPath, forceWrite, version);
@@ -199,11 +199,11 @@ export class Leopard {
    *
    * @param accessKey AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
    * @param modelPath Path to the model saved in indexedDB.
-   * @param initConfig Flag to enable automatic punctuation insertion.
+   * @param options Optional configuration arguments.
    *
    * @returns An instance of the Leopard engine.
    */
-  public static async create(accessKey: string, modelPath: string, initConfig: LeopardInitConfig): Promise<Leopard> {
+  public static async create(accessKey: string, modelPath: string, options: LeopardOptions): Promise<Leopard> {
     if (!isAccessKeyValid(accessKey)) {
       throw new Error('Invalid AccessKey');
     }
@@ -211,7 +211,7 @@ export class Leopard {
       Leopard._leopardMutex
         .runExclusive(async () => {
           const isSimd = await simd();
-          const wasmOutput = await Leopard.initWasm(accessKey.trim(), (isSimd) ? this._wasmSimd : this._wasm, modelPath, initConfig);
+          const wasmOutput = await Leopard.initWasm(accessKey.trim(), (isSimd) ? this._wasmSimd : this._wasm, modelPath, options);
           return new Leopard(wasmOutput);
         })
         .then((result: Leopard) => {
@@ -326,8 +326,8 @@ export class Leopard {
     this._wasmMemory = undefined;
   }
 
-  private static async initWasm(accessKey: string, wasmBase64: string, modelPath: string, initConfig: LeopardInitConfig): Promise<any> {
-    const { enableAutomaticPunctuation = false } = initConfig;
+  private static async initWasm(accessKey: string, wasmBase64: string, modelPath: string, options: LeopardOptions): Promise<any> {
+    const { enableAutomaticPunctuation = false } = options;
 
     // A WebAssembly page has a constant size of 64KiB. -> 1MiB ~= 16 pages
     // minimum memory requirements for init: 3370 pages

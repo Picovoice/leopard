@@ -2,7 +2,7 @@ import { Leopard } from './leopard';
 import { LeopardWorker } from './leopard_worker';
 
 import {
-  LeopardConfig,
+  LeopardOptions,
   LeopardWord,
   LeopardTranscription,
   LeopardWorkerInitRequest,
@@ -26,7 +26,7 @@ LeopardWorker.setWasmSimd(leopardWasmSimd);
 
 export {
   Leopard,
-  LeopardConfig,
+  LeopardOptions,
   LeopardWord,
   LeopardTranscription,
   LeopardWorker,
