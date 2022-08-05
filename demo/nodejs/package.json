@@ -1,6 +1,6 @@
 {
   "name": "@picovoice/leopard-node-demo",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Picovoice Leopard Node.js file-based and microphone demos",
   "scripts": {
     "file": "node file.js",
