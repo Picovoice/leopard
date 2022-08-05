@@ -2,8 +2,10 @@
 # yarn lockfile v1
 
 
-"@picovoice/leopard-web@../../binding/web":
+"@picovoice/leopard-web@^1.1.0":
   version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@picovoice/leopard-web/-/leopard-web-1.1.0.tgz#e205e627ea7a2a6742aa71f1bb2f9ff5bd35b444"
+  integrity sha512-9adbCBuFJBfiBt8M2a8Rt/yAWekXfOQZfZD8gzYtd/XLkq1L758ct0WJiFaxzGAFWYNEl9lf0dppvTRADlxoMQ==
   dependencies:
     "@picovoice/web-utils" "=1.2.1"
 
