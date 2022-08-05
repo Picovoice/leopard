@@ -332,15 +332,18 @@ import ai.picovoice.leopard.*;
 final String accessKey = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
 final String modelPath = "${MODEL_FILE}";
 try {
-    Leopard handle = new Leopard.Builder().setAccessKey(accessKey).setModelPath(modelPath).build(appContext);
+    Leopard handle = new Leopard.Builder()
+        .setAccessKey(accessKey)
+        .setModelPath(modelPath)
+        .build(appContext);
 
     File audioFile = new File("${AUDIO_FILE_PATH}");
-    String transcript = handle.processFile(audioFile.getAbsolutePath());
+    LeopardTranscript transcript = handle.processFile(audioFile.getAbsolutePath());
 
 } catch (LeopardException ex) { }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/), and `${AUDIO_FILE_PATH}` with the path to the audio file.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with a custom trained model from [console](https://console.picovoice.ai/) or the [default model](/lib/common/), and `${AUDIO_FILE_PATH}` with the path to the audio file.
 
 ### Node.js
 
