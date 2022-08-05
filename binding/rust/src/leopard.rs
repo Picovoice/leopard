@@ -135,13 +135,13 @@ impl LeopardBuilder {
         self
     }
 
-    pub fn library_path<P: Into<PathBuf>>(&mut self, library_path: P) -> &mut Self {
-        self.library_path = library_path.into();
+    pub fn model_path<P: Into<PathBuf>>(&mut self, model_path: P) -> &mut Self {
+        self.model_path = model_path.into();
         self
     }
 
-    pub fn model_path<P: Into<PathBuf>>(&mut self, model_path: P) -> &mut Self {
-        self.model_path = model_path.into();
+    pub fn library_path<P: Into<PathBuf>>(&mut self, library_path: P) -> &mut Self {
+        self.library_path = library_path.into();
         self
     }
 
