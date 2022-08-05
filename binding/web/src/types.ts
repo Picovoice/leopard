@@ -28,7 +28,7 @@ export type LeopardWord = {
 }
 
 export type LeopardTranscript = {
-  transcription: string;
+  transcript: string;
   words: LeopardWord[];
 }
 

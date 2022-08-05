@@ -277,7 +277,7 @@ export class Leopard {
             true,
           );
 
-          const transcription = arrayBufferToStringAtIndex(
+          const transcript = arrayBufferToStringAtIndex(
             this._memoryBufferUint8,
             transcriptionAddress,
           );
@@ -304,7 +304,7 @@ export class Leopard {
           await this._pvFree(wordsAddress);
           await this._pvFree(inputBufferAddress);
 
-          return { transcription, words };
+          return { transcript, words };
         })
         .then((result: LeopardTranscript) => {
           resolve(result);
