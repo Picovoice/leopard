@@ -9,11 +9,36 @@
 
 import PvLeopard
 
+public struct LeopardWord {
+    public let word: String
+    public let startSec: Float
+    public let endSec: Float
+    public let confidence: Float
+
+    internal init(word: String, startSec: Float, endSec: Float, confidence: Float) {
+        self.word = word
+        self.startSec = startSec
+        self.endSec = endSec
+        self.confidence = confidence
+    }
+}
+
 /// iOS binding for Leopard speech-to-text engine. Provides a Swift interface to the Leopard library.
 public class Leopard {
-    private static let supportedAudioTypes: Set = ["flac", "mp3", "ogg", "opus", "wav", "webm"]
+    private static let supportedAudioTypes: Set = [
+        "3gp",
+        "flac",
+        "m4a",
+        "mp3",
+        "mp4",
+        "ogg",
+        "opus",
+        "vorbis",
+        "wav",
+        "webm", ]
 
     private var handle: OpaquePointer?
+
     public static let sampleRate = UInt32(pv_sample_rate())
     public static let version = String(cString: pv_leopard_version())
 
@@ -22,8 +47,9 @@ public class Leopard {
     /// - Parameters:
     ///   - accessKey: The AccessKey obtained from Picovoice Console (https://console.picovoice.ai).
     ///   - modelPath: Absolute path to file containing model parameters.
+    ///   - enableAutomaticPunctuation: Set to `true` to enable automatic punctuation insertion.
     /// - Throws: LeopardError
-    public init(accessKey: String, modelPath: String) throws {
+    public init(accessKey: String, modelPath: String, enableAutomaticPunctuation: bool = false) throws {
 
         if accessKey.count == 0 {
             throw LeopardInvalidArgumentError("AccessKey is required for Leopard initialization")
@@ -37,6 +63,7 @@ public class Leopard {
         let status = pv_leopard_init(
                 accessKey,
                 modelPathArg,
+                enableAutomaticPunctuation,
                 &handle)
         try checkStatus(status, "Leopard init failed")
     }
@@ -46,9 +73,10 @@ public class Leopard {
     /// - Parameters:
     ///   - accessKey: The AccessKey obtained from Picovoice Console (https://console.picovoice.ai).
     ///   - modelURL: URL file containing model parameters.
+    ///   - enableAutomaticPunctuation: Set to `true` to enable automatic punctuation insertion.
     /// - Throws: LeopardError
-    public convenience init(accessKey: String, modelURL: URL) throws {
-        try self.init(accessKey: accessKey, modelPath: modelURL.path)
+    public convenience init(accessKey: String, modelURL: URL, enableAutomaticPunctuation: bool = false) throws {
+        try self.init(accessKey: accessKey, modelPath: modelURL.path, enableAutomaticPunctuation)
     }
 
     deinit {
@@ -56,7 +84,7 @@ public class Leopard {
     }
 
     /// Releases native resources that were allocated to Leopard
-    public func delete(){
+    public func delete() {
         if handle != nil {
             pv_leopard_delete(handle)
             handle = nil
@@ -71,7 +99,7 @@ public class Leopard {
     ///          sample rate or format consider using `.process_file`.
     /// - Throws: LeopardError
     /// - Returns: Inferred transcription.
-    public func process(_ pcm:[Int16]) throws -> String {
+    public func process(_ pcm: [Int16]) throws -> (transcript: String, words: [LeopardWord]) {
         if handle == nil {
             throw LeopardInvalidStateError("Leopard must be initialized before processing")
         }
@@ -81,24 +109,45 @@ public class Leopard {
         }
 
         var cTranscript: UnsafeMutablePointer<Int8>?
-        let status = pv_leopard_process(self.handle, pcm, Int32(pcm.count), &cTranscript)
+        var numWords: Int32
+        var cWords: UnsafeMutablePointer<pv_word_t>?
+        let status = pv_leopard_process(
+                self.handle,
+                pcm,
+                Int32(pcm.count),
+                &cTranscript,
+                numWords,
+                &cWords)
         try checkStatus(status, "Leopard process failed")
 
         let transcript = String(cString: cTranscript!)
         cTranscript?.deallocate()
 
-        return transcript
+        var words = [Word]()
+        if numWords > 0 {
+            for cWord in UnsafeBufferPointer(start: cWords, count: numWords) {
+                let word = Word(
+                        word: String(cString: cWords.word),
+                        startSec: Float(cWord.start_sec),
+                        endSec: Float(cWord.end_sec),
+                        confidence: Float(cWord.confidence)
+                )
+                words.append(word)
+            }
+            cWords?.deallocate()
+        }
+
+        return (transcript, words)
     }
 
     /// Processes a given audio file and returns its transcription.
     ///
     /// - Parameters:
-    ///   - audioPath: Absolute path to the audio file. The file needs to have a sample rate equal to or greater
-    ///                than `Leopard.sampleRate`. The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`,
-    ///                `Vorbis`, `WAV`, and `WebM`.
+    ///   - audioPath: Absolute path to the audio file. The supported formats are:
+    ///                `3gp (AMR)`, `FLAC`, `MP3`, `MP4/m4a (AAC)`, `Ogg`, `WAV` and `WebM`.
     /// - Throws: LeopardError
-    /// - Returns: Inferred transcription.
-    public func processFile(_ audioPath: String) throws -> String {
+    /// - Returns: Inferred transcription and sequence of transcribed words with their associated metadata.
+    public func processFile(_ audioPath: String) throws -> (transcript: String, words: [LeopardWord]) {
         if handle == nil {
             throw LeopardInvalidStateError("Leopard must be initialized before processing")
         }
@@ -109,7 +158,14 @@ public class Leopard {
         }
 
         var cTranscript: UnsafeMutablePointer<Int8>?
-        let status = pv_leopard_process_file(self.handle, audioPathArg, &cTranscript)
+        var numWords: Int32
+        var cWords: UnsafeMutablePointer<pv_word_t>?
+        let status = pv_leopard_process_file(
+                self.handle,
+                audioPathArg,
+                &cTranscript,
+                numWords,
+                &cWords)
         do {
             try checkStatus(status, "Leopard process failed")
         } catch let error as LeopardInvalidArgumentError {
@@ -124,18 +180,31 @@ public class Leopard {
         let transcript = String(cString: cTranscript!)
         cTranscript?.deallocate()
 
-        return transcript
+        var words = [Word]()
+        if numWords > 0 {
+            for cWord in UnsafeBufferPointer(start: cWords, count: numWords) {
+                let word = Word(
+                        word: String(cString: cWords.word),
+                        startSec: Float(cWord.start_sec),
+                        endSec: Float(cWord.end_sec),
+                        confidence: Float(cWord.confidence)
+                )
+                words.append(word)
+            }
+            cWords?.deallocate()
+        }
+
+        return (transcript, words)
     }
 
     /// Processes a given audio file and returns its transcription.
     ///
     /// - Parameters:
-    ///   - audioURL: URL to the audio file. The file needs to have a sample rate equal to or greater
-    ///               than `.sample_rate`. The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`,
-    ///               `Vorbis`, `WAV`, and `WebM`.
+    ///   - audioURL: Absolute path to the audio file. The supported formats are:
+    ///              `3gp (AMR)`, `FLAC`, `MP3`, `MP4/m4a (AAC)`, `Ogg`, `WAV` and `WebM`.
     /// - Throws: LeopardError
-    /// - Returns: Inferred transcription.
-    public func processFile(_ audioURL: URL) throws -> String {
+    /// - Returns: Inferred transcription and sequence of transcribed words with their associated metadata.
+    public func processFile(_ audioURL: URL) throws -> (transcript: String, words: [LeopardWord]) {
         if handle == nil {
             throw LeopardInvalidStateError("Leopard must be initialized before processing")
         }
