@@ -23,7 +23,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 
 ## Installation
 
-### Package
+Using `yarn`:
 
 ```console
 yarn add @picovoice/leopard-web
@@ -185,4 +185,4 @@ await handle.terminate();
 
 # Demo
 
-For example usage refer to our [Web demo application](/demo/web).
+For example usage refer to our [Web demo application](https://github.com/Picovoice/leopard/tree/master/demo/web).
