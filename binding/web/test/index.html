@@ -126,7 +126,7 @@
         writeMessage("Checking Leopard 'fromPublicDirectory'");
         let handle = await LeopardWeb.Leopard.fromPublicDirectory(accessKey, "leopard_params.pv", { forceWrite: true, enableAutomaticPunctuation: true });
         let result = await handle.process(pcm);
-        assertEquals(expectedPunctuation, result.transcription, 'Failed to transcribe audio file');
+        assertEquals(expectedPunctuation, result.transcript, 'Failed to transcribe audio file');
         assertDeepEquals(expectedWords, result.words);
         handle.release()
         writeMessage("Checking Leopard 'fromPublicDirectory'... done!");
@@ -134,7 +134,7 @@
         writeMessage("Checking Leopard 'fromBase64'");
         handle = await LeopardWeb.Leopard.fromBase64(accessKey, modelParams, { forceWrite: true });
         result = await handle.process(pcm);
-        assertEquals(expected, result.transcription, 'Failed to transcribe audio file');
+        assertEquals(expected, result.transcript, 'Failed to transcribe audio file');
         assertDeepEquals(expectedWords, result.words);
         handle.release()
         writeMessage("Checking Leopard 'fromBase64'... done!");
@@ -142,7 +142,7 @@
         writeMessage("Checking LeopardWorker 'fromPublicDirectory'");
         handle = await LeopardWeb.LeopardWorker.fromPublicDirectory(accessKey, "leopard_params.pv", { forceWrite: true });
         result = await handle.process(pcm);
-        assertEquals(expected, result.transcription, 'Failed to transcribe audio file');
+        assertEquals(expected, result.transcript, 'Failed to transcribe audio file');
         assertDeepEquals(expectedWords, result.words);
         handle.release()
         writeMessage("Checking LeopardWorker 'fromPublicDirectory'... done!");
@@ -150,7 +150,7 @@
         writeMessage("Checking LeopardWorker 'fromBase64'");
         handle = await LeopardWeb.LeopardWorker.fromBase64(accessKey, modelParams, { forceWrite: true });
         result = await handle.process(pcm);
-        assertEquals(expected, result.transcription, 'Failed to transcribe audio file');
+        assertEquals(expected, result.transcript, 'Failed to transcribe audio file');
         assertDeepEquals(expectedWords, result.words);
         handle.release()
         writeMessage("Checking LeopardWorker 'fromBase64'... done!");
@@ -159,7 +159,7 @@
         handle = await LeopardWeb.LeopardWorker.fromPublicDirectory(accessKey, "leopard_params.pv", { forceWrite: true });
         const defaultLen = pcm.length;
         result = await handle.process(pcm, { transfer: true, transferCB: (data) => {pcm = data} });
-        assertEquals(expected, result.transcription, 'Failed to transcribe audio file');
+        assertEquals(expected, result.transcript, 'Failed to transcribe audio file');
         assertDeepEquals(expectedWords, result.words);
         assertEquals(pcm.length, defaultLen, 'Buffer failed to transfer');
         handle.release()
