@@ -81,8 +81,7 @@ public class Leopard {
     /**
      * Processes given audio file and returns its transcription.
      *
-     * @param path Absolute path to the audio file. The file needs to have a sample rate equal to or greater
-     *             than `.sample_rate`. The supported formats are:
+     * @param path Absolute path to the audio file. The supported formats are:
      *             `3gp (AMR)`, `FLAC`, `MP3`, `MP4/m4a (AAC)`, `Ogg`, `WAV`, `WebM`
      * @return LeopardTranscript object which contains the transcription results of the engine.
      * @throws LeopardException if there is an error while processing the audio frame.
