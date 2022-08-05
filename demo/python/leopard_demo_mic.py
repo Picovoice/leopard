@@ -17,6 +17,7 @@ from threading import Thread
 
 from pvleopard import *
 from pvrecorder import PvRecorder
+from tabulate import tabulate
 
 
 class Recorder(Thread):
@@ -54,7 +55,7 @@ def main():
     parser.add_argument('--access_key', required=True)
     parser.add_argument('--model_path', default=None)
     parser.add_argument('--library_path', default=None)
-    parser.add_argument('--enable_automatic_punctuation', action='store_true')
+    parser.add_argument('--disable_automatic_punctuation', action='store_true')
     parser.add_argument('--verbose', action='store_true')
     args = parser.parse_args()
 
@@ -62,7 +63,7 @@ def main():
         access_key=args.access_key,
         model_path=args.model_path,
         library_path=args.library_path,
-        enable_automatic_punctuation=args.enable_automatic_punctuation)
+        enable_automatic_punctuation=not args.disable_automatic_punctuation)
 
     recorder = None
 
@@ -86,13 +87,7 @@ def main():
                 transcript, words = o.process(recorder.stop())
                 print(transcript)
                 if args.verbose:
-                    for word in words:
-                        print('{')
-                        print('  word: "%s",' % word.word)
-                        print('  start_sec: %.2f,' % word.start_sec)
-                        print('  end_sec: %.2f,' % word.end_sec)
-                        print('  confidence: %.2f,' % word.confidence)
-                        print('}')
+                    print(tabulate(words, headers=['word', 'start_sec', 'end_sec', 'confidence'], floatfmt='.2f'))
             except LeopardActivationLimitError:
                 print("AccessKey '%s' has reached it's processing limit." % args.access_key)
             print()
