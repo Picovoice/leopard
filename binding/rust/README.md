@@ -5,7 +5,6 @@
 Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
 Leopard is an on-device speech-to-text engine. Leopard is:
-
 - Private; All voice processing runs locally.
 - [Accurate](https://picovoice.ai/docs/benchmark/stt/)
 - [Compact and Computationally-Efficient](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
@@ -66,4 +65,4 @@ The model file contains the parameters for the Leopard engine. You may create be
 
 ## Demos
 
-The [Leopard Rust demo project](/demo/rust) is a Rust console app that allows for processing real-time audio (i.e. microphone) and files using Leopard.
+The [Leopard Rust demo project](https://github.com/Picovoice/leopard/tree/master/demo/rust) is a Rust console app that allows for processing real-time audio (i.e. microphone) and files using Leopard.
