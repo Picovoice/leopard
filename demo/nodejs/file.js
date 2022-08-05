@@ -66,7 +66,16 @@ function fileDemo() {
     const res = engineInstance.processFile(audioPath);
     console.log(res.transcript);
     if (verbose) {
-      console.table(res.words);
+      console.table(
+        res.words.map(word => {
+          return {
+            "word": word.word,
+            "Start time in Sec": word.startSec.toFixed(2),
+            "End time in Sec": word.endSec.toFixed(2),
+            "Confidence": word.confidence.toFixed(2)
+          };
+        })
+      );
     }
   } catch (err) {
     if (err instanceof LeopardActivationLimitReached) {
