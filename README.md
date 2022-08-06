@@ -359,7 +359,9 @@ Create instances of the Leopard class:
 const Leopard = require("@picovoice/leopard-node");
 const accessKey = "${ACCESS_KEY}" // Obtained from the Picovoice Console (https://console.picovoice.ai/)
 let handle = new Leopard(accessKey);
-console.log(handle.processFile('${AUDIO_PATH}'))
+
+const result = engineInstance.processFile('${AUDIO_PATH}');
+console.log(result.transcript);
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
