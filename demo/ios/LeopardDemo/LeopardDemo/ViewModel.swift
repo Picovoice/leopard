@@ -32,7 +32,8 @@ class ViewModel: ObservableObject {
 
     @Published var errorMessage = ""
     @Published var state = UIState.INIT
-    @Published var result: String = ""
+    @Published var transcript: String = ""
+    @Published var words:[LeopardWord] = []
     @Published var recordingTimeSec = 0.0
     @Published var transcribeTimeSec = 0.0
 
@@ -44,7 +45,10 @@ class ViewModel: ObservableObject {
         state = UIState.INIT
         do {
             let modelPath = Bundle(for: type(of: self)).path(forResource: "leopard_params", ofType: "pv")!
-            try leopard = Leopard(accessKey: ACCESS_KEY, modelPath: modelPath)
+            try leopard = Leopard(
+                    accessKey: ACCESS_KEY,
+                    modelPath: modelPath,
+                    enableAutomaticPunctuation: true)
             state = UIState.READY
         } catch let error as LeopardInvalidArgumentError{
             errorMessage = "\(error.localizedDescription)\nEnsure your AccessKey '\(ACCESS_KEY)' is valid."
@@ -163,7 +167,9 @@ class ViewModel: ObservableObject {
         let path = directoryContents[0].path
 
         let begin = clock()
-        result = try leopard.processFile(path)
+        let result = try leopard.processFile(path)
+        transcript = result.transcript
+        words = result.words
         transcribeTimeSec = Double(clock() - begin) / Double(CLOCKS_PER_SEC)
     }
 
