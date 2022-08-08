@@ -115,12 +115,12 @@ func runProcessTestCase(
 		pcm[i] = int16(binary.LittleEndian.Uint16(data[2*i : (2*i)+2]))
 	}
 
-	res, err := leopard.Process(pcm)
+	transcript, _, err := leopard.Process(pcm)
 	if err != nil {
 		t.Fatalf("Failed to process pcm buffer: %v", err)
 	}
-	if res.Transcript != expectedTranscript {
-		t.Fatalf("Expected '%s' got '%s'", expectedTranscript, res.Transcript)
+	if transcript != expectedTranscript {
+		t.Fatalf("Expected '%s' got '%s'", expectedTranscript, transcript)
 	}
 }
 
@@ -137,14 +137,14 @@ func runProcessFileTestCase(
 	}
 	defer leopard.Delete()
 
-	res, err := leopard.ProcessFile(testAudioPath)
+	transcript, words, err := leopard.ProcessFile(testAudioPath)
 	if err != nil {
 		t.Fatalf("Failed to process pcm buffer: %v", err)
 	}
-	if res.Transcript != expectedTranscript {
-		t.Fatalf("Expected '%s' got '%s'", expectedTranscript, res.Transcript)
+	if transcript != expectedTranscript {
+		t.Fatalf("Expected '%s' got '%s'", expectedTranscript, transcript)
 	}
-	reflect.DeepEqual(res.Words, referenceTranscriptMetadata)
+	reflect.DeepEqual(words, referenceTranscriptMetadata)
 }
 
 func TestProcess(t *testing.T) {

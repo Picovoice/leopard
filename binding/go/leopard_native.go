@@ -178,13 +178,13 @@ type nativeLeopardType struct {
 func (nl *nativeLeopardType) nativeInit(leopard *pvLeopard) (status PvStatus) {
 	var (
 		accessKeyC                  = C.CString(leopard.AccessKey)
-		libraryPathC                = C.CString(leopard.LibraryPath)
 		modelPathC                  = C.CString(leopard.ModelPath)
+		libraryPathC                = C.CString(leopard.LibraryPath)
 		enableAutomaticPunctuationC = C.bool(leopard.EnableAutomaticPunctuation)
 	)
 	defer C.free(unsafe.Pointer(accessKeyC))
-	defer C.free(unsafe.Pointer(libraryPathC))
 	defer C.free(unsafe.Pointer(modelPathC))
+	defer C.free(unsafe.Pointer(libraryPathC))
 
 	nl.libraryHandle = C.open_dl(libraryPathC)
 	nl.pv_leopard_init_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_leopard_init"))
@@ -209,12 +209,11 @@ func (nl *nativeLeopardType) nativeDelete(leopard *pvLeopard) {
 		leopard.handle)
 }
 
-func (nl *nativeLeopardType) nativeProcess(leopard *pvLeopard, pcm []int16) (status PvStatus, leopardResult LeopardTranscript) {
+func (nl *nativeLeopardType) nativeProcess(leopard *pvLeopard, pcm []int16) (status PvStatus, transcript string, words []LeopardWord) {
 	var (
 		numWords      int32
 		transcriptPtr unsafe.Pointer
 		wordsPtr      unsafe.Pointer
-		words         []LeopardWord
 	)
 
 	var ret = C.pv_leopard_process_wrapper(nl.pv_leopard_process_ptr,
@@ -225,8 +224,8 @@ func (nl *nativeLeopardType) nativeProcess(leopard *pvLeopard, pcm []int16) (sta
 		(*C.int32_t)(unsafe.Pointer(&numWords)),
 		(**C.pv_word_t)(unsafe.Pointer(&wordsPtr)))
 
-	transcript := C.GoString((*C.char)(transcriptPtr))
-	cWords := (*[1 << 16]C.pv_word_t)(wordsPtr)[:numWords]
+	transcript = C.GoString((*C.char)(transcriptPtr))
+	cWords := (*[1 << 28]C.pv_word_t)(wordsPtr)[:numWords]
 	for i := 0; i < int(numWords); i++ {
 		n := LeopardWord{
 			Word:       C.GoString(cWords[i].word),
@@ -240,21 +239,15 @@ func (nl *nativeLeopardType) nativeProcess(leopard *pvLeopard, pcm []int16) (sta
 	C.free(transcriptPtr)
 	C.free(wordsPtr)
 
-	leopardResult = LeopardTranscript{
-		Transcript: transcript,
-		Words:      words,
-	}
-
-	return PvStatus(ret), leopardResult
+	return PvStatus(ret), transcript, words
 }
 
-func (nl *nativeLeopardType) nativeProcessFile(leopard *pvLeopard, audioPath string) (status PvStatus, leopardResult LeopardTranscript) {
+func (nl *nativeLeopardType) nativeProcessFile(leopard *pvLeopard, audioPath string) (status PvStatus, transcript string, words []LeopardWord) {
 	var (
 		audioPathC    = C.CString(audioPath)
 		numWords      int32
 		transcriptPtr unsafe.Pointer
 		wordsPtr      unsafe.Pointer
-		words         []LeopardWord
 	)
 	defer C.free(unsafe.Pointer(audioPathC))
 
@@ -265,8 +258,8 @@ func (nl *nativeLeopardType) nativeProcessFile(leopard *pvLeopard, audioPath str
 		(*C.int32_t)(unsafe.Pointer(&numWords)),
 		(**C.pv_word_t)(unsafe.Pointer(&wordsPtr)))
 
-	transcript := C.GoString((*C.char)(transcriptPtr))
-	cWords := (*[1 << 16]C.pv_word_t)(wordsPtr)[:numWords]
+	transcript = C.GoString((*C.char)(transcriptPtr))
+	cWords := (*[1 << 28]C.pv_word_t)(wordsPtr)[:numWords]
 	for i := 0; i < int(numWords); i++ {
 		n := LeopardWord{
 			Word:       C.GoString(cWords[i].word),
@@ -280,12 +273,7 @@ func (nl *nativeLeopardType) nativeProcessFile(leopard *pvLeopard, audioPath str
 	C.free(transcriptPtr)
 	C.free(wordsPtr)
 
-	leopardResult = LeopardTranscript{
-		Transcript: transcript,
-		Words:      words,
-	}
-
-	return PvStatus(ret), leopardResult
+	return PvStatus(ret), transcript, words
 }
 
 func (nl *nativeLeopardType) nativeSampleRate() (sampleRate int) {

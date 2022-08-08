@@ -97,14 +97,6 @@ type LeopardWord struct {
 	Confidence float32
 }
 
-type LeopardTranscript struct {
-	// Inferred transcription.
-	Transcript string
-
-	// Transcribed words and their associated metadata.
-	Words []LeopardWord
-}
-
 // private vars
 var (
 	osName, cpu   = getOS()
@@ -193,69 +185,61 @@ func (leopard *pvLeopard) Delete() error {
 // linearly-encoded. This function operates on single-channel audio. If you wish
 // to process data in a different sample rate or format consider using `ProcessFile`.
 // Returns the inferred transcription.
-func (leopard *pvLeopard) Process(pcm []int16) (LeopardTranscript, error) {
-	emptyResult := LeopardTranscript{
-		Transcript: "",
-		Words:      nil,
-	}
+func (leopard *pvLeopard) Process(pcm []int16) (string, []LeopardWord, error) {
 	if leopard.handle == nil {
-		return emptyResult, &LeopardError{
+		return "", nil, &LeopardError{
 			INVALID_STATE,
 			"Leopard has not been initialized or has already been deleted"}
 	}
 
 	if len(pcm) == 0 {
-		return emptyResult, &LeopardError{
+		return "", nil, &LeopardError{
 			INVALID_ARGUMENT,
 			"Audio data must not be empty"}
 	}
 
-	ret, result := nativeLeopard.nativeProcess(leopard, pcm)
+	ret, transcript, words := nativeLeopard.nativeProcess(leopard, pcm)
 	if PvStatus(ret) != SUCCESS {
-		return emptyResult, &LeopardError{
+		return "", nil, &LeopardError{
 			PvStatus(ret),
 			"Leopard process failed."}
 	}
 
-	return result, nil
+	return transcript, words, nil
 }
 
 // Processes a given audio file and returns its transcription.
 // The supported formats are: `3gp (AMR)`, `FLAC`, `MP3`, `MP4/m4a (AAC)`, `Ogg`, `WAV`, `WebM`.
 // Returns the inferred transcription.
-func (leopard *pvLeopard) ProcessFile(audioPath string) (LeopardTranscript, error) {
-	emptyResult := LeopardTranscript{
-		Transcript: "",
-		Words:      nil,
-	}
+func (leopard *pvLeopard) ProcessFile(audioPath string) (string, []LeopardWord, error) {
 	if leopard.handle == nil {
-		return emptyResult, &LeopardError{
+		return "", nil, &LeopardError{
 			INVALID_STATE,
 			"Leopard has not been initialized or has already been deleted"}
 	}
 
 	if _, err := os.Stat(audioPath); os.IsNotExist(err) {
-		return emptyResult, &LeopardError{
+		return "", nil, &LeopardError{
 			INVALID_ARGUMENT,
 			fmt.Sprintf("Specified file could not be found at '%s'", audioPath)}
 	}
 
-	ret, result := nativeLeopard.nativeProcessFile(leopard, audioPath)
+	ret, transcipt, words := nativeLeopard.nativeProcessFile(leopard, audioPath)
 	if ret != SUCCESS {
 		if ret == INVALID_ARGUMENT {
 			fileExtension := filepath.Ext(audioPath)
 			if !validExtensions.includes(fileExtension) {
-				return emptyResult, &LeopardError{
+				return "", nil, &LeopardError{
 					INVALID_ARGUMENT,
 					fmt.Sprintf("Specified file with extension '%s' is not supported", fileExtension)}
 			}
 		}
-		return emptyResult, &LeopardError{
+		return "", nil, &LeopardError{
 			PvStatus(ret),
 			"Leopard process failed."}
 	}
 
-	return result, nil
+	return transcipt, words, nil
 }
 
 func pvStatusToString(status PvStatus) string {
