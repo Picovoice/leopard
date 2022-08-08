@@ -58,6 +58,7 @@ type LeopardWasmOutput = {
 };
 
 const PV_STATUS_SUCCESS = 10000;
+const MAX_PCM_LENGTH_SEC = 60 * 15;
 
 export class Leopard {
   private readonly _pvLeopardDelete: pv_leopard_delete_type;
@@ -234,6 +235,10 @@ export class Leopard {
     if (!(pcm instanceof Int16Array)) {
       throw new Error('The argument \'pcm\' must be provided as an Int16Array');
     }
+    const maxSize = MAX_PCM_LENGTH_SEC * Leopard._sampleRate;
+    if (pcm.length > maxSize) {
+      throw new Error(`'pcm' size must be smaller than ${maxSize}`);
+    }
 
     const returnPromise = new Promise<LeopardTranscript>((resolve, reject) => {
       this._processMutex
@@ -330,8 +335,7 @@ export class Leopard {
     const { enableAutomaticPunctuation = false } = options;
 
     // A WebAssembly page has a constant size of 64KiB. -> 1MiB ~= 16 pages
-    // minimum memory requirements for init: 3370 pages
-    const memory = new WebAssembly.Memory({ initial: 3370 });
+    const memory = new WebAssembly.Memory({ initial: 3500 });
 
     const memoryBufferUint8 = new Uint8Array(memory.buffer);
 
