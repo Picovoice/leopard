@@ -261,25 +261,40 @@ Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://co
 Create an instance of the engine and transcribe an audio file:
 
 ```c
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "pv_leopard.h"
 
 pv_leopard_t *handle = NULL;
-pv_status_t status = pv_leopard_init("${ACCESS_KEY}", "${MODEL_PATH}", &handle);
+bool automatic_punctuation = false;
+pv_status_t status = pv_leopard_init("${ACCESS_KEY}", "${MODEL_PATH}", automatic_punctuation, &handle);
 if (status != PV_STATUS_SUCCESS) {
     // error handling logic
 }
 
 char *transcript = NULL;
-status = pv_leopard_process_file(handle, "${AUDIO_PATH}", &transcript);
+int32_t num_words = 0;
+pv_word_t *words = NULL;
+status = pv_leopard_process_file(handle, "${AUDIO_PATH}", &transcript, &num_words, &words);
 if (status != PV_STATUS_SUCCESS) {
     // error handling logic
 }
 
 fprintf(stdout, "%s\n", transcript);
+for (int32_t i = 0; i < num_words; i++) {
+    fprintf(
+            stdout,
+            "[%s]\t.start_sec = %.1f .end_sec = %.1f .confidence = %.2f\n",
+            words[i].word,
+            words[i].start_sec,
+            words[i].end_sec,
+            words[i].confidence);
+}
+
 free(transcript);
+free(words);
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_PATH}` to path to
