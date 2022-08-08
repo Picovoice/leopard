@@ -72,15 +72,15 @@ func main() {
 
 	log.Println("Processing audio file...")
 
-	res, err := l.ProcessFile(inputAudioPath)
+	transcript, words, err := l.ProcessFile(inputAudioPath)
 	if err != nil {
 		log.Fatalf("Error processing: %v\n", err)
 	}
 
-	fmt.Println(res.Transcript)
+	fmt.Println(transcript)
 	if *verbosArg {
 		fmt.Printf("|%10s | %15s | %15s | %10s|\n", "word", "Start in Sec", "End in Sec", "Confidence")
-		for _, word := range res.Words {
+		for _, word := range words {
 			fmt.Printf("|%10s | %15.2f | %15.2f | %10.2f|\n", word.Word, word.StartSec, word.EndSec, word.Confidence)
 		}
 	}
