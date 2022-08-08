@@ -7,16 +7,13 @@ Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally.
-- Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
-- Compact and Computationally-Efficient [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
+- [Accurate](https://picovoice.ai/docs/benchmark/stt/)
+- [Compact and Computationally-Efficient](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
-    - Linux (x86_64)
-    - macOS (x86_64, arm64)
-    - Windows (x86_64)
-    - Android
-    - iOS
-    - Raspberry Pi (4, 3)
-    - NVIDIA Jetson Nano
+  - Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64)
+  - Android and iOS
+  - Chrome, Safari, Firefox, and Edge
+  - Raspberry Pi (4, 3) and NVIDIA Jetson Nano
 
 ## Installation
 
@@ -34,10 +31,10 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 ## Usage
 
-Add the Leopard model file in `Xcode` by:
+Add the Leopard model file in `Xcode`:
 
-1. Either creating a model in [Picovoice CAT Console](https://picovoice.ai/cat/) or get the default model in [/lib/common/leopard_params.pv](/lib/common/leopard_params.pv).
-2. Add the model as a bundled resource by selecting Build Phases and adding it to Copy Bundle Resources step.
+1. Create a model in [Picovoice Console](https://console.picovoice.ai/) or use the [default model](/lib/common/).
+2. Add the model as a bundled resource by selecting Build Phases and adding it to `Copy Bundle Resources` step.
 
 Create an instance of the engine:
 
@@ -58,10 +55,12 @@ Transcribe an audio file either by passing the absolute path or an url to the fi
 
 do {
     let audioPath = Bundle(for: type(of: self)).path(forResource: "${AUDIO_FILE_NAME}", ofType: "${AUDIO_FILE_EXTENSION}")
-    print(leopard.process_file(audioPath))
-
+    var result = leopard.process_file(audioPath)  
+    print(result.transcript)
+  
     let audioURL = Bundle(for: type(of: self)).url(forResource: "${AUDIO_FILE_NAME}", withExtension: "${AUDIO_FILE_EXTENSION}")
-    print(leopard.process_file(audioURL))
+    result = leopard.process_file(audioURL)
+    print(result.transcript)
 } catch let error as LeopardError {
     // handle error
 } catch { }

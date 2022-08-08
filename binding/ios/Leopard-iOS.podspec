@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name = 'Leopard-iOS'
   s.module_name = 'Leopard'
-  s.version = '1.0.2'
+  s.version = '1.1.0'
   s.license = {:type => 'Apache 2.0'}
   s.summary = 'iOS SDK for Picovoice\'s Leopard speech-to-text engine.'
   s.description = 
@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
   DESC
   s.homepage = 'https://github.com/Picovoice/leopard/tree/master/binding/ios'
   s.author = { 'Picovoice' => 'hello@picovoice.ai' }
-  s.source = { :git => "https://github.com/Picovoice/leopard.git", :tag => "Leopard-iOS-v1.0.2" }
+  s.source = { :git => "https://github.com/Picovoice/leopard.git", :tag => "Leopard-iOS-v1.1.0" }
   s.ios.deployment_target = '9.0'
   s.swift_version = '5.0'
   s.vendored_frameworks = 'lib/ios/PvLeopard.xcframework'

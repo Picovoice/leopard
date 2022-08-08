@@ -16,6 +16,7 @@
 #endif
 
 #include <getopt.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
@@ -84,22 +85,30 @@ static void print_dl_error(const char *message) {
 
 }
 
-int main(int argc, char **argv) {
+int picovoice_main(int argc, char **argv) {
     const char *access_key = NULL;
-    const char *library_path = NULL;
     const char *model_path = NULL;
+    const char *library_path = NULL;
+    bool enable_automatic_punctuation = true;
+    bool show_metadata = false;
 
     int opt;
-    while ((opt = getopt(argc, argv, "a:l:m:")) != -1) {
+    while ((opt = getopt(argc, argv, "a:m:l:dv")) != -1) {
         switch (opt) {
             case 'a':
                 access_key = optarg;
                 break;
+            case 'm':
+                model_path = optarg;
+                break;
             case 'l':
                 library_path = optarg;
                 break;
-            case 'm':
-                model_path = optarg;
+            case 'd':
+                enable_automatic_punctuation = false;
+                break;
+            case 'v':
+                show_metadata = true;
                 break;
             default:
                 break;
@@ -107,7 +116,7 @@ int main(int argc, char **argv) {
     }
 
     if (!(access_key && library_path && model_path && (optind < argc))) {
-        fprintf(stderr, "usage: -a ACCESS_KEY -l LIBRARY_PATH -m MODEL_PATH audio_path0 audio_path1 ...\n");
+        fprintf(stderr, "usage: -a ACCESS_KEY -m MODEL_PATH -l LIBRARY_PATH [-d] [-v] audio_path0 audio_path1 ...\n");
         exit(1);
     }
 
@@ -129,7 +138,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    pv_status_t (*pv_leopard_init_func)(const char *, const char *, pv_leopard_t **) =
+    pv_status_t (*pv_leopard_init_func)(const char *, const char *, bool, pv_leopard_t **) =
     load_symbol(dl_handle, "pv_leopard_init");
     if (!pv_leopard_init_func) {
         print_dl_error("failed to load `pv_leopard_init`");
@@ -142,7 +151,7 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    pv_status_t (*pv_leopard_process_file_func)(pv_leopard_t *, const char *, char **) =
+    pv_status_t (*pv_leopard_process_file_func)(pv_leopard_t *, const char *, char **, int32_t *, pv_word_t **) =
     load_symbol(dl_handle, "pv_leopard_process_file");
     if (!pv_leopard_process_file_func) {
         print_dl_error("failed to load `pv_leopard_process_file`");
@@ -153,7 +162,7 @@ int main(int argc, char **argv) {
     gettimeofday(&before, NULL);
 
     pv_leopard_t *leopard = NULL;
-    pv_status_t status = pv_leopard_init_func(access_key, model_path, &leopard);
+    pv_status_t status = pv_leopard_init_func(access_key, model_path, enable_automatic_punctuation, &leopard);
     if (status != PV_STATUS_SUCCESS) {
         fprintf(stderr, "failed to init with `%s`.\n", pv_status_to_string_func(status));
         exit(1);
@@ -171,7 +180,9 @@ int main(int argc, char **argv) {
         gettimeofday(&before, NULL);
 
         char *transcript = NULL;
-        status = pv_leopard_process_file_func(leopard, argv[i], &transcript);
+        int32_t num_words = 0;
+        pv_word_t *words = NULL;
+        status = pv_leopard_process_file_func(leopard, argv[i], &transcript, &num_words, &words);
         if (status != PV_STATUS_SUCCESS) {
             fprintf(stderr, "failed to process with `%s`.\n", pv_status_to_string_func(status));
             exit(1);
@@ -183,6 +194,20 @@ int main(int argc, char **argv) {
 
         fprintf(stdout, "%s\n", transcript);
         free(transcript);
+
+        if (show_metadata) {
+            for (int32_t j = 0; j < num_words; j++) {
+                fprintf(
+                        stdout,
+                        "[%s]\t.start_sec = %.1f .end_sec = %.1f .confidence = %.2f\n",
+                        words[j].word,
+                        words[j].start_sec,
+                        words[j].end_sec,
+                        words[j].confidence);
+            }
+            printf("\n");
+        }
+        free(words);
     }
 
     fprintf(stdout, "proc took %.2f sec\n", proc_sec);
@@ -191,4 +216,47 @@ int main(int argc, char **argv) {
     close_dl(dl_handle);
 
     return 0;
+}
+
+int main(int argc, char *argv[]) {
+
+#if defined(_WIN32) || defined(_WIN64)
+
+#define UTF8_COMPOSITION_FLAG (0)
+#define NULL_TERMINATED (-1)
+
+    LPWSTR *wargv = CommandLineToArgvW(GetCommandLineW(), &argc);
+    if (wargv == NULL) {
+        fprintf(stderr, "CommandLineToArgvW failed\n");
+        exit(1);
+    }
+
+    char *utf8_argv[argc];
+
+    for (int i = 0; i < argc; ++i) {
+        // WideCharToMultiByte: https://docs.microsoft.com/en-us/windows/win32/api/stringapiset/nf-stringapiset-widechartomultibyte
+        int arg_chars_num = WideCharToMultiByte(CP_UTF8, UTF8_COMPOSITION_FLAG, wargv[i], NULL_TERMINATED, NULL, 0, NULL, NULL);
+        utf8_argv[i] = (char *) malloc(arg_chars_num * sizeof(char));
+        if (!utf8_argv[i]) {
+            fprintf(stderr, "failed to to allocate memory for converting args");
+        }
+        WideCharToMultiByte(CP_UTF8, UTF8_COMPOSITION_FLAG, wargv[i], NULL_TERMINATED, utf8_argv[i], arg_chars_num, NULL, NULL);
+    }
+
+    LocalFree(wargv);
+    argv = utf8_argv;
+
+#endif
+
+    int result = picovoice_main(argc, argv);
+
+#if defined(_WIN32) || defined(_WIN64)
+
+    for (int i = 0; i < argc; ++i) {
+        free(utf8_argv[i]);
+    }
+
+#endif
+
+    return result;
 }

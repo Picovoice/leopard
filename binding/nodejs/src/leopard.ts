@@ -19,7 +19,13 @@ import {
   pvStatusToException,
 } from "./errors";
 
-import { getSystemLibraryPath } from "./platforms";
+import {
+  LeopardWord,
+  LeopardTranscript,
+  LeopardOptions
+} from "./types";
+
+import {getSystemLibraryPath} from "./platforms";
 
 const DEFAULT_MODEL_PATH = "../lib/common/leopard_params.pv";
 
@@ -31,10 +37,14 @@ const VALID_AUDIO_EXTENSIONS = [
   ".vorbis",
   ".wav",
   ".webm",
+  ".mp4",
+  ".m4a",
+  ".3gp"
 ];
 
 type LeopardHandleAndStatus = { handle: any; status: PvStatus };
-type TranscriptAndStatus = { transcript: string; status: PvStatus };
+type LeopardResult = { transcript: string; words: LeopardWord[]; status: PvStatus };
+
 
 /**
  * Node.js binding for Leopard speech-to-text engine.
@@ -42,7 +52,7 @@ type TranscriptAndStatus = { transcript: string; status: PvStatus };
  * Performs the calls to the Leopard node library. Does some basic parameter validation to prevent
  * errors occurring in the library layer. Provides clearer error messages in native JavaScript.
  */
-export default class Leopard {
+export class Leopard {
   private _pvLeopard: any;
 
   private _handle: any;
@@ -53,10 +63,15 @@ export default class Leopard {
   /**
    * Creates an instance of Leopard.
    * @param {string} accessKey AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).
-   * @param {string} modelPath the path to the Leopard model (.pv extension)
-   * @param {string} libraryPath the path to the Leopard dynamic library (.node extension)
+   * @param {LeopardOptions} options Optional configuration arguments.
+   * @param {string} options.modelPath The path to save and use the model from (.pv extension)
+   * @param {string} options.libraryPath the path to the Leopard dynamic library (.node extension)
+   * @param {boolean} options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
    */
-  constructor(accessKey: string, modelPath?: string, libraryPath?: string) {
+  constructor(
+    accessKey: string,
+    options: LeopardOptions = {}) {
+
     if (
       accessKey === null ||
       accessKey === undefined ||
@@ -65,13 +80,10 @@ export default class Leopard {
       throw new LeopardInvalidArgumentError(`No AccessKey provided to Leopard`);
     }
 
-    if (modelPath === undefined || modelPath === null) {
-      modelPath = path.resolve(__dirname, DEFAULT_MODEL_PATH);
-    }
-
-    if (libraryPath === undefined || modelPath === null) {
-      libraryPath = getSystemLibraryPath();
-    }
+    const {
+      modelPath = path.resolve(__dirname, DEFAULT_MODEL_PATH),
+      libraryPath = getSystemLibraryPath(),
+      enableAutomaticPunctuation = false} = options;
 
     if (!fs.existsSync(libraryPath)) {
       throw new LeopardInvalidArgumentError(
@@ -89,7 +101,7 @@ export default class Leopard {
 
     let leopardHandleAndStatus: LeopardHandleAndStatus | null = null;
     try {
-      leopardHandleAndStatus = pvLeopard.init(accessKey, modelPath);
+      leopardHandleAndStatus = pvLeopard.init(accessKey, modelPath, enableAutomaticPunctuation);
     } catch (err: any) {
       pvStatusToException(<PvStatus>err.code, err);
     }
@@ -126,9 +138,9 @@ export default class Leopard {
    * @param {Int16Array} pcm Audio data. The audio needs to have a sample rate equal to `Leopard.sampleRate` and be 16-bit linearly-encoded.
    * This function operates on single-channel audio. If you wish to process data in a different
    * sample rate or format consider using `Leopard.processFile()`.
-   * @returns {string} Inferred transcription.
+   * @returns {LeopardTranscript} LeopardTranscript object which contains the transcription results of the engine.
    */
-  process(pcm: Int16Array): string {
+  process(pcm: Int16Array): LeopardTranscript {
     if (
       this._handle === 0 ||
       this._handle === null ||
@@ -147,9 +159,9 @@ export default class Leopard {
       );
     }
 
-    let transcriptAndStatus: TranscriptAndStatus | null = null;
+    let leopardResult: LeopardResult | null = null;
     try {
-      transcriptAndStatus = this._pvLeopard.process(
+      leopardResult = this._pvLeopard.process(
         this._handle,
         pcm,
         pcm.length
@@ -158,12 +170,15 @@ export default class Leopard {
       pvStatusToException(<PvStatus>err.code, err);
     }
 
-    const status = transcriptAndStatus!.status;
+    const status = leopardResult!.status;
     if (status !== PvStatus.SUCCESS) {
       pvStatusToException(status, "Leopard failed to process the audio frame");
     }
 
-    return transcriptAndStatus!.transcript;
+    return {
+      transcript: leopardResult!.transcript,
+      words: leopardResult!.words,
+    }
   }
 
   /**
@@ -171,10 +186,10 @@ export default class Leopard {
    *
    * @param {string} audioPath Absolute path to the audio file.
    * The file needs to have a sample rate equal to or greater than `.sampleRate`.
-   * The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`, `Vorbis`, `WAV`, and `WebM`.
-   * @returns {string} Inferred transcription.
+   * The supported formats are: `FLAC`, `MP3`, `Ogg`, `WAV`, `WebM`, `MP4/m4a (AAC)`, and `3gp (AMR)`
+   * @returns {LeopardTranscript} object which contains the transcription results of the engine.
    */
-  processFile(audioPath: string): string {
+  processFile(audioPath: string): LeopardTranscript {
     if (
       this._handle === 0 ||
       this._handle === null ||
@@ -189,9 +204,9 @@ export default class Leopard {
       );
     }
 
-    let transcriptAndStatus: TranscriptAndStatus | null = null;
+    let leopardResult: LeopardResult | null = null;
     try {
-      transcriptAndStatus = this._pvLeopard.process_file(
+      leopardResult = this._pvLeopard.process_file(
         this._handle,
         audioPath
       );
@@ -199,7 +214,7 @@ export default class Leopard {
       pvStatusToException(<PvStatus>err.code, err);
     }
 
-    const status = transcriptAndStatus!.status;
+    const status = leopardResult!.status;
     if (status !== PvStatus.SUCCESS) {
       if (
         status === PvStatus.INVALID_ARGUMENT &&
@@ -214,7 +229,10 @@ export default class Leopard {
       }
       pvStatusToException(status, "Leopard failed to process the audio file");
     }
-    return transcriptAndStatus!.transcript;
+    return {
+      transcript: leopardResult!.transcript,
+      words: leopardResult!.words,
+    }
   }
 
   /**
