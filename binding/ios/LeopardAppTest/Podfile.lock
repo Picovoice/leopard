@@ -2,15 +2,15 @@ PODS:
   - Leopard-iOS (1.1.0)
 
 DEPENDENCIES:
-  - Leopard-iOS (from `https://raw.githubusercontent.com/Picovoice/leopard/v1.1-ios/binding/ios/Leopard-iOS.podspec`)
+  - Leopard-iOS (from `https://raw.githubusercontent.com/Picovoice/leopard/v1.1/binding/ios/Leopard-iOS.podspec`)
 
 EXTERNAL SOURCES:
   Leopard-iOS:
-    :podspec: https://raw.githubusercontent.com/Picovoice/leopard/v1.1-ios/binding/ios/Leopard-iOS.podspec
+    :podspec: https://raw.githubusercontent.com/Picovoice/leopard/v1.1/binding/ios/Leopard-iOS.podspec
 
 SPEC CHECKSUMS:
   Leopard-iOS: edad5cc511b4dd36e13ce80941c5775174767010
 
-PODFILE CHECKSUM: ebc5a2eaa13ff5b977aee88a699cff8bd7b287c2
+PODFILE CHECKSUM: b0b9a108e15994ea95cdbe30d8ca19c646b0e1d3
 
 COCOAPODS: 1.11.2
