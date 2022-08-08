@@ -55,12 +55,12 @@ Transcribe an audio file either by passing the absolute path or an url to the fi
 
 do {
     let audioPath = Bundle(for: type(of: self)).path(forResource: "${AUDIO_FILE_NAME}", ofType: "${AUDIO_FILE_EXTENSION}")
-    var transcript, words = leopard.process_file(audioPath)  
-    print(transcript)
+    var result = leopard.process_file(audioPath)  
+    print(result.transcript)
   
     let audioURL = Bundle(for: type(of: self)).url(forResource: "${AUDIO_FILE_NAME}", withExtension: "${AUDIO_FILE_EXTENSION}")
-    var transcript, words = leopard.process_file(audioURL)
-    print(transcript)
+    result = leopard.process_file(audioURL)
+    print(result.transcript)
 } catch let error as LeopardError {
     // handle error
 } catch { }
