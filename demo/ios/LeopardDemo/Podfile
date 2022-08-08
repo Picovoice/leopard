@@ -2,5 +2,5 @@ source 'https://cdn.cocoapods.org/'
 platform :ios, '9.0'
 
 target 'LeopardDemo' do
-  pod 'Leopard-iOS', podspec: 'https://raw.githubusercontent.com/Picovoice/leopard/v1.1/binding/ios/Leopard-iOS.podspec'
+  pod 'Leopard-iOS', '~> 1.1.0'
 end
