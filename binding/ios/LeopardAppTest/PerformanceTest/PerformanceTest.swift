@@ -68,7 +68,7 @@ class PerformanceTest: XCTestCase {
         let filePath: String = bundle.path(forResource: "test", ofType: "wav")!
 
         var results: [Double] = []
-        for _ in 0...numTestIterations {
+        for i in 0...numTestIterations {
             var totalNSec = 0.0
 
             let before = CFAbsoluteTimeGetCurrent()
