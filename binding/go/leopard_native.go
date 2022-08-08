@@ -225,7 +225,7 @@ func (nl *nativeLeopardType) nativeProcess(leopard *pvLeopard, pcm []int16) (sta
 		(**C.pv_word_t)(unsafe.Pointer(&wordsPtr)))
 
 	transcript = C.GoString((*C.char)(transcriptPtr))
-	cWords := (*[1 << 28]C.pv_word_t)(wordsPtr)[:numWords]
+	cWords := (*[1 << 20]C.pv_word_t)(wordsPtr)[:numWords]
 	for i := 0; i < int(numWords); i++ {
 		n := LeopardWord{
 			Word:       C.GoString(cWords[i].word),
@@ -259,7 +259,7 @@ func (nl *nativeLeopardType) nativeProcessFile(leopard *pvLeopard, audioPath str
 		(**C.pv_word_t)(unsafe.Pointer(&wordsPtr)))
 
 	transcript = C.GoString((*C.char)(transcriptPtr))
-	cWords := (*[1 << 28]C.pv_word_t)(wordsPtr)[:numWords]
+	cWords := (*[1 << 20]C.pv_word_t)(wordsPtr)[:numWords]
 	for i := 0; i < int(numWords); i++ {
 		n := LeopardWord{
 			Word:       C.GoString(cWords[i].word),
