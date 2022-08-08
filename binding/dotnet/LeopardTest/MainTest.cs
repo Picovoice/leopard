@@ -28,7 +28,7 @@ namespace LeopardTest
 
         private static string _relativeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-/*        LeopardWord[] referenceTranscriptMetadata = {
+        LeopardWord[] referenceTranscriptMetadata = {
             new LeopardWord("Mr", 0.95f, 0.58f, 0.80f),
             new LeopardWord("quilter", 0.80f, 0.86f, 1.18f),
             new LeopardWord("is", 0.96f, 1.31f, 1.38f),
@@ -45,7 +45,7 @@ namespace LeopardTest
             new LeopardWord("to", 0.97f, 4.10f, 4.16f),
             new LeopardWord("welcome", 0.89f, 4.22f, 4.58f),
             new LeopardWord("his", 0.96f, 4.67f, 4.83f),
-            new LeopardWord("gospel", 0.93f, 4.93f, 5.38f)};*/
+            new LeopardWord("gospel", 0.93f, 4.93f, 5.38f)};
 
         private List<short> GetPcmFromFile(string audioFilePath, int expectedSampleRate)
         {
@@ -86,30 +86,37 @@ namespace LeopardTest
             string testAudioPath = Path.Combine(_relativeDir, "resources/audio_samples/test.wav");
             LeopardTranscript result = leopard.ProcessFile(testAudioPath);
             Assert.AreEqual(REF_TRANSCRIPT, result.TranscriptString);
+            for (int i= 0; i < 10; i++)
+            {
+                Assert.AreEqual(result.WordArray[i].Word, referenceTranscriptMetadata[i].Word);
+                Assert.AreEqual(result.WordArray[i].Confidence, referenceTranscriptMetadata[i].Confidence, 0.01);
+                Assert.AreEqual(result.WordArray[i].StartSec, referenceTranscriptMetadata[i].StartSec, 0.01);
+                Assert.AreEqual(result.WordArray[i].EndSec, referenceTranscriptMetadata[i].EndSec, 0.01);
+            }
         }
 
-        //[TestMethod]
-        //[DataRow(true, "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel.")]
-        //[DataRow(false, "Mr quilter is the apostle of the middle classes and we are glad to welcome his gospel")]
-        //public void TestProcess(bool enableAutomaticPunctuation, string expectedTranscript)
-        //{
-        //    using Leopard leopard = Leopard.Create(
-        //        accessKey:ACCESS_KEY, 
-        //        enableAutomaticPunctuation:enableAutomaticPunctuation);
-        //    string testAudioPath = Path.Combine(_relativeDir, "resources/audio_samples/test.wav");
-        //    List<short> pcm = GetPcmFromFile(testAudioPath, leopard.SampleRate);
-        //    LeopardTranscript result = leopard.Process(pcm.ToArray());
-        //    Assert.AreEqual(expectedTranscript, result.TranscriptString);
-        //}
+        [TestMethod]
+        [DataRow(true, "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel.")]
+        [DataRow(false, "Mr quilter is the apostle of the middle classes and we are glad to welcome his gospel")]
+        public void TestProcess(bool enableAutomaticPunctuation, string expectedTranscript)
+        {
+            using Leopard leopard = Leopard.Create(
+                accessKey: ACCESS_KEY,
+                enableAutomaticPunctuation: enableAutomaticPunctuation);
+            string testAudioPath = Path.Combine(_relativeDir, "resources/audio_samples/test.wav");
+            List<short> pcm = GetPcmFromFile(testAudioPath, leopard.SampleRate);
+            LeopardTranscript result = leopard.Process(pcm.ToArray());
+            Assert.AreEqual(expectedTranscript, result.TranscriptString);
+        }
 
-        //[TestMethod]
-        //public void TestCustomModel()
-        //{
-        //    string testModelPath = Path.Combine(_relativeDir, "lib/common/leopard_params.pv");
-        //    string testAudioPath = Path.Combine(_relativeDir, "resources/audio_samples/test.wav");
-        //    using Leopard leopard = Leopard.Create(ACCESS_KEY, testModelPath);
-        //    LeopardTranscript result = leopard.ProcessFile(testAudioPath);
-        //    Assert.AreEqual(REF_TRANSCRIPT, result.TranscriptString);
-        //}
+        [TestMethod]
+        public void TestCustomModel()
+        {
+            string testModelPath = Path.Combine(_relativeDir, "lib/common/leopard_params.pv");
+            string testAudioPath = Path.Combine(_relativeDir, "resources/audio_samples/test.wav");
+            using Leopard leopard = Leopard.Create(ACCESS_KEY, testModelPath);
+            LeopardTranscript result = leopard.ProcessFile(testAudioPath);
+            Assert.AreEqual(REF_TRANSCRIPT, result.TranscriptString);
+        }
     }
 }

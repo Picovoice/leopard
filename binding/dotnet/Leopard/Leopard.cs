@@ -45,6 +45,7 @@ namespace Pv
         {
             Word = word;
             Confidence = confidence;
+
             StartSec = startSec;
             EndSec = endSec;
         }
@@ -244,14 +245,15 @@ namespace Pv
             string transcript = Utils.GetUtf8StringFromPtr(transcriptPtr);
             pv_free(transcriptPtr);
             List<LeopardWord> wordsList = new List<LeopardWord>();
+            IntPtr orgWordsPtr = wordsPtr;
             for (int i = 0; i < numWords; i++)
             {
                 CWord cword = (CWord)Marshal.PtrToStructure(wordsPtr, typeof(CWord));
                 string word = Utils.GetUtf8StringFromPtr(cword.wordPtr);
-                pv_free(cword.wordPtr);
                 wordsList.Add(new LeopardWord(word, cword.confidence, cword.startSec, cword.endSec));
                 wordsPtr += Marshal.SizeOf(typeof(CWord));
             }
+            pv_free(orgWordsPtr);
             return new LeopardTranscript(transcript, wordsList.ToArray());
         }
 
@@ -293,6 +295,7 @@ namespace Pv
 
             string transcript = Utils.GetUtf8StringFromPtr(transcriptPtr);
             pv_free(transcriptPtr);
+            IntPtr orgWordsPtr = wordsPtr;
             List<LeopardWord> wordsList = new List<LeopardWord>();
             for (int i = 0; i < numWords; i++)
             {
@@ -301,6 +304,7 @@ namespace Pv
                 wordsList.Add(new LeopardWord(word, cword.confidence, cword.startSec, cword.endSec));
                 wordsPtr += Marshal.SizeOf(typeof(CWord));
             }
+            pv_free(orgWordsPtr);
             return new LeopardTranscript(transcript, wordsList.ToArray());
         }
 
