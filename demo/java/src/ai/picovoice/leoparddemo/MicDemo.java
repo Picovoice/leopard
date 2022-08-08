@@ -98,16 +98,10 @@ class Recorder extends Thread {
                 this.pcmBuffer.add(shortBuffer[i]);
             }
         }
-
-        this.isRecording = false;
     }
 
     public void end() {
         this.stop = true;
-    }
-
-    public boolean getIsRecording() {
-        return this.isRecording;
     }
 
     public short[] getPCM() {
@@ -147,8 +141,7 @@ public class MicDemo {
                     System.out.println(">>> Recording ... Press 'ENTER' to stop:");
                     scanner.nextLine();
                     recorder.end();
-                    while (recorder.getIsRecording()) { }
-
+                    while (recorder.isAlive()) { }
                     short[] pcm = recorder.getPCM();
 
                     LeopardTranscript transcript = leopard.process(pcm);
