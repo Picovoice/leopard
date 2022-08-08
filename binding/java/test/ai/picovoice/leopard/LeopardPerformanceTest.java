@@ -29,7 +29,7 @@ public class LeopardPerformanceTest {
     void initPerformance() throws Exception {
 
         long[] perfResults = new long[numTestIterations];
-        for (int i = 0; i < numTestIterations; i++) {
+        for (int i = 0; i < numTestIterations + 1; i++) {
             long before = System.nanoTime();
             Leopard leopard = new Leopard.Builder()
                     .setAccessKey(accessKey)
@@ -66,7 +66,7 @@ public class LeopardPerformanceTest {
                 .toString();
 
         long[] perfResults = new long[numTestIterations];
-        for (int i = 0; i < numTestIterations; i++) {
+        for (int i = 0; i < numTestIterations + 1; i++) {
             long before = System.nanoTime();
             leopard.processFile(audioFilePath);
             long procTime = (System.nanoTime() - before);
