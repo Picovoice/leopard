@@ -87,7 +87,7 @@ public class Leopard {
     ///
     /// - Parameters:
     ///   - accessKey: The AccessKey obtained from Picovoice Console (https://console.picovoice.ai).
-    ///   - modelURL: URL file containing model parameters.
+    ///   - modelURL: URL to the file containing model parameters.
     ///   - enableAutomaticPunctuation: Set to `true` to enable automatic punctuation insertion.
     /// - Throws: LeopardError
     public convenience init(accessKey: String, modelURL: URL, enableAutomaticPunctuation: Bool = false) throws {
@@ -215,7 +215,7 @@ public class Leopard {
     /// Processes a given audio file and returns its transcription.
     ///
     /// - Parameters:
-    ///   - audioURL: Absolute path to the audio file. The supported formats are:
+    ///   - audioURL: URL to the audio file. The supported formats are:
     ///              `3gp (AMR)`, `FLAC`, `MP3`, `MP4/m4a (AAC)`, `Ogg`, `WAV` and `WebM`.
     /// - Throws: LeopardError
     /// - Returns: Inferred transcription and sequence of transcribed words with their associated metadata.
