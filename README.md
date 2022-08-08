@@ -322,12 +322,13 @@ let leopard = Leopard(accessKey: "${ACCESS_KEY}", modelPath: modelPath)
 
 do {
     let audioPath = Bundle(for: type(of: self)).path(forResource: "${AUDIO_FILE_NAME}", ofType: "${AUDIO_FILE_EXTENSION}")
-    print(leopard.process(audioPath))
+    let result = leopard.process(audioPath)
+    print(result.transcript)
 } catch let error as LeopardError {
 } catch { }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/), `${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of the audio file.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` a custom trained model from [console](https://console.picovoice.ai/) or the [default model](/lib/common/), `${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of the audio file.
 
 ### Android
 
