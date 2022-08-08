@@ -10,11 +10,26 @@
 import PvLeopard
 
 public struct LeopardWord {
+
+    /// Transcribed word.
     public let word: String
+
+    /// Start of word in seconds.
     public let startSec: Float
+
+    /// End of word in seconds.
     public let endSec: Float
+
+    /// Transcription confidence. It is a number within [0, 1].
     public let confidence: Float
 
+    /// Constructor.
+    ///
+    /// - Parameters:
+    ///   - word: Transcribed word.
+    ///   - startSec: Start of word in seconds.
+    ///   - endSec: End of word in seconds.
+    ///   - confidence: Transcription confidence. It is a number within [0, 1].
     public init(word: String, startSec: Float, endSec: Float, confidence: Float) {
         self.word = word
         self.startSec = startSec
