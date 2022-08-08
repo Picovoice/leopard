@@ -37,7 +37,7 @@ public class LeopardPerformanceTest {
 
             long initTime = (System.nanoTime() - before);
             if (i > 0) {
-                perfResults[i] = initTime;
+                perfResults[i - 1] = initTime;
             }
             leopard.delete();
 
@@ -72,7 +72,7 @@ public class LeopardPerformanceTest {
             long procTime = (System.nanoTime() - before);
 
             if (i > 0) {
-                perfResults[i] = procTime;
+                perfResults[i - 1] = procTime;
             }
         }
 
