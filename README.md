@@ -8,8 +8,8 @@ Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally.
-- Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
-- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
+- [Accurate](https://picovoice.ai/docs/benchmark/stt/)
+- [Compact and Computationally-Efficient](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
   - Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64)
   - Android and iOS
@@ -33,6 +33,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [Java](#java-demo)
         - [.NET](#net-demo)
         - [Rust](#rust-demo)
+        - [Web](#web-demo)
     - [SDKs](#sdks)
         - [Python](#python)
         - [C](#c)
@@ -45,6 +46,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [Java](#java)
         - [.NET](#net)
         - [Rust](#rust)
+        - [Web](#web)
     - [Releases](#releases)
 
 ## AccessKey
@@ -228,6 +230,24 @@ Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_
 wish to transcribe.
 
 For more information about Rust demos, go to [demo/rust](/demo/rust).
+
+### Web Demo
+
+From [demo/web](/demo/web) run the following in the terminal:
+
+```console
+yarn
+yarn start
+```
+
+(or)
+
+```console
+npm install
+npm run start
+```
+
+Open [http://localhost:5000](http://localhost:5000) in your browser to try the demo.
 
 ## SDKs
 
@@ -545,6 +565,43 @@ if let Ok(leopard_transcript) = leopard.process_file("/absolute/path/to/audio_fi
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)).
+
+### Web
+
+Install the web SDK using yarn:
+
+```console
+yarn add @picovoice/leopard-web
+```
+
+or using npm:
+
+```console
+npm install --save @picovoice/leopard-web
+```
+
+Create an instance of the engine using `LeopardWorker` and transcribe an audio file:
+
+```typescript
+import { Leopard } from "@picovoice/leopard-web";
+import leopardParams from "${PATH_TO_BASE64_LEOPARD_PARAMS}";
+
+function getAudioData(): Int16Array {
+... // function to get audio data
+  return new Int16Array();
+}
+
+const leopard = await LeopardWorker.fromBase64(
+  "${ACCESS_KEY}",
+  leopardParams
+);
+
+const { transcript, words } = await leopard.process(getAudioData());
+console.log(transcript);
+console.log(words);
+```
+
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)). Finally, when done release the resources using `leopard.release()`.
 
 ## Releases
 

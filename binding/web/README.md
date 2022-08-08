@@ -1,12 +1,19 @@
-# leopard-web
+# Leopard Binding for Web
 
-**NOTE**: This is a beta build.
+## Leopard Speech-to-Text Engine
 
-The Picovoice Leopard library for web browsers, powered by WebAssembly.
+Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
-This library transcribes audio samples in-browser, offline. All processing is done via WebAssembly and Workers in a separate thread.
+Leopard is an on-device speech-to-text engine. Leopard is:
 
-Looking for Leopard on NodeJS? See the [@picovoice/leopard-node](https://www.npmjs.com/package/@picovoice/leopard-node) package.
+- Private; All voice processing runs locally.
+- [Accurate](https://picovoice.ai/docs/benchmark/stt/)
+- [Compact and Computationally-Efficient](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
+- Cross-Platform:
+  - Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64)
+  - Android and iOS
+  - Chrome, Safari, Firefox, and Edge
+  - Raspberry Pi (4, 3) and NVIDIA Jetson Nano
 
 ## Compatibility
 
@@ -14,13 +21,9 @@ Looking for Leopard on NodeJS? See the [@picovoice/leopard-node](https://www.npm
 - Firefox
 - Safari
 
-This library requires several modern browser features: `WebAssembly`, `Web Workers`, `IndexedDB` and `Promise`. Internet Explorer will _not_ work.
+## Installation
 
-## Installation & Usage
-
-### Package
-
-Install the [Leopard-Web package](https://www.npmjs.com/package/@picovoice/leopard-web) using `yarn`:
+Using `yarn`:
 
 ```console
 yarn add @picovoice/leopard-web
@@ -38,10 +41,9 @@ Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` ac
 You can get your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
 Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get your `AccessKey`.
 
-### Leopard Models
+### Usage
 
-Leopard requires a model file on initialization. Create a custom model file from [Picovoice Console](https://console.picovoice.ai/cat)
-or you can use the [default model file](/lib/common/leopard_params.pv).
+Create a model in [Picovoice Console](https://console.picovoice.ai/) or use the [default model](https://github.com/Picovoice/leopard/tree/master/lib/common).
 
 For the web packages, there are two methods to initialize Leopard.
 
@@ -73,21 +75,19 @@ run:
 npx pvbase64 -h
 ```
 
-### Usage
-
 #### Init options
 
 Leopard saves and caches your model file in IndexedDB to be used by WebAssembly. Use a different `modelPath` variable
 to hold multiple models and set the `forceWrite` value to true to force re-save a model file. Set `enableAutomaticPunctuation`
-to false, if you do not wish to enable capitalization and punctuation in transcription.
+to true, if wish to enable punctuation in transcription.
 If the model file (`.pv`) changes, `version` should be incremented to force the cached model to be updated.
 
 ```typescript
 // these are default
 const options = {
+  enableAutomaticPunctuation: false,
   modelPath: "leopard_model",
   forceWrite: false,
-  enableAutomaticPunctuation: true,
   version: 1
 }
 ```
@@ -143,9 +143,8 @@ const handle = await LeopardWorker.fromBase64(
 #### Process Audio Frames
 
 The process result is an object with:
-- `transcription`: A string containing the transcribed data.
-- `words`: A list of objects containing a `word`, `startSec`, and `endSec`. Each object indicates
-the start and end time of the word.
+- `transcript`: A string containing the transcribed data.
+- `words`: A list of objects containing a `word`, `startSec`, `endSec`, and `confidence`. Each object indicates the start, end time and confidence (between 0 and 1) of the word.
 
 ```typescript
 function getAudioData(): Int16Array {
@@ -154,7 +153,7 @@ function getAudioData(): Int16Array {
 }
 
 const result = await handle.process(getAudioData());
-console.log(result.transcription);
+console.log(result.transcript);
 console.log(result.words);
 ```
 
@@ -166,7 +165,7 @@ const result = await handle.process(pcm, {
   transfer: true,
   transferCB: (data) => {pcm = data}
 });
-console.log(result.transcription);
+console.log(result.transcript);
 console.log(result.words);
 ```
 
@@ -186,13 +185,6 @@ Terminate `LeopardWorker` instance:
 await handle.terminate();
 ```
 
-## Build from source (IIFE + ESM outputs)
+## Demo
 
-This library uses Rollup and TypeScript along with Babel and other popular rollup plugins. There are two outputs: an IIFE version intended for script tags / CDN usage, and a JavaScript module version intended for use with modern JavaScript/TypeScript development (e.g. Angular, Create React App, Webpack).
-
-```console
-yarn
-yarn build
-```
-
-The output will appear in the ./dist/ folder.
+For example usage refer to our [Web demo application](https://github.com/Picovoice/leopard/tree/master/demo/web).
