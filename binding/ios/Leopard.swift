@@ -98,7 +98,7 @@ public class Leopard {
     ///          linearly-encoded. This function operates on single-channel audio. If you wish to process data in a different
     ///          sample rate or format consider using `.process_file`.
     /// - Throws: LeopardError
-    /// - Returns: Inferred transcription.
+    /// - Returns: Inferred transcription and sequence of transcribed words with their associated metadata.
     public func process(_ pcm: [Int16]) throws -> (transcript: String, words: [LeopardWord]) {
         if handle == nil {
             throw LeopardInvalidStateError("Leopard must be initialized before processing")
