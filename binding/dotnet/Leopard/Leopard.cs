@@ -37,43 +37,6 @@ namespace Pv
     }
 
     /// <summary>
-    /// Class for storing word metadata
-    /// </summary>
-    public class LeopardWord
-    {
-        public LeopardWord(string word, float confidence, float startSec, float endSec)
-        {
-            Word = word;
-            Confidence = confidence;
-
-            StartSec = startSec;
-            EndSec = endSec;
-        }
-
-        public string Word { get; }
-        public float Confidence { get; }
-        public float StartSec { get; }
-        public float EndSec { get; }
-    }
-
-    /// <summary>
-    /// Class that contains transcription results
-    /// </summary>
-    public class LeopardTranscript
-    {
-        public LeopardTranscript(string transcriptString, LeopardWord[] wordArray)
-        {
-            TranscriptString = transcriptString;
-            WordArray = wordArray;
-        }
-
-        public string TranscriptString { get; }
-
-        public LeopardWord[] WordArray { get; }
-
-    }
-
-    /// <summary>
     /// .NET binding for Leopard Speech-to-Text Engine.
     /// </summary>
     public class Leopard : IDisposable
