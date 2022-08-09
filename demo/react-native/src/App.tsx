@@ -270,26 +270,33 @@ export default class App extends Component<Props, State> {
         <View style={styles.statusBar}>
           <Text style={styles.statusBarText}>Leopard</Text>
         </View>
-        <View style={{flex: 5}}>
-          <ScrollView style={styles.transcriptionBox}>
-            <Text style={styles.transcriptionText}>
-              {this.state.transcription}
-            </Text>
-          </ScrollView>
+
+        <View style={{flex: 4}}>
+          {this.state.appState === UIState.TRANSCRIBED && (
+            <ScrollView style={styles.transcriptionBox}>
+              <Text style={styles.transcriptionText}>
+                {this.state.transcription}
+              </Text>
+            </ScrollView>
+          )}
         </View>
 
-        <View style={{flex: 3}}>
-          <View style={styles.wordTableHeader}>
-            <Text style={styles.wordCell}>Word</Text>
-            <Text style={styles.wordCell}>Start</Text>
-            <Text style={styles.wordCell}>End</Text>
-            <Text style={styles.wordCell}>Confidence</Text>
-          </View>
-          <ScrollView style={styles.wordBox}>
-            {this.state.words.map((word: LeopardWord, index: number) =>
-              this._generateTableRow(word, index),
-            )}
-          </ScrollView>
+        <View style={{flex: 2}}>
+          {this.state.appState === UIState.TRANSCRIBED && (
+            <>
+              <View style={styles.wordTableHeader}>
+                <Text style={styles.wordCell}>Word</Text>
+                <Text style={styles.wordCell}>Start</Text>
+                <Text style={styles.wordCell}>End</Text>
+                <Text style={styles.wordCell}>Confidence</Text>
+              </View>
+              <ScrollView style={styles.wordBox}>
+                {this.state.words.map((word: LeopardWord, index: number) =>
+                  this._generateTableRow(word, index),
+                )}
+              </ScrollView>
+            </>
+          )}
         </View>
 
         {this.state.appState === UIState.ERROR ? (
@@ -378,7 +385,7 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {
     width: '50%',
-    height: '100%',
+    height: 80,
     alignSelf: 'center',
     justifyContent: 'center',
     backgroundColor: '#377DFF',
