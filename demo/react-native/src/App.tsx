@@ -18,14 +18,16 @@ import {
   SafeAreaView,
   ScrollView,
   StatusBar,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
-import {StyleSheet, Text, View} from 'react-native';
 
 import {Leopard, LeopardErrors} from '@picovoice/leopard-react-native';
 import {
-  VoiceProcessor,
   BufferEmitter,
+  VoiceProcessor,
 } from '@picovoice/react-native-voice-processor';
 
 import Recorder from './Recorder';
@@ -71,6 +73,7 @@ export default class App extends Component<Props, State> {
   }
 
   componentDidMount() {
+    console.log('hi');
     this.init();
   }
 
@@ -89,6 +92,7 @@ export default class App extends Component<Props, State> {
       this._leopard = await Leopard.create(
         this._accessKey,
         'leopard_params.pv',
+        {enableAutomaticPunctuation: true},
       );
       this._voiceProcessor = VoiceProcessor.getVoiceProcessor(
         512,
@@ -195,7 +199,7 @@ export default class App extends Component<Props, State> {
         const end = Date.now();
         if (res !== undefined) {
           this.setState({
-            transcription: res,
+            transcription: res.transcript,
             appState: UIState.TRANSCRIBED,
             processSeconds: (end - start) / 1000,
           });

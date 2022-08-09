@@ -11,9 +11,9 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.67.4)
   - fmt (6.2.1)
   - glog (0.3.5)
-  - Leopard-iOS (1.0.2)
-  - leopard-react-native (1.0.3):
-    - Leopard-iOS (~> 1.0.2)
+  - Leopard-iOS (1.1.0)
+  - leopard-react-native (1.1.0):
+    - Leopard-iOS (~> 1.1.0)
     - React
   - RCT-Folly (2021.06.28.00-v2):
     - boost
@@ -406,8 +406,8 @@ SPEC CHECKSUMS:
   FBReactNativeSpec: 0f4e1f4cfeace095694436e7c7fcc5bf4b03a0ff
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 85ecdd10ee8d8ec362ef519a6a45ff9aa27b2e85
-  Leopard-iOS: 9637ccbfb10ee5381319e493713d28f227c020ec
-  leopard-react-native: 6b4c3ec2eab09260b4e0917a8646ceb08b70abbe
+  Leopard-iOS: edad5cc511b4dd36e13ce80941c5775174767010
+  leopard-react-native: ee68731725daace1a25c4240c473f65ab5c95813
   RCT-Folly: 803a9cfd78114b2ec0f140cfa6fa2a6bafb2d685
   RCTRequired: 0aa6c1c27e1d65920df35ceea5341a5fe76bdb79
   RCTTypeSafety: d76a59d00632891e11ed7522dba3fd1a995e573a

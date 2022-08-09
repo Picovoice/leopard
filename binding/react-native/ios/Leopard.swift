@@ -24,7 +24,7 @@ class PvLeopard: NSObject {
             rejecter reject: RCTPromiseRejectBlock) -> Void {
 
         do {
-            let enableAutomaticPunctuation = options["enableAutomaticPunctuation"] ?? false
+            let enableAutomaticPunctuation = options["enableAutomaticPunctuation"] as! Bool ?? false
             let leopard = try Leopard(
                     accessKey: accessKey,
                     modelPath: modelPath,
