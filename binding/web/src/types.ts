@@ -13,7 +13,7 @@ export type LeopardOptions = {
   /** @defaultValue false */
   enableAutomaticPunctuation?: boolean;
   /** @defaultValue 'leopard_model' */
-  modelPath?: string;
+  customWritePath?: string;
   /** @defaultValue false */
   forceWrite?: boolean;
   /** @defaultValue 1 */

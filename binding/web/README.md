@@ -86,7 +86,7 @@ If the model file (`.pv`) changes, `version` should be incremented to force the 
 // these are default
 const options = {
   enableAutomaticPunctuation: false,
-  modelPath: "leopard_model",
+  customWritePath: "leopard_model",
   forceWrite: false,
   version: 1
 }
@@ -99,7 +99,7 @@ Use `Leopard` to initialize from public directory:
 ```typescript
 const handle = await Leopard.fromPublicDirectory(
   ${ACCESS_KEY},
-  ${MODEL_FILE_RELATIVE_TO_PUBLIC_DIRECTORY},
+  ${MODEL_RELATIVE_PATH},
   options // optional options
 );
 ```
@@ -123,7 +123,7 @@ Use `LeopardWorker` to initialize from public directory:
 ```typescript
 const handle = await LeopardWorker.fromPublicDirectory(
   ${ACCESS_KEY},
-  ${MODEL_FILE_RELATIVE_TO_PUBLIC_DIRECTORY},
+  ${MODEL_RELATIVE_PATH},
   options // optional options
 );
 ```
@@ -163,7 +163,7 @@ For processing using worker, you may consider transferring the buffer instead fo
 const pcm = new Int16Array();
 const result = await handle.process(pcm, {
   transfer: true,
-  transferCB: (data) => {pcm = data}
+  transferCallback: (data) => {pcm = data}
 });
 console.log(result.transcript);
 console.log(result.words);

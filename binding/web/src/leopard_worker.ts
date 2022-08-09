@@ -65,8 +65,8 @@ export class LeopardWorker {
    * @param modelBase64 The model in base64 string to initialize Leopard.
    * @param options Optional configuration arguments.
    * @param options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
-   * @param options.modelPath The path to save and use the model from. Use different names to use different models
-   * across different Leopard instances.
+   * @param options.customWritePath Custom path to save the model in storage.
+   * Set to a different name to use multiple models across `leopard` instances.
    * @param options.forceWrite Flag to overwrite the model in storage even if it exists.
    * @param options.version Leopard model version. Set to a higher number to update the model file.
    *
@@ -77,9 +77,9 @@ export class LeopardWorker {
     modelBase64: string,
     options: LeopardOptions = {},
   ): Promise<LeopardWorker> {
-    const { modelPath = 'leopard_model', forceWrite = false, version = 1, ...rest } = options;
-    await fromBase64(modelPath, modelBase64, forceWrite, version);
-    return this.create(accessKey, modelPath, rest);
+    const { customWritePath = 'leopard_model', forceWrite = false, version = 1, ...rest } = options;
+    await fromBase64(customWritePath, modelBase64, forceWrite, version);
+    return this.create(accessKey, customWritePath, rest);
   }
 
   /**
@@ -91,8 +91,8 @@ export class LeopardWorker {
    * @param publicPath The model path relative to the public directory.
    * @param options Optional configuration arguments.
    * @param options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion
-   * @param options.modelPath The path to save and use the model from. Use different names to use different models
-   * across different Leopard instances.
+   * @param options.customWritePath Custom path to save the model in storage.
+   * Set to a different name to use multiple models across `leopard` instances.
    * @param options.forceWrite Flag to overwrite the model in storage even if it exists.
    * @param options.version Leopard model version. Set to a higher number to update the model file..
    *
@@ -103,9 +103,9 @@ export class LeopardWorker {
     publicPath: string,
     options: LeopardOptions = {},
   ): Promise<LeopardWorker> {
-    const { modelPath = 'leopard_model', forceWrite = false, version = 1, ...rest } = options;
-    await fromPublicDirectory(modelPath, publicPath, forceWrite, version);
-    return this.create(accessKey, modelPath, rest);
+    const { customWritePath = 'leopard_model', forceWrite = false, version = 1, ...rest } = options;
+    await fromPublicDirectory(customWritePath, publicPath, forceWrite, version);
+    return this.create(accessKey, customWritePath, rest);
   }
 
   /**
@@ -180,20 +180,20 @@ export class LeopardWorker {
    * @param options Optional process arguments.
    * @param options.transfer Flag to indicate if the buffer should be transferred or not. If set to true,
    * input buffer array will be transferred to the worker.
-   * @param options.transferCB Optional callback containing a new Int16Array with contents from 'pcm'. Use this callback
+   * @param options.transferCallback Optional callback containing a new Int16Array with contents from 'pcm'. Use this callback
    * to get the input pcm when using transfer.
    * @return The transcription.
    */
   public process(
     pcm: Int16Array,
-    options: { transfer?: boolean, transferCB?: (data: Int16Array) => void } = {},
+    options: { transfer?: boolean, transferCallback?: (data: Int16Array) => void } = {},
   ): Promise<LeopardTranscript> {
-    const { transfer = false, transferCB } = options;
+    const { transfer = false, transferCallback } = options;
 
     const returnPromise: Promise<LeopardTranscript> = new Promise((resolve, reject) => {
       this._worker.onmessage = (event: MessageEvent<LeopardWorkerProcessResponse>): void => {
-        if (transfer && transferCB && event.data.inputFrame) {
-          transferCB(new Int16Array(event.data.inputFrame.buffer));
+        if (transfer && transferCallback && event.data.inputFrame) {
+          transferCallback(new Int16Array(event.data.inputFrame.buffer));
         }
         switch (event.data.command) {
           case 'ok':
