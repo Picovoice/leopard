@@ -27,17 +27,38 @@ import java.util.Map;
 
 public class FileDemo {
 
-    public static void runDemo(String accessKey, File inputAudioFile, String libraryPath, String modelPath) {
+    public static void runDemo(
+            String accessKey,
+            String modelPath,
+            String libraryPath,
+            boolean enableAutomaticPunctuation,
+            boolean verbose,
+            File inputAudioFile) {
         Leopard leopard = null;
         try {
             leopard = new Leopard.Builder()
                     .setAccessKey(accessKey)
                     .setLibraryPath(libraryPath)
                     .setModelPath(modelPath)
+                    .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
                     .build();
 
-            String transcription = leopard.processFile(inputAudioFile.getPath());
-            System.out.println(transcription);
+            LeopardTranscript transcript = leopard.processFile(inputAudioFile.getPath());
+            System.out.println(transcript.getTranscriptString());
+            if (verbose) {
+                LeopardTranscript.Word[] words = transcript.getWordArray();
+                System.out.format("%14s - %5s - %5s - %5s\n", "word", "start", "end", "confidence");
+                for (int i = 0; i < words.length; i++) {
+                    System.out.format(
+                            "%2d: %10s - %5.2f - %5.2f - %5.2f\n",
+                            i,
+                            words[i].getWord(),
+                            words[i].getStartSec(),
+                            words[i].getEndSec(),
+                            words[i].getConfidence());
+                }
+            }
+
         } catch (Exception e) {
             System.out.println(e.toString());
         } finally {
@@ -68,9 +89,11 @@ public class FileDemo {
         }
 
         String accessKey = cmd.getOptionValue("access_key");
-        String inputAudioPath = cmd.getOptionValue("input_audio_path");
-        String libraryPath = cmd.getOptionValue("library_path");
         String modelPath = cmd.getOptionValue("model_path");
+        String libraryPath = cmd.getOptionValue("library_path");
+        boolean enableAutomaticPunctuation = !cmd.hasOption("disable_automatic_punctuation");
+        boolean verbose = cmd.hasOption("verbose");
+        String inputAudioPath = cmd.getOptionValue("input_audio_path");
 
         if (accessKey == null || accessKey.length() == 0) {
             throw new IllegalArgumentException("AccessKey is required for Leopard.");
@@ -92,7 +115,13 @@ public class FileDemo {
             modelPath = Leopard.MODEL_PATH;
         }
 
-        runDemo(accessKey, inputAudioFile, libraryPath, modelPath);
+        runDemo(
+                accessKey,
+                modelPath,
+                libraryPath,
+                enableAutomaticPunctuation,
+                verbose,
+                inputAudioFile);
     }
 
     private static Options BuildCommandLineOptions() {
@@ -104,10 +133,10 @@ public class FileDemo {
                 .desc("AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).")
                 .build());
 
-        options.addOption(Option.builder("i")
-                .longOpt("input_audio_path")
+        options.addOption(Option.builder("m")
+                .longOpt("model_path")
                 .hasArg(true)
-                .desc("Absolute path to input audio file.")
+                .desc("Absolute path to the file containing model parameters.")
                 .build());
 
         options.addOption(Option.builder("l")
@@ -116,10 +145,20 @@ public class FileDemo {
                 .desc("Absolute path to the Leopard native runtime library.")
                 .build());
 
-        options.addOption(Option.builder("m")
-                .longOpt("model_path")
+        options.addOption(Option.builder("d")
+                .longOpt("disable_automatic_punctuation")
+                .desc("Disable automatic punctuation.")
+                .build());
+
+        options.addOption(Option.builder("i")
+                .longOpt("input_audio_path")
                 .hasArg(true)
-                .desc("Absolute path to the file containing model parameters.")
+                .desc("Absolute path to input audio file.")
+                .build());
+
+        options.addOption(Option.builder("v")
+                .longOpt("verbose")
+                .desc("Enable verbose logging.")
                 .build());
 
         options.addOption(new Option("h", "help", false, ""));

@@ -29,17 +29,15 @@ public class LeopardPerformanceTest {
     void initPerformance() throws Exception {
 
         long[] perfResults = new long[numTestIterations];
-        for (int i = 0; i < numTestIterations; i++) {
+        for (int i = 0; i < numTestIterations + 1; i++) {
             long before = System.nanoTime();
-            Leopard leopard = new Leopard(
-                    accessKey,
-                    Utils.getPackagedLibraryPath(),
-                    Utils.getPackagedModelPath()
-            );
+            Leopard leopard = new Leopard.Builder()
+                    .setAccessKey(accessKey)
+                    .build();
 
             long initTime = (System.nanoTime() - before);
             if (i > 0) {
-                perfResults[i] = initTime;
+                perfResults[i - 1] = initTime;
             }
             leopard.delete();
 
@@ -59,24 +57,22 @@ public class LeopardPerformanceTest {
 
     @Test
     void procPerformance() throws Exception {
-        Leopard leopard = new Leopard(
-                accessKey,
-                Utils.getPackagedLibraryPath(),
-                Utils.getPackagedModelPath()
-        );
+        Leopard leopard = new Leopard.Builder()
+                .setAccessKey(accessKey)
+                .build();
 
         String audioFilePath = Paths.get(System.getProperty("user.dir"))
                 .resolve("../../resources/audio_samples/test.wav")
                 .toString();
 
         long[] perfResults = new long[numTestIterations];
-        for (int i = 0; i < numTestIterations; i++) {
+        for (int i = 0; i < numTestIterations + 1; i++) {
             long before = System.nanoTime();
             leopard.processFile(audioFilePath);
             long procTime = (System.nanoTime() - before);
 
             if (i > 0) {
-                perfResults[i] = procTime;
+                perfResults[i - 1] = procTime;
             }
         }
 

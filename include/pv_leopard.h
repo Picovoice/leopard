@@ -90,8 +90,8 @@ PV_API pv_status_t pv_leopard_process(
  * buffer.
  *
  * @param object Leopard object.
- * @param audio_path Absolute path to the audio file. The file needs to have a sample rate equal to or greater than
- * `pv_sample_rate()`. The supported formats are: `3gp (AMR)`, `FLAC`, `MP3`, `MP4/m4a (AAC)`, `Ogg`, `WAV` and `WebM`.
+ * @param audio_path Absolute path to the audio file.
+ * The supported formats are: `3gp (AMR)`, `FLAC`, `MP3`, `MP4/m4a (AAC)`, `Ogg`, `WAV`, and `WebM`
  * @param[out] transcript Inferred transcription.
  * @param[out] num_words Number of transcribed words
  * @param[out] words Transcribed words and their associated metadata.

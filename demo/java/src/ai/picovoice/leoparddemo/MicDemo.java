@@ -98,16 +98,10 @@ class Recorder extends Thread {
                 this.pcmBuffer.add(shortBuffer[i]);
             }
         }
-
-        this.isRecording = false;
     }
 
     public void end() {
         this.stop = true;
-    }
-
-    public boolean getIsRecording() {
-        return this.isRecording;
     }
 
     public short[] getPCM() {
@@ -120,13 +114,20 @@ class Recorder extends Thread {
 }
 
 public class MicDemo {
-    public static void runDemo(String accessKey, String libraryPath, String modelPath, int audioDeviceIndex) {
+    public static void runDemo(
+            String accessKey,
+            String modelPath,
+            String libraryPath,
+            boolean enableAutomaticPunctuation,
+            boolean verbose,
+            int audioDeviceIndex) {
         Leopard leopard = null;
         try {
             leopard = new Leopard.Builder()
                     .setAccessKey(accessKey)
-                    .setLibraryPath(libraryPath)
                     .setModelPath(modelPath)
+                    .setLibraryPath(libraryPath)
+                    .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
                     .build();
 
             System.out.println("Leopard version : " + leopard.getVersion());
@@ -140,11 +141,24 @@ public class MicDemo {
                     System.out.println(">>> Recording ... Press 'ENTER' to stop:");
                     scanner.nextLine();
                     recorder.end();
-                    while (recorder.getIsRecording()) { }
-
+                    while (recorder.isAlive()) { }
                     short[] pcm = recorder.getPCM();
-                    String transcript = leopard.process(pcm);
-                    System.out.println(transcript + "\n");
+
+                    LeopardTranscript transcript = leopard.process(pcm);
+                    System.out.println(transcript.getTranscriptString() + "\n");
+                    if (verbose) {
+                        LeopardTranscript.Word[] words = transcript.getWordArray();
+                        System.out.format("%14s - %5s - %5s - %5s\n", "word", "start", "end", "confidence");
+                        for (int i = 0; i < words.length; i++) {
+                            System.out.format(
+                                    "%2d: %10s - %5.2f - %5.2f - %5.2f\n",
+                                    i,
+                                    words[i].getWord(),
+                                    words[i].getStartSec(),
+                                    words[i].getEndSec(),
+                                    words[i].getConfidence());
+                        }
+                    }
                     recorder = null;
                 } else {
                     System.out.println(">>> Press 'ENTER' to start:");
@@ -205,8 +219,10 @@ public class MicDemo {
         }
 
         String accessKey = cmd.getOptionValue("access_key");
-        String libraryPath = cmd.getOptionValue("library_path");
         String modelPath = cmd.getOptionValue("model_path");
+        String libraryPath = cmd.getOptionValue("library_path");
+        boolean enableAutomaticPunctuation = !cmd.hasOption("disable_automatic_punctuation");
+        boolean verbose = cmd.hasOption("verbose");
         String audioDeviceIndexStr = cmd.getOptionValue("audio_device_index");
 
         if (accessKey == null || accessKey.length() == 0) {
@@ -235,7 +251,13 @@ public class MicDemo {
             }
         }
 
-        runDemo(accessKey, libraryPath, modelPath, audioDeviceIndex);
+        runDemo(
+                accessKey,
+                modelPath,
+                libraryPath,
+                enableAutomaticPunctuation,
+                verbose,
+                audioDeviceIndex);
     }
 
     private static Options BuildCommandLineOptions() {
@@ -247,22 +269,32 @@ public class MicDemo {
                 .desc("AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).")
                 .build());
 
-        options.addOption(Option.builder("l")
-                .longOpt("library_path")
-                .hasArg(true)
-                .desc("Absolute path to the Leopard native runtime library.")
-                .build());
-
         options.addOption(Option.builder("m")
                 .longOpt("model_path")
                 .hasArg(true)
                 .desc("Absolute path to the file containing model parameters.")
                 .build());
 
+        options.addOption(Option.builder("l")
+                .longOpt("library_path")
+                .hasArg(true)
+                .desc("Absolute path to the Leopard native runtime library.")
+                .build());
+
+        options.addOption(Option.builder("d")
+                .longOpt("disable_automatic_punctuation")
+                .desc("Disable automatic punctuation.")
+                .build());
+
         options.addOption(Option.builder("di")
                 .longOpt("audio_device_index")
                 .hasArg(true)
                 .desc("Index of input audio device.")
+                .build());
+
+        options.addOption(Option.builder("v")
+                .longOpt("verbose")
+                .desc("Enable verbose logging.")
                 .build());
 
         options.addOption(new Option("sd", "show_audio_devices", false, "Print available recording devices."));
