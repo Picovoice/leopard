@@ -73,7 +73,6 @@ export default class App extends Component<Props, State> {
   }
 
   componentDidMount() {
-    console.log('hi');
     this.init();
   }
 

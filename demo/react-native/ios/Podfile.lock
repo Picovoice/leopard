@@ -282,7 +282,7 @@ PODS:
     - React-perflogger (= 0.67.4)
   - RNCPicker (1.16.8):
     - React-Core
-  - RNFS (2.19.0):
+  - RNFS (2.20.0):
     - React-Core
   - Yoga (1.14.0)
 
@@ -434,7 +434,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: a9d3c82ddf7ffdad9fbe6a81c6d6f8c06385464d
   ReactCommon: 07d0c460b9ba9af3eaf1b8f5abe7daaad28c9c4e
   RNCPicker: 0991c56da7815c0cf946d6f63cf920b25296e5f6
-  RNFS: fc610f78fdf8bfc89a9e5cc2f898519f4dba1002
+  RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   Yoga: d6b6a80659aa3e91aaba01d0012e7edcbedcbecd
 
 PODFILE CHECKSUM: 92c7729d4fbd6069d1b7e28fea6481738446a185

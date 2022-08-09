@@ -18,7 +18,6 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
@@ -33,7 +32,7 @@ import ai.picovoice.leopard.LeopardTranscript;
 
 
 public class LeopardModule extends ReactContextBaseJavaModule {
-  
+
   private final ReactApplicationContext reactContext;
   private final Map<String, Leopard> leopardPool = new HashMap<>();
 
@@ -51,11 +50,9 @@ public class LeopardModule extends ReactContextBaseJavaModule {
   public void create(
     String accessKey,
     String modelPath,
-    ReadableMap options,
+    boolean enableAutomaticPunctuation,
     Promise promise) {
     try {
-      final boolean enableAutomaticPunctuation = options.hasKey("enableAutomaticPunctuation")
-        && options.getBoolean("enableAutomaticPunctuation");
 
       Leopard leopard = new Leopard.Builder()
         .setAccessKey(accessKey)

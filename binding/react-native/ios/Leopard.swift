@@ -15,16 +15,15 @@ import Leopard
 class PvLeopard: NSObject {
     private var leopardPool: Dictionary<String, Leopard> = [:]
 
-    @objc(create:modelPath:options:resolver:rejecter:)
+    @objc(create:modelPath:enableAutomaticPunctuation:resolver:rejecter:)
     func create(
             accessKey: String,
             modelPath: String,
-            options: [String: Any],
+            enableAutomaticPunctuation: Bool,
             resolver resolve: RCTPromiseResolveBlock,
             rejecter reject: RCTPromiseRejectBlock) -> Void {
 
         do {
-            let enableAutomaticPunctuation = options["enableAutomaticPunctuation"] as! Bool ?? false
             let leopard = try Leopard(
                     accessKey: accessKey,
                     modelPath: modelPath,
@@ -65,7 +64,8 @@ class PvLeopard: NSObject {
         do {
             if let leopard = leopardPool[handle] {
                 let result = try leopard.process(pcm)
-                resolve(result)
+                let resultMap = leopardTranscriptToDictionary(result: result)
+                resolve(resultMap)
             } else {
                 let (code, message) = errorToCodeAndMessage(LeopardRuntimeError("Invalid handle provided to Leopard 'process'"))
                 reject(code, message, nil)
@@ -88,7 +88,8 @@ class PvLeopard: NSObject {
         do {
             if let leopard = leopardPool[handle] {
                 let result = try leopard.processFile(audioPath)
-                resolve(result)
+                let resultMap = leopardTranscriptToDictionary(result: result)
+                resolve(resultMap)
             } else {
                 let (code, message) = errorToCodeAndMessage(LeopardRuntimeError("Invalid handle provided to Leopard 'process'"))
                 reject(code, message, nil)
@@ -104,5 +105,23 @@ class PvLeopard: NSObject {
 
     private func errorToCodeAndMessage(_ error: LeopardError) -> (String, String) {
         return (error.name.replacingOccurrences(of: "Error", with: "Exception"), error.localizedDescription)
+    }
+
+    private func leopardTranscriptToDictionary(result: (transcript: String, words: [LeopardWord])) -> [String: Any] {
+        var resultMap: [String: Any] = [:]
+        resultMap["transcript"] = result.transcript
+
+        var wordMapArray: [[String: Any]] = []
+        for wordMeta in result.words {
+            var wordMap: [String: Any] = [:]
+            wordMap["word"] = wordMeta.word
+            wordMap["confidence"] = wordMeta.confidence
+            wordMap["startSec"] = wordMeta.startSec
+            wordMap["endSec"] = wordMeta.endSec
+            wordMapArray.append(wordMap)
+        }
+        resultMap["words"] = wordMapArray;
+
+        return resultMap;
     }
 }
