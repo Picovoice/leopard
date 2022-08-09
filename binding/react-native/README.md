@@ -24,7 +24,7 @@ This binding is for running Leopard on **React Native 0.62.2+** on the following
 
 ## Installation
 
-To start install be sure you have installed yarn and cocoapods. Then add these two native modules to your react-native project.
+To start install, be sure you have installed yarn and cocoapods. Then, add the following native modules to your react-native project:
 
 ```console
 yarn add @picovoice/leopard-react-native
