@@ -37,14 +37,17 @@ namespace Pv
         /// Getter for word
         /// </summary>
         public string Word { get; }
+
         /// <summary>
         /// Getter for confidence.
         /// </summary>
         public float Confidence { get; }
+
         /// <summary>
         /// Getter for startSec.
         /// </summary>
         public float StartSec { get; }
+
         /// <summary>
         /// Getter for endSec.
         /// </summary>
@@ -56,7 +59,6 @@ namespace Pv
     /// </summary>
     public class LeopardTranscript
     {
-        
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -81,6 +83,5 @@ namespace Pv
         /// Getter for transcribed words and their associated metadata.
         /// </summary>
         public LeopardWord[] WordArray { get; }
-
     }
 }

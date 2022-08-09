@@ -194,9 +194,9 @@ namespace Pv
             Int32 numWords = 0;
             IntPtr wordsPtr = IntPtr.Zero;
             PvStatus status = pv_leopard_process
-                (_libraryPointer, 
+            (_libraryPointer,
                 pcm,
-                (Int32)pcm.Length, 
+                (Int32)pcm.Length,
                 out transcriptPtr,
                 out numWords,
                 out wordsPtr);
@@ -216,6 +216,7 @@ namespace Pv
                 wordsList.Add(new LeopardWord(word, cword.confidence, cword.startSec, cword.endSec));
                 wordsPtr += Marshal.SizeOf(typeof(CWord));
             }
+
             pv_free(orgWordsPtr);
             return new LeopardTranscript(transcript, wordsList.ToArray());
         }
@@ -243,7 +244,7 @@ namespace Pv
             Int32 numWords = 0;
             IntPtr wordsPtr = IntPtr.Zero;
             PvStatus status = pv_leopard_process_file(
-                _libraryPointer, 
+                _libraryPointer,
                 audioPathPtr,
                 out transcriptPtr,
                 out numWords,
@@ -267,6 +268,7 @@ namespace Pv
                 wordsList.Add(new LeopardWord(word, cword.confidence, cword.startSec, cword.endSec));
                 wordsPtr += Marshal.SizeOf(typeof(CWord));
             }
+
             pv_free(orgWordsPtr);
             return new LeopardTranscript(transcript, wordsList.ToArray());
         }
