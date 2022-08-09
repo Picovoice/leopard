@@ -200,16 +200,14 @@ export default class App extends Component<Props, State> {
       try {
         const audioPath = await this._recorder.finalize();
         const start = Date.now();
-        const res = await this._leopard?.processFile(audioPath);
+        const {transcript, words} = await this._leopard!.processFile(audioPath);
         const end = Date.now();
-        if (res !== undefined) {
-          this.setState({
-            transcription: res.transcript,
-            words: res.words,
-            appState: UIState.TRANSCRIBED,
-            processSeconds: (end - start) / 1000,
-          });
-        }
+        this.setState({
+          transcription: transcript,
+          words: words,
+          appState: UIState.TRANSCRIBED,
+          processSeconds: (end - start) / 1000,
+        });
       } catch (err: any) {
         this.handleError(err);
       }

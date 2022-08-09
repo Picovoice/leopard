@@ -56,14 +56,14 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 To add the Leopard model file to your Android application:
 
-1. Create a custom model using the [Picovoice Console](https://console.picovoice.ai/) or use the [default model](/lib/common/leopard_params.pv).
+1. Create a custom model using the [Picovoice Console](https://console.picovoice.ai/) or use the [default model](/lib/common/).
 2. Add the model as a bundled resource by placing it under the [`assets`](./android/src/main/assets/) directory of your Android application.
 
 ### iOS
 
 Open [`Leopard.xcodeproj`](./ios/Leopard.xcodeproj) in `Xcode` and add the Leopard model file in `Xcode`:
 
-1. Create a model using the [Picovoice Console](https://picovoice.ai/) or use the [default model](/lib/common/leopard_params.pv).
+1. Create a model using the [Picovoice Console](https://picovoice.ai/) or use the [default model](/lib/common/).
 2. Add the model as a bundled resource by selecting Build Phases and adding it to the `Copy Bundle Resources` step.
 
 ## Usage
@@ -89,7 +89,7 @@ try {
 }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)), `${MODEL_FILE}`
+Replace `${ACCESS_KEY}` with your `AccessKey` obtained from [Picovoice Console]((https://console.picovoice.ai/)), `${MODEL_FILE}`
 with the name of the Leopard model file name and `${AUDIO_FILE_PATH}` with the absolute path of the audio file.
 Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
 
