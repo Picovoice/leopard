@@ -52,7 +52,7 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 ## Adding custom Leopard models
 
-Create a custom model using the [Picovoice Console](https://console.picovoice.ai/) or use the [default model](https://github.com/Picovoice/cheetah/tree/master/lib/common/).
+Create a custom model using the [Picovoice Console](https://console.picovoice.ai/) or use the [default model](https://github.com/Picovoice/leopard/tree/master/lib/common/).
 
 ### Android
 
@@ -91,4 +91,4 @@ Finally, when done be sure to explicitly release the resources using `leopard.de
 
 ## Demo App
 
-For example usage refer to our [React Native demo application](https://github.com/Picovoice/cheetah/tree/master/demo/react-native).
+For example usage refer to our [React Native demo application](https://github.com/Picovoice/leopard/tree/master/demo/react-native).
