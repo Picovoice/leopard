@@ -13,16 +13,23 @@ import Leopard
 
 @objc(PvLeopard)
 class PvLeopard: NSObject {
-    private var leopardPool:Dictionary<String, Leopard> = [:]
+    private var leopardPool: Dictionary<String, Leopard> = [:]
 
-    @objc(create:modelPath:resolver:rejecter:)
-    func create(accessKey: String, modelPath: String,
-        resolver resolve:RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock) -> Void {
+    @objc(create:modelPath:options:resolver:rejecter:)
+    func create(
+            accessKey: String,
+            modelPath: String,
+            options: [String: Any],
+            resolver resolve: RCTPromiseResolveBlock,
+            rejecter reject: RCTPromiseRejectBlock) -> Void {
 
         do {
+            let enableAutomaticPunctuation = options["enableAutomaticPunctuation"] ?? false
             let leopard = try Leopard(
-                accessKey: accessKey,
-                modelPath: modelPath)
+                    accessKey: accessKey,
+                    modelPath: modelPath,
+                    enableAutomaticPunctuation: enableAutomaticPunctuation
+            )
 
             let handle: String = String(describing: leopard)
             leopardPool[handle] = leopard
@@ -43,15 +50,18 @@ class PvLeopard: NSObject {
     }
 
     @objc(delete:)
-    func delete(handle:String) -> Void {
+    func delete(handle: String) -> Void {
         if let leopard = leopardPool.removeValue(forKey: handle) {
             leopard.delete()
         }
     }
 
     @objc(process:pcm:resolver:rejecter:)
-    func process(handle:String, pcm:[Int16],
-        resolver resolve:RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock) -> Void {
+    func process(
+            handle: String,
+            pcm: [Int16],
+            resolver resolve: RCTPromiseResolveBlock,
+            rejecter reject: RCTPromiseRejectBlock) -> Void {
         do {
             if let leopard = leopardPool[handle] {
                 let result = try leopard.process(pcm)
@@ -70,8 +80,11 @@ class PvLeopard: NSObject {
     }
 
     @objc(processFile:audioPath:resolver:rejecter:)
-    func processFile(handle:String, audioPath:String,
-                 resolver resolve:RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock) -> Void {
+    func processFile(
+            handle: String,
+            audioPath: String,
+            resolver resolve: RCTPromiseResolveBlock,
+            rejecter reject: RCTPromiseRejectBlock) -> Void {
         do {
             if let leopard = leopardPool[handle] {
                 let result = try leopard.processFile(audioPath)

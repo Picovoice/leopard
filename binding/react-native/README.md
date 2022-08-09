@@ -7,22 +7,19 @@ Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally.
-- Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
-- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
+- [Accurate](https://picovoice.ai/docs/benchmark/stt/)
+- [Compact and Computationally-Efficient](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
-  - Linux (x86_64)
-  - macOS (x86_64, arm64)
-  - Windows (x86_64)
-  - Android
-  - iOS
-  - Raspberry Pi (4, 3)
-  - NVIDIA Jetson Nano
+  - Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64)
+  - Android and iOS
+  - Chrome, Safari, Firefox, and Edge
+  - Raspberry Pi (4, 3) and NVIDIA Jetson Nano
 
 ## Compatibility
 
 This binding is for running Leopard on **React Native 0.62.2+** on the following platforms:
 
-- Android 4.4+ (SDK 19+)
+- Android 5.0+ (SDK 21+)
 - iOS 10.0+
 
 ## Installation
@@ -64,17 +61,17 @@ To add the Leopard model file to your Android application:
 
 ### iOS
 
-Open [`Leopard.xcodeproj`](./ios/Leopard.xcodeproj) in `Xcode` and add the Leopard model file in `Xcode` by:
+Open [`Leopard.xcodeproj`](./ios/Leopard.xcodeproj) in `Xcode` and add the Leopard model file in `Xcode`:
 
-1. Create a model using the [Picovoice CAT Console](https://picovoice.ai/cat/) or use the [default model](/lib/common/leopard_params.pv).
-2. Add the model as a bundled resource by selecting Build Phases and adding it to the Copy Bundle Resources step.
+1. Create a model using the [Picovoice Console](https://picovoice.ai/) or use the [default model](/lib/common/leopard_params.pv).
+2. Add the model as a bundled resource by selecting Build Phases and adding it to the `Copy Bundle Resources` step.
 
 ## Usage
 
 Transcribe an audio file either by passing the absolute path or an url to the file:
 
 ```typescript
-import {Leopard, LeopardErrors} from '@picovoice/leopard-react-native';
+import { Leopard, LeopardErrors } from '@picovoice/leopard-react-native';
 
 const getAudioFrame = () => {
   // get audio frames
@@ -83,7 +80,8 @@ const getAudioFrame = () => {
 try {
   const leopard = await Leopard.create("${ACCESS_KEY}", "${MODEL_FILE}")
 
-  console.log(await leopard.processFile("${AUDIO_FILE_PATH}"))
+  const { transcript, words } = await leopard.processFile("${AUDIO_FILE_PATH}")
+  console.log(transcript)
 } catch (err: any) {
   if (err instanceof LeopardErrors) {
     // handle error

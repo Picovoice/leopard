@@ -11,6 +11,7 @@
 
 import { NativeModules } from 'react-native';
 import * as LeopardErrors from './leopard_errors';
+import type { LeopardTranscript, LeopardOptions } from './leopard_types';
 
 const RCTLeopard = NativeModules.PvLeopard;
 
@@ -28,13 +29,22 @@ class Leopard {
    * Static creator for initializing Leopard given the model path.
    * @param accessKey AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).
    * @param modelPath Path to the file containing model parameters.
+   * @param options Optional configuration arguments.
+   * @param options.enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
    * @returns An instance of the engine.
    */
-  public static async create(accessKey: string, modelPath: string) {
+  public static async create(
+    accessKey: string,
+    modelPath: string,
+    options: LeopardOptions = {}
+  ) {
+    const { enableAutomaticPunctuation = false } = options;
+
     try {
       let { handle, sampleRate, version } = await RCTLeopard.create(
         accessKey,
-        modelPath
+        modelPath,
+        enableAutomaticPunctuation
       );
       return new Leopard(handle, sampleRate, version);
     } catch (err) {
@@ -58,9 +68,9 @@ class Leopard {
    * @param frame An array of 16-bit pcm samples. The audio needs to have a sample rate equal to `.sampleRate` and be 16-bit
    *    linearly-encoded. This function operates on single-channel audio. If you wish to process data in a different
    *    sample rate or format consider using `.processFile`.
-   * @returns {Promise} Inferred transcription.
+   * @returns {Promise<LeopardTranscript>} LeopardTranscript object which contains the transcription results of the engine.
    */
-  async process(frame: number[]) {
+  async process(frame: number[]): Promise<LeopardTranscript> {
     if (frame === undefined) {
       throw new LeopardErrors.LeopardInvalidArgumentError(
         'Frame array provided to process() is undefined or null'
@@ -84,12 +94,11 @@ class Leopard {
 
   /**
    * Process a frame of audio with the speech-to-text engine.
-   * @param audioPath Absolute path to the audio file. The file needs to have a sample rate equal to or greater
-   *     than `Leopard.sampleRate`. The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`,
-   *     `Vorbis`, `WAV`, and `WebM`.
-   * @returns {Promise} Inferred transcription.
+   * @param audioPath Absolute path to the audio file. The supported formats are: `3gp (AMR)`, `FLAC`, `MP3`,
+   * `Ogg`, `WAV`, `WebM`, `MP4/m4a (AAC)`, and
+   * @returns {Promise<LeopardTranscript>>} LeopardTranscript object which contains the transcription results of the engine.
    */
-  async processFile(audioPath: string) {
+  async processFile(audioPath: string): Promise<LeopardTranscript> {
     if (audioPath === undefined || audioPath === '') {
       throw new LeopardErrors.LeopardInvalidArgumentError(
         'Audio path provided is not set.'
