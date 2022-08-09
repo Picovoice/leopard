@@ -450,12 +450,12 @@ if err != nil {
 }
 defer leopard.Delete()
 
-transcription, err := leopard.ProcessFile("${AUDIO_PATH}")
+transcript, words, err := leopard.ProcessFile("${AUDIO_PATH}")
 if err != nil {
     // handle process error
 }
 
-log.Println(transcription)
+log.Println(transcript)
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and

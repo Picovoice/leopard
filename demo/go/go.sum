@@ -1,4 +1,4 @@
-github.com/Picovoice/leopard/binding/go v1.0.4 h1:106fcJXh+zj+KUTOHykhpsqLXiX2vGUVpMYoQV216pY=
-github.com/Picovoice/leopard/binding/go v1.0.4/go.mod h1:5kaEg9ZcH2dLkrX/H1xMVF6QFM7l3vd9GKxeXSanA8s=
+github.com/Picovoice/leopard/binding/go v1.0.5-0.20220808232306-1523cefecfbb h1:mGzK/qCydVBrP2dN3OF2aq9K6lh0859u9n6U1Ww63K0=
+github.com/Picovoice/leopard/binding/go v1.0.5-0.20220808232306-1523cefecfbb/go.mod h1:5kaEg9ZcH2dLkrX/H1xMVF6QFM7l3vd9GKxeXSanA8s=
 github.com/Picovoice/pvrecorder/sdk/go v1.1.1 h1:Tx49q+A5DwgURrTxMDTKeCChPuaFTVNlfDk4LCnU6Xk=
 github.com/Picovoice/pvrecorder/sdk/go v1.1.1/go.mod h1:IoSKWuM28e0wWzVSn7B4WvHWmOpcPg85JdwlueTJgGk=

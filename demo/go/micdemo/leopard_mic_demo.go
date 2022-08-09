@@ -41,8 +41,10 @@ func readFrames(recorder *pvrecorder.PvRecorder, data *[]int16, stopCh chan stru
 
 func main() {
 	accessKeyArg := flag.String("access_key", "", "AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)")
-	libraryPathArg := flag.String("library_path", "", "Path to Leopard's dynamic library file")
 	modelPathArg := flag.String("model_path", "", "Path to Leopard model file")
+	libraryPathArg := flag.String("library_path", "", "Path to Leopard's dynamic library file")
+	disableAutomaticPunctuationArg := flag.Bool("disable_automatic_punctuation", false, "Disable automatic punctuation")
+	verbosArg := flag.Bool("verbose", false, "Enable verbose logging")
 	audioDeviceIndex := flag.Int("audio_device_index", -1, "Index of capture device to use.")
 	showAudioDevices := flag.Bool("show_audio_devices", false, "Display all available capture devices")
 	flag.Parse()
@@ -52,9 +54,8 @@ func main() {
 		return
 	}
 
-	l := leopard.Leopard{
-		AccessKey: *accessKeyArg,
-	}
+	l := leopard.NewLeopard(*accessKeyArg)
+	l.EnableAutomaticPunctuation = !*disableAutomaticPunctuationArg
 
 	// validate library path
 	if *libraryPathArg != "" {
@@ -132,12 +133,18 @@ func main() {
 			close(stopCh)
 			<-stoppedCh
 
-			res, err := l.Process(audioData)
+			transcript, words, err := l.Process(audioData)
 			if err != nil {
 				log.Fatalf("Error processing: %v\n", err)
 			}
 
-			fmt.Printf("%s\n\n", res)
+			fmt.Printf("%s\n\n", transcript)
+			if *verbosArg {
+				fmt.Printf("|%10s | %15s | %15s | %10s|\n", "word", "Start in Sec", "End in Sec", "Confidence")
+				for _, word := range words {
+					fmt.Printf("|%10s | %15.2f | %15.2f | %10.2f|\n", word.Word, word.StartSec, word.EndSec, word.Confidence)
+				}
+			}
 		} else {
 			fmt.Print(">>> Press 'ENTER' to start: ")
 			_, err := reader.ReadString('\n')
