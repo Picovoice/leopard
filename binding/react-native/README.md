@@ -52,19 +52,15 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 ## Adding custom Leopard models
 
+Create a custom model using the [Picovoice Console](https://console.picovoice.ai/) or use the [default model](https://github.com/Picovoice/cheetah/tree/master/lib/common/).
+
 ### Android
 
-To add the Leopard model file to your Android application:
-
-1. Create a custom model using the [Picovoice Console](https://console.picovoice.ai/) or use the [default model](/lib/common/).
-2. Add the model as a bundled resource by placing it under the [`assets`](./android/src/main/assets/) directory of your Android application.
+To add a Leopard model file to your Android application, add the file as a bundled resource by placing it under the `assets` directory of your Android application.
 
 ### iOS
 
-Open [`Leopard.xcodeproj`](./ios/Leopard.xcodeproj) in `Xcode` and add the Leopard model file in `Xcode`:
-
-1. Create a model using the [Picovoice Console](https://picovoice.ai/) or use the [default model](/lib/common/).
-2. Add the model as a bundled resource by selecting Build Phases and adding it to the `Copy Bundle Resources` step.
+To add a Leopard model file to your iOS application, add the file as a bundled resource by selecting Build Phases in `Xcode` and adding it to the `Copy Bundle Resources` step.
 
 ## Usage
 
@@ -95,4 +91,4 @@ Finally, when done be sure to explicitly release the resources using `leopard.de
 
 ## Demo App
 
-For example usage refer to our [React Native demo application](/demo/react-native).
+For example usage refer to our [React Native demo application](https://github.com/Picovoice/cheetah/tree/master/demo/react-native).
