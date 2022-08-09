@@ -182,7 +182,7 @@ export class LeopardWorker {
    * input buffer array will be transferred to the worker.
    * @param options.transferCallback Optional callback containing a new Int16Array with contents from 'pcm'. Use this callback
    * to get the input pcm when using transfer.
-   * @return The transcription.
+   * @return The transcript.
    */
   public process(
     pcm: Int16Array,

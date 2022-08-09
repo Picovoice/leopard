@@ -32,7 +32,7 @@ import { LeopardOptions, LeopardTranscript, LeopardWord } from './types';
  */
 
 type pv_leopard_init_type = (accessKey: number, modelPath: number, enableAutomaticPunctuation: number, object: number) => Promise<number>;
-type pv_leopard_process_type = (object: number, pcm: number, numSamples: number, transcription: number, numWords: number, words: number) => Promise<number>;
+type pv_leopard_process_type = (object: number, pcm: number, numSamples: number, transcript: number, numWords: number, words: number) => Promise<number>;
 type pv_leopard_delete_type = (object: number) => Promise<void>;
 type pv_status_to_string_type = (status: number) => Promise<number>
 type pv_sample_rate_type = () => Promise<number>;
@@ -52,7 +52,7 @@ type LeopardWasmOutput = {
   pvStatusToString: pv_status_to_string_type;
   sampleRate: number;
   version: string;
-  transcriptionAddressAddress: number;
+  transcriptAddressAddress: number;
   numWordsAddress: number;
   wordsAddressAddress: number;
 };
@@ -74,7 +74,7 @@ export class Leopard {
 
   private readonly _objectAddress: number;
   private readonly _alignedAlloc: CallableFunction;
-  private readonly _transcriptionAddressAddress: number;
+  private readonly _transcriptAddressAddress: number;
   private readonly _numWordsAddress: number;
   private readonly _wordsAddressAddress: number;
 
@@ -97,7 +97,7 @@ export class Leopard {
     this._pvFree = handleWasm.pvFree;
     this._objectAddress = handleWasm.objectAddress;
     this._alignedAlloc = handleWasm.aligned_alloc;
-    this._transcriptionAddressAddress = handleWasm.transcriptionAddressAddress;
+    this._transcriptAddressAddress = handleWasm.transcriptAddressAddress;
     this._numWordsAddress = handleWasm.numWordsAddress;
     this._wordsAddressAddress = handleWasm.wordsAddressAddress;
 
@@ -229,7 +229,7 @@ export class Leopard {
    * 16-bit linearly-encoded. Furthermore, the engine operates on single-channel audio.
    *
    * @param pcm A frame of audio with properties described above.
-   * @return The transcription.
+   * @return The transcript.
    */
   public async process(pcm: Int16Array): Promise<LeopardTranscript> {
     if (!(pcm instanceof Int16Array)) {
@@ -263,7 +263,7 @@ export class Leopard {
             this._objectAddress,
             inputBufferAddress,
             pcm.length,
-            this._transcriptionAddressAddress,
+            this._transcriptAddressAddress,
             this._numWordsAddress,
             this._wordsAddressAddress,
           );
@@ -277,14 +277,14 @@ export class Leopard {
             );
           }
 
-          const transcriptionAddress = this._memoryBufferView.getInt32(
-            this._transcriptionAddressAddress,
+          const transcriptAddress = this._memoryBufferView.getInt32(
+            this._transcriptAddressAddress,
             true,
           );
 
           const transcript = arrayBufferToStringAtIndex(
             this._memoryBufferUint8,
-            transcriptionAddress,
+            transcriptAddress,
           );
 
           const numWords = this._memoryBufferView.getInt32(this._numWordsAddress, true);
@@ -305,7 +305,7 @@ export class Leopard {
             words.push({ word, startSec, endSec, confidence });
           }
 
-          await this._pvFree(transcriptionAddress);
+          await this._pvFree(transcriptAddress);
           await this._pvFree(wordsAddress);
           await this._pvFree(inputBufferAddress);
 
@@ -349,11 +349,11 @@ export class Leopard {
     const pv_status_to_string = exports.pv_status_to_string as pv_status_to_string_type;
     const pv_sample_rate = exports.pv_sample_rate as pv_sample_rate_type;
 
-    const transcriptionAddressAddress = await aligned_alloc(
+    const transcriptAddressAddress = await aligned_alloc(
       Int32Array.BYTES_PER_ELEMENT,
       Int32Array.BYTES_PER_ELEMENT,
     );
-    if (transcriptionAddressAddress === 0) {
+    if (transcriptAddressAddress === 0) {
       throw new Error('malloc failed: Cannot allocate memory');
     }
 
@@ -439,7 +439,7 @@ export class Leopard {
       pvStatusToString: pv_status_to_string,
       sampleRate: sampleRate,
       version: version,
-      transcriptionAddressAddress: transcriptionAddressAddress,
+      transcriptAddressAddress: transcriptAddressAddress,
       numWordsAddress: numWordsAddress,
       wordsAddressAddress: wordsAddressAddress,
     };
