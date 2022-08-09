@@ -77,7 +77,7 @@ npx pvbase64 -h
 
 #### Init options
 
-Leopard saves and caches your model file in IndexedDB to be used by WebAssembly. Use a different `modelPath` variable
+Leopard saves and caches your model file in IndexedDB to be used by WebAssembly. Use a different `customWritePath` variable
 to hold multiple models and set the `forceWrite` value to true to force re-save a model file. Set `enableAutomaticPunctuation`
 to true, if wish to enable punctuation in transcription.
 If the model file (`.pv`) changes, `version` should be incremented to force the cached model to be updated.
