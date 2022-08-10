@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {
     width: '50%',
-    height: 80,
+    height: 60,
     alignSelf: 'center',
     justifyContent: 'center',
     backgroundColor: '#377DFF',
