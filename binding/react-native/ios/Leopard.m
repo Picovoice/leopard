@@ -1,5 +1,5 @@
 //
-// Copyright 2020-2021 Picovoice Inc.
+// Copyright 2020-2022 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -15,6 +15,7 @@
 
 RCT_EXTERN_METHOD(create: (NSString *)accessKey
                   modelPath: (NSString *)modelPath
+                  enableAutomaticPunctuation: (BOOL)enableAutomaticPunctuation
                   resolver: (RCTPromiseResolveBlock)resolve
                   rejecter: (RCTPromiseRejectBlock)reject)
 

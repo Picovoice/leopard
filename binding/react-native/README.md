@@ -7,27 +7,24 @@ Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally.
-- Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
-- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
+- [Accurate](https://picovoice.ai/docs/benchmark/stt/)
+- [Compact and Computationally-Efficient](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
-  - Linux (x86_64)
-  - macOS (x86_64, arm64)
-  - Windows (x86_64)
-  - Android
-  - iOS
-  - Raspberry Pi (4, 3)
-  - NVIDIA Jetson Nano
+  - Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64)
+  - Android and iOS
+  - Chrome, Safari, Firefox, and Edge
+  - Raspberry Pi (4, 3) and NVIDIA Jetson Nano
 
 ## Compatibility
 
 This binding is for running Leopard on **React Native 0.62.2+** on the following platforms:
 
-- Android 4.4+ (SDK 19+)
+- Android 5.0+ (SDK 21+)
 - iOS 10.0+
 
 ## Installation
 
-To start install be sure you have installed yarn and cocoapods. Then add these two native modules to your react-native project.
+To start install, be sure you have installed yarn and cocoapods. Then, add the following native modules to your react-native project:
 
 ```console
 yarn add @picovoice/leopard-react-native
@@ -55,26 +52,22 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 ## Adding custom Leopard models
 
+Create a custom model using the [Picovoice Console](https://console.picovoice.ai/) or use the [default model](https://github.com/Picovoice/leopard/tree/master/lib/common/).
+
 ### Android
 
-To add the Leopard model file to your Android application:
-
-1. Create a custom model using the [Picovoice Console](https://console.picovoice.ai/) or use the [default model](/lib/common/leopard_params.pv).
-2. Add the model as a bundled resource by placing it under the [`assets`](./android/src/main/assets/) directory of your Android application.
+To add a Leopard model file to your Android application, add the file as a bundled resource by placing it under the `assets` directory of your Android application.
 
 ### iOS
 
-Open [`Leopard.xcodeproj`](./ios/Leopard.xcodeproj) in `Xcode` and add the Leopard model file in `Xcode` by:
-
-1. Create a model using the [Picovoice CAT Console](https://picovoice.ai/cat/) or use the [default model](/lib/common/leopard_params.pv).
-2. Add the model as a bundled resource by selecting Build Phases and adding it to the Copy Bundle Resources step.
+To add a Leopard model file to your iOS application, add the file as a bundled resource by selecting Build Phases in `Xcode` and adding it to the `Copy Bundle Resources` step.
 
 ## Usage
 
 Transcribe an audio file either by passing the absolute path or an url to the file:
 
 ```typescript
-import {Leopard, LeopardErrors} from '@picovoice/leopard-react-native';
+import { Leopard, LeopardErrors } from '@picovoice/leopard-react-native';
 
 const getAudioFrame = () => {
   // get audio frames
@@ -83,7 +76,8 @@ const getAudioFrame = () => {
 try {
   const leopard = await Leopard.create("${ACCESS_KEY}", "${MODEL_FILE}")
 
-  console.log(await leopard.processFile("${AUDIO_FILE_PATH}"))
+  const { transcript, words } = await leopard.processFile("${AUDIO_FILE_PATH}")
+  console.log(transcript)
 } catch (err: any) {
   if (err instanceof LeopardErrors) {
     // handle error
@@ -91,10 +85,10 @@ try {
 }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)), `${MODEL_FILE}`
+Replace `${ACCESS_KEY}` with your `AccessKey` obtained from [Picovoice Console]((https://console.picovoice.ai/)), `${MODEL_FILE}`
 with the name of the Leopard model file name and `${AUDIO_FILE_PATH}` with the absolute path of the audio file.
 Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
 
 ## Demo App
 
-For example usage refer to our [React Native demo application](/demo/react-native).
+For example usage refer to our [React Native demo application](https://github.com/Picovoice/leopard/tree/master/demo/react-native).

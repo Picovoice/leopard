@@ -481,7 +481,7 @@ const getAudioFrame = () => {
 
 try {
   const leopard = await Leopard.create("${ACCESS_KEY}", "${MODEL_FILE}")
-  const transcript = await leopard.processFile("${AUDIO_FILE_PATH}")
+  const { transcript, words } = await leopard.processFile("${AUDIO_FILE_PATH}")
   console.log(transcript)
 } catch (err: any) {
   if (err instanceof LeopardErrors) {
@@ -490,7 +490,8 @@ try {
 }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/) and `${AUDIO_FILE_PATH}` with the absolute path of the audio file. When done be sure to explicitly release the resources using `leopard.delete()`.
+Replace `${ACCESS_KEY}` with your `AccessKey` obtained from Picovoice Console, `${MODEL_FILE}` with a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](/lib/common/) and `${AUDIO_FILE_PATH}` with the absolute path of the audio file. 
+When done be sure to explicitly release the resources using `leopard.delete()`.
 
 ### Java
 

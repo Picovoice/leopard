@@ -11,31 +11,22 @@
 
 const mkdirp = require('mkdirp');
 const ncp = require('ncp').ncp;
-const fs = require('fs');
 
 const androidAssetPath =
   './android/leopard-rn-demo-app/src/main/assets/leopard_params.pv';
 const iosAssetPath = './ios/LeopardDemo/leopard_params.pv';
 
 mkdirp.sync('./android/leopard-rn-demo-app/src/main/assets/');
-fs.stat(androidAssetPath, (err, stat) => {
-  if (err !== null && err.code === 'ENOENT') {
-    ncp('../../lib/common/leopard_params.pv', androidAssetPath, (error) => {
-      if (error) {
-        return console.error(error);
-      }
-      console.log('Copied Android params.');
-    });
+ncp('../../lib/common/leopard_params.pv', androidAssetPath, (error) => {
+  if (error) {
+    return console.error(error);
   }
+  console.log('Copied Android params.');
 });
 
-fs.stat(iosAssetPath, (err, stat) => {
-  if (err !== null && err.code === 'ENOENT') {
-    ncp('../../lib/common/leopard_params.pv', iosAssetPath, (error) => {
-      if (error) {
-        return console.error(error);
-      }
-      console.log('Copied iOS params.');
-    });
+ncp('../../lib/common/leopard_params.pv', iosAssetPath, (error) => {
+  if (error) {
+    return console.error(error);
   }
+  console.log('Copied iOS params.');
 });
