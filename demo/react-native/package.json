@@ -14,7 +14,7 @@
     "postinstall": "node copy.js"
   },
   "dependencies": {
-    "@picovoice/leopard-react-native": "../../binding/react-native/pkg/picovoice-leopard-react-native-1.1.0.tgz",
+    "@picovoice/leopard-react-native": "^1.1.0",
     "@picovoice/react-native-voice-processor": "^1.0.4",
     "@react-native-picker/picker": "^1.9.2",
     "react": "^17.0.2",
