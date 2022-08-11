@@ -424,11 +424,12 @@ const accessKey = "{ACCESS_KEY}"  // AccessKey obtained from Picovoice Console (
 
 try {
     Leopard _leopard = await Leopard.create(accessKey, '{LEOPARD_MODEL_PATH}');
-    String transcript = = await _leopard.processFile("${AUDIO_FILE_PATH}");
+    LeopardTranscript result = = await _leopard.processFile("${AUDIO_FILE_PATH}");
+    print(result.transcript);
 } on LeopardException catch (err) { }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/), and `${AUDIO_FILE_PATH}` with the path to the audio file.
+Replace `${ACCESS_KEY}` with your `AccessKey` obtained from [Picovoice Console](https://console.picovoice.ai/), `${MODEL_FILE}` with the a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](lib/common/), and `${AUDIO_FILE_PATH}` with the path to the audio file.
 
 ### Go
 
