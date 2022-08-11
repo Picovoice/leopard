@@ -17,9 +17,15 @@ import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import ai.picovoice.leopard.*;
+import ai.picovoice.leopard.Leopard;
+import ai.picovoice.leopard.LeopardException;
+import ai.picovoice.leopard.LeopardInvalidArgumentException;
+import ai.picovoice.leopard.LeopardInvalidStateException;
+import ai.picovoice.leopard.LeopardRuntimeException;
+import ai.picovoice.leopard.LeopardTranscript;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -28,144 +34,190 @@ import io.flutter.plugin.common.MethodChannel.Result;
 
 public class LeopardPlugin implements FlutterPlugin, MethodCallHandler {
 
-  private enum Method {
-    CREATE,
-    PROCESS,
-    PROCESSFILE,
-    DELETE
-  }
+    private final Map<String, Leopard> leopardPool = new HashMap<>();
+    private Context flutterContext;
+    private MethodChannel channel;
 
-  private Context flutterContext;
-  private MethodChannel channel;
-  private final Map<String, Leopard> leopardPool = new HashMap<>();
-
-  @Override
-  public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-    flutterContext = flutterPluginBinding.getApplicationContext();
-    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "leopard");
-    channel.setMethodCallHandler(this);
-  }
-
-  @Override
-  public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
-    Method method;
-    try {
-      method = Method.valueOf(call.method.toUpperCase());
-    } catch (IllegalArgumentException e) {
-      result.error(
-              LeopardRuntimeException.class.getSimpleName(),
-              String.format("Leopard method '%s' is not a valid function", call.method),
-              null);
-      return;
+    @Override
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+        flutterContext = flutterPluginBinding.getApplicationContext();
+        channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "leopard");
+        channel.setMethodCallHandler(this);
     }
 
-    switch (method) {
-      case CREATE:
+    @Override
+    public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
+        Method method;
         try {
-          String accessKey = call.argument("accessKey");
-          String modelPath = call.argument("modelPath");
+            method = Method.valueOf(call.method.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            result.error(
+                    LeopardRuntimeException.class.getSimpleName(),
+                    String.format("Leopard method '%s' is not a valid function", call.method),
+                    null);
+            return;
+        }
 
-          Leopard.Builder leopardBuilder = new Leopard.Builder().setAccessKey(accessKey).setModelPath(modelPath);
+        switch (method) {
+            case CREATE:
+                leopardCreate(call, result);
+                break;
+            case PROCESS:
+                leopardProcess(call, result);
+                break;
+            case PROCESSFILE:
+                leopardProcessFile(call, result);
+                break;
+            case DELETE:
+                leopardDelete(call, result);
+                break;
+        }
+    }
 
-          Leopard leopard = leopardBuilder.build(flutterContext);
-          leopardPool.put(String.valueOf(System.identityHashCode(leopard)), leopard);
+    @Override
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+        channel.setMethodCallHandler(null);
+    }
 
-          Map<String, Object> param = new HashMap<>();
-          param.put("handle", String.valueOf(System.identityHashCode(leopard)));
-          param.put("sampleRate", leopard.getSampleRate());
-          param.put("version", leopard.getVersion());
+    private void leopardCreate(@NonNull MethodCall call, @NonNull Result result) {
+        try {
+            String accessKey = call.argument("accessKey");
+            String modelPath = call.argument("modelPath");
 
-          result.success(param);
+            Leopard.Builder leopardBuilder = new Leopard.Builder().setAccessKey(accessKey).setModelPath(modelPath);
+
+            Leopard leopard = leopardBuilder.build(flutterContext);
+            leopardPool.put(String.valueOf(System.identityHashCode(leopard)), leopard);
+
+            Map<String, Object> param = new HashMap<>();
+            param.put("handle", String.valueOf(System.identityHashCode(leopard)));
+            param.put("sampleRate", leopard.getSampleRate());
+            param.put("version", leopard.getVersion());
+
+            result.success(param);
         } catch (LeopardException e) {
-          result.error(e.getClass().getSimpleName(), e.getMessage(), null);
+            result.error(e.getClass().getSimpleName(), e.getMessage(), null);
         } catch (Exception e) {
-          result.error(LeopardException.class.getSimpleName(), e.getMessage(), null);
+            result.error(LeopardException.class.getSimpleName(), e.getMessage(), null);
         }
-        break;
-      case PROCESS:
-        try {
-          String handle = call.argument("handle");
-          ArrayList<Integer> pcmList = call.argument("frame");
+    }
 
-          if (!leopardPool.containsKey(handle)) {
-            result.error(
-                    LeopardInvalidStateException.class.getSimpleName(),
-                    "Invalid leopard handle provided to native module",
-                    null);
-            return;
-          }
+    private void leopardProcess(@NonNull MethodCall call, @NonNull Result result) {
 
-          short[] pcm = null;
-          if (pcmList != null) {
-            pcm = new short[pcmList.size()];
-            for (int i = 0; i < pcmList.size(); i++) {
-              pcm[i] = pcmList.get(i).shortValue();
-            }
-          }
-
-          Leopard leopard = leopardPool.get(handle);
-          String transcript = leopard.process(pcm);
-
-          Map<String, Object> param = new HashMap<>();
-          param.put("transcript", transcript);
-
-          result.success(param);
-        } catch (LeopardException e) {
-          result.error(
-                  e.getClass().getSimpleName(),
-                  e.getMessage(),
-                  null);
-        }
-        break;
-      case PROCESSFILE:
-        try {
-          String handle = call.argument("handle");
-          String path = call.argument("path");
-
-          if (!leopardPool.containsKey(handle)) {
-            result.error(
-                    LeopardInvalidStateException.class.getSimpleName(),
-                    "Invalid leopard handle provided to native module",
-                    null);
-            return;
-          }
-
-          Leopard leopard = leopardPool.get(handle);
-          String transcript = leopard.processFile(path);
-
-          Map<String, Object> param = new HashMap<>();
-          param.put("transcript", transcript);
-
-          result.success(param);
-        } catch (LeopardException e) {
-          result.error(
-                  e.getClass().getSimpleName(),
-                  e.getMessage(),
-                  null);
-        }
-        break;
-      case DELETE:
         String handle = call.argument("handle");
+        ArrayList<Integer> pcmList = call.argument("frame");
 
         if (!leopardPool.containsKey(handle)) {
-          result.error(
-                  LeopardInvalidArgumentException.class.getSimpleName(),
-                  "Invalid Leopard handle provided to native module.",
-                  null);
-          return;
+            result.error(
+                    LeopardInvalidStateException.class.getSimpleName(),
+                    "Invalid leopard handle provided to native module",
+                    null);
+            return;
+        }
+
+        short[] pcm = null;
+        if (pcmList != null) {
+            pcm = new short[pcmList.size()];
+            for (int i = 0; i < pcmList.size(); i++) {
+                pcm[i] = pcmList.get(i).shortValue();
+            }
         }
 
         Leopard leopard = leopardPool.get(handle);
-        leopard.delete();
+        if (leopard == null) {
+            result.error(
+                    LeopardInvalidStateException.class.getSimpleName(),
+                    "Instance of Leopard no longer exists",
+                    null);
+            return;
+        }
+        try {
+            LeopardTranscript leopardTranscript = leopard.process(pcm);
+            Map<String, Object> resultMap = leopardTranscriptToMap(leopardTranscript);
+            result.success(resultMap);
+        } catch (LeopardException e) {
+            result.error(
+                    e.getClass().getSimpleName(),
+                    e.getMessage(),
+                    null);
+        }
+    }
+
+    private void leopardProcessFile(@NonNull MethodCall call, @NonNull Result result) {
+
+        String handle = call.argument("handle");
+        String path = call.argument("path");
+
+        if (!leopardPool.containsKey(handle)) {
+            result.error(
+                    LeopardInvalidStateException.class.getSimpleName(),
+                    "Invalid leopard handle provided to native module",
+                    null);
+            return;
+        }
+
+        Leopard leopard = leopardPool.get(handle);
+        if (leopard == null) {
+            result.error(
+                    LeopardInvalidStateException.class.getSimpleName(),
+                    "Instance of Leopard no longer exists",
+                    null);
+            return;
+        }
+        try {
+            LeopardTranscript leopardTranscript = leopard.processFile(path);
+            Map<String, Object> resultMap = leopardTranscriptToMap(leopardTranscript);
+            result.success(resultMap);
+        } catch (LeopardException e) {
+            result.error(
+                    e.getClass().getSimpleName(),
+                    e.getMessage(),
+                    null);
+        }
+    }
+
+    private void leopardDelete(@NonNull MethodCall call, @NonNull Result result) {
+        String handle = call.argument("handle");
+
+        if (!leopardPool.containsKey(handle)) {
+            result.error(
+                    LeopardInvalidArgumentException.class.getSimpleName(),
+                    "Invalid Leopard handle provided to native module.",
+                    null);
+            return;
+        }
+
+        Leopard leopard = leopardPool.get(handle);
+        if (leopard != null) {
+            leopard.delete();
+        }
         leopardPool.remove(handle);
 
         result.success(null);
-        break;
     }
-  }
 
-  @Override
-  public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    channel.setMethodCallHandler(null);
-  }
+    private Map<String, Object> leopardTranscriptToMap(LeopardTranscript result) {
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("transcript", result.getTranscriptString());
+
+        List<Map<String, Object>> words = new ArrayList<>();
+        for (LeopardTranscript.Word word : result.getWordArray()) {
+            Map<String, Object> wordMap = new HashMap<>();
+            wordMap.put("word", word.getWord());
+            wordMap.put("confidence", word.getConfidence());
+            wordMap.put("startSec", word.getStartSec());
+            wordMap.put("endSec", word.getEndSec());
+            words.add(wordMap);
+        }
+        resultMap.put("words", words.toArray());
+
+        return resultMap;
+    }
+
+    private enum Method {
+        CREATE,
+        PROCESS,
+        PROCESSFILE,
+        DELETE
+    }
 }

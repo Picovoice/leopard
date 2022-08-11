@@ -10,15 +10,12 @@
 //
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:leopard_demo/mic_recorder.dart';
 import 'package:leopard_flutter/leopard.dart';
 import 'package:leopard_flutter/leopard_error.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:leopard_flutter/leopard_transcript.dart';
 
 void main() {
   runApp(MyApp());
@@ -30,7 +27,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final String accessKey = '{YOUR_ACCESS_KEY_HERE}'; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
+  final String accessKey =
+      '{YOUR_ACCESS_KEY_HERE}'; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
   final int maxRecordingLengthSecs = 120;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -43,6 +41,7 @@ class _MyAppState extends State<MyApp> {
   double recordedLength = 0.0;
   String statusAreaText = "";
   String transcriptText = "";
+  List<LeopardWord> words = [];
 
   MicRecorder? _micRecorder;
   Leopard? _leopard;
@@ -52,8 +51,10 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     setState(() {
       recordedLength = 0.0;
-      statusAreaText = "Press START to start recording some audio to transcribe";
+      statusAreaText =
+          "Press START to start recording some audio to transcribe";
       transcriptText = "";
+      words = [];
     });
 
     initLeopard();
@@ -69,16 +70,18 @@ class _MyAppState extends State<MyApp> {
     String modelPath = "assets/models/$platform/leopard_params.pv";
 
     try {
-      _leopard = await Leopard.create(accessKey, modelPath);
-      _micRecorder = await MicRecorder.create(_leopard!.sampleRate, recordedCallback, errorCallback);
+      _leopard = await Leopard.create(accessKey, modelPath,
+          enableAutomaticPunctuation: true);
+      _micRecorder = await MicRecorder.create(
+          _leopard!.sampleRate, recordedCallback, errorCallback);
     } on LeopardInvalidArgumentException catch (ex) {
       errorCallback(LeopardInvalidArgumentException(
           "${ex.message}\nEnsure your accessKey '$accessKey' is a valid access key."));
     } on LeopardActivationException {
       errorCallback(LeopardActivationException("AccessKey activation error."));
     } on LeopardActivationLimitException {
-      errorCallback(
-          LeopardActivationLimitException("AccessKey reached its device limit."));
+      errorCallback(LeopardActivationLimitException(
+          "AccessKey reached its device limit."));
     } on LeopardActivationRefusedException {
       errorCallback(LeopardActivationRefusedException("AccessKey refused."));
     } on LeopardActivationThrottledException {
@@ -93,7 +96,8 @@ class _MyAppState extends State<MyApp> {
     if (length < maxRecordingLengthSecs) {
       setState(() {
         recordedLength = length;
-        statusAreaText = "Recording : ${length.toStringAsFixed(1)} / ${maxRecordingLengthSecs} seconds";
+        statusAreaText =
+            "Recording : ${length.toStringAsFixed(1)} / $maxRecordingLengthSecs seconds";
       });
     } else {
       setState(() {
@@ -148,16 +152,19 @@ class _MyAppState extends State<MyApp> {
       return;
     }
 
-    Stopwatch stopwatch = new Stopwatch()..start();
-    String? transcript = await _leopard?.processFile(recordedFile.path);
+    Stopwatch stopwatch = Stopwatch()..start();
+    LeopardTranscript? result = await _leopard?.processFile(recordedFile.path);
     Duration elapsed = stopwatch.elapsed;
 
     String audioLength = recordedLength.toStringAsFixed(1);
-    String transcriptionTime = (elapsed.inMilliseconds / 1000).toStringAsFixed(1);
+    String transcriptionTime =
+        (elapsed.inMilliseconds / 1000).toStringAsFixed(1);
 
     setState(() {
-      statusAreaText = "Transcribed ${audioLength}(s) of audio in ${transcriptionTime}(s)";
-      transcriptText = transcript ?? "";
+      statusAreaText =
+          "Transcribed $audioLength(s) of audio in $transcriptionTime(s)";
+      transcriptText = result?.transcript ?? "";
+      words = result?.words ?? [];
     });
   }
 
@@ -171,15 +178,18 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Leopard Demo'),
           backgroundColor: picoBlue,
         ),
-        body: Column(
-          children: [
-            buildLeopardTextArea(context),
-            buildErrorMessage(context),
-            buildLeopardStatusArea(context),
-            buildStartButton(context),
-            footer
-          ],
-        ),
+        body: Container(
+            color: Colors.white,
+            child: Column(
+              children: [
+                buildLeopardTextArea(context),
+                buildLeopardWordArea(context),
+                buildErrorMessage(context),
+                buildLeopardStatusArea(context),
+                buildStartButton(context),
+                footer
+              ],
+            )),
       ),
     );
   }
@@ -198,8 +208,11 @@ class _MyAppState extends State<MyApp> {
               height: 65,
               child: ElevatedButton(
                 style: buttonStyle,
-                onPressed:
-                    (isRecording) ? _stopRecording : _startRecording,
+                onPressed: isError
+                    ? null
+                    : isRecording
+                        ? _stopRecording
+                        : _startRecording,
                 child: Text(isRecording ? "Stop" : "Start",
                     style: TextStyle(fontSize: 30)),
               ))),
@@ -210,41 +223,86 @@ class _MyAppState extends State<MyApp> {
     return Expanded(
         flex: 6,
         child: Container(
-          alignment: Alignment.topCenter,
+            alignment: Alignment.topCenter,
+            color: Color(0xff25187e),
+            margin: EdgeInsets.all(10),
+            child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                padding: EdgeInsets.all(10),
+                physics: RangeMaintainingScrollPhysics(),
+                child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      transcriptText,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    )))));
+  }
+
+  buildLeopardWordArea(BuildContext context) {
+    List<TableRow> tableRows = words.map<TableRow>((leopardWord) {
+      return TableRow(children: [
+        Column(children: [
+          Text(leopardWord.word, style: TextStyle(color: Colors.white))
+        ]),
+        Column(children: [
+          Text('${leopardWord.startSec.toStringAsFixed(2)}s',
+              style: TextStyle(color: Colors.white))
+        ]),
+        Column(children: [
+          Text('${leopardWord.endSec.toStringAsFixed(2)}s',
+              style: TextStyle(color: Colors.white))
+        ]),
+        Column(children: [
+          Text('${(leopardWord.confidence * 100).toStringAsFixed(0)}%',
+              style: TextStyle(color: Colors.white))
+        ]),
+      ]);
+    }).toList();
+
+    return Expanded(
+        flex: 4,
+        child: Container(
           color: Color(0xff25187e),
+          alignment: Alignment.topCenter,
           margin: EdgeInsets.all(10),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            padding: EdgeInsets.all(10),
-            physics: RangeMaintainingScrollPhysics(),
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                transcriptText,
-                textAlign: TextAlign.left,
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              )
-            )
-          )
-        )
-      );
+          child: Column(children: [
+            Container(
+                color: Colors.white,
+                padding: EdgeInsets.only(bottom: 5, top: 5),
+                child: Table(children: [
+                  TableRow(children: [
+                    Column(children: [Text("Word")]),
+                    Column(children: [Text("Start")]),
+                    Column(children: [Text("End")]),
+                    Column(children: [Text("Confidence")]),
+                  ])
+                ])),
+            Flexible(
+                child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    padding: EdgeInsets.all(10),
+                    physics: RangeMaintainingScrollPhysics(),
+                    child: Table(children: tableRows)))
+          ]),
+        ));
   }
 
   buildLeopardStatusArea(BuildContext context) {
     return Expanded(
-      flex: 1,
-      child: Container(
-          alignment: Alignment.center,
-          padding: EdgeInsets.only(bottom: 20),
-          child: Text(
-            statusAreaText,
-            style: TextStyle(color: Colors.black),
-          )));
+        flex: 1,
+        child: Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.only(bottom: 20),
+            child: Text(
+              statusAreaText,
+              style: TextStyle(color: Colors.black),
+            )));
   }
 
   buildErrorMessage(BuildContext context) {
     return Expanded(
-        flex: isError ? 2 : 0,
+        flex: isError ? 4 : 0,
         child: Container(
             alignment: Alignment.center,
             margin: EdgeInsets.only(left: 20, right: 20),
@@ -266,6 +324,7 @@ class _MyAppState extends State<MyApp> {
       child: Container(
           alignment: Alignment.bottomCenter,
           padding: EdgeInsets.only(bottom: 20),
+          margin: EdgeInsets.only(bottom: 10),
           child: const Text(
             "Made in Vancouver, Canada by Picovoice",
             style: TextStyle(color: Color(0xff666666)),

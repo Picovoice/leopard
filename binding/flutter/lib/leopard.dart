@@ -13,6 +13,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:leopard_flutter/leopard_transcript.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:leopard_flutter/leopard_error.dart';
 
@@ -35,10 +36,13 @@ class Leopard {
   ///
   /// [modelPath] Path to the file containing model parameters.
   ///
-  /// Thows a `LeopardException` if not initialized correctly
+  /// [enableAutomaticPunctuation] (Optional) Set to `true` to enable automatic punctuation insertion.
   ///
-  /// returns an instance of the speech-to-text engine
-  static Future<Leopard> create(String accessKey, String modelPath) async {
+  /// Throws a `LeopardException` if not initialized correctly
+  ///
+  /// returns an instance of the Leopard Speech-to-Text engine
+  static Future<Leopard> create(String accessKey, String modelPath,
+      {enableAutomaticPunctuation = false}) async {
     modelPath = await _tryExtractFlutterAsset(modelPath);
 
     try {
@@ -46,9 +50,11 @@ class Leopard {
           Map<String, dynamic>.from(await _channel.invokeMethod('create', {
         'accessKey': accessKey,
         'modelPath': modelPath,
+        'enableAutomaticPunctuation': enableAutomaticPunctuation
       }));
 
-      return Leopard._(result['handle'], result['sampleRate'], result['version']);
+      return Leopard._(
+          result['handle'], result['sampleRate'], result['version']);
     } on PlatformException catch (error) {
       throw leopardStatusToException(error.code, error.message);
     } on Exception catch (error) {
@@ -63,18 +69,13 @@ class Leopard {
   ///
   /// [frame] frame of 16-bit integers of 16kHz linear PCM mono audio.
   ///
-  /// returns String object.
-  Future<String> process(List<int>? frame) async {
+  /// returns LeopardTranscript object which contains the transcription results of the engine.
+  Future<LeopardTranscript> process(List<int>? frame) async {
     try {
-      Map<String, dynamic> transcript = Map<String, dynamic>.from(await _channel
+      Map<String, dynamic> result = Map<String, dynamic>.from(await _channel
           .invokeMethod('process', {'handle': _handle, 'frame': frame}));
 
-      if (transcript['transcript'] == null) {
-        throw LeopardInvalidStateException(
-            "field 'transcript' must be always present");
-      }
-
-      return transcript['transcript'];
+      return _pluginResultToLeopardTranscript(result);
     } on PlatformException catch (error) {
       throw leopardStatusToException(error.code, error.message);
     } on Exception catch (error) {
@@ -84,22 +85,16 @@ class Leopard {
 
   /// Processes given audio data and returns its transcription.
   ///
-  /// [path] Absolute path to the audio file. The file needs to have a sample rate equal to or greater
-  ///        than Leopard.sampleRate. The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`,
-  ///        `Vorbis`, `WAV`, and `WebM`.
+  /// [path] Absolute path to the audio file. The supported formats are: `3gp (AMR)`, `FLAC`,
+  ///        `MP3`, `MP4/m4a (AAC)`, `Ogg`, `WAV` and `WebM`.
   ///
-  /// returns String object.
-  Future<String> processFile(String path) async {
+  /// returns LeopardTranscript object which contains the transcription results of the engine.
+  Future<LeopardTranscript> processFile(String path) async {
     try {
-      Map<String, dynamic> transcript = Map<String, dynamic>.from(await _channel
+      Map<String, dynamic> result = Map<String, dynamic>.from(await _channel
           .invokeMethod('processfile', {'handle': _handle, 'path': path}));
 
-      if (transcript['transcript'] == null) {
-        throw LeopardInvalidStateException(
-            "field 'transcript' must be always present");
-      }
-
-      return transcript['transcript'];
+      return _pluginResultToLeopardTranscript(result);
     } on PlatformException catch (error) {
       throw leopardStatusToException(error.code, error.message);
     } on Exception catch (error) {
@@ -113,6 +108,30 @@ class Leopard {
       await _channel.invokeMethod('delete', {'handle': _handle});
       _handle = null;
     }
+  }
+
+  LeopardTranscript _pluginResultToLeopardTranscript(
+      Map<String, dynamic> result) {
+    if (result['transcript'] == null) {
+      throw LeopardInvalidStateException(
+          "field 'transcript' must be always present");
+    }
+
+    String transcript = result['transcript'];
+
+    if (result['words'] == null) {
+      throw LeopardInvalidStateException(
+          "field 'words' must be always present");
+    } else {
+      result['words'] = List<dynamic>.from(result['words']);
+    }
+
+    List<LeopardWord> words = [];
+    for (dynamic word in result['words']) {
+      words.add(LeopardWord(
+          word['word'], word['startSec'], word['endSec'], word['confidence']));
+    }
+    return LeopardTranscript(transcript, words);
   }
 
   static Future<String> _tryExtractFlutterAsset(String filePath) async {
