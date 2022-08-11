@@ -68,8 +68,7 @@ namespace LeopardTest
         [ClassInitialize]
         public static void ClassInitialize(TestContext _)
         {
-            //ACCESS_KEY = Environment.GetEnvironmentVariable("ACCESS_KEY");
-            ACCESS_KEY = "Nj93iN5VjmLvoeefKxrfqMXtzxYTAYiWo/tFb8JftF7IrNkpyGoyWw==";
+            ACCESS_KEY = Environment.GetEnvironmentVariable("ACCESS_KEY");
         }
 
         [TestMethod]
