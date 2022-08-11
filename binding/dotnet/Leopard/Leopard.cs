@@ -10,6 +10,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -65,6 +66,7 @@ namespace Pv
         private static extern PvStatus pv_leopard_init(
             IntPtr accessKey,
             IntPtr modelPath,
+            bool enable_automatic_punctuation,
             out IntPtr handle);
 
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
@@ -78,19 +80,35 @@ namespace Pv
             IntPtr handle,
             Int16[] pcm,
             Int32 pcmLength,
-            out IntPtr transcriptPtr);
+            out IntPtr transcriptPtr,
+            out Int32 numWords,
+            out IntPtr wordsPtr);
 
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
         private static extern PvStatus pv_leopard_process_file(
             IntPtr handle,
             IntPtr audioPath,
-            out IntPtr transcriptPtr);
+            out IntPtr transcriptPtr,
+            out Int32 numWords,
+            out IntPtr wordsPtr);
 
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr pv_leopard_version();
 
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
         private static extern void pv_free(IntPtr memoryPtr);
+
+        /// <summary>
+        /// C Struct for storing word metadata
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+        private struct CWord
+        {
+            public IntPtr wordPtr;
+            public float startSec;
+            public float endSec;
+            public float confidence;
+        }
 
         /// <summary>
         /// Factory method for Leopard Speech-to-Text engine.
@@ -100,10 +118,13 @@ namespace Pv
         /// Absolute path to the file containing model parameters. If not set it will be set to the
         /// default location.
         /// </param>
+        /// <param name="enableAutomaticPunctuation">
+        /// Set to `true` to enable automatic punctuation insertion.
+        /// </param>
         /// <returns>An instance of Leopard Speech-to-Text engine.</returns>
-        public static Leopard Create(string accessKey, string modelPath = null)
+        public static Leopard Create(string accessKey, string modelPath = null, bool enableAutomaticPunctuation = false)
         {
-            return new Leopard(accessKey, modelPath ?? DEFAULT_MODEL_PATH);
+            return new Leopard(accessKey, modelPath ?? DEFAULT_MODEL_PATH, enableAutomaticPunctuation);
         }
 
         /// <summary>
@@ -114,9 +135,13 @@ namespace Pv
         /// Absolute path to the file containing model parameters. If not set it will be set to the
         /// default location.
         /// </param>
+        /// <param name="enableAutomaticPunctuation">
+        /// Set to `true` to enable automatic punctuation insertion.
+        /// </param>
         private Leopard(
             string accessKey,
-            string modelPath)
+            string modelPath,
+            bool enableAutomaticPunctuation)
         {
             if (string.IsNullOrEmpty(accessKey))
             {
@@ -134,6 +159,7 @@ namespace Pv
             PvStatus status = pv_leopard_init(
                 accessKeyPtr,
                 modelPathPtr,
+                enableAutomaticPunctuation,
                 out _libraryPointer);
 
             Marshal.FreeHGlobal(accessKeyPtr);
@@ -155,9 +181,9 @@ namespace Pv
         /// Audio data. The audio needs to have a sample rate equal to `.SampleRate` and be 16-bit linearly-encoded. This function operates on single-channel audio.
         /// </param>
         /// <returns>
-        /// Inferred transcription.
+        /// LeopardTranscript object which contains the transcription results of the engine.
         /// </returns>
-        public string Process(Int16[] pcm)
+        public LeopardTranscript Process(Int16[] pcm)
         {
             if (pcm.Length == 0 | pcm == null)
             {
@@ -165,7 +191,15 @@ namespace Pv
             }
 
             IntPtr transcriptPtr = IntPtr.Zero;
-            PvStatus status = pv_leopard_process(_libraryPointer, pcm, (Int32)pcm.Length, out transcriptPtr);
+            Int32 numWords = 0;
+            IntPtr wordsPtr = IntPtr.Zero;
+            PvStatus status = pv_leopard_process
+            (_libraryPointer,
+                pcm,
+                (Int32)pcm.Length,
+                out transcriptPtr,
+                out numWords,
+                out wordsPtr);
             if (status != PvStatus.SUCCESS)
             {
                 throw PvStatusToException(status, "Leopard failed to process the audio frame.");
@@ -173,7 +207,18 @@ namespace Pv
 
             string transcript = Utils.GetUtf8StringFromPtr(transcriptPtr);
             pv_free(transcriptPtr);
-            return transcript;
+            List<LeopardWord> wordsList = new List<LeopardWord>();
+            IntPtr orgWordsPtr = wordsPtr;
+            for (int i = 0; i < numWords; i++)
+            {
+                CWord cword = (CWord)Marshal.PtrToStructure(wordsPtr, typeof(CWord));
+                string word = Utils.GetUtf8StringFromPtr(cword.wordPtr);
+                wordsList.Add(new LeopardWord(word, cword.confidence, cword.startSec, cword.endSec));
+                wordsPtr += Marshal.SizeOf(typeof(CWord));
+            }
+
+            pv_free(orgWordsPtr);
+            return new LeopardTranscript(transcript, wordsList.ToArray());
         }
 
         /// <summary>
@@ -184,9 +229,9 @@ namespace Pv
         /// The supported formats are: `FLAC`, `MP3`, `Ogg`, `Opus`, `Vorbis`, `WAV`, and `WebM`.
         /// </param>
         /// <returns>
-        /// Inferred transcription.
+        /// LeopardTranscript object which contains the transcription results of the engine.
         /// </returns>
-        public string ProcessFile(string audioPath)
+        public LeopardTranscript ProcessFile(string audioPath)
         {
             if (!File.Exists(audioPath))
             {
@@ -196,7 +241,14 @@ namespace Pv
             IntPtr audioPathPtr = Utils.GetPtrFromUtf8String(audioPath);
 
             IntPtr transcriptPtr = IntPtr.Zero;
-            PvStatus status = pv_leopard_process_file(_libraryPointer, audioPathPtr, out transcriptPtr);
+            Int32 numWords = 0;
+            IntPtr wordsPtr = IntPtr.Zero;
+            PvStatus status = pv_leopard_process_file(
+                _libraryPointer,
+                audioPathPtr,
+                out transcriptPtr,
+                out numWords,
+                out wordsPtr);
 
             Marshal.FreeHGlobal(audioPathPtr);
 
@@ -207,7 +259,18 @@ namespace Pv
 
             string transcript = Utils.GetUtf8StringFromPtr(transcriptPtr);
             pv_free(transcriptPtr);
-            return transcript;
+            IntPtr orgWordsPtr = wordsPtr;
+            List<LeopardWord> wordsList = new List<LeopardWord>();
+            for (int i = 0; i < numWords; i++)
+            {
+                CWord cword = (CWord)Marshal.PtrToStructure(wordsPtr, typeof(CWord));
+                string word = Utils.GetUtf8StringFromPtr(cword.wordPtr);
+                wordsList.Add(new LeopardWord(word, cword.confidence, cword.startSec, cword.endSec));
+                wordsPtr += Marshal.SizeOf(typeof(CWord));
+            }
+
+            pv_free(orgWordsPtr);
+            return new LeopardTranscript(transcript, wordsList.ToArray());
         }
 
         /// <summary>

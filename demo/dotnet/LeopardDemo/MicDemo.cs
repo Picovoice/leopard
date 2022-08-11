@@ -30,18 +30,27 @@ namespace LeopardDemo
         /// </summary>
         /// <param name="accessKey">AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).</param>
         /// <param name="modelPath">Absolute path to the file containing model parameters. If not set it will be set to the default location.</param>           
+        /// <param name="enableAutomaticPunctuation">
+        /// Set to `true` to enable automatic punctuation insertion.
+        /// </param>
+        /// <param name="verbose">
+        /// Enable verbose logging.
+        /// </param>
         /// <param name="audioDeviceIndex">Optional argument. If provided, audio is recorded from this input device. Otherwise, the default audio input device is used.</param>        
         public static void RunDemo(
             string accessKey,
             string modelPath,
+            bool enableAutomaticPunctuation,
+            bool verbose,
             int audioDeviceIndex)
         {
 
             Leopard leopard = null;
 
             leopard = Leopard.Create(
-                accessKey,
-                modelPath);
+                accessKey:accessKey,
+                modelPath:modelPath,
+                enableAutomaticPunctuation:enableAutomaticPunctuation);
 
             PvRecorder recorder = PvRecorder.Create(audioDeviceIndex, PV_RECORDER_FRAME_LENGTH);
 
@@ -91,7 +100,17 @@ namespace LeopardDemo
                 Console.WriteLine(">>> Processing ... \n");
                 try
                 {
-                    Console.WriteLine(leopard.Process(pcm));
+                    LeopardTranscript result = leopard.Process(pcm);
+                    Console.WriteLine(result.TranscriptString);
+                    if (verbose)
+                    {
+                        Console.WriteLine(String.Format("\n|{0,-15}|{1,-10:0.00}|{2,-10:0.00}|{3,-10:0.00}|\n", "word", "Confidence", "StartSec", "EndSec"));
+                        for (int i = 0; i < result.WordArray.Length; i++)
+                        {
+                            LeopardWord word = result.WordArray[i];
+                            Console.WriteLine(String.Format("|{0,-15}|{1,10:0.00}|{2,10:0.00}|{3,10:0.00}|", word.Word, word.Confidence, word.StartSec, word.EndSec));
+                        }
+                    }
                 }
                 catch (LeopardActivationLimitException)
                 {
@@ -124,6 +143,8 @@ namespace LeopardDemo
 
             string accessKey = null;
             string modelPath = null;
+            bool enableAutomaticPunctuation = true;
+            bool verbose = true;
             int audioDeviceIndex = -1;
             bool showAudioDevices = false;
             bool showHelp = false;
@@ -145,6 +166,16 @@ namespace LeopardDemo
                     {
                         modelPath = args[argIndex++];
                     }
+                }
+                else if (args[argIndex] == "--disable_automatic_punctuation")
+                {
+                    enableAutomaticPunctuation = false;
+                    argIndex++;
+                }
+                else if (args[argIndex] == "--verbose")
+                {
+                    verbose = true;
+                    argIndex++;
                 }
                 else if (args[argIndex] == "--show_audio_devices")
                 {
@@ -190,6 +221,8 @@ namespace LeopardDemo
             RunDemo(
                 accessKey,
                 modelPath,
+                enableAutomaticPunctuation,
+                verbose,
                 audioDeviceIndex);
         }
 
@@ -204,6 +237,8 @@ namespace LeopardDemo
             "\t--access_key (required): AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)\n" +
             "\t--model_path: Absolute path to the file containing model parameters.\n" +
             "\t--audio_device_index: Index of input audio device.\n" +
-            "\t--show_audio_devices: Print available recording devices.\n";
+            "\t--show_audio_devices: Print available recording devices.\n" +
+            "\t--disable_automatic_punctuation: Disable automatic punctuation.\n" +
+            "\t--verbose: Enable verbose logging";
     }
 }
