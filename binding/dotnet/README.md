@@ -7,16 +7,13 @@ Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally.
-- Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
-- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
+- [Accurate](https://picovoice.ai/docs/benchmark/stt/#results)
+- [Compact and Computationally-Efficient](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
-    - Linux (x86_64)
-    - macOS (x86_64, arm64)
-    - Windows (x86_64)
-    - Android
-    - iOS
-    - Raspberry Pi (4, 3)
-    - NVIDIA Jetson Nano
+  - Linux (x86_64), macOS (x86_64, arm64), and Windows (x86_64)
+  - Android and iOS
+  - Chrome, Safari, Firefox, and Edge
+  - Raspberry Pi (4, 3) and NVIDIA Jetson Nano
 
 ## Requirements
 
@@ -69,9 +66,9 @@ using Pv;
 const string accessKey = "${ACCESS_KEY}";
 const string audioPath = "/absolute/path/to/audio_file";
 
-Leopard handle = Leopard.Create(accessKey);
+Leopard leopard = Leopard.Create(accessKey);
 
-Console.Write(handle.ProcessFile(audioPath));
+LeopardTranscript result = leopard.ProcessFile(audioPath);
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)). Finally, when done release the resources using `handle.Dispose()`.
@@ -89,4 +86,4 @@ Leopard handle = Leopard.Create(accessKey, modelPath);
 
 ## Demos
 
-The [Leopard dotnet demo project](/demo/dotnet) is a .NET Core console app that allows for processing real-time audio (i.e. microphone) and files using Leopard.
+The [Leopard dotnet demo project](https://github.com/Picovoice/leopard/tree/master/demo/dotnet) is a .NET Core console app that allows for processing real-time audio (i.e. microphone) and files using Leopard.
