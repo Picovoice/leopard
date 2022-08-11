@@ -95,7 +95,7 @@ class Leopard {
   /**
    * Process a frame of audio with the speech-to-text engine.
    * @param audioPath Absolute path to the audio file. The supported formats are: `3gp (AMR)`, `FLAC`, `MP3`,
-   * `Ogg`, `WAV`, `WebM`, `MP4/m4a (AAC)`, and
+   *                  `MP4/m4a (AAC)`, `Ogg`, `WAV` and `WebM`.
    * @returns {Promise<LeopardTranscript>>} LeopardTranscript object which contains the transcription results of the engine.
    */
   async processFile(audioPath: string): Promise<LeopardTranscript> {
