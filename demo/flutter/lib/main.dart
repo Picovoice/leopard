@@ -324,7 +324,7 @@ class _MyAppState extends State<MyApp> {
       child: Container(
           alignment: Alignment.bottomCenter,
           padding: EdgeInsets.only(bottom: 20),
-          margin: EdgeInsets.only(bottom: 10),
+          margin: EdgeInsets.only(top: 10),
           child: const Text(
             "Made in Vancouver, Canada by Picovoice",
             style: TextStyle(color: Color(0xff666666)),

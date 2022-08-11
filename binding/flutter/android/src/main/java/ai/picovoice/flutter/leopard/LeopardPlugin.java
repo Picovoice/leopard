@@ -83,8 +83,12 @@ public class LeopardPlugin implements FlutterPlugin, MethodCallHandler {
         try {
             String accessKey = call.argument("accessKey");
             String modelPath = call.argument("modelPath");
+            boolean enableAutomaticPunctuation = call.argument("enableAutomaticPunctuation");
 
-            Leopard.Builder leopardBuilder = new Leopard.Builder().setAccessKey(accessKey).setModelPath(modelPath);
+            Leopard.Builder leopardBuilder = new Leopard.Builder()
+                    .setAccessKey(accessKey)
+                    .setModelPath(modelPath)
+                    .setEnableAutomaticPunctuation(enableAutomaticPunctuation);
 
             Leopard leopard = leopardBuilder.build(flutterContext);
             leopardPool.put(String.valueOf(System.identityHashCode(leopard)), leopard);
@@ -209,7 +213,7 @@ public class LeopardPlugin implements FlutterPlugin, MethodCallHandler {
             wordMap.put("endSec", word.getEndSec());
             words.add(wordMap);
         }
-        resultMap.put("words", words.toArray());
+        resultMap.put("words", words);
 
         return resultMap;
     }

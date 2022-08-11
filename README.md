@@ -424,7 +424,7 @@ const accessKey = "{ACCESS_KEY}"  // AccessKey obtained from Picovoice Console (
 
 try {
     Leopard _leopard = await Leopard.create(accessKey, '{LEOPARD_MODEL_PATH}');
-    LeopardTranscript result = = await _leopard.processFile("${AUDIO_FILE_PATH}");
+    LeopardTranscript result = await _leopard.processFile("${AUDIO_FILE_PATH}");
     print(result.transcript);
 } on LeopardException catch (err) { }
 ```

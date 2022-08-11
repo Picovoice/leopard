@@ -93,7 +93,7 @@ Transcribe an audio file by passing in the path:
 
 ```dart
 try {
-    LeopardTranscript result = = await _leopard.processFile("${AUDIO_FILE_PATH}");
+    LeopardTranscript result = await _leopard.processFile("${AUDIO_FILE_PATH}");
     print(result.transcript);
 } on LeopardException catch (err) { }
 ```
