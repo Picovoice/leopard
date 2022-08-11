@@ -10,34 +10,50 @@
 //
 "use strict";
 
-import Leopard from "./leopard";
 import {
-  LeopardError,
-  LeopardOutOfMemoryError,
-  LeopardIoError,
-  LeopardInvalidArgumentError,
-  LeopardStopIterationError,
-  LeopardKeyError,
-  LeopardInvalidStateError,
-  LeopardRuntimeError,
+  Leopard,
+} from "./leopard";
+
+import {
   LeopardActivationError,
   LeopardActivationLimitReached,
-  LeopardActivationThrottled,
   LeopardActivationRefused,
+  LeopardActivationThrottled,
+  LeopardError,
+  LeopardInvalidArgumentError,
+  LeopardInvalidStateError,
+  LeopardIoError,
+  LeopardKeyError,
+  LeopardOutOfMemoryError,
+  LeopardRuntimeError,
+  LeopardStopIterationError,
 } from "./errors";
+
+import {
+  LeopardOptions,
+  LeopardInitOptions,
+  LeopardInputOptions,
+  LeopardWord,
+  LeopardTranscript,
+} from "./types";
 
 export {
   Leopard,
-  LeopardError,
-  LeopardOutOfMemoryError,
-  LeopardIoError,
-  LeopardInvalidArgumentError,
-  LeopardStopIterationError,
-  LeopardKeyError,
-  LeopardInvalidStateError,
-  LeopardRuntimeError,
   LeopardActivationError,
   LeopardActivationLimitReached,
-  LeopardActivationThrottled,
   LeopardActivationRefused,
+  LeopardActivationThrottled,
+  LeopardOptions,
+  LeopardError,
+  LeopardInitOptions,
+  LeopardInputOptions,
+  LeopardInvalidArgumentError,
+  LeopardInvalidStateError,
+  LeopardIoError,
+  LeopardKeyError,
+  LeopardOutOfMemoryError,
+  LeopardRuntimeError,
+  LeopardStopIterationError,
+  LeopardTranscript,
+  LeopardWord,
 };

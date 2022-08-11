@@ -1,10 +1,10 @@
-import { Leopard } from "./leopard";
-import { LeopardWorker } from "./leopard_worker";
+import { Leopard } from './leopard';
+import { LeopardWorker } from './leopard_worker';
 
 import {
-  LeopardConfig,
+  LeopardOptions,
   LeopardWord,
-  LeopardTranscription,
+  LeopardTranscript,
   LeopardWorkerInitRequest,
   LeopardWorkerProcessRequest,
   LeopardWorkerReleaseRequest,
@@ -13,11 +13,11 @@ import {
   LeopardWorkerProcessResponse,
   LeopardWorkerReleaseResponse,
   LeopardWorkerFailureResponse,
-  LeopardWorkerResponse
-} from "./types";
+  LeopardWorkerResponse,
+} from './types';
 
-import leopardWasm from "../lib/pv_leopard.wasm";
-import leopardWasmSimd from "../lib/pv_leopard_simd.wasm";
+import leopardWasm from '../lib/pv_leopard.wasm';
+import leopardWasmSimd from '../lib/pv_leopard_simd.wasm';
 
 Leopard.setWasm(leopardWasm);
 Leopard.setWasmSimd(leopardWasmSimd);
@@ -26,9 +26,9 @@ LeopardWorker.setWasmSimd(leopardWasmSimd);
 
 export {
   Leopard,
-  LeopardConfig,
+  LeopardOptions,
   LeopardWord,
-  LeopardTranscription,
+  LeopardTranscript,
   LeopardWorker,
   LeopardWorkerInitRequest,
   LeopardWorkerProcessRequest,
@@ -38,5 +38,5 @@ export {
   LeopardWorkerProcessResponse,
   LeopardWorkerReleaseResponse,
   LeopardWorkerFailureResponse,
-  LeopardWorkerResponse
+  LeopardWorkerResponse,
 };

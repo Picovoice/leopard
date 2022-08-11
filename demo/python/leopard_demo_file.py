@@ -12,21 +12,31 @@
 import argparse
 
 from pvleopard import *
+from tabulate import tabulate
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--access_key', required=True)
-    parser.add_argument('--library_path', default=None)
     parser.add_argument('--model_path', default=None)
+    parser.add_argument('--library_path', default=None)
+    parser.add_argument('--disable_automatic_punctuation', action='store_true')
+    parser.add_argument('--verbose', action='store_true')
     parser.add_argument('--audio_paths', nargs='+', required=True)
     args = parser.parse_args()
 
-    o = create(access_key=args.access_key, library_path=args.library_path, model_path=args.model_path)
+    o = create(
+        access_key=args.access_key,
+        model_path=args.model_path,
+        library_path=args.library_path,
+        enable_automatic_punctuation=not args.disable_automatic_punctuation)
 
     try:
         for audio_path in args.audio_paths:
-            print(o.process_file(audio_path))
+            transcript, words = o.process_file(audio_path)
+            print(transcript)
+            if args.verbose:
+                print(tabulate(words, headers=['word', 'start_sec', 'end_sec', 'confidence'], floatfmt='.2f'))
     except LeopardActivationLimitError:
         print("AccessKey '%s' has reached it's processing limit." % args.access_key)
 

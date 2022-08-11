@@ -13,7 +13,7 @@ import Flutter
 import UIKit
 import Leopard
 
-enum Method : String {
+enum Method: String {
     case CREATE
     case PROCESS
     case PROCESSFILE
@@ -21,41 +21,43 @@ enum Method : String {
 }
 
 public class SwiftLeopardPlugin: NSObject, FlutterPlugin {
-    private var leopardPool:Dictionary<String, Leopard> = [:]
-    
+    private var leopardPool: Dictionary<String, Leopard> = [:]
+
     public static func register(with registrar: FlutterPluginRegistrar) {
         let instance = SwiftLeopardPlugin()
 
         let methodChannel = FlutterMethodChannel(name: "leopard", binaryMessenger: registrar.messenger())
         registrar.addMethodCallDelegate(instance, channel: methodChannel)
     }
-    
+
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         guard let method = Method(rawValue: call.method.uppercased()) else {
             result(errorToFlutterError(LeopardRuntimeError("Leopard method '\(call.method)' is not a valid function")))
             return
         }
         let args = call.arguments as! [String: Any]
-        
+
         switch (method) {
         case .CREATE:
             do {
                 if let accessKey = args["accessKey"] as? String,
                    let modelPath = args["modelPath"] as? String {
+                    let enableAutomaticPunctuation = args["enableAutomaticPunctuation"] as? Bool
 
                     let leopard = try Leopard(
-                        accessKey: accessKey,
-                        modelPath: modelPath
+                            accessKey: accessKey,
+                            modelPath: modelPath,
+                            enableAutomaticPunctuation: enableAutomaticPunctuation ?? false
                     )
-                    
+
                     let handle: String = String(describing: leopard)
                     leopardPool[handle] = leopard
-                    
-                    var param: [String: Any] = [:]
-                    param["handle"] = handle
-                    param["sampleRate"] = Leopard.sampleRate
-                    param["version"] = Leopard.version
-                    
+
+                    let param: [String: Any] = [
+                        "handle": handle,
+                        "sampleRate": Leopard.sampleRate,
+                        "version": Leopard.version
+                    ]
                     result(param)
                 } else {
                     result(errorToFlutterError(LeopardInvalidArgumentError("missing required arguments 'accessKey' and 'modelPath'")))
@@ -71,12 +73,9 @@ public class SwiftLeopardPlugin: NSObject, FlutterPlugin {
                 if let handle = args["handle"] as? String,
                    let frame = args["frame"] as? [Int16] {
                     if let leopard = leopardPool[handle] {
-                        var param: [String: Any] = [:]
-                        
-                        let transcript = try leopard.process(frame)
-                        param["transcript"] = transcript
-                        
-                        result(param)
+                        let leopardTranscript = try leopard.process(frame)
+                        let resultDictionary = leopardTranscriptToDictionary(leopardTranscript)
+                        result(resultDictionary)
                     } else {
                         result(errorToFlutterError(LeopardInvalidStateError("Invalid handle provided to Leopard 'process'")))
                     }
@@ -94,12 +93,9 @@ public class SwiftLeopardPlugin: NSObject, FlutterPlugin {
                 if let handle = args["handle"] as? String,
                    let path = args["path"] as? String {
                     if let leopard = leopardPool[handle] {
-                        var param: [String: Any] = [:]
-
-                        let transcript = try leopard.processFile(path)
-                        param["transcript"] = transcript
-
-                        result(param)
+                        let leopardTranscript = try leopard.processFile(path)
+                        let resultDictionary = leopardTranscriptToDictionary(leopardTranscript)
+                        result(resultDictionary)
                     } else {
                         result(errorToFlutterError(LeopardInvalidStateError("Invalid handle provided to Leopard 'process'")))
                     }
@@ -121,8 +117,26 @@ public class SwiftLeopardPlugin: NSObject, FlutterPlugin {
             break
         }
     }
-    
+
     private func errorToFlutterError(_ error: LeopardError) -> FlutterError {
         return FlutterError(code: error.name.replacingOccurrences(of: "Error", with: "Exception"), message: error.localizedDescription, details: nil)
+    }
+
+    private func leopardTranscriptToDictionary(_ result: (transcript: String, words: [LeopardWord])) -> [String: Any] {
+        var resultDictionary: [String: Any] = [:]
+        resultDictionary["transcript"] = result.transcript
+
+        var wordMapArray: [[String: Any]] = []
+        for wordMeta in result.words {
+            var wordMap: [String: Any] = [:]
+            wordMap["word"] = wordMeta.word
+            wordMap["confidence"] = wordMeta.confidence
+            wordMap["startSec"] = wordMeta.startSec
+            wordMap["endSec"] = wordMeta.endSec
+            wordMapArray.append(wordMap)
+        }
+        resultDictionary["words"] = wordMapArray;
+
+        return resultDictionary;
     }
 }

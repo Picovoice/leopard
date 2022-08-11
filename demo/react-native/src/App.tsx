@@ -18,14 +18,20 @@ import {
   SafeAreaView,
   ScrollView,
   StatusBar,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
-import {StyleSheet, Text, View} from 'react-native';
 
-import {Leopard, LeopardErrors} from '@picovoice/leopard-react-native';
 import {
-  VoiceProcessor,
+  Leopard,
+  LeopardErrors,
+  LeopardWord,
+} from '@picovoice/leopard-react-native';
+import {
   BufferEmitter,
+  VoiceProcessor,
 } from '@picovoice/react-native-voice-processor';
 
 import Recorder from './Recorder';
@@ -44,6 +50,7 @@ type State = {
   appState: UIState;
   errorMessage: string | null;
   transcription: string;
+  words: LeopardWord[];
   recordSeconds: number;
   processSeconds: number;
 };
@@ -65,6 +72,7 @@ export default class App extends Component<Props, State> {
       appState: UIState.LOADING,
       errorMessage: null,
       transcription: '',
+      words: [],
       recordSeconds: 0.0,
       processSeconds: 0.0,
     };
@@ -89,6 +97,7 @@ export default class App extends Component<Props, State> {
       this._leopard = await Leopard.create(
         this._accessKey,
         'leopard_params.pv',
+        {enableAutomaticPunctuation: true},
       );
       this._voiceProcessor = VoiceProcessor.getVoiceProcessor(
         512,
@@ -191,15 +200,14 @@ export default class App extends Component<Props, State> {
       try {
         const audioPath = await this._recorder.finalize();
         const start = Date.now();
-        const res = await this._leopard?.processFile(audioPath);
+        const {transcript, words} = await this._leopard!.processFile(audioPath);
         const end = Date.now();
-        if (res !== undefined) {
-          this.setState({
-            transcription: res,
-            appState: UIState.TRANSCRIBED,
-            processSeconds: (end - start) / 1000,
-          });
-        }
+        this.setState({
+          transcription: transcript,
+          words: words,
+          appState: UIState.TRANSCRIBED,
+          processSeconds: (end - start) / 1000,
+        });
       } catch (err: any) {
         this.handleError(err);
       }
@@ -235,6 +243,19 @@ export default class App extends Component<Props, State> {
     }
   }
 
+  _generateTableRow(word: LeopardWord, index: number) {
+    return (
+      <View key={`word-${index}`} style={styles.wordTableRow}>
+        <Text style={styles.wordText}>{word.word}</Text>
+        <Text style={styles.wordText}>{`${word.startSec.toFixed(2)}s`}</Text>
+        <Text style={styles.wordText}>{`${word.endSec.toFixed(2)}s`}</Text>
+        <Text style={styles.wordText}>{`${(word.confidence * 100).toFixed(
+          0,
+        )}%`}</Text>
+      </View>
+    );
+  }
+
   render() {
     const disabled =
       this.state.appState === UIState.LOADING ||
@@ -247,12 +268,33 @@ export default class App extends Component<Props, State> {
         <View style={styles.statusBar}>
           <Text style={styles.statusBarText}>Leopard</Text>
         </View>
-        <View style={{flex: 6}}>
-          <ScrollView style={styles.transcriptionBox}>
-            <Text style={styles.transcriptionText}>
-              {this.state.transcription}
-            </Text>
-          </ScrollView>
+
+        <View style={{flex: 4}}>
+          {this.state.appState === UIState.TRANSCRIBED && (
+            <ScrollView style={styles.transcriptionBox}>
+              <Text style={styles.transcriptionText}>
+                {this.state.transcription}
+              </Text>
+            </ScrollView>
+          )}
+        </View>
+
+        <View style={{flex: 2}}>
+          {this.state.appState === UIState.TRANSCRIBED && (
+            <>
+              <View style={styles.wordTableHeader}>
+                <Text style={styles.wordCell}>Word</Text>
+                <Text style={styles.wordCell}>Start</Text>
+                <Text style={styles.wordCell}>End</Text>
+                <Text style={styles.wordCell}>Confidence</Text>
+              </View>
+              <ScrollView style={styles.wordBox}>
+                {this.state.words.map((word: LeopardWord, index: number) =>
+                  this._generateTableRow(word, index),
+                )}
+              </ScrollView>
+            </>
+          )}
         </View>
 
         {this.state.appState === UIState.ERROR ? (
@@ -341,7 +383,7 @@ const styles = StyleSheet.create({
   },
   buttonStyle: {
     width: '50%',
-    height: '100%',
+    height: 60,
     alignSelf: 'center',
     justifyContent: 'center',
     backgroundColor: '#377DFF',
@@ -387,5 +429,30 @@ const styles = StyleSheet.create({
   transcriptionText: {
     fontSize: 20,
     color: 'white',
+  },
+  wordBox: {
+    backgroundColor: '#25187E',
+    marginHorizontal: 20,
+    marginVertical: 10,
+    height: '100%',
+  },
+  wordTableHeader: {
+    flexDirection: 'row',
+    marginHorizontal: 25,
+    marginTop: 10,
+  },
+  wordTableRow: {
+    flexDirection: 'row',
+    margin: 2,
+  },
+  wordText: {
+    fontSize: 12,
+    color: 'white',
+    flex: 1,
+    textAlign: 'center',
+  },
+  wordCell: {
+    flex: 1,
+    textAlign: 'center',
   },
 });

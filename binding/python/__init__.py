@@ -11,23 +11,15 @@
 
 from typing import *
 
-from .leopard import Leopard
-from .leopard import LeopardActivationError
-from .leopard import LeopardActivationLimitError
-from .leopard import LeopardActivationRefusedError
-from .leopard import LeopardActivationThrottledError
-from .leopard import LeopardError
-from .leopard import LeopardIOError
-from .leopard import LeopardInvalidArgumentError
-from .leopard import LeopardInvalidStateError
-from .leopard import LeopardKeyError
-from .leopard import LeopardMemoryError
-from .leopard import LeopardRuntimeError
-from .leopard import LeopardStopIterationError
+from .leopard import *
 from .util import *
 
 
-def create(access_key: str, library_path: Optional[str] = None, model_path: Optional[str] = None) -> Leopard:
+def create(
+        access_key: str,
+        model_path: Optional[str] = None,
+        library_path: Optional[str] = None,
+        enable_automatic_punctuation: bool = False) -> Leopard:
     """
     Factory method for Leopard speech-to-text engine.
 
@@ -35,13 +27,18 @@ def create(access_key: str, library_path: Optional[str] = None, model_path: Opti
     :param library_path: Absolute path to Leopard's dynamic library. If not set it will be set to the default location.
     :param model_path: Absolute path to the file containing model parameters. If not set it will be set to the default
     location.
+    :param enable_automatic_punctuation Set to `True` to enable automatic punctuation insertion.
     :return: An instance of Leopard speech-to-text engine.
     """
-
-    if library_path is None:
-        library_path = default_library_path('')
 
     if model_path is None:
         model_path = default_model_path('')
 
-    return Leopard(access_key=access_key, library_path=library_path, model_path=model_path)
+    if library_path is None:
+        library_path = default_library_path('')
+
+    return Leopard(
+        access_key=access_key,
+        model_path=model_path,
+        library_path=library_path,
+        enable_automatic_punctuation=enable_automatic_punctuation)

@@ -8,16 +8,13 @@ Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally.
-- Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
-- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
+- [Accurate](https://picovoice.ai/docs/benchmark/stt/)
+- [Compact and Computationally-Efficient](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
-    - Linux (x86_64)
-    - macOS (x86_64, arm64)
-    - Windows (x86_64)
-    - Android
-    - iOS
-    - Raspberry Pi (4, 3)
-    - NVIDIA Jetson Nano
+  - Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64)
+  - Android and iOS
+  - Chrome, Safari, Firefox, and Edge
+  - Raspberry Pi (4, 3) and NVIDIA Jetson Nano
 
 ## Table of Contents
 
@@ -36,6 +33,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [Java](#java-demo)
         - [.NET](#net-demo)
         - [Rust](#rust-demo)
+        - [Web](#web-demo)
     - [SDKs](#sdks)
         - [Python](#python)
         - [C](#c)
@@ -48,6 +46,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [Java](#java)
         - [.NET](#net)
         - [Rust](#rust)
+        - [Web](#web)
     - [Releases](#releases)
 
 ## AccessKey
@@ -114,7 +113,7 @@ Then, using [Xcode](https://developer.apple.com/xcode/), open the generated `Leo
 
 Using Android Studio, open [demo/android/LeopardDemo](/demo/android/LeopardDemo) as an Android project and then run the application.
 
-Replace `"${YOUR_ACCESS_KEY_HERE}"` in the file [MainActivity.java](/demo/android/leopard-demo-app/src/main/java/ai/picovoice/leoparddemo/MainActivity.java) with your `AccessKey`.
+Replace `"${YOUR_ACCESS_KEY_HERE}"` in the file [MainActivity.java](/demo/android/LeopardDemo/leopard-demo-app/src/main/java/ai/picovoice/leoparddemo/MainActivity.java) with your `AccessKey`.
 
 ### Node.js Demo
 
@@ -232,6 +231,24 @@ wish to transcribe.
 
 For more information about Rust demos, go to [demo/rust](/demo/rust).
 
+### Web Demo
+
+From [demo/web](/demo/web) run the following in the terminal:
+
+```console
+yarn
+yarn start
+```
+
+(or)
+
+```console
+npm install
+npm run start
+```
+
+Open [http://localhost:5000](http://localhost:5000) in your browser to try the demo.
+
 ## SDKs
 
 ### Python
@@ -261,25 +278,40 @@ Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://co
 Create an instance of the engine and transcribe an audio file:
 
 ```c
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "pv_leopard.h"
 
 pv_leopard_t *handle = NULL;
-pv_status_t status = pv_leopard_init("${ACCESS_KEY}", "${MODEL_PATH}", &handle);
+bool automatic_punctuation = false;
+pv_status_t status = pv_leopard_init("${ACCESS_KEY}", "${MODEL_PATH}", automatic_punctuation, &handle);
 if (status != PV_STATUS_SUCCESS) {
     // error handling logic
 }
 
 char *transcript = NULL;
-status = pv_leopard_process_file(handle, "${AUDIO_PATH}", &transcript);
+int32_t num_words = 0;
+pv_word_t *words = NULL;
+status = pv_leopard_process_file(handle, "${AUDIO_PATH}", &transcript, &num_words, &words);
 if (status != PV_STATUS_SUCCESS) {
     // error handling logic
 }
 
 fprintf(stdout, "%s\n", transcript);
+for (int32_t i = 0; i < num_words; i++) {
+    fprintf(
+            stdout,
+            "[%s]\t.start_sec = %.1f .end_sec = %.1f .confidence = %.2f\n",
+            words[i].word,
+            words[i].start_sec,
+            words[i].end_sec,
+            words[i].confidence);
+}
+
 free(transcript);
+free(words);
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_PATH}` to path to
@@ -307,12 +339,13 @@ let leopard = Leopard(accessKey: "${ACCESS_KEY}", modelPath: modelPath)
 
 do {
     let audioPath = Bundle(for: type(of: self)).path(forResource: "${AUDIO_FILE_NAME}", ofType: "${AUDIO_FILE_EXTENSION}")
-    print(leopard.process(audioPath))
+    let result = leopard.process(audioPath)
+    print(result.transcript)
 } catch let error as LeopardError {
 } catch { }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/), `${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of the audio file.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` a custom trained model from [console](https://console.picovoice.ai/) or the [default model](/lib/common/), `${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of the audio file.
 
 ### Android
 
@@ -332,15 +365,18 @@ import ai.picovoice.leopard.*;
 final String accessKey = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
 final String modelPath = "${MODEL_FILE}";
 try {
-    Leopard handle = new Leopard.Builder().setAccessKey(accessKey).setModelPath(modelPath).build(appContext);
+    Leopard handle = new Leopard.Builder()
+        .setAccessKey(accessKey)
+        .setModelPath(modelPath)
+        .build(appContext);
 
     File audioFile = new File("${AUDIO_FILE_PATH}");
-    String transcript = handle.processFile(audioFile.getAbsolutePath());
+    LeopardTranscript transcript = handle.processFile(audioFile.getAbsolutePath());
 
 } catch (LeopardException ex) { }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/), and `${AUDIO_FILE_PATH}` with the path to the audio file.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with a custom trained model from [console](https://console.picovoice.ai/) or the [default model](/lib/common/), and `${AUDIO_FILE_PATH}` with the path to the audio file.
 
 ### Node.js
 
@@ -356,7 +392,9 @@ Create instances of the Leopard class:
 const Leopard = require("@picovoice/leopard-node");
 const accessKey = "${ACCESS_KEY}" // Obtained from the Picovoice Console (https://console.picovoice.ai/)
 let handle = new Leopard(accessKey);
-console.log(handle.processFile('${AUDIO_PATH}'))
+
+const result = engineInstance.processFile('${AUDIO_PATH}');
+console.log(result.transcript);
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
@@ -386,11 +424,12 @@ const accessKey = "{ACCESS_KEY}"  // AccessKey obtained from Picovoice Console (
 
 try {
     Leopard _leopard = await Leopard.create(accessKey, '{LEOPARD_MODEL_PATH}');
-    String transcript = = await _leopard.processFile("${AUDIO_FILE_PATH}");
+    LeopardTranscript result = await _leopard.processFile("${AUDIO_FILE_PATH}");
+    print(result.transcript);
 } on LeopardException catch (err) { }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/), and `${AUDIO_FILE_PATH}` with the path to the audio file.
+Replace `${ACCESS_KEY}` with your `AccessKey` obtained from [Picovoice Console](https://console.picovoice.ai/), `${MODEL_FILE}` with the a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](lib/common/), and `${AUDIO_FILE_PATH}` with the path to the audio file.
 
 ### Go
 
@@ -412,12 +451,12 @@ if err != nil {
 }
 defer leopard.Delete()
 
-transcription, err := leopard.ProcessFile("${AUDIO_PATH}")
+transcript, words, err := leopard.ProcessFile("${AUDIO_PATH}")
 if err != nil {
     // handle process error
 }
 
-log.Println(transcription)
+log.Println(transcript)
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
@@ -443,7 +482,7 @@ const getAudioFrame = () => {
 
 try {
   const leopard = await Leopard.create("${ACCESS_KEY}", "${MODEL_FILE}")
-  const transcript = await leopard.processFile("${AUDIO_FILE_PATH}")
+  const { transcript, words } = await leopard.processFile("${AUDIO_FILE_PATH}")
   console.log(transcript)
 } catch (err: any) {
   if (err instanceof LeopardErrors) {
@@ -452,7 +491,8 @@ try {
 }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with the default or custom trained model from [console](https://console.picovoice.ai/) and `${AUDIO_FILE_PATH}` with the absolute path of the audio file. When done be sure to explicitly release the resources using `leopard.delete()`.
+Replace `${ACCESS_KEY}` with your `AccessKey` obtained from Picovoice Console, `${MODEL_FILE}` with a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](/lib/common/) and `${AUDIO_FILE_PATH}` with the absolute path of the audio file. 
+When done be sure to explicitly release the resources using `leopard.delete()`.
 
 ### Java
 
@@ -471,7 +511,7 @@ final String accessKey = "${ACCESS_KEY}";
 
 try {
     Leopard leopard = new Leopard.Builder().setAccessKey(accessKey).build();
-    String transcript = leopard.processFile("${AUDIO_PATH}");
+    LeopardTranscript result = leopard.processFile("${AUDIO_PATH}");
     leopard.delete();
 } catch (LeopardException ex) { }
 
@@ -519,14 +559,51 @@ Create an instance of the engine using `LeopardBuilder` instance and transcribe 
 use leopard::LeopardBuilder;
 
 let access_key = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
-let leopard: Leopard = LeopardBuilder::new(access_key).init().expect("Unable to create Leopard");
+let leopard: Leopard = LeopardBuilder::new().access_key(access_key).init().expect("Unable to create Leopard");
 
-if let Ok(transcript) = leopard.process_file("/absolute/path/to/audio_file") {
-    println!("{}", transcript);
+if let Ok(leopard_transcript) = leopard.process_file("/absolute/path/to/audio_file") {
+    println!("{}", leopard_transcript.transcript);
 }
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)).
+
+### Web
+
+Install the web SDK using yarn:
+
+```console
+yarn add @picovoice/leopard-web
+```
+
+or using npm:
+
+```console
+npm install --save @picovoice/leopard-web
+```
+
+Create an instance of the engine using `LeopardWorker` and transcribe an audio file:
+
+```typescript
+import { Leopard } from "@picovoice/leopard-web";
+import leopardParams from "${PATH_TO_BASE64_LEOPARD_PARAMS}";
+
+function getAudioData(): Int16Array {
+... // function to get audio data
+  return new Int16Array();
+}
+
+const leopard = await LeopardWorker.fromBase64(
+  "${ACCESS_KEY}",
+  leopardParams
+);
+
+const { transcript, words } = await leopard.process(getAudioData());
+console.log(transcript);
+console.log(words);
+```
+
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)). Finally, when done release the resources using `leopard.release()`.
 
 ## Releases
 

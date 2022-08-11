@@ -7,16 +7,13 @@ Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally.
-- Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
+- Accurate [[1]](https://picovoice.ai/docs/benchmark/stt/#results)
 - Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
-  - Linux (x86_64)
-  - macOS (x86_64, arm64)
-  - Windows (x86_64)
-  - Android
-  - iOS
-  - Raspberry Pi (4, 3)
-  - NVIDIA Jetson Nano
+  - Linux (x86_64), macOS (x86_64, arm64), and Windows (x86_64)
+  - Android and iOS
+  - Chrome, Safari, Firefox, and Edge
+  - Raspberry Pi (4, 3) and NVIDIA Jetson Nano
 
 ## Compatibility
 
@@ -56,8 +53,10 @@ import ai.picovoice.leopard.*;
 final String accessKey = "${ACCESS_KEY}";
 
 try {
-    Leopard leopard = new Leopard.Builder().setAccessKey(accessKey).build();
-    String transcript = leopard.processFile("${AUDIO_PATH}");
+    Leopard leopard = new Leopard.Builder()
+        .setAccessKey(accessKey)
+        .build();
+    LeopardTranscript result = leopard.processFile("${AUDIO_PATH}");
     leopard.delete();
 } catch (LeopardException ex) { }
 
@@ -68,4 +67,4 @@ Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://co
 
 ## Demo App
 
-For example usage refer to our [Java demos](/demo/java).
+For example usage, refer to our [Java demos](/demo/java).

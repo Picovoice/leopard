@@ -5,18 +5,14 @@
 Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
 Leopard is an on-device speech-to-text engine. Leopard is:
-
 - Private; All voice processing runs locally.
-- Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
-- Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
+- [Accurate](https://picovoice.ai/docs/benchmark/stt/)
+- [Compact and Computationally-Efficient](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
-  - Linux (x86_64)
-  - macOS (x86_64, arm64)
-  - Windows (x86_64)
-  - Android
-  - iOS
-  - Raspberry Pi (4, 3)
-  - NVIDIA Jetson Nano
+    - Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64)
+    - Android and iOS
+    - Chrome, Safari, Firefox, and Edge
+    - Raspberry Pi (4, 3) and NVIDIA Jetson Nano
 
 ## Compatibility
 
@@ -57,16 +53,16 @@ use leopard::LeopardBuilder;
 let access_key = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
 
 let leopard: Leopard = LeopardBuilder::new(access_key).init().expect("Unable to create Leopard");
-if let Ok(transcript) = leopard.process_file("${AUDIO_PATH}") {
-    println!("{}", transcript);
+if let Ok(leopard_transcript) = leopard.process_file("${AUDIO_PATH}") {
+    println!("{}", leopard_transcript.transcript);
 }
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
-`${AUDIO_PATH}` to the path an audio file. 
+`${AUDIO_PATH}` to the path an audio file.
 
 The model file contains the parameters for the Leopard engine. You may create bespoke language models using [Picovoice Console](https://console.picovoice.ai/) and then pass in the relevant file.
 
 ## Demos
 
-The [Leopard Rust demo project](/demo/rust) is a Rust console app that allows for processing real-time audio (i.e. microphone) and files using Leopard.
+The [Leopard Rust demo project](https://github.com/Picovoice/leopard/tree/master/demo/rust) is a Rust console app that allows for processing real-time audio (i.e. microphone) and files using Leopard.

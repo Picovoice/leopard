@@ -16,6 +16,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2B1ED6A74FFAB956F22EB7BB /* Pods-LeopardDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardDemo.debug.xcconfig"; path = "Target Support Files/Pods-LeopardDemo/Pods-LeopardDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		327694975368499C3B7946DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		327695EA9D71F6A29C6D079A /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		327697358B823E5B2EF0FA8C /* LeopardDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeopardDemoApp.swift; sourceTree = "<group>"; };
@@ -23,12 +24,9 @@
 		327699927E572962C40A7A04 /* LeopardDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LeopardDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		32769E49F724E169E0E13E27 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		32769F3923C69C8C0C435CCF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		3B82BCD82CCC5303A602F516 /* Pods-LeopardDemoUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardDemoUITests.debug.xcconfig"; path = "Target Support Files/Pods-LeopardDemoUITests/Pods-LeopardDemoUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		5FF6489235A4DC2A8D3777FC /* Pods-LeopardDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardDemo.release.xcconfig"; path = "Target Support Files/Pods-LeopardDemo/Pods-LeopardDemo.release.xcconfig"; sourceTree = "<group>"; };
 		6317D5AC3BB798341835D07F /* libPods-LeopardDemoUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LeopardDemoUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		79E6C5E1A07F1F9C428E73D4 /* Pods-LeopardDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardDemo.debug.xcconfig"; path = "Target Support Files/Pods-LeopardDemo/Pods-LeopardDemo.debug.xcconfig"; sourceTree = "<group>"; };
-		BD4ECBA4E7173E9ECE685095 /* Pods-LeopardDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardDemo.release.xcconfig"; path = "Target Support Files/Pods-LeopardDemo/Pods-LeopardDemo.release.xcconfig"; sourceTree = "<group>"; };
 		CB997F06C7C673F9F2446D95 /* libPods-LeopardDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LeopardDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F33333AE1B947FF5FFB3E9E7 /* Pods-LeopardDemoUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardDemoUITests.release.xcconfig"; path = "Target Support Files/Pods-LeopardDemoUITests/Pods-LeopardDemoUITests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,13 +50,23 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		1918003DDB7013A004865A81 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				2B1ED6A74FFAB956F22EB7BB /* Pods-LeopardDemo.debug.xcconfig */,
+				5FF6489235A4DC2A8D3777FC /* Pods-LeopardDemo.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		327692BCE8C735F3534C318E = {
 			isa = PBXGroup;
 			children = (
 				32769B87809678D96B1C6C55 /* Products */,
 				32769C17C8FD0599F872D3D1 /* LeopardDemo */,
-				AED451108802979154B4E395 /* Pods */,
 				152DF7E2EA2DFC4CD7EB46DC /* Frameworks */,
+				1918003DDB7013A004865A81 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -81,17 +89,6 @@
 				3276985D3C3865B5EC13B467 /* leopard_params.pv */,
 			);
 			path = LeopardDemo;
-			sourceTree = "<group>";
-		};
-		AED451108802979154B4E395 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				79E6C5E1A07F1F9C428E73D4 /* Pods-LeopardDemo.debug.xcconfig */,
-				BD4ECBA4E7173E9ECE685095 /* Pods-LeopardDemo.release.xcconfig */,
-				3B82BCD82CCC5303A602F516 /* Pods-LeopardDemoUITests.debug.xcconfig */,
-				F33333AE1B947FF5FFB3E9E7 /* Pods-LeopardDemoUITests.release.xcconfig */,
-			);
-			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -276,7 +273,7 @@
 		};
 		3276957BE00965E54B1F13C1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 79E6C5E1A07F1F9C428E73D4 /* Pods-LeopardDemo.debug.xcconfig */;
+			baseConfigurationReference = 2B1ED6A74FFAB956F22EB7BB /* Pods-LeopardDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -304,7 +301,7 @@
 		};
 		327698DB666EFBD22F7AB2D5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BD4ECBA4E7173E9ECE685095 /* Pods-LeopardDemo.release.xcconfig */;
+			baseConfigurationReference = 5FF6489235A4DC2A8D3777FC /* Pods-LeopardDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

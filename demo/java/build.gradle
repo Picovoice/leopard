@@ -15,7 +15,7 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'ai.picovoice:leopard-java:1.0.2'
+    implementation 'ai.picovoice:leopard-java:1.1.0'
     implementation 'commons-cli:commons-cli:1.4'
 }
 

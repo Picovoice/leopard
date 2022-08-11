@@ -29,6 +29,14 @@ use crate::util::{pathbuf_to_cstring, pv_library_path, pv_model_path};
 struct CLeopard {}
 
 #[repr(C)]
+struct CLeopardWord {
+    word: *const c_char,
+    start_sec: f32,
+    end_sec: f32,
+    confidence: f32,
+}
+
+#[repr(C)]
 #[derive(PartialEq, Clone, Debug)]
 #[allow(non_camel_case_types)]
 pub enum PvStatus {
@@ -49,6 +57,7 @@ pub enum PvStatus {
 type PvLeopardInitFn = unsafe extern "C" fn(
     access_key: *const c_char,
     model_path: *const c_char,
+    enable_automatic_punctuation: bool,
     object: *mut *mut CLeopard,
 ) -> PvStatus;
 type PvSampleRateFn = unsafe extern "C" fn() -> i32;
@@ -58,11 +67,15 @@ type PvLeopardProcessFn = unsafe extern "C" fn(
     pcm: *const i16,
     num_samples: i32,
     transcript: *mut *mut c_char,
+    num_words: *mut i32,
+    words: *mut *mut CLeopardWord,
 ) -> PvStatus;
 type PvLeopardProcessFileFn = unsafe extern "C" fn(
     object: *mut CLeopard,
     audio_path: *const c_char,
     transcript: *mut *mut c_char,
+    num_words: *mut i32,
+    words: *mut *mut CLeopardWord,
 ) -> PvStatus;
 type PvLeopardDeleteFn = unsafe extern "C" fn(object: *mut CLeopard);
 type PvFreeFn = unsafe extern "C" fn(*mut c_void);
@@ -100,16 +113,20 @@ impl std::error::Error for LeopardError {}
 
 pub struct LeopardBuilder {
     access_key: String,
-    library_path: PathBuf,
     model_path: PathBuf,
+    library_path: PathBuf,
+    enable_automatic_punctuation: bool,
 }
 
 impl LeopardBuilder {
-    pub fn new<S: Into<String>>(access_key: S) -> Self {
+    const DEFAULT_ENABLE_AUTOMATIC_PUNCTUATION: bool = false;
+
+    pub fn new() -> Self {
         Self {
-            access_key: access_key.into(),
+            access_key: String::from(""),
             model_path: pv_model_path(),
             library_path: pv_library_path(),
+            enable_automatic_punctuation: Self::DEFAULT_ENABLE_AUTOMATIC_PUNCTUATION,
         }
     }
 
@@ -118,18 +135,31 @@ impl LeopardBuilder {
         self
     }
 
-    pub fn library_path<P: Into<PathBuf>>(&mut self, library_path: P) -> &mut Self {
-        self.library_path = library_path.into();
-        self
-    }
-
     pub fn model_path<P: Into<PathBuf>>(&mut self, model_path: P) -> &mut Self {
         self.model_path = model_path.into();
         self
     }
 
+    pub fn library_path<P: Into<PathBuf>>(&mut self, library_path: P) -> &mut Self {
+        self.library_path = library_path.into();
+        self
+    }
+
+    pub fn enable_automatic_punctuation(
+        &mut self,
+        enable_automatic_punctuation: bool,
+    ) -> &mut Self {
+        self.enable_automatic_punctuation = enable_automatic_punctuation;
+        self
+    }
+
     pub fn init(&self) -> Result<Leopard, LeopardError> {
-        let inner = LeopardInner::init(&self.access_key, &self.library_path, &self.model_path);
+        let inner = LeopardInner::init(
+            &self.access_key,
+            &self.model_path,
+            &self.library_path,
+            self.enable_automatic_punctuation,
+        );
         match inner {
             Ok(inner) => Ok(Leopard {
                 inner: Arc::new(inner),
@@ -139,17 +169,54 @@ impl LeopardBuilder {
     }
 }
 
+#[derive(PartialEq, Clone, Debug)]
+pub struct LeopardWord {
+    pub word: String,
+    pub start_sec: f32,
+    pub end_sec: f32,
+    pub confidence: f32,
+}
+
+impl From<&CLeopardWord> for Result<LeopardWord, LeopardError> {
+    fn from(c_leopard_word: &CLeopardWord) -> Self {
+        let word = unsafe {
+            String::from(CStr::from_ptr(c_leopard_word.word).to_str().map_err(|_| {
+                LeopardError::new(
+                    LeopardErrorStatus::LibraryError(PvStatus::RUNTIME_ERROR),
+                    "Failed to convert metadata word string",
+                )
+            })?)
+        };
+
+        Ok(LeopardWord {
+            word: word,
+            start_sec: c_leopard_word.start_sec,
+            end_sec: c_leopard_word.end_sec,
+            confidence: c_leopard_word.confidence,
+        })
+    }
+}
+
+#[derive(PartialEq, Clone, Debug)]
+pub struct LeopardTranscript {
+    pub transcript: String,
+    pub words: Vec<LeopardWord>,
+}
+
 #[derive(Clone)]
 pub struct Leopard {
     inner: Arc<LeopardInner>,
 }
 
 impl Leopard {
-    pub fn process(&self, pcm: &[i16]) -> Result<String, LeopardError> {
+    pub fn process(&self, pcm: &[i16]) -> Result<LeopardTranscript, LeopardError> {
         self.inner.process(pcm)
     }
 
-    pub fn process_file<P: AsRef<Path>>(&self, audio_path: P) -> Result<String, LeopardError> {
+    pub fn process_file<P: AsRef<Path>>(
+        &self,
+        audio_path: P,
+    ) -> Result<LeopardTranscript, LeopardError> {
         self.inner.process_file(audio_path)
     }
 
@@ -222,21 +289,21 @@ struct LeopardInner {
     vtable: LeopardInnerVTable,
 }
 
-const VALID_EXTENSIONS: [&str; 6] = ["flac", "mp3", "ogg", "opus", "wav", "webm"];
+const VALID_EXTENSIONS: [&str; 10] = [
+    "3gp", "flac", "m4a", "mp3", "mp4", "ogg", "opus", "vorbis", "wav", "webm",
+];
 
 impl LeopardInner {
     pub fn init<P: AsRef<Path>>(
         access_key: &str,
-        library_path: P,
         model_path: P,
+        library_path: P,
+        enable_automatic_punctuation: bool,
     ) -> Result<Self, LeopardError> {
-        if !library_path.as_ref().exists() {
+        if access_key == "" {
             return Err(LeopardError::new(
                 LeopardErrorStatus::ArgumentError,
-                format!(
-                    "Couldn't find Leopard's dynamic library at {}",
-                    library_path.as_ref().display()
-                ),
+                "AccessKey is empty",
             ));
         }
 
@@ -246,6 +313,16 @@ impl LeopardInner {
                 format!(
                     "Couldn't find model file at {}",
                     model_path.as_ref().display()
+                ),
+            ));
+        }
+
+        if !library_path.as_ref().exists() {
+            return Err(LeopardError::new(
+                LeopardErrorStatus::ArgumentError,
+                format!(
+                    "Couldn't find Leopard's dynamic library at {}",
+                    library_path.as_ref().display()
                 ),
             ));
         }
@@ -281,6 +358,7 @@ impl LeopardInner {
             let status = pv_leopard_init(
                 access_key.as_ptr(),
                 pv_model_path.as_ptr(),
+                enable_automatic_punctuation,
                 addr_of_mut!(cleopard),
             );
             check_fn_call_status(status, "pv_leopard_init")?;
@@ -306,7 +384,7 @@ impl LeopardInner {
         })
     }
 
-    pub fn process(&self, pcm: &[i16]) -> Result<String, LeopardError> {
+    pub fn process(&self, pcm: &[i16]) -> Result<LeopardTranscript, LeopardError> {
         if pcm.len() == 0 {
             return Err(LeopardError::new(
                 LeopardErrorStatus::FrameLengthError,
@@ -316,12 +394,16 @@ impl LeopardInner {
 
         let transcript = unsafe {
             let mut transcript_ptr: *mut c_char = std::ptr::null_mut();
+            let mut num_words: i32 = 0;
+            let mut words_ptr: *mut CLeopardWord = std::ptr::null_mut();
 
             let status = (self.vtable.pv_leopard_process)(
                 self.cleopard,
                 pcm.as_ptr(),
                 pcm.len() as i32,
                 addr_of_mut!(transcript_ptr),
+                addr_of_mut!(num_words),
+                addr_of_mut!(words_ptr),
             );
 
             check_fn_call_status(status, "pv_leopard_process")?;
@@ -333,16 +415,24 @@ impl LeopardInner {
                         "Failed to convert transcript string",
                     )
                 })?);
-
             (self.vtable.pv_free)(transcript_ptr as *mut c_void);
 
-            transcript
+            let words = std::slice::from_raw_parts(words_ptr, num_words as usize)
+                .iter()
+                .map(|c_word| c_word.into())
+                .collect::<Result<Vec<LeopardWord>, LeopardError>>()?;
+            (self.vtable.pv_free)(words_ptr as *mut c_void);
+
+            LeopardTranscript { transcript, words }
         };
 
         Ok(transcript)
     }
 
-    pub fn process_file<P: AsRef<Path>>(&self, audio_path: P) -> Result<String, LeopardError> {
+    pub fn process_file<P: AsRef<Path>>(
+        &self,
+        audio_path: P,
+    ) -> Result<LeopardTranscript, LeopardError> {
         if !audio_path.as_ref().exists() {
             return Err(LeopardError::new(
                 LeopardErrorStatus::ArgumentError,
@@ -356,11 +446,15 @@ impl LeopardInner {
         let pv_audio_path = pathbuf_to_cstring(&audio_path);
         let transcript = unsafe {
             let mut transcript_ptr: *mut c_char = std::ptr::null_mut();
+            let mut num_words: i32 = 0;
+            let mut words_ptr: *mut CLeopardWord = std::ptr::null_mut();
 
             let status = (self.vtable.pv_leopard_process_file)(
                 self.cleopard,
                 pv_audio_path.as_ptr(),
                 addr_of_mut!(transcript_ptr),
+                addr_of_mut!(num_words),
+                addr_of_mut!(words_ptr),
             );
 
             if status != PvStatus::SUCCESS {
@@ -393,7 +487,13 @@ impl LeopardInner {
 
             (self.vtable.pv_free)(transcript_ptr as *mut c_void);
 
-            transcript
+            let words = std::slice::from_raw_parts(words_ptr, num_words as usize)
+                .iter()
+                .map(|c_word| c_word.into())
+                .collect::<Result<Vec<LeopardWord>, LeopardError>>()?;
+            (self.vtable.pv_free)(words_ptr as *mut c_void);
+
+            LeopardTranscript { transcript, words }
         };
 
         Ok(transcript)

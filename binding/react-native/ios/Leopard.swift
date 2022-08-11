@@ -13,16 +13,22 @@ import Leopard
 
 @objc(PvLeopard)
 class PvLeopard: NSObject {
-    private var leopardPool:Dictionary<String, Leopard> = [:]
+    private var leopardPool: Dictionary<String, Leopard> = [:]
 
-    @objc(create:modelPath:resolver:rejecter:)
-    func create(accessKey: String, modelPath: String,
-        resolver resolve:RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock) -> Void {
+    @objc(create:modelPath:enableAutomaticPunctuation:resolver:rejecter:)
+    func create(
+            accessKey: String,
+            modelPath: String,
+            enableAutomaticPunctuation: Bool,
+            resolver resolve: RCTPromiseResolveBlock,
+            rejecter reject: RCTPromiseRejectBlock) -> Void {
 
         do {
             let leopard = try Leopard(
-                accessKey: accessKey,
-                modelPath: modelPath)
+                    accessKey: accessKey,
+                    modelPath: modelPath,
+                    enableAutomaticPunctuation: enableAutomaticPunctuation
+            )
 
             let handle: String = String(describing: leopard)
             leopardPool[handle] = leopard
@@ -43,19 +49,23 @@ class PvLeopard: NSObject {
     }
 
     @objc(delete:)
-    func delete(handle:String) -> Void {
+    func delete(handle: String) -> Void {
         if let leopard = leopardPool.removeValue(forKey: handle) {
             leopard.delete()
         }
     }
 
     @objc(process:pcm:resolver:rejecter:)
-    func process(handle:String, pcm:[Int16],
-        resolver resolve:RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock) -> Void {
+    func process(
+            handle: String,
+            pcm: [Int16],
+            resolver resolve: RCTPromiseResolveBlock,
+            rejecter reject: RCTPromiseRejectBlock) -> Void {
         do {
             if let leopard = leopardPool[handle] {
                 let result = try leopard.process(pcm)
-                resolve(result)
+                let resultMap = leopardTranscriptToDictionary(result: result)
+                resolve(resultMap)
             } else {
                 let (code, message) = errorToCodeAndMessage(LeopardRuntimeError("Invalid handle provided to Leopard 'process'"))
                 reject(code, message, nil)
@@ -70,12 +80,16 @@ class PvLeopard: NSObject {
     }
 
     @objc(processFile:audioPath:resolver:rejecter:)
-    func processFile(handle:String, audioPath:String,
-                 resolver resolve:RCTPromiseResolveBlock, rejecter reject:RCTPromiseRejectBlock) -> Void {
+    func processFile(
+            handle: String,
+            audioPath: String,
+            resolver resolve: RCTPromiseResolveBlock,
+            rejecter reject: RCTPromiseRejectBlock) -> Void {
         do {
             if let leopard = leopardPool[handle] {
                 let result = try leopard.processFile(audioPath)
-                resolve(result)
+                let resultMap = leopardTranscriptToDictionary(result: result)
+                resolve(resultMap)
             } else {
                 let (code, message) = errorToCodeAndMessage(LeopardRuntimeError("Invalid handle provided to Leopard 'process'"))
                 reject(code, message, nil)
@@ -91,5 +105,23 @@ class PvLeopard: NSObject {
 
     private func errorToCodeAndMessage(_ error: LeopardError) -> (String, String) {
         return (error.name.replacingOccurrences(of: "Error", with: "Exception"), error.localizedDescription)
+    }
+
+    private func leopardTranscriptToDictionary(result: (transcript: String, words: [LeopardWord])) -> [String: Any] {
+        var resultMap: [String: Any] = [:]
+        resultMap["transcript"] = result.transcript
+
+        var wordMapArray: [[String: Any]] = []
+        for wordMeta in result.words {
+            var wordMap: [String: Any] = [:]
+            wordMap["word"] = wordMeta.word
+            wordMap["confidence"] = wordMeta.confidence
+            wordMap["startSec"] = wordMeta.startSec
+            wordMap["endSec"] = wordMeta.endSec
+            wordMapArray.append(wordMap)
+        }
+        resultMap["words"] = wordMapArray;
+
+        return resultMap;
     }
 }

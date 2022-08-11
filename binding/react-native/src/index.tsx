@@ -13,5 +13,16 @@
 
 import Leopard from './leopard';
 import * as LeopardErrors from './leopard_errors';
+import type {
+  LeopardOptions,
+  LeopardTranscript,
+  LeopardWord,
+} from './leopard_types';
 
-export { Leopard, LeopardErrors };
+export {
+  Leopard,
+  LeopardErrors,
+  LeopardOptions,
+  LeopardTranscript,
+  LeopardWord,
+};

@@ -2,10 +2,10 @@ PODS:
   - Flutter (1.0.0)
   - flutter_voice_processor (1.0.6):
     - Flutter
-  - Leopard-iOS (1.0.2)
-  - leopard_flutter (1.0.3):
+  - Leopard-iOS (1.1.0)
+  - leopard_flutter (1.1.0):
     - Flutter
-    - Leopard-iOS (~> 1.0.2)
+    - Leopard-iOS (~> 1.1.0)
   - path_provider_ios (0.0.1):
     - Flutter
 
@@ -32,9 +32,9 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_voice_processor: afb59b604d99397a1ccf15c935ac8f2c2327f09f
-  Leopard-iOS: 9637ccbfb10ee5381319e493713d28f227c020ec
-  leopard_flutter: 055d7997e1a65d0a115eb9d823834f8815b79d05
-  path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5
+  Leopard-iOS: edad5cc511b4dd36e13ce80941c5775174767010
+  leopard_flutter: 90a17708ec97d8f75cecef232db73627626943db
+  path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
 
 PODFILE CHECKSUM: a75497545d4391e2d394c3668e20cfb1c2bbd4aa
 

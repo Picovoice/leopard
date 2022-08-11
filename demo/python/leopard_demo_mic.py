@@ -17,6 +17,7 @@ from threading import Thread
 
 from pvleopard import *
 from pvrecorder import PvRecorder
+from tabulate import tabulate
 
 
 class Recorder(Thread):
@@ -52,11 +53,17 @@ class Recorder(Thread):
 def main():
     parser = ArgumentParser()
     parser.add_argument('--access_key', required=True)
-    parser.add_argument('--library_path', default=None)
     parser.add_argument('--model_path', default=None)
+    parser.add_argument('--library_path', default=None)
+    parser.add_argument('--disable_automatic_punctuation', action='store_true')
+    parser.add_argument('--verbose', action='store_true')
     args = parser.parse_args()
 
-    o = create(access_key=args.access_key, library_path=args.library_path, model_path=args.model_path)
+    o = create(
+        access_key=args.access_key,
+        model_path=args.model_path,
+        library_path=args.library_path,
+        enable_automatic_punctuation=not args.disable_automatic_punctuation)
 
     recorder = None
 
@@ -77,7 +84,10 @@ def main():
         if recorder is not None:
             input('>>> Recording ... Press `ENTER` to stop: ')
             try:
-                print(o.process(recorder.stop()))
+                transcript, words = o.process(recorder.stop())
+                print(transcript)
+                if args.verbose:
+                    print(tabulate(words, headers=['word', 'start_sec', 'end_sec', 'confidence'], floatfmt='.2f'))
             except LeopardActivationLimitError:
                 print("AccessKey '%s' has reached it's processing limit." % args.access_key)
             print()

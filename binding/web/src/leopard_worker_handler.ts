@@ -12,38 +12,38 @@
 /// <reference no-default-lib="false"/>
 /// <reference lib="webworker" />
 
-import { Leopard } from "./leopard";
-import { LeopardWorkerRequest } from "./types";
+import { Leopard } from './leopard';
+import { LeopardWorkerRequest } from './types';
 
 /**
  * Leopard worker handler.
  */
 let leopard: Leopard | null = null;
-self.onmessage = async function (
-  event: MessageEvent<LeopardWorkerRequest>
+self.onmessage = async function(
+  event: MessageEvent<LeopardWorkerRequest>,
 ): Promise<void> {
   switch (event.data.command) {
     case 'init':
       if (leopard !== null) {
         self.postMessage({
-          command: "error",
-          message: "Leopard already initialized"
+          command: 'error',
+          message: 'Leopard already initialized',
         });
         return;
       }
       try {
         Leopard.setWasm(event.data.wasm);
         Leopard.setWasmSimd(event.data.wasmSimd);
-        leopard = await Leopard.create(event.data.accessKey, event.data.modelPath, event.data.initConfig);
+        leopard = await Leopard.create(event.data.accessKey, event.data.modelPath, event.data.options);
         self.postMessage({
-          command: "ok",
+          command: 'ok',
           version: leopard.version,
-          sampleRate: leopard.sampleRate
+          sampleRate: leopard.sampleRate,
         });
       } catch (e: any) {
         self.postMessage({
-          command: "error",
-          message: e.message
+          command: 'error',
+          message: e.message,
         });
       }
       break;
@@ -52,23 +52,23 @@ self.onmessage = async function (
       const transferable = (event.data.transfer) ? [event.data.inputFrame.buffer] : [];
       if (leopard === null) {
         self.postMessage({
-          command: "error",
-          message: "Leopard not initialized",
-          inputFrame: event.data.inputFrame
+          command: 'error',
+          message: 'Leopard not initialized',
+          inputFrame: event.data.inputFrame,
         }, transferable);
         return;
       }
       try {
         self.postMessage({
-          command: "ok",
+          command: 'ok',
           result: await leopard.process(event.data.inputFrame),
-          inputFrame: (event.data.transfer) ? event.data.inputFrame : undefined
+          inputFrame: (event.data.transfer) ? event.data.inputFrame : undefined,
         }, transferable);
       } catch (e: any) {
         self.postMessage({
-          command: "error",
+          command: 'error',
           message: e.message,
-          inputFrame: event.data.inputFrame
+          inputFrame: event.data.inputFrame,
         }, transferable);
       }
       break;
@@ -79,14 +79,14 @@ self.onmessage = async function (
         close();
       }
       self.postMessage({
-        command: "ok"
+        command: 'ok',
       });
       break;
     default:
       self.postMessage({
-        command: "failed",
+        command: 'failed',
         // @ts-ignore
-        message: `Unrecognized command: ${event.data.command}`
+        message: `Unrecognized command: ${event.data.command}`,
       });
   }
 };

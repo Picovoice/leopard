@@ -9,30 +9,26 @@
   specific language governing permissions and limitations under the License.
 */
 
-export type LeopardInitConfig = {
-  /** @defaultValue true */
+export type LeopardOptions = {
+  /** @defaultValue false */
   enableAutomaticPunctuation?: boolean;
-}
-
-export type LeopardInputConfig = {
   /** @defaultValue 'leopard_model' */
-  modelPath?: string;
+  customWritePath?: string;
   /** @defaultValue false */
   forceWrite?: boolean;
   /** @defaultValue 1 */
   version?: number;
-}
-
-export type LeopardConfig = LeopardInitConfig & LeopardInputConfig;
+};
 
 export type LeopardWord = {
   word: string;
   startSec: number;
   endSec: number;
+  confidence: number;
 }
 
-export type LeopardTranscription = {
-  transcription: string;
+export type LeopardTranscript = {
+  transcript: string;
   words: LeopardWord[];
 }
 
@@ -40,7 +36,7 @@ export type LeopardWorkerInitRequest = {
   command: 'init';
   accessKey: string;
   modelPath: string;
-  initConfig: LeopardInitConfig;
+  options: LeopardOptions;
   wasm: string;
   wasmSimd: string;
 };
@@ -74,7 +70,7 @@ export type LeopardWorkerInitResponse = LeopardWorkerFailureResponse | {
 
 export type LeopardWorkerProcessResponse = LeopardWorkerFailureResponse | {
   command: 'ok';
-  result: LeopardTranscription;
+  result: LeopardTranscript;
   inputFrame?: Int16Array;
 };
 
