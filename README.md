@@ -607,6 +607,14 @@ Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://co
 
 ## Releases
 
-### V1.0.0 — January 10th, 2022
+### v1.1.0 — August 11th, 2022
+
+* added true-casing by default for transcription results
+* added option to enable automatic punctuation insertion
+* word timestamps and confidence returned as part of transcription
+* support for 3gp (AMR) and MP4/m4a (AAC) audio files
+* Leopard Web SDK release
+
+### v1.0.0 — January 10th, 2022
 
 * Initial release.
