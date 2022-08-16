@@ -66,7 +66,7 @@ func (e *LeopardError) Error() string {
 }
 
 // Leopard struct
-type pvLeopard struct {
+type Leopard struct {
 	// handle for leopard instance in C
 	handle unsafe.Pointer
 
@@ -110,16 +110,16 @@ var (
 )
 
 var (
-	// Audio sample rate accepted by Picovoice.
+	// SampleRate Audio sample rate accepted by Picovoice.
 	SampleRate int
 
-	// Leopard version
+	// Version Leopard version
 	Version string
 )
 
-// Returns a Leopard struct with default parameters
-func NewLeopard(accessKey string) pvLeopard {
-	return pvLeopard{
+// NewLeopard returns a Leopard struct with default parameters
+func NewLeopard(accessKey string) Leopard {
+	return Leopard{
 		AccessKey:                  accessKey,
 		ModelPath:                  defaultModelFile,
 		LibraryPath:                defaultLibPath,
@@ -128,7 +128,7 @@ func NewLeopard(accessKey string) pvLeopard {
 }
 
 // Init function for Leopard. Must be called before attempting process
-func (leopard *pvLeopard) Init() error {
+func (leopard *Leopard) Init() error {
 	if leopard.AccessKey == "" {
 		return &LeopardError{
 			INVALID_ARGUMENT,
@@ -168,8 +168,8 @@ func (leopard *pvLeopard) Init() error {
 	return nil
 }
 
-// Releases resources acquired by Leopard.
-func (leopard *pvLeopard) Delete() error {
+// Delete releases resources acquired by Leopard.
+func (leopard *Leopard) Delete() error {
 	if leopard.handle == nil {
 		return &LeopardError{
 			INVALID_STATE,
@@ -185,7 +185,7 @@ func (leopard *pvLeopard) Delete() error {
 // linearly-encoded. This function operates on single-channel audio. If you wish
 // to process data in a different sample rate or format consider using `ProcessFile`.
 // Returns the inferred transcription.
-func (leopard *pvLeopard) Process(pcm []int16) (string, []LeopardWord, error) {
+func (leopard *Leopard) Process(pcm []int16) (string, []LeopardWord, error) {
 	if leopard.handle == nil {
 		return "", nil, &LeopardError{
 			INVALID_STATE,
@@ -208,10 +208,10 @@ func (leopard *pvLeopard) Process(pcm []int16) (string, []LeopardWord, error) {
 	return transcript, words, nil
 }
 
-// Processes a given audio file and returns its transcription.
+// ProcessFile Processes a given audio file and returns its transcription.
 // The supported formats are: `3gp (AMR)`, `FLAC`, `MP3`, `MP4/m4a (AAC)`, `Ogg`, `WAV`, `WebM`.
 // Returns the inferred transcription.
-func (leopard *pvLeopard) ProcessFile(audioPath string) (string, []LeopardWord, error) {
+func (leopard *Leopard) ProcessFile(audioPath string) (string, []LeopardWord, error) {
 	if leopard.handle == nil {
 		return "", nil, &LeopardError{
 			INVALID_STATE,
@@ -224,7 +224,7 @@ func (leopard *pvLeopard) ProcessFile(audioPath string) (string, []LeopardWord, 
 			fmt.Sprintf("Specified file could not be found at '%s'", audioPath)}
 	}
 
-	ret, transcipt, words := nativeLeopard.nativeProcessFile(leopard, audioPath)
+	ret, transcript, words := nativeLeopard.nativeProcessFile(leopard, audioPath)
 	if ret != SUCCESS {
 		if ret == INVALID_ARGUMENT {
 			fileExtension := filepath.Ext(audioPath)
@@ -239,7 +239,7 @@ func (leopard *pvLeopard) ProcessFile(audioPath string) (string, []LeopardWord, 
 			"Leopard process failed."}
 	}
 
-	return transcipt, words, nil
+	return transcript, words, nil
 }
 
 func pvStatusToString(status PvStatus) string {
