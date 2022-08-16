@@ -27,7 +27,7 @@ import (
 
 var (
 	testAccessKey string
-	leopard       pvLeopard
+	leopard       Leopard
 	testAudioPath string
 )
 

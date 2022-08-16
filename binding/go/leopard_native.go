@@ -158,10 +158,10 @@ void pv_leopard_delete_wrapper(void *f, void *object) {
 import "C"
 
 type nativeLeopardInterface interface {
-	nativeInit(*pvLeopard)
-	nativeProcess(*pvLeopard, []int)
-	nativeProcessFile(*pvLeopard, string)
-	nativeDelete(*pvLeopard)
+	nativeInit(*Leopard)
+	nativeProcess(*Leopard, []int)
+	nativeProcessFile(*Leopard, string)
+	nativeDelete(*Leopard)
 	nativeSampleRate()
 	nativeVersion()
 }
@@ -175,7 +175,7 @@ type nativeLeopardType struct {
 	pv_sample_rate_ptr          unsafe.Pointer
 }
 
-func (nl *nativeLeopardType) nativeInit(leopard *pvLeopard) (status PvStatus) {
+func (nl *nativeLeopardType) nativeInit(leopard *Leopard) (status PvStatus) {
 	var (
 		accessKeyC                  = C.CString(leopard.AccessKey)
 		modelPathC                  = C.CString(leopard.ModelPath)
@@ -204,12 +204,12 @@ func (nl *nativeLeopardType) nativeInit(leopard *pvLeopard) (status PvStatus) {
 	return PvStatus(ret)
 }
 
-func (nl *nativeLeopardType) nativeDelete(leopard *pvLeopard) {
+func (nl *nativeLeopardType) nativeDelete(leopard *Leopard) {
 	C.pv_leopard_delete_wrapper(nl.pv_leopard_delete_ptr,
 		leopard.handle)
 }
 
-func (nl *nativeLeopardType) nativeProcess(leopard *pvLeopard, pcm []int16) (status PvStatus, transcript string, words []LeopardWord) {
+func (nl *nativeLeopardType) nativeProcess(leopard *Leopard, pcm []int16) (status PvStatus, transcript string, words []LeopardWord) {
 	var (
 		numWords      int32
 		transcriptPtr unsafe.Pointer
@@ -242,7 +242,7 @@ func (nl *nativeLeopardType) nativeProcess(leopard *pvLeopard, pcm []int16) (sta
 	return PvStatus(ret), transcript, words
 }
 
-func (nl *nativeLeopardType) nativeProcessFile(leopard *pvLeopard, audioPath string) (status PvStatus, transcript string, words []LeopardWord) {
+func (nl *nativeLeopardType) nativeProcessFile(leopard *Leopard, audioPath string) (status PvStatus, transcript string, words []LeopardWord) {
 	var (
 		audioPathC    = C.CString(audioPath)
 		numWords      int32
