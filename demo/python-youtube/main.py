@@ -84,7 +84,7 @@ def main():
         anime = ProgressAnimation('Transcribing `%s`' % url)
         anime.start()
         start_sec = time.time()
-        transcript = leopard.process_file(webm_path)
+        transcript, words = leopard.process_file(webm_path)
         proc_sec = time.time() - start_sec
         anime.stop()
         print("Transcribed `%d` seconds in `%.2f` seconds" % (youtube.length, proc_sec))
