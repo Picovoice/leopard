@@ -39,7 +39,7 @@ class ProgressAnimation(Thread):
         while True:
             for frame in self._frames:
                 if self._stop:
-                    sys.stdout.write('\r%s\r' % " " * (len(self._prefix) + 1 + len(frame)))
+                    sys.stdout.write('\r%s\r' % (" " * (len(self._prefix) + 1 + len(frame))))
                     self._stop = False
                     return
                 sys.stdout.write('\r%s %s' % (self._prefix, frame))
