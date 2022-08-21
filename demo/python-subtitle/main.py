@@ -69,38 +69,56 @@ def main() -> None:
 
     anime = ProgressAnimation('Initializing Leopard with AccessKey `%s`' % access_key)
     anime.start()
-    leopard = pvleopard.create(access_key=access_key, model_path=model_path)
-    anime.stop()
+    try:
+        leopard = pvleopard.create(access_key=access_key, model_path=model_path)
+    except pvleopard.LeopardError as e:
+        print("Failed to initialize Leopard with `%s`" % e)
+        exit(1)
+    finally:
+        anime.stop()
 
     if audio_path is not None:
         if not os.path.exists(audio_path):
-            raise ValueError(f"`{audio_path}` does not exist")
+            print("`%s` does not exist" % audio_path)
+            exit(1)
     else:
         audio_path = os.path.join(os.path.dirname(subtitle_path), '%s.webm' % youtube_url.split("watch?v=")[1])
 
     if youtube_url is not None and not os.path.exists(audio_path):
         anime = ProgressAnimation('Downloading `%s`' % youtube_url)
         anime.start()
-        youtube = YouTube(youtube_url)
-        audio_stream = youtube.streams.filter(mime_type='audio/webm').order_by('bitrate').last()
-        audio_stream.download(
-            output_path=os.path.dirname(audio_path),
-            filename=os.path.basename(audio_path),
-            skip_existing=True)
-        anime.stop()
+        try:
+            youtube = YouTube(youtube_url)
+            audio_stream = youtube.streams.filter(mime_type='audio/webm').order_by('bitrate').last()
+            audio_stream.download(
+                output_path=os.path.dirname(audio_path),
+                filename=os.path.basename(audio_path),
+                skip_existing=True)
+        except Exception as e:
+            print("Failed to download from YouTube with `%s`" % e)
+        finally:
+            anime.stop()
 
     try:
         anime = ProgressAnimation('Transcribing `%s`' % youtube_url)
         anime.start()
-        start_sec = time.time()
-        transcript, words = leopard.process_file(audio_path)
-        proc_sec = time.time() - start_sec
-        anime.stop()
-        print("Transcribed `%.2f` seconds" % proc_sec)
+        try:
+            start_sec = time.time()
+            # noinspection PyUnboundLocalVariable
+            transcript, words = leopard.process_file(audio_path)
+            proc_sec = time.time() - start_sec
+        except pvleopard.LeopardError as e:
+            anime.stop()
+            print("Failed to transcribe audio with `%s`" % e)
+            exit(1)
+        else:
+            anime.stop()
+            print("Transcribed `%.2f` seconds" % proc_sec)
 
         if os.path.exists(subtitle_path):
             os.remove(subtitle_path)
         with open(subtitle_path, 'w') as f:
+            # noinspection PyUnboundLocalVariable
             f.write(transcript)
             f.write('\n')
         print('Saved transcription into `%s`' % subtitle_path)
