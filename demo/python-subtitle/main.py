@@ -64,25 +64,20 @@ def second_to_timecode(x: float) -> str:
 
 
 def to_srt(words: Sequence[pvleopard.Leopard.Word], endpoint_sec: float = 1.) -> str:
+    def _helper(start: int, end: int) -> None:
+        lines.append("%s" % str(section))
+        lines.append("%s --> %s" % (second_to_timecode(words[start].start_sec), second_to_timecode(words[end].end_sec)))
+        lines.append(' '.join(x.word for x in words[start:(end + 1)]))
+        lines.append('')
+
     lines = list()
     section = 0
-
-    j = 0
+    j = -1
     for k in range(1, len(words), 1):
         if (words[k].start_sec - words[k - 1].end_sec) >= endpoint_sec:
-            i = k - 1
-            lines.append("%s" % str(section))
-            lines.append(
-                "%s --> %s" % (second_to_timecode(words[j].start_sec), second_to_timecode(words[i].end_sec)))
-            lines.append(' '.join(x.word for x in words[j:(i + 1)]))
-            lines.append('')
+            _helper(start=(j + 1), end=(k - 1))
             j = k - 1
-
-    i = len(words) - 1
-    lines.append("%s" % str(section))
-    lines.append("%s --> %s" % (second_to_timecode(words[j].start_sec), second_to_timecode(words[i].end_sec)))
-    lines.append(' '.join(x.word for x in words[j:(i + 1)]))
-    lines.append('')
+    _helper(start=(j + 1), end=(len(words) - 1))
 
     return '\n'.join(lines)
 
