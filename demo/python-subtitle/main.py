@@ -64,9 +64,9 @@ def second_to_timecode(x: float) -> str:
     return '%.2d:%.2d:%.2d,%.3d' % (hour, minute, second, millisecond)
 
 
-def to_srt(words: Sequence[pvleopard.Leopard.Word], endpoint_sec: float = .5, length_limit: Optional[int] = 16) -> str:
+def to_srt(words: Sequence[pvleopard.Leopard.Word], endpoint_sec: float = 1., length_limit: Optional[int] = 16) -> str:
     def _helper(start: int, end: int) -> None:
-        lines.append("%s" % str(section))
+        lines.append("%d" % section)
         lines.append("%s --> %s" % (second_to_timecode(words[start].start_sec), second_to_timecode(words[end].end_sec)))
         lines.append(' '.join(x.word for x in words[start:(end + 1)]))
         lines.append('')
@@ -124,30 +124,24 @@ def main() -> None:
         try:
             youtube = YouTube(youtube_url)
             audio_stream = youtube.streams.filter(mime_type='audio/webm').order_by('bitrate').last()
-            audio_stream.download(
-                output_path=os.path.dirname(audio_path),
-                filename=os.path.basename(audio_path),
-                skip_existing=True)
+            audio_stream.download(output_path=os.path.dirname(audio_path), filename=os.path.basename(audio_path))
         except Exception as e:
             print("Failed to download from YouTube with `%s`" % e)
+            exit(1)
         finally:
             anime.stop()
 
     try:
-        anime = ProgressAnimation('Transcribing `%s`' % youtube_url)
+        anime = ProgressAnimation('Transcribing `%s`' % audio_path)
         anime.start()
         try:
-            start_sec = time.time()
             # noinspection PyUnboundLocalVariable
             transcript, words = leopard.process_file(audio_path)
-            proc_sec = time.time() - start_sec
         except pvleopard.LeopardError as e:
-            anime.stop()
             print("Failed to transcribe audio with `%s`" % e)
             exit(1)
-        else:
+        finally:
             anime.stop()
-            print("Transcribed `%.2f` seconds" % proc_sec)
 
         with open(subtitle_path, 'w') as f:
             # noinspection PyUnboundLocalVariable
