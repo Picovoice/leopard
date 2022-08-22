@@ -83,8 +83,6 @@ to hold multiple models and set the `forceWrite` value to true to force re-save 
 Either `base64` or `publicPath` must be set to instantiate Leopard. If both are set, Leopard will use the `base64` model.
 
 ```typescript
-import leopardParams from "${PATH_TO_BASE64_LEOPARD_PARAMS}";
-
 const leopardModel = {
   publicPath: ${MODEL_RELATIVE_PATH}, // or
   base64: ${MODEL_BASE64_STRING},
@@ -96,12 +94,12 @@ const leopardModel = {
 
 #### Init options
 
-Set `enableAutomaticPunctuation` to true, if wish to enable punctuation in transcript.
+Set `enableAutomaticPunctuation` to true, if you wish to enable punctuation in transcript.
 
 ```typescript
 // Optional, these are default
 const options = {
-  enableAutomaticPunctuation: false
+  enableAutomaticPunctuation: true
 }
 ```
 
