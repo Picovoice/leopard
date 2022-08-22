@@ -14,6 +14,7 @@ import sys
 import time
 from argparse import ArgumentParser
 from threading import Thread
+from typing import Sequence
 
 import pvleopard
 from pytube import YouTube
@@ -49,6 +50,31 @@ class ProgressAnimation(Thread):
         self._stop = True
         while self._stop:
             pass
+
+
+def second_to_timecode(x: float) -> str:
+    hour = int(x) // 3600
+    x -= hour * 3600
+    minute = int(x) // 60
+    x -= minute * 60
+    second = int(x)
+    millisecond = int(x * 1000.)
+
+    return '%.2d:%.2d:%.2d,%.3d' % (hour, minute, second, millisecond)
+
+
+def to_srt(words: Sequence[pvleopard.Leopard.Word]) -> str:
+    lines = list()
+    section = 0
+
+    j = -1
+    i = len(words) - 1
+    lines.append("%s" % str(section))
+    lines.append("%s --> %s" % (second_to_timecode(words[j + 1].start_sec), second_to_timecode(words[i].end_sec)))
+    lines.append(' '.join(x.word for x in words[(j + 1):(i + 1)]))
+    lines.append('')
+
+    return '\n'.join(lines)
 
 
 def main() -> None:
@@ -115,11 +141,9 @@ def main() -> None:
             anime.stop()
             print("Transcribed `%.2f` seconds" % proc_sec)
 
-        if os.path.exists(subtitle_path):
-            os.remove(subtitle_path)
         with open(subtitle_path, 'w') as f:
             # noinspection PyUnboundLocalVariable
-            f.write(transcript)
+            f.write(to_srt(words))
             f.write('\n')
         print('Saved transcription into `%s`' % subtitle_path)
     finally:
