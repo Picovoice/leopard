@@ -14,7 +14,7 @@ import sys
 import time
 from argparse import ArgumentParser
 from threading import Thread
-from typing import Sequence
+from typing import *
 
 import pvleopard
 from pytube import YouTube
@@ -58,12 +58,13 @@ def second_to_timecode(x: float) -> str:
     minute = int(x) // 60
     x -= minute * 60
     second = int(x)
+    x -= second
     millisecond = int(x * 1000.)
 
     return '%.2d:%.2d:%.2d,%.3d' % (hour, minute, second, millisecond)
 
 
-def to_srt(words: Sequence[pvleopard.Leopard.Word], endpoint_sec: float = 1.) -> str:
+def to_srt(words: Sequence[pvleopard.Leopard.Word], endpoint_sec: float = .5, length_limit: Optional[int] = 16) -> str:
     def _helper(start: int, end: int) -> None:
         lines.append("%s" % str(section))
         lines.append("%s --> %s" % (second_to_timecode(words[start].start_sec), second_to_timecode(words[end].end_sec)))
@@ -74,9 +75,11 @@ def to_srt(words: Sequence[pvleopard.Leopard.Word], endpoint_sec: float = 1.) ->
     section = 0
     j = -1
     for k in range(1, len(words), 1):
-        if (words[k].start_sec - words[k - 1].end_sec) >= endpoint_sec:
+        if ((words[k].start_sec - words[k - 1].end_sec) >= endpoint_sec) or \
+                (length_limit is not None and (k - j - 1) >= length_limit):
             _helper(start=(j + 1), end=(k - 1))
             j = k - 1
+            section += 1
     _helper(start=(j + 1), end=(len(words) - 1))
 
     return '\n'.join(lines)
