@@ -65,7 +65,7 @@ def second_to_timecode(x: float) -> str:
 
 
 def to_srt(words: Sequence[pvleopard.Leopard.Word], endpoint_sec: float = 1., length_limit: Optional[int] = 16) -> str:
-    def _helper(start: int, end: int) -> None:
+    def _helper(end: int) -> None:
         lines.append("%d" % section)
         lines.append("%s --> %s" % (second_to_timecode(words[start].start_sec), second_to_timecode(words[end].end_sec)))
         lines.append(' '.join(x.word for x in words[start:(end + 1)]))
@@ -73,14 +73,14 @@ def to_srt(words: Sequence[pvleopard.Leopard.Word], endpoint_sec: float = 1., le
 
     lines = list()
     section = 0
-    j = -1
-    for k in range(1, len(words), 1):
+    start = 0
+    for k in range(1, len(words)):
         if ((words[k].start_sec - words[k - 1].end_sec) >= endpoint_sec) or \
-                (length_limit is not None and (k - j - 1) >= length_limit):
-            _helper(start=(j + 1), end=(k - 1))
-            j = k - 1
+                (length_limit is not None and (k - start) >= length_limit):
+            _helper(k - 1)
+            start = k
             section += 1
-    _helper(start=(j + 1), end=(len(words) - 1))
+    _helper(len(words) - 1)
 
     return '\n'.join(lines)
 
@@ -131,25 +131,22 @@ def main() -> None:
         finally:
             anime.stop()
 
+    anime = ProgressAnimation('Transcribing `%s`' % audio_path)
+    anime.start()
     try:
-        anime = ProgressAnimation('Transcribing `%s`' % audio_path)
-        anime.start()
-        try:
-            # noinspection PyUnboundLocalVariable
-            transcript, words = leopard.process_file(audio_path)
-        except pvleopard.LeopardError as e:
-            print("Failed to transcribe audio with `%s`" % e)
-            exit(1)
-        finally:
-            anime.stop()
-
-        with open(subtitle_path, 'w') as f:
-            # noinspection PyUnboundLocalVariable
-            f.write(to_srt(words))
-            f.write('\n')
-        print('Saved transcription into `%s`' % subtitle_path)
+        # noinspection PyUnboundLocalVariable
+        transcript, words = leopard.process_file(audio_path)
+    except pvleopard.LeopardError as e:
+        print("Failed to transcribe audio with `%s`" % e)
+        exit(1)
     finally:
-        pass
+        anime.stop()
+
+    with open(subtitle_path, 'w') as f:
+        # noinspection PyUnboundLocalVariable
+        f.write(to_srt(words))
+        f.write('\n')
+    print('Saved transcription into `%s`' % subtitle_path)
 
 
 if __name__ == '__main__':
