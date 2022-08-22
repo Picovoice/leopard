@@ -63,15 +63,25 @@ def second_to_timecode(x: float) -> str:
     return '%.2d:%.2d:%.2d,%.3d' % (hour, minute, second, millisecond)
 
 
-def to_srt(words: Sequence[pvleopard.Leopard.Word]) -> str:
+def to_srt(words: Sequence[pvleopard.Leopard.Word], endpoint_sec: float = 1.) -> str:
     lines = list()
     section = 0
 
-    j = -1
+    j = 0
+    for k in range(1, len(words), 1):
+        if (words[k].start_sec - words[k - 1].end_sec) >= endpoint_sec:
+            i = k - 1
+            lines.append("%s" % str(section))
+            lines.append(
+                "%s --> %s" % (second_to_timecode(words[j].start_sec), second_to_timecode(words[i].end_sec)))
+            lines.append(' '.join(x.word for x in words[j:(i + 1)]))
+            lines.append('')
+            j = k - 1
+
     i = len(words) - 1
     lines.append("%s" % str(section))
-    lines.append("%s --> %s" % (second_to_timecode(words[j + 1].start_sec), second_to_timecode(words[i].end_sec)))
-    lines.append(' '.join(x.word for x in words[(j + 1):(i + 1)]))
+    lines.append("%s --> %s" % (second_to_timecode(words[j].start_sec), second_to_timecode(words[i].end_sec)))
+    lines.append(' '.join(x.word for x in words[j:(i + 1)]))
     lines.append('')
 
     return '\n'.join(lines)
