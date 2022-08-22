@@ -123,7 +123,7 @@ def main() -> None:
         anime.start()
         try:
             youtube = YouTube(youtube_url)
-            audio_stream = youtube.streams.filter(mime_type='audio/webm').order_by('bitrate').last()
+            audio_stream = youtube.streams.filter(only_audio=True, audio_codec='opus').order_by('bitrate').last()
             audio_stream.download(output_path=os.path.dirname(audio_path), filename=os.path.basename(audio_path))
         except Exception as e:
             print("Failed to download from YouTube with `%s`" % e)
