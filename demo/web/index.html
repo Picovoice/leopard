@@ -53,9 +53,20 @@
         const stopRecord = document.getElementById("stopRecord");
 
         let timer = null;
-        let webVp = null;
+        let webVp = window.WebVoiceProcessor.WebVoiceProcessor.instance();
         let currentTimer = 0.0;
         let audioData = [];
+        const recorderEngine = {
+          onmessage: (event) => {
+            switch (event.data.command) {
+              case "process":
+                audioData.push(event.data.inputFrame);
+                break;
+            }
+          }
+        }
+        webVp.subscribe(recorderEngine);
+        console.log(webVp);
         recordButton.addEventListener("click", async () => {
           displayTimer.style.display = "inline";
           stopRecord.style.display = "inline";
@@ -63,18 +74,9 @@
 
           currentTimer = 0.0;
           audioData = [];
-
           try {
-            const worker = new Worker("worker.js");
-            webVp = await window.WebVoiceProcessor.WebVoiceProcessor.init({
-              engines: [worker],
-              start: true
-            });
-
             writeMessage("Recording audio...");
-            worker.onmessage = (event) => {
-              audioData.push(event.data);
-            }
+            await webVp.start();
             timer = setInterval(() => {
               currentTimer += 0.1;
               displayTimer.innerText = `${currentTimer.toFixed(1)} / 120`;
@@ -92,9 +94,7 @@
           stopRecord.style.display = "none";
           recordButton.style.display = "inline";
 
-          if (webVp !== null) {
-            webVp.stop();
-          }
+          await webVp.stop();
           clearInterval(timer);
 
           const frames = new Int16Array(audioData.length * 512);
@@ -140,9 +140,9 @@
       async function startLeopard(accessKey) {
         writeMessage("Leopard is loading. Please wait...");
         try {
-          leopard = await LeopardWeb.LeopardWorker.fromBase64(
+          leopard = await LeopardWeb.LeopardWorker.create(
             accessKey,
-            modelParams,
+            {base64: modelParams},
             {enableAutomaticPunctuation: true}
           );
           document.getElementById("control").style.display = "block";

@@ -2,24 +2,22 @@
 # yarn lockfile v1
 
 
-"@picovoice/leopard-web@^1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@picovoice/leopard-web/-/leopard-web-1.1.4.tgz#f3a4964eb8df96efb129e8aecce22e11fba635db"
-  integrity sha512-Jql19JgzgiFCokxbif+7rseVI5N9h0OR5QpReM04yXbN03d1MjBY6ScZeLKYn5b4BfhHoEUqY2KGRExREOwMfg==
+"@picovoice/leopard-web@../../binding/web":
+  version "1.1.5"
   dependencies:
-    "@picovoice/web-utils" "=1.2.3"
+    "@picovoice/web-utils" "=1.2.5"
 
-"@picovoice/web-utils@=1.2.3":
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/@picovoice/web-utils/-/web-utils-1.2.3.tgz#aa2eecca95fa55d74727645dab8ddd388dce8d13"
-  integrity sha512-ETZtPpjY1hPW3MkIxR2gialZAg+vAw4gdJW5zXoB2F/eJQ3B+LiTAcbV1sLHMB/fBsrO+2yb5yk80nVU0lMqIA==
+"@picovoice/web-utils@=1.2.5":
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/@picovoice/web-utils/-/web-utils-1.2.5.tgz#55461fb78ddfe8b8b755cba2caf863e262988dd0"
+  integrity sha512-3eoGSewOO2vllsYs/Q9FVHMzFQqy2Mg1mBJTbRChuZMpDG2wCv+AB3vD34w4bb++wwGpo/iS7PB1SwP0vBzYig==
   dependencies:
     commander "^9.2.0"
 
-"@picovoice/web-voice-processor@^2.2.3":
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/@picovoice/web-voice-processor/-/web-voice-processor-2.2.3.tgz#b1b7d6499a05956c917addbaa25137abc3109590"
-  integrity sha512-xlMwwRfV5DFcDGwT7rSglnfETgQnUQoThdIkGVbEW6jLhJIDAVJuNz121RSmgL1X+sI/95u7Vh0RdiXWdvMxrA==
+"@picovoice/web-voice-processor@^3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@picovoice/web-voice-processor/-/web-voice-processor-3.0.2.tgz#92b5c007871503c9edfbfa3bf7e93804a229d380"
+  integrity sha512-IwjPz7qatc0Rj57gV0mpD8yUzOpEkrN/MpUIhvVx3QovxSNA2fBrDAnG9eVySRkklJMp/2dGNIz+XhWWGXXJFA==
 
 ansi-styles@^4.1.0:
   version "4.3.0"

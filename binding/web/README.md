@@ -75,69 +75,58 @@ run:
 npx pvbase64 -h
 ```
 
-#### Init options
+#### Leopard Model
 
 Leopard saves and caches your model file in IndexedDB to be used by WebAssembly. Use a different `customWritePath` variable
-to hold multiple models and set the `forceWrite` value to true to force re-save a model file. Set `enableAutomaticPunctuation`
-to true, if wish to enable punctuation in transcript.
-If the model file (`.pv`) changes, `version` should be incremented to force the cached model to be updated.
+to hold multiple models and set the `forceWrite` value to true to force re-save a model file.
+
+Either `base64` or `publicPath` must be set to instantiate Leopard. If both are set, Leopard will use the `base64` model.
 
 ```typescript
-// these are default
+import leopardParams from "${PATH_TO_BASE64_LEOPARD_PARAMS}";
+
+const leopardModel = {
+  publicPath: ${MODEL_RELATIVE_PATH}, // or
+  base64: ${MODEL_BASE64_STRING},
+  customWritePath: "leopard_model", // Optional
+  forceWrite: false, // Optional
+  version: 1, // Optional
+}
+```
+
+#### Init options
+
+Set `enableAutomaticPunctuation` to true, if wish to enable punctuation in transcript.
+
+```typescript
+// Optional, these are default
 const options = {
-  enableAutomaticPunctuation: false,
-  customWritePath: "leopard_model",
-  forceWrite: false,
-  version: 1
+  enableAutomaticPunctuation: false
 }
 ```
 
 #### Initialize in Main Thread
 
-Use `Leopard` to initialize from public directory:
+Create an instance of `Leopard`:
 
 ```typescript
-const handle = await Leopard.fromPublicDirectory(
+const handle = await Leopard.create(
   ${ACCESS_KEY},
-  ${MODEL_RELATIVE_PATH},
+  leopardModel,
   options // optional options
 );
-```
-
-or initialize using a base64 string:
-
-```typescript
-import leopardParams from "${PATH_TO_BASE64_LEOPARD_PARAMS}";
-
-const handle = await Leopard.fromBase64(
-  ${ACCESS_KEY},
-  leopardParams,
-  options // optional options
-)
 ```
 
 #### Initialize in Worker Thread
 
-Use `LeopardWorker` to initialize from public directory:
+Create an instance of `LeopardWorker`:
 
 ```typescript
-const handle = await LeopardWorker.fromPublicDirectory(
+const handle = await LeopardWorker.create(
   ${ACCESS_KEY},
-  ${MODEL_RELATIVE_PATH},
+  leopardModel,
   options // optional options
 );
-```
-
-or initialize using a base64 string:
-
-```typescript
-import leopardParams from "${PATH_TO_BASE64_LEOPARD_PARAMS}";
-
-const handle = await LeopardWorker.fromBase64(
-  ${ACCESS_KEY},
-  leopardParams,
-  options // optional options
-)
 ```
 
 #### Process Audio Frames
