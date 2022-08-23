@@ -9,15 +9,16 @@
   specific language governing permissions and limitations under the License.
 */
 
+import { PvModel } from '@picovoice/web-utils';
+
+/**
+ * LeopardModel types
+ */
+export type LeopardModel = PvModel;
+
 export type LeopardOptions = {
   /** @defaultValue false */
   enableAutomaticPunctuation?: boolean;
-  /** @defaultValue 'leopard_model' */
-  customWritePath?: string;
-  /** @defaultValue false */
-  forceWrite?: boolean;
-  /** @defaultValue 1 */
-  version?: number;
 };
 
 export type LeopardWord = {

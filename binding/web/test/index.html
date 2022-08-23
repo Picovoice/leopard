@@ -29,6 +29,17 @@
     ];
     let pcm = null;
 
+    const modelBase64 = {
+      base64: modelParams,
+      forceWrite: true,
+    }
+
+    const modelPublicPath = {
+      publicPath: "leopard_params.pv",
+      forceWrite: true,
+    }
+
+
     window.onload = function () {
       const audioContext = new (window.AudioContext || window.webKitAudioContext)(
               {sampleRate: 16000}
@@ -124,7 +135,7 @@
 
       try {
         writeMessage("Checking Leopard 'fromPublicDirectory'");
-        let handle = await LeopardWeb.Leopard.fromPublicDirectory(accessKey, "leopard_params.pv", { forceWrite: true, enableAutomaticPunctuation: true });
+        let handle = await LeopardWeb.Leopard.create(accessKey, modelPublicPath, { enableAutomaticPunctuation: true });
         let result = await handle.process(pcm);
         assertEquals(expectedPunctuation, result.transcript, 'Failed to transcribe audio file');
         assertDeepEquals(expectedWords, result.words);
@@ -132,7 +143,7 @@
         writeMessage("Checking Leopard 'fromPublicDirectory'... done!");
 
         writeMessage("Checking Leopard 'fromBase64'");
-        handle = await LeopardWeb.Leopard.fromBase64(accessKey, modelParams, { forceWrite: true });
+        handle = await LeopardWeb.Leopard.create(accessKey, modelBase64);
         result = await handle.process(pcm);
         assertEquals(expected, result.transcript, 'Failed to transcribe audio file');
         assertDeepEquals(expectedWords, result.words);
@@ -140,7 +151,7 @@
         writeMessage("Checking Leopard 'fromBase64'... done!");
 
         writeMessage("Checking LeopardWorker 'fromPublicDirectory'");
-        handle = await LeopardWeb.LeopardWorker.fromPublicDirectory(accessKey, "leopard_params.pv", { forceWrite: true });
+        handle = await LeopardWeb.LeopardWorker.create(accessKey, modelPublicPath);
         result = await handle.process(pcm);
         assertEquals(expected, result.transcript, 'Failed to transcribe audio file');
         assertDeepEquals(expectedWords, result.words);
@@ -148,7 +159,7 @@
         writeMessage("Checking LeopardWorker 'fromPublicDirectory'... done!");
 
         writeMessage("Checking LeopardWorker 'fromBase64'");
-        handle = await LeopardWeb.LeopardWorker.fromBase64(accessKey, modelParams, { forceWrite: true });
+        handle = await LeopardWeb.LeopardWorker.create(accessKey, modelBase64);
         result = await handle.process(pcm);
         assertEquals(expected, result.transcript, 'Failed to transcribe audio file');
         assertDeepEquals(expectedWords, result.words);
@@ -156,7 +167,7 @@
         writeMessage("Checking LeopardWorker 'fromBase64'... done!");
 
         writeMessage("Checking LeopardWorker 'transfer buffer'");
-        handle = await LeopardWeb.LeopardWorker.fromPublicDirectory(accessKey, "leopard_params.pv", { forceWrite: true });
+        handle = await LeopardWeb.LeopardWorker.create(accessKey, modelPublicPath);
         const defaultLen = pcm.length;
         result = await handle.process(pcm, { transfer: true, transferCallback: (data) => {pcm = data} });
         assertEquals(expected, result.transcript, 'Failed to transcribe audio file');
@@ -168,7 +179,7 @@
         writeMessage("Checking invalid public path");
         is_failed = false
         try {
-          await LeopardWeb.Leopard.fromPublicDirectory(accessKey, "invalid", { forceWrite: true });
+          await LeopardWeb.Leopard.create(accessKey, { modelPublicPath: 'invalid', forceWrite: true });
         } catch (e) {
           is_failed = true;
         }
@@ -176,7 +187,7 @@
 
         is_failed = false
         try {
-          await LeopardWeb.LeopardWorker.fromPublicDirectory(accessKey, "invalid", { forceWrite: true });
+          await LeopardWeb.LeopardWorker.create(accessKey, { modelPublicPath: 'invalid', forceWrite: true });
         } catch (e) {
           is_failed = true;
         }
@@ -186,7 +197,7 @@
         writeMessage("Checking invalid base64 string");
         is_failed = false
         try {
-          await LeopardWeb.Leopard.fromBase64(accessKey, "invalid", { forceWrite: true });
+          await LeopardWeb.Leopard.create(accessKey, { base64: 'invalid', forceWrite: true });
         } catch (e) {
           is_failed = true;
         }
@@ -194,7 +205,7 @@
 
         is_failed = false
         try {
-          await LeopardWeb.LeopardWorker.fromBase64(accessKey, "invalid", { forceWrite: true });
+          await LeopardWeb.LeopardWorker.create(accessKey, { base64: 'invalid', forceWrite: true });
         } catch (e) {
           is_failed = true;
         }
@@ -204,7 +215,7 @@
         writeMessage("Checking invalid access key");
         is_failed = false
         try {
-          await LeopardWeb.Leopard.fromPublicDirectory("invalid", "leopard_params.pv");
+          await LeopardWeb.Leopard.create("invalid", modelPublicPath);
         } catch (e) {
           is_failed = true;
         }
@@ -212,7 +223,7 @@
 
         is_failed = false
         try {
-          await LeopardWeb.LeopardWorker.fromPublicDirectory("invalid", "leopard_params.pv");
+          await LeopardWeb.LeopardWorker.create("invalid", modelPublicPath);
         } catch (e) {
           is_failed = true;
         }
@@ -239,13 +250,13 @@
         writeMessage("Starting init performance test!");
         let start = Date.now();
         for (let i = 0; i < numIterations; i++) {
-          handle = await LeopardWeb.LeopardWorker.fromBase64(accessKey, modelParams, {forceWrite: true});
+          handle = await LeopardWeb.LeopardWorker.create(accessKey, modelBase64, {forceWrite: true});
           handle.terminate();
         }
         let end = Date.now();
         writeMessage(`Init Performance: ${((end - start) / 1000) / numIterations}`);
 
-        handle = await LeopardWeb.LeopardWorker.fromBase64(accessKey, modelParams, {forceWrite: true});
+        handle = await LeopardWeb.LeopardWorker.create(accessKey, modelBase64, {forceWrite: true});
         writeMessage("Starting process performance test!");
         start = Date.now();
         for (let i = 0; i < numIterations; i++) {

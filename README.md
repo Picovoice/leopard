@@ -593,9 +593,9 @@ function getAudioData(): Int16Array {
   return new Int16Array();
 }
 
-const leopard = await LeopardWorker.fromBase64(
+const leopard = await LeopardWorker.create(
   "${ACCESS_KEY}",
-  leopardParams
+  { base64: leopardParams },
 );
 
 const { transcript, words } = await leopard.process(getAudioData());
