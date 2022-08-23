@@ -106,9 +106,9 @@ const options = {
 }
 ```
 
-#### Initialize in Main Thread
+#### Initialize Leopard
 
-Create an instance of `Leopard`:
+Create an instance of `Leopard` in the main thread:
 
 ```typescript
 const handle = await Leopard.create(
@@ -118,9 +118,7 @@ const handle = await Leopard.create(
 );
 ```
 
-#### Initialize in Worker Thread
-
-Create an instance of `LeopardWorker`:
+Or create an instance of `Leopard` in a worker thread:
 
 ```typescript
 const handle = await LeopardWorker.create(
