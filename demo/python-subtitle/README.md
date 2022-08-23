@@ -37,6 +37,6 @@ python3 demo/python-subtitle/main.py \
 ```
 
 Replace `${ACCESS_KEY}` with your own obtained from [Picovoice Console](https://console.picovoice.ai/). Replace
-`${YOUTUBE_URL }` with the URL to a video (not a playlist or channel). A video URL on YouTube should look like this:
+`${YOUTUBE_URL}` with the URL to a video (not a playlist or channel). A video URL on YouTube should look like this:
 `https://www.youtube.com/watch?v=${VIDEO_UUID}`. Replace `AUDIO_PATH` with the path to an audio file. ${SUBTITLE_PATH}`
 is the path to the [SRT](https://en.wikipedia.org/wiki/SubRip) subtitle file.
