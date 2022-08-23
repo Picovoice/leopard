@@ -94,7 +94,7 @@ export class LeopardWorker {
    *
    * @returns An instance of LeopardWorker.
    */
-  private static async create(accessKey: string, model: LeopardModel, options: LeopardOptions = {}): Promise<LeopardWorker> {
+  public static async create(accessKey: string, model: LeopardModel, options: LeopardOptions = {}): Promise<LeopardWorker> {
     const customWritePath = (model.customWritePath) ? model.customWritePath : 'leopard_model';
     const modelPath = await loadModel({ ...model, customWritePath });
 

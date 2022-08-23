@@ -84,11 +84,14 @@ Either `base64` or `publicPath` must be set to instantiate Leopard. If both are 
 
 ```typescript
 const leopardModel = {
-  publicPath: ${MODEL_RELATIVE_PATH}, // or
+  publicPath: ${MODEL_RELATIVE_PATH},
+  // or
   base64: ${MODEL_BASE64_STRING},
-  customWritePath: "leopard_model", // Optional
-  forceWrite: false, // Optional
-  version: 1, // Optional
+  
+  // Optionals
+  customWritePath: "leopard_model",
+  forceWrite: false,
+  version: 1,
 }
 ```
 
