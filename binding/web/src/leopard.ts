@@ -152,7 +152,7 @@ export class Leopard {
    * @param model.customWritePath Custom path to save the model in storage.
    * Set to a different name to use multiple models across `leopard` instances.
    * @param model.forceWrite Flag to overwrite the model in storage even if it exists.
-   * @param model.version Leopard model version. Set to a higher number to update the model file.
+   * @param model.version Version of the model file. Increment to update the model file in storage.
    * @param options Optional arguments.
    * @param options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
    *
