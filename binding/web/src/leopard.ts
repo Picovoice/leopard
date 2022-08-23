@@ -162,15 +162,13 @@ export class Leopard {
     const customWritePath = (model.customWritePath) ? model.customWritePath : 'leopard_model';
     const modelPath = await loadModel({ ...model, customWritePath });
 
-    const { enableAutomaticPunctuation = false } = options;
-
-    return await this._init(accessKey, enableAutomaticPunctuation, modelPath);
+    return await this._init(accessKey, modelPath, options);
   }
 
   public static _init(
     accessKey: string,
-    enableAutomaticPunctuation: boolean,
     modelPath: string,
+    options: LeopardOptions = {},
   ): Promise<Leopard> {
     if (!isAccessKeyValid(accessKey)) {
       throw new Error('Invalid AccessKey');
@@ -180,7 +178,7 @@ export class Leopard {
       Leopard._leopardMutex
         .runExclusive(async () => {
           const isSimd = await simd();
-          const wasmOutput = await Leopard.initWasm(accessKey.trim(), (isSimd) ? this._wasmSimd : this._wasm, modelPath, enableAutomaticPunctuation);
+          const wasmOutput = await Leopard.initWasm(accessKey.trim(), (isSimd) ? this._wasmSimd : this._wasm, modelPath, options);
           return new Leopard(wasmOutput);
         })
         .then((result: Leopard) => {
@@ -300,7 +298,9 @@ export class Leopard {
     this._wasmMemory = undefined;
   }
 
-  private static async initWasm(accessKey: string, wasmBase64: string, modelPath: string, enableAutomaticPunctuation: boolean): Promise<any> {
+  private static async initWasm(accessKey: string, wasmBase64: string, modelPath: string, options: LeopardOptions): Promise<any> {
+    const { enableAutomaticPunctuation = false } = options;
+
     // A WebAssembly page has a constant size of 64KiB. -> 1MiB ~= 16 pages
     const memory = new WebAssembly.Memory({ initial: 3500 });
 

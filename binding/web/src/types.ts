@@ -36,8 +36,8 @@ export type LeopardTranscript = {
 export type LeopardWorkerInitRequest = {
   command: 'init';
   accessKey: string;
-  enableAutomaticPunctuation: boolean;
   modelPath: string;
+  options: LeopardOptions;
   wasm: string;
   wasmSimd: string;
 };

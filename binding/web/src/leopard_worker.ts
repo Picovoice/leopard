@@ -98,8 +98,6 @@ export class LeopardWorker {
     const customWritePath = (model.customWritePath) ? model.customWritePath : 'leopard_model';
     const modelPath = await loadModel({ ...model, customWritePath });
 
-    const { enableAutomaticPunctuation = false } = options;
-
     const worker = new PvWorker();
     const returnPromise: Promise<LeopardWorker> = new Promise((resolve, reject) => {
       // @ts-ignore - block from GC
@@ -123,8 +121,8 @@ export class LeopardWorker {
     worker.postMessage({
       command: 'init',
       accessKey: accessKey,
-      enableAutomaticPunctuation: enableAutomaticPunctuation,
       modelPath: modelPath,
+      options: options,
       wasm: this._wasm,
       wasmSimd: this._wasmSimd,
     });
