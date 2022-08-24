@@ -50,11 +50,13 @@ Create an instance of the engine and transcribe an audio file:
 ```rust
 use leopard::LeopardBuilder;
 
-let access_key = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
-
-let leopard: Leopard = LeopardBuilder::new(access_key).init().expect("Unable to create Leopard");
-if let Ok(leopard_transcript) = leopard.process_file("${AUDIO_PATH}") {
-    println!("{}", leopard_transcript.transcript);
+fn main() {
+  let access_key = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
+  
+  let leopard: Leopard = LeopardBuilder::new(access_key).init().expect("Unable to create Leopard");
+  if let Ok(leopard_transcript) = leopard.process_file("${AUDIO_PATH}") {
+      println!("{}", leopard_transcript.transcript);
+  }
 }
 ```
 

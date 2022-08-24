@@ -217,7 +217,7 @@ For more information about .NET demos, go to [demo/dotnet](/demo/dotnet).
 
 ### Rust Demo
 
-[Leopard Rustdemo](/demo/rust) is a command-line application that lets you choose between running Leopard on an audio
+[Leopard Rust demo](/demo/rust) is a command-line application that lets you choose between running Leopard on an audio
 file or on real-time microphone input.
 
 From [demo/rust/filedemo](/demo/rust/filedemo) run the following in the terminal:
@@ -345,7 +345,7 @@ do {
 } catch { }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` a custom trained model from [console](https://console.picovoice.ai/) or the [default model](/lib/common/), `${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of the audio file.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` a custom trained model from [console](https://console.picovoice.ai/) or the [default model](/lib/common/leopard_params.pv), `${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of the audio file.
 
 ### Android
 
@@ -376,7 +376,7 @@ try {
 } catch (LeopardException ex) { }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with a custom trained model from [console](https://console.picovoice.ai/) or the [default model](/lib/common/), and `${AUDIO_FILE_PATH}` with the path to the audio file.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with a custom trained model from [console](https://console.picovoice.ai/) or the [default model](/lib/common/leopard_params.pv), and `${AUDIO_FILE_PATH}` with the path to the audio file.
 
 ### Node.js
 
@@ -429,7 +429,7 @@ try {
 } on LeopardException catch (err) { }
 ```
 
-Replace `${ACCESS_KEY}` with your `AccessKey` obtained from [Picovoice Console](https://console.picovoice.ai/), `${MODEL_FILE}` with the a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](lib/common/), and `${AUDIO_FILE_PATH}` with the path to the audio file.
+Replace `${ACCESS_KEY}` with your `AccessKey` obtained from [Picovoice Console](https://console.picovoice.ai/), `${MODEL_FILE}` with a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](lib/common/leopard_params.pv), and `${AUDIO_FILE_PATH}` with the path to the audio file.
 
 ### Go
 
@@ -491,7 +491,7 @@ try {
 }
 ```
 
-Replace `${ACCESS_KEY}` with your `AccessKey` obtained from Picovoice Console, `${MODEL_FILE}` with a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](/lib/common/) and `${AUDIO_FILE_PATH}` with the absolute path of the audio file. 
+Replace `${ACCESS_KEY}` with your `AccessKey` obtained from Picovoice Console, `${MODEL_FILE}` with a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](/lib/common/leopard_params.pv) and `${AUDIO_FILE_PATH}` with the absolute path of the audio file. 
 When done be sure to explicitly release the resources using `leopard.delete()`.
 
 ### Java
@@ -558,11 +558,13 @@ Create an instance of the engine using `LeopardBuilder` instance and transcribe 
 ```rust
 use leopard::LeopardBuilder;
 
-let access_key = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
-let leopard: Leopard = LeopardBuilder::new().access_key(access_key).init().expect("Unable to create Leopard");
-
-if let Ok(leopard_transcript) = leopard.process_file("/absolute/path/to/audio_file") {
-    println!("{}", leopard_transcript.transcript);
+fn main() {
+    let access_key = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
+    let leopard: Leopard = LeopardBuilder::new().access_key(access_key).init().expect("Unable to create Leopard");
+    
+    if let Ok(leopard_transcript) = leopard.process_file("/absolute/path/to/audio_file") {
+        println!("{}", leopard_transcript.transcript);
+    }
 }
 ```
 
