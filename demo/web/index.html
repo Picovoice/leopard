@@ -53,7 +53,6 @@
         const stopRecord = document.getElementById("stopRecord");
 
         let timer = null;
-        let webVp = window.WebVoiceProcessor.WebVoiceProcessor.instance();
         let currentTimer = 0.0;
         let audioData = [];
         const recorderEngine = {
@@ -65,7 +64,6 @@
             }
           }
         }
-        webVp.subscribe(recorderEngine);
         recordButton.addEventListener("click", async () => {
           displayTimer.style.display = "inline";
           stopRecord.style.display = "inline";
@@ -75,7 +73,7 @@
           audioData = [];
           try {
             writeMessage("Recording audio...");
-            await webVp.start();
+            await window.WebVoiceProcessor.WebVoiceProcessor.subscribe(recorderEngine);
             timer = setInterval(() => {
               currentTimer += 0.1;
               displayTimer.innerText = `${currentTimer.toFixed(1)} / 120`;
@@ -93,7 +91,7 @@
           stopRecord.style.display = "none";
           recordButton.style.display = "inline";
 
-          await webVp.stop();
+          await window.WebVoiceProcessor.WebVoiceProcessor.unsubscribe(recorderEngine);
           clearInterval(timer);
 
           const frames = new Int16Array(audioData.length * 512);
