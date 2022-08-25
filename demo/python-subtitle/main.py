@@ -64,7 +64,9 @@ def second_to_timecode(x: float) -> str:
 def to_srt(words: Sequence[pvleopard.Leopard.Word], endpoint_sec: float = 1., length_limit: Optional[int] = 16) -> str:
     def _helper(end: int) -> None:
         lines.append("%d" % section)
-        lines.append("%s --> %s" % (second_to_timecode(words[start].start_sec), second_to_timecode(words[end].end_sec)))
+        lines.append(
+            "%s --> %s" %
+            (second_to_timecode(words[start].start_sec), second_to_timecode(words[end].end_sec)))
         lines.append(' '.join(x.word for x in words[start:(end + 1)]))
         lines.append('')
 
@@ -120,7 +122,11 @@ def main() -> None:
         anime.start()
         try:
             youtube = YouTube(youtube_url)
-            audio_stream = youtube.streams.filter(only_audio=True, audio_codec='opus').order_by('bitrate').last()
+            audio_stream = youtube \
+                .streams \
+                .filter(only_audio=True, audio_codec='opus') \
+                .order_by('bitrate') \
+                .last()
             audio_stream.download(output_path=os.path.dirname(audio_path), filename=os.path.basename(audio_path))
         except Exception as e:
             print("Failed to download from YouTube with `%s`" % e)
