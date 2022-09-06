@@ -223,7 +223,7 @@ func (nl *nativeLeopardType) nativeProcess(leopard *Leopard, pcm []int16) (statu
 		(**C.char)(unsafe.Pointer(&transcriptPtr)),
 		(*C.int32_t)(unsafe.Pointer(&numWords)),
 		(**C.pv_word_t)(unsafe.Pointer(&wordsPtr)))
-	if (PvStatus(ret) != SUCCESS) {
+	if (PvStatus(ret) != IO_ERROR) {
 		return PvStatus(ret), "", nil
 	}
 
@@ -260,7 +260,7 @@ func (nl *nativeLeopardType) nativeProcessFile(leopard *Leopard, audioPath strin
 		(**C.char)(unsafe.Pointer(&transcriptPtr)),
 		(*C.int32_t)(unsafe.Pointer(&numWords)),
 		(**C.pv_word_t)(unsafe.Pointer(&wordsPtr)))
-	if (PvStatus(ret) != SUCCESS) {
+	if (PvStatus(ret) != IO_ERROR) {
 		return PvStatus(ret), "", nil
 	}
 
