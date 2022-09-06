@@ -223,20 +223,22 @@ func (nl *nativeLeopardType) nativeProcess(leopard *Leopard, pcm []int16) (statu
 		(**C.char)(unsafe.Pointer(&transcriptPtr)),
 		(*C.int32_t)(unsafe.Pointer(&numWords)),
 		(**C.pv_word_t)(unsafe.Pointer(&wordsPtr)))
-	if (PvStatus(ret) != IO_ERROR) {
+	if (PvStatus(ret) != SUCCESS) {
 		return PvStatus(ret), "", nil
 	}
 
 	transcript = C.GoString((*C.char)(transcriptPtr))
-	cWords := (*[1 << 20]C.pv_word_t)(wordsPtr)[:numWords]
-	for i := 0; i < int(numWords); i++ {
-		n := LeopardWord{
-			Word:       C.GoString(cWords[i].word),
-			StartSec:   float32(cWords[i].start_sec),
-			EndSec:     float32(cWords[i].end_sec),
-			Confidence: float32(cWords[i].confidence),
+	if (wordsPtr != nil) {
+		cWords := (*[1 << 20]C.pv_word_t)(wordsPtr)[:numWords]
+		for i := 0; i < int(numWords); i++ {
+			n := LeopardWord{
+				Word:       C.GoString(cWords[i].word),
+				StartSec:   float32(cWords[i].start_sec),
+				EndSec:     float32(cWords[i].end_sec),
+				Confidence: float32(cWords[i].confidence),
+			}
+			words = append(words, n)
 		}
-		words = append(words, n)
 	}
 
 	C.free(transcriptPtr)
@@ -260,20 +262,22 @@ func (nl *nativeLeopardType) nativeProcessFile(leopard *Leopard, audioPath strin
 		(**C.char)(unsafe.Pointer(&transcriptPtr)),
 		(*C.int32_t)(unsafe.Pointer(&numWords)),
 		(**C.pv_word_t)(unsafe.Pointer(&wordsPtr)))
-	if (PvStatus(ret) != IO_ERROR) {
+	if (PvStatus(ret) != SUCCESS) {
 		return PvStatus(ret), "", nil
 	}
 
 	transcript = C.GoString((*C.char)(transcriptPtr))
-	cWords := (*[1 << 20]C.pv_word_t)(wordsPtr)[:numWords]
-	for i := 0; i < int(numWords); i++ {
-		n := LeopardWord{
-			Word:       C.GoString(cWords[i].word),
-			StartSec:   float32(cWords[i].start_sec),
-			EndSec:     float32(cWords[i].end_sec),
-			Confidence: float32(cWords[i].confidence),
+	if (wordsPtr != nil) {
+		cWords := (*[1 << 20]C.pv_word_t)(wordsPtr)[:numWords]
+		for i := 0; i < int(numWords); i++ {
+			n := LeopardWord{
+				Word:       C.GoString(cWords[i].word),
+				StartSec:   float32(cWords[i].start_sec),
+				EndSec:     float32(cWords[i].end_sec),
+				Confidence: float32(cWords[i].confidence),
+			}
+			words = append(words, n)
 		}
-		words = append(words, n)
 	}
 
 	C.free(transcriptPtr)
