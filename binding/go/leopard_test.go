@@ -25,19 +25,18 @@ import (
 	"testing"
 )
 
-var (
-	testAccessKey string
-	leopard       Leopard
-	testAudioPath string
-)
-
-var processTestParameters = []struct {
+type TestParameters struct {
 	enableAutomaticPunctuation bool
 	transcript                 string
-}{
-	{false, "Mr quilter is the apostle of the middle classes and we are glad to welcome his gospel"},
-	{true, "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel."},
+	transcriptMetadata         []LeopardWord
+	audioPath                  string
 }
+
+var (
+	testAccessKey         string
+	leopard               Leopard
+	processTestParameters []TestParameters
+)
 
 var referenceTranscriptMetadata = []LeopardWord{
 	{Word: "Mr", StartSec: 0.58, EndSec: 0.80, Confidence: 0.95},
@@ -67,7 +66,14 @@ func TestMain(m *testing.M) {
 	_, filename, _, _ := runtime.Caller(0)
 	dir := filepath.Dir(filename)
 
-	testAudioPath, _ = filepath.Abs(filepath.Join(dir, "../../resources/audio_samples/test.wav"))
+	var testAudioPath, _ = filepath.Abs(filepath.Join(dir, "../../resources/audio_samples/test.wav"))
+	var emptyAudioPath, _ = filepath.Abs(filepath.Join(dir, "../../resources/audio_samples/empty.wav"))
+
+	processTestParameters = []TestParameters{
+		{false, "Mr quilter is the apostle of the middle classes and we are glad to welcome his gospel", referenceTranscriptMetadata, testAudioPath},
+		{true, "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel.", referenceTranscriptMetadata, testAudioPath},
+		{false, "", nil, emptyAudioPath},
+	}
 
 	os.Exit(m.Run())
 }
@@ -92,7 +98,9 @@ func TestVersion(t *testing.T) {
 func runProcessTestCase(
 	t *testing.T,
 	enableAutomaticPunctuation bool,
-	expectedTranscript string) {
+	expectedTranscript string,
+	expectedTranscriptMetadata []LeopardWord,
+	audioPath string) {
 
 	leopard = NewLeopard(testAccessKey)
 	leopard.EnableAutomaticPunctuation = enableAutomaticPunctuation
@@ -102,7 +110,7 @@ func runProcessTestCase(
 	}
 	defer leopard.Delete()
 
-	data, err := ioutil.ReadFile(testAudioPath)
+	data, err := ioutil.ReadFile(audioPath)
 	if err != nil {
 		t.Fatalf("Could not read test file: %v", err)
 	}
@@ -115,19 +123,22 @@ func runProcessTestCase(
 		pcm[i] = int16(binary.LittleEndian.Uint16(data[2*i : (2*i)+2]))
 	}
 
-	transcript, _, err := leopard.Process(pcm)
+	transcript, words, err := leopard.Process(pcm)
 	if err != nil {
 		t.Fatalf("Failed to process pcm buffer: %v", err)
 	}
 	if transcript != expectedTranscript {
 		t.Fatalf("Expected '%s' got '%s'", expectedTranscript, transcript)
 	}
+	reflect.DeepEqual(words, expectedTranscriptMetadata)
 }
 
 func runProcessFileTestCase(
 	t *testing.T,
 	enableAutomaticPunctuation bool,
-	expectedTranscript string) {
+	expectedTranscript string,
+	expectedTranscriptMetadata []LeopardWord,
+	audioPath string) {
 
 	leopard = NewLeopard(testAccessKey)
 	leopard.EnableAutomaticPunctuation = enableAutomaticPunctuation
@@ -137,24 +148,24 @@ func runProcessFileTestCase(
 	}
 	defer leopard.Delete()
 
-	transcript, words, err := leopard.ProcessFile(testAudioPath)
+	transcript, words, err := leopard.ProcessFile(audioPath)
 	if err != nil {
 		t.Fatalf("Failed to process pcm buffer: %v", err)
 	}
 	if transcript != expectedTranscript {
 		t.Fatalf("Expected '%s' got '%s'", expectedTranscript, transcript)
 	}
-	reflect.DeepEqual(words, referenceTranscriptMetadata)
+	reflect.DeepEqual(words, expectedTranscriptMetadata)
 }
 
 func TestProcess(t *testing.T) {
 	for _, test := range processTestParameters {
-		runProcessTestCase(t, test.enableAutomaticPunctuation, test.transcript)
+		runProcessTestCase(t, test.enableAutomaticPunctuation, test.transcript, test.transcriptMetadata, test.audioPath)
 	}
 }
 
 func TestProcessFile(t *testing.T) {
 	for _, test := range processTestParameters {
-		runProcessFileTestCase(t, test.enableAutomaticPunctuation, test.transcript)
+		runProcessFileTestCase(t, test.enableAutomaticPunctuation, test.transcript, test.transcriptMetadata, test.audioPath)
 	}
 }
