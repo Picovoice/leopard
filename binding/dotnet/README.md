@@ -71,7 +71,7 @@ Leopard leopard = Leopard.Create(accessKey);
 LeopardTranscript result = leopard.ProcessFile(audioPath);
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)). Finally, when done release the resources using `handle.Dispose()`.
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/). Finally, when done release the resources using `handle.Dispose()`.
 
 The model file contains the parameters for the Leopard engine. You may create bespoke language models using [Picovoice Console](https://console.picovoice.ai/) and then pass in the relevant file.
 

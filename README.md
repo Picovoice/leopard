@@ -94,26 +94,26 @@ Run the demo:
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${LIBRARY_PATH}` with the path to appropriate
-library under [lib](/lib), `${MODEL_PATH}` to path to [default model file](/lib/common/leopard_params.pv)
+library under [lib](/lib), `${MODEL_PATH}` to path to [default model file](./lib/common/leopard_params.pv)
 (or your custom one), and `${AUDIO_PATH}` with a path to an audio file you wish to transcribe.
 
 ### iOS Demo
 
-To run the demo, go to [demo/ios/LeopardDemo](/demo/ios/LeopardDemo) and run:
+To run the demo, go to [demo/ios/LeopardDemo](./demo/ios/LeopardDemo) and run:
 
 ```console
 pod install
 ```
 
-Replace `let accessKey = "${YOUR_ACCESS_KEY_HERE}"` in the file [ViewModel.swift](/demo/ios/LeopardDemo/LeopardDemo/ViewModel.swift) with your `AccessKey`.
+Replace `let accessKey = "${YOUR_ACCESS_KEY_HERE}"` in the file [ViewModel.swift](./demo/ios/LeopardDemo/LeopardDemo/ViewModel.swift) with your `AccessKey`.
 
 Then, using [Xcode](https://developer.apple.com/xcode/), open the generated `LeopardDemo.xcworkspace` and run the application.
 
 ### Android Demo
 
-Using Android Studio, open [demo/android/LeopardDemo](/demo/android/LeopardDemo) as an Android project and then run the application.
+Using Android Studio, open [demo/android/LeopardDemo](./demo/android/LeopardDemo) as an Android project and then run the application.
 
-Replace `"${YOUR_ACCESS_KEY_HERE}"` in the file [MainActivity.java](/demo/android/LeopardDemo/leopard-demo-app/src/main/java/ai/picovoice/leoparddemo/MainActivity.java) with your `AccessKey`.
+Replace `"${YOUR_ACCESS_KEY_HERE}"` in the file [MainActivity.java](./demo/android/LeopardDemo/leopard-demo-app/src/main/java/ai/picovoice/leoparddemo/MainActivity.java) with your `AccessKey`.
 
 ### Node.js Demo
 
@@ -132,17 +132,17 @@ leopard-file-demo --access_key ${ACCESS_KEY} --input_audio_file_path ${AUDIO_PAT
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
 wish to transcribe.
 
-For more information about Node.js demos go to [demo/nodejs](/demo/nodejs).
+For more information about Node.js demos go to [demo/nodejs](./demo/nodejs).
 
 ### Flutter Demo
 
 To run the Leopard demo on Android or iOS with Flutter, you must have the [Flutter SDK](https://flutter.dev/docs/get-started/install) installed on your system. Once installed, you can run `flutter doctor` to determine any other missing requirements for your relevant platform. Once your environment has been set up, launch a simulator or connect an Android/iOS device.
 
-Before launching the app, use the [copy_assets.sh](/demo/flutter/copy_assets.sh) script to copy the cheetah demo model file into the demo project. (**NOTE**: on Windows, Git Bash or another bash shell is required, or you will have to manually copy the context into the project).
+Before launching the app, use the [copy_assets.sh](./demo/flutter/copy_assets.sh) script to copy the cheetah demo model file into the demo project. (**NOTE**: on Windows, Git Bash or another bash shell is required, or you will have to manually copy the context into the project).
 
-Replace `"${YOUR_ACCESS_KEY_HERE}"` in the file [main.dart](/demo/flutter/lib/main.dart) with your `AccessKey`.
+Replace `"${YOUR_ACCESS_KEY_HERE}"` in the file [main.dart](./demo/flutter/lib/main.dart) with your `AccessKey`.
 
-Run the following command from [demo/flutter](/demo/flutter) to build and deploy the demo to your device:
+Run the following command from [demo/flutter](./demo/flutter) to build and deploy the demo to your device:
 
 ```console
 flutter run
@@ -150,9 +150,9 @@ flutter run
 
 ### Go Demo
 
-The demo requires `cgo`, which on Windows may mean that you need to install a gcc compiler like [Mingw](http://mingw-w64.org/doku.php) to build it properly.
+The demo requires `cgo`, which on Windows may mean that you need to install a gcc compiler like [Mingw](https://www.mingw-w64.org/) to build it properly.
 
-From [demo/go](/demo/go) run the following command from the terminal to build and run the file demo:
+From [demo/go](./demo/go) run the following command from the terminal to build and run the file demo:
 
 ```console
 go run filedemo/leopard_file_demo.go -access_key "${ACCESS_KEY}" -input_audio_path "${AUDIO_PATH}"
@@ -160,13 +160,13 @@ go run filedemo/leopard_file_demo.go -access_key "${ACCESS_KEY}" -input_audio_pa
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you wish to transcribe.
 
-For more information about Go demos go to [demo/go](/demo/go).
+For more information about Go demos go to [demo/go](./demo/go).
 
 ### React Native Demo
 
 To run the React Native Leopard demo app you will first need to set up your React Native environment. For this,
 please refer to [React Native's documentation](https://reactnative.dev/docs/environment-setup). Once your environment has
-been set up, navigate to [demo/react-native](/demo/react-native) to run the following commands:
+been set up, navigate to [demo/react-native](./demo/react-native) to run the following commands:
 
 For Android:
 
@@ -184,9 +184,9 @@ yarn ios-run
 
 ### Java Demo
 
-The [Leopard Java demo](/demo/java) is a command-line application that lets you choose between running Leopard on an audio file or on microphone input.
+The [Leopard Java demo](./demo/java) is a command-line application that lets you choose between running Leopard on an audio file or on microphone input.
 
-From [demo/java](/demo/java) run the following commands from the terminal to build and run the file demo:
+From [demo/java](./demo/java) run the following commands from the terminal to build and run the file demo:
 
 ```console
 cd demo/java
@@ -197,14 +197,14 @@ java -jar leopard-file-demo.jar -a ${ACCESS_KEY} -i ${AUDIO_PATH}
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you wish to transcribe.
 
-For more information about Java demos go to [demo/java](/demo/java).
+For more information about Java demos go to [demo/java](./demo/java).
 
 ### .NET Demo
 
-[Leopard .NET demo](/demo/dotnet) is a command-line application that lets you choose between running Leopard on an audio
+[Leopard .NET demo](./demo/dotnet) is a command-line application that lets you choose between running Leopard on an audio
 file or on real-time microphone input.
 
-From [demo/dotnet/LeopardDemo](/demo/dotnet/LeopardDemo) run the following in the terminal:
+From [demo/dotnet/LeopardDemo](./demo/dotnet/LeopardDemo) run the following in the terminal:
 
 ```console
 dotnet run -c FileDemo.Release -- --access_key ${ACCESS_KEY} --input_audio_path ${AUDIO_PATH}
@@ -213,14 +213,14 @@ dotnet run -c FileDemo.Release -- --access_key ${ACCESS_KEY} --input_audio_path 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
 wish to transcribe.
 
-For more information about .NET demos, go to [demo/dotnet](/demo/dotnet).
+For more information about .NET demos, go to [demo/dotnet](./demo/dotnet).
 
 ### Rust Demo
 
-[Leopard Rust demo](/demo/rust) is a command-line application that lets you choose between running Leopard on an audio
+[Leopard Rust demo](./demo/rust) is a command-line application that lets you choose between running Leopard on an audio
 file or on real-time microphone input.
 
-From [demo/rust/filedemo](/demo/rust/filedemo) run the following in the terminal:
+From [demo/rust/filedemo](./demo/rust/filedemo) run the following in the terminal:
 
 ```console
 carogu run --release -- --access_key ${ACCESS_KEY} --input_audio_path ${AUDIO_PATH}
@@ -229,11 +229,11 @@ carogu run --release -- --access_key ${ACCESS_KEY} --input_audio_path ${AUDIO_PA
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
 wish to transcribe.
 
-For more information about Rust demos, go to [demo/rust](/demo/rust).
+For more information about Rust demos, go to [demo/rust](./demo/rust).
 
 ### Web Demo
 
-From [demo/web](/demo/web) run the following in the terminal:
+From [demo/web](./demo/web) run the following in the terminal:
 
 ```console
 yarn
@@ -247,6 +247,7 @@ npm install
 npm run start
 ```
 
+<!-- markdown-link-check-disable-next-line -->
 Open [http://localhost:5000](http://localhost:5000) in your browser to try the demo.
 
 ## SDKs
@@ -269,7 +270,7 @@ handle = pvleopard.create(access_key='${ACCESS_KEY}')
 print(handle.process_file('${AUDIO_PATH}'))
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and
 `${AUDIO_PATH}` to path an audio file. Finally, when done be sure to explicitly release the resources using
 `handle.delete()`.
 
@@ -315,7 +316,7 @@ free(words);
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_PATH}` to path to
-[default model file](/lib/common/leopard_params.pv) (or your custom one), and `${AUDIO_PATH}` to path an audio file.
+[default model file](./lib/common/leopard_params.pv) (or your custom one), and `${AUDIO_PATH}` to path an audio file.
 Finally, when done be sure to release resources acquired using `pv_leopard_delete(handle)`.
 
 ### iOS
@@ -345,7 +346,7 @@ do {
 } catch { }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` a custom trained model from [console](https://console.picovoice.ai/) or the [default model](/lib/common/leopard_params.pv), `${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of the audio file.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` a custom trained model from [console](https://console.picovoice.ai/) or the [default model](./lib/common/leopard_params.pv), `${AUDIO_FILE_NAME}` with the name of the audio file and `${AUDIO_FILE_EXTENSION}` with the extension of the audio file.
 
 ### Android
 
@@ -376,7 +377,7 @@ try {
 } catch (LeopardException ex) { }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with a custom trained model from [console](https://console.picovoice.ai/) or the [default model](/lib/common/leopard_params.pv), and `${AUDIO_FILE_PATH}` with the path to the audio file.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with a custom trained model from [console](https://console.picovoice.ai/) or the [default model](./lib/common/leopard_params.pv), and `${AUDIO_FILE_PATH}` with the path to the audio file.
 
 ### Node.js
 
@@ -397,7 +398,7 @@ const result = engineInstance.processFile('${AUDIO_PATH}');
 console.log(result.transcript);
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and
 `${AUDIO_PATH}` to path an audio file.
 
 When done, be sure to release resources using `release()`:
@@ -429,7 +430,7 @@ try {
 } on LeopardException catch (err) { }
 ```
 
-Replace `${ACCESS_KEY}` with your `AccessKey` obtained from [Picovoice Console](https://console.picovoice.ai/), `${MODEL_FILE}` with a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](lib/common/leopard_params.pv), and `${AUDIO_FILE_PATH}` with the path to the audio file.
+Replace `${ACCESS_KEY}` with your `AccessKey` obtained from [Picovoice Console](https://console.picovoice.ai/), `${MODEL_FILE}` with a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](./lib/common/leopard_params.pv), and `${AUDIO_FILE_PATH}` with the path to the audio file.
 
 ### Go
 
@@ -491,7 +492,7 @@ try {
 }
 ```
 
-Replace `${ACCESS_KEY}` with your `AccessKey` obtained from Picovoice Console, `${MODEL_FILE}` with a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](/lib/common/leopard_params.pv) and `${AUDIO_FILE_PATH}` with the absolute path of the audio file. 
+Replace `${ACCESS_KEY}` with your `AccessKey` obtained from Picovoice Console, `${MODEL_FILE}` with a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](./lib/common/leopard_params.pv) and `${AUDIO_FILE_PATH}` with the absolute path of the audio file. 
 When done be sure to explicitly release the resources using `leopard.delete()`.
 
 ### Java
@@ -518,7 +519,7 @@ try {
 System.out.println(transcript);
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and `${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and `${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
 
 ### .NET
 
@@ -541,7 +542,7 @@ Leopard handle = Leopard.Create(accessKey);
 Console.Write(handle.ProcessFile(audioPath));
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)). Finally, when done release the resources using `handle.Dispose()`.
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/). Finally, when done release the resources using `handle.Dispose()`.
 
 ### Rust
 
@@ -568,7 +569,7 @@ fn main() {
 }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)).
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/).
 
 ### Web
 
@@ -605,7 +606,7 @@ console.log(transcript);
 console.log(words);
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)). Finally, when done release the resources using `leopard.release()`.
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/). Finally, when done release the resources using `leopard.release()`.
 
 ## Releases
 

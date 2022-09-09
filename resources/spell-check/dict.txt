@@ -1,0 +1,7 @@
+picovoice
+flac
+vorbis
+Jetson
+Signup
+libpv
+NETCOREAPP

@@ -8,9 +8,9 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 ## Running the Demo
 
-Before building the demo app, run the following from [LeopardDemo](/demo/ios/LeopardDemo) directory to install the Leopard Cocoapod:
+Before building the demo app, run the following from [LeopardDemo](./LeopardDemo) directory to install the Leopard Cocoapod:
 
 ```console
 pod install
 ```
-Open [LeopardDemo.xcworkspace](/demo/ios/LeopardDemo/LeopardDemo.xcworkspace`) and run the demo.
+Open [LeopardDemo.xcworkspace](./LeopardDemo/LeopardDemo.xcworkspace`) and run the demo.

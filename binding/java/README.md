@@ -63,8 +63,8 @@ try {
 System.out.println(transcript);
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and `${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and `${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
 
 ## Demo App
 
-For example usage, refer to our [Java demos](/demo/java).
+For example usage, refer to our [Java demos](../../demo/java).
