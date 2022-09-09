@@ -21,5 +21,4 @@ yarn
 yarn start
 ```
 
-<!-- markdown-link-check-disable-next-line -->
-Visit [http://localhost:3000](http://localhost:3000) to use the application.
+Visit `http://localhost:3000` to use the application.

@@ -247,8 +247,7 @@ npm install
 npm run start
 ```
 
-<!-- markdown-link-check-disable-next-line -->
-Open [http://localhost:5000](http://localhost:5000) in your browser to try the demo.
+Open `http://localhost:5000` in your browser to try the demo.
 
 ## SDKs
 
