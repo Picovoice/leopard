@@ -25,7 +25,7 @@ func main() {
 	modelPathArg := flag.String("model_path", "", "Path to Leopard model file")
 	libraryPathArg := flag.String("library_path", "", "Path to Leopard's dynamic library file")
 	disableAutomaticPunctuationArg := flag.Bool("disable_automatic_punctuation", false, "Disable automatic punctuation")
-	verbosArg := flag.Bool("verbose", false, "Enable verbose logging")
+	verboseArg := flag.Bool("verbose", false, "Enable verbose logging")
 	inputAudioPathArg := flag.String("input_audio_path", "", "Path to input audio file (mono, valid: `3gp (AMR)`, `FLAC`, `MP3`, `MP4/m4a (AAC)`, `Ogg`, `WAV`, `WebM`, 16-bit)")
 
 	flag.Parse()
@@ -78,7 +78,7 @@ func main() {
 	}
 
 	fmt.Println(transcript)
-	if *verbosArg {
+	if *verboseArg {
 		fmt.Printf("|%10s | %15s | %15s | %10s|\n", "word", "Start in Sec", "End in Sec", "Confidence")
 		for _, word := range words {
 			fmt.Printf("|%10s | %15.2f | %15.2f | %10.2f|\n", word.Word, word.StartSec, word.EndSec, word.Confidence)

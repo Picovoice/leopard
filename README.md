@@ -223,7 +223,7 @@ file or on real-time microphone input.
 From [demo/rust/filedemo](./demo/rust/filedemo) run the following in the terminal:
 
 ```console
-carogu run --release -- --access_key ${ACCESS_KEY} --input_audio_path ${AUDIO_PATH}
+cargo run --release -- --access_key ${ACCESS_KEY} --input_audio_path ${AUDIO_PATH}
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
@@ -460,7 +460,7 @@ if err != nil {
 log.Println(transcript)
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and
 `${AUDIO_PATH}` to path an audio file. Finally, when done be sure to explicitly release the resources using
 `leopard.Delete()`.
 

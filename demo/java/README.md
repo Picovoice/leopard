@@ -52,7 +52,7 @@ java -jar leopard-file-demo.jar -a ${ACCESS_KEY} -i ${AUDIO_PATH}
 
 ### Microphone Demo
 
-The microphone demo opens an audio stream from a microphone, records audio and performces speech-to-text transcription from the recorded audio:
+The microphone demo opens an audio stream from a microphone, records audio and performs speech-to-text transcription from the recorded audio:
 
 ```console
 java -jar leopard-mic-demo.jar -a ${ACCESS_KEY}

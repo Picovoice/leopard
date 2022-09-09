@@ -33,6 +33,10 @@
     "**/AndroidManifest.xml",
     "**/activity_main.xml",
 
+    // go
+    "**/go.sum",
+    "**/go.mod",
+
     // ios
     "**/*.xcconfig",
     "**/*.podspec",

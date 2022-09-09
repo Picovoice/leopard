@@ -13,4 +13,4 @@ Before building the demo app, run the following from [LeopardDemo](./LeopardDemo
 ```console
 pod install
 ```
-Open [LeopardDemo.xcworkspace](./LeopardDemo/LeopardDemo.xcworkspace`) and run the demo.
+Open [LeopardDemo.xcworkspace](./LeopardDemo/LeopardDemo.xcworkspace) and run the demo.
