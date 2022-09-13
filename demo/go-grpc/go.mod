@@ -3,7 +3,7 @@ module leopardgogrpc
 go 1.18
 
 require (
-	github.com/Picovoice/leopard/binding/go v1.0.5-0.20220805231309-633f90f90b37
+	github.com/Picovoice/leopard/binding/go v1.1.2
 	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.3.0
 	google.golang.org/grpc v1.45.0
