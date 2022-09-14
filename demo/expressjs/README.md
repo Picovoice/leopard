@@ -3,7 +3,7 @@
 A web application that demonstrates how Picovoice Leopard can be used on a server with Express.js to transcribe the 
 latest episode of a given podcast.
 
-## Compatability
+## Compatibility
 
 - Node.js 12+
 
@@ -21,4 +21,4 @@ yarn
 yarn start
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) to use the application.
+Visit `http://localhost:3000` to use the application.

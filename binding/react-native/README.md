@@ -85,7 +85,7 @@ try {
 }
 ```
 
-Replace `${ACCESS_KEY}` with your `AccessKey` obtained from [Picovoice Console]((https://console.picovoice.ai/)), `${MODEL_FILE}`
+Replace `${ACCESS_KEY}` with your `AccessKey` obtained from [Picovoice Console](https://console.picovoice.ai/), `${MODEL_FILE}`
 with the name of the Leopard model file name and `${AUDIO_FILE_PATH}` with the absolute path of the audio file.
 Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
 

@@ -33,7 +33,7 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 Add the Leopard model file in `Xcode`:
 
-1. Create a model in [Picovoice Console](https://console.picovoice.ai/) or use the [default model](/lib/common/).
+1. Create a model in [Picovoice Console](https://console.picovoice.ai/) or use the [default model](../../lib/common/).
 2. Add the model as a bundled resource by selecting Build Phases and adding it to `Copy Bundle Resources` step.
 
 Create an instance of the engine:
@@ -67,7 +67,7 @@ do {
 ```
 
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)), `${MODEL_FILE}` 
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/), `${MODEL_FILE}` 
 with the name of the Leopard model file name, `${AUDIO_FILE_NAME}` with the name of the audio file and 
 `${AUDIO_FILE_EXTENSION}` with the extension of the audio file. Finally, when done be sure to explicitly release
 the resources using `leopard.delete()`.
@@ -78,4 +78,4 @@ Copy your `AccessKey` into the `accessKey` variable in [`LeopardAppTestUITests.s
 
 ## Demo App
 
-For example usage refer to our [iOS demo application](/demo/ios).
+For example usage refer to our [iOS demo application](../../demo/ios).

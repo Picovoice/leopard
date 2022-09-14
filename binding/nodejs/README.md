@@ -44,7 +44,7 @@ const result = engineInstance.processFile('${AUDIO_PATH}');
 console.log(result.transcript);
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console]((https://console.picovoice.ai/)) and
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and
 `${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using
 `handle.release()`.
 
