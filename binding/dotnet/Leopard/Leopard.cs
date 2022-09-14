@@ -331,7 +331,7 @@ namespace Pv
                 pv_leopard_delete(_libraryPointer);
                 _libraryPointer = IntPtr.Zero;
 
-                // ensures finalize doesn't trigger if already manually disposed
+                // ensures finalizer doesn't trigger if already manually disposed
                 GC.SuppressFinalize(this);
             }
         }

@@ -23,6 +23,7 @@ EADDRINUSE
 exopackage
 favourite
 filedemo
+finalizer
 flac
 floatfmt
 fprintf
