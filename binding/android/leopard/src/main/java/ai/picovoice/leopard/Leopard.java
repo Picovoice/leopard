@@ -24,10 +24,6 @@ import java.io.OutputStream;
  */
 public class Leopard {
 
-    static {
-        System.loadLibrary("pv_leopard");
-    }
-
     private final static String[] VALID_EXTENSIONS = {
             "3gp",
             "flac",
@@ -41,7 +37,11 @@ public class Leopard {
             "webm"
     };
 
-    private final long handle;
+    static {
+        System.loadLibrary("pv_leopard");
+    }
+
+    private long handle;
 
     /**
      * Constructor.
@@ -55,7 +55,7 @@ public class Leopard {
             String accessKey,
             String modelPath,
             boolean enableAutomaticPunctuation) throws LeopardException {
-        handle = init(
+        handle = LeopardNative.init(
                 accessKey,
                 modelPath,
                 enableAutomaticPunctuation);
@@ -86,7 +86,10 @@ public class Leopard {
      * Releases resources acquired by Leopard.
      */
     public void delete() {
-        delete(handle);
+        if (handle != 0) {
+            LeopardNative.delete(handle);
+            handle = 0;
+        }
     }
 
     /**
@@ -100,7 +103,15 @@ public class Leopard {
      * @throws LeopardException if there is an error while processing the audio frame.
      */
     public LeopardTranscript process(short[] pcm) throws LeopardException {
-        return process(handle, pcm, pcm.length);
+        if (handle == 0) {
+            throw new LeopardInvalidStateException("Attempted to call Leopard process after delete.");
+        }
+
+        if (pcm == null) {
+            throw new LeopardInvalidArgumentException("Passed null frame to Leopard process.");
+        }
+
+        return LeopardNative.process(handle, pcm, pcm.length);
     }
 
     /**
@@ -112,8 +123,16 @@ public class Leopard {
      * @throws LeopardException if there is an error while processing the audio frame.
      */
     public LeopardTranscript processFile(String path) throws LeopardException {
+        if (handle == 0) {
+            throw new LeopardInvalidStateException("Attempted to call Leopard processFile after delete.");
+        }
+
+        if (path == null || path.equals("")) {
+            throw new LeopardInvalidArgumentException("Passed null path to Leopard processFile.");
+        }
+
         try {
-            return processFile(handle, path);
+            return LeopardNative.processFile(handle, path);
         } catch (LeopardInvalidArgumentException e) {
             boolean endsWithValidExt = false;
             for (String ext : VALID_EXTENSIONS) {
@@ -138,30 +157,18 @@ public class Leopard {
      *
      * @return Required audio sample rate for PCM data.
      */
-    public native int getSampleRate();
+    public int getSampleRate() {
+        return LeopardNative.getSampleRate();
+    }
 
     /**
      * Getter for Leopard version.
      *
      * @return Leopard version.
      */
-    public native String getVersion();
-
-    private native long init(
-            String accessKey,
-            String modelPath,
-            boolean enableAutomaticPunctuation) throws LeopardException;
-
-    private native void delete(long object);
-
-    private native LeopardTranscript process(
-            long object,
-            short[] pcm,
-            int numSamples) throws LeopardException;
-
-    private native LeopardTranscript processFile(
-            long object,
-            String path) throws LeopardException;
+    public String getVersion() {
+        return LeopardNative.getVersion();
+    }
 
     public static class Builder {
 

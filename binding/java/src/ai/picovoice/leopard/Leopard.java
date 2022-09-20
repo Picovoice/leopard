@@ -38,20 +38,13 @@ public class Leopard {
      * @param enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
      * @throws LeopardException if there is an error while initializing Leopard.
      */
-    private Leopard(
-            String accessKey,
-            String modelPath,
-            String libraryPath,
-            boolean enableAutomaticPunctuation) throws LeopardException {
+    private Leopard(String accessKey, String modelPath, String libraryPath, boolean enableAutomaticPunctuation) throws LeopardException {
         try {
             System.load(libraryPath);
         } catch (Exception exception) {
             throw new LeopardException(exception);
         }
-        handle = LeopardNative.init(
-                accessKey,
-                modelPath,
-                enableAutomaticPunctuation);
+        handle = LeopardNative.init(accessKey, modelPath, enableAutomaticPunctuation);
     }
 
     /**
@@ -183,8 +176,7 @@ public class Leopard {
         public Leopard build() throws LeopardException {
 
             if (!Utils.isEnvironmentSupported()) {
-                throw new LeopardRuntimeException("Could not initialize Leopard. " +
-                        "Execution environment not currently supported by Leopard Java.");
+                throw new LeopardRuntimeException("Could not initialize Leopard. " + "Execution environment not currently supported by Leopard Java.");
             }
 
             if (accessKey == null) {
@@ -195,12 +187,10 @@ public class Leopard {
                 if (Utils.isResourcesAvailable()) {
                     libraryPath = LIBRARY_PATH;
                 } else {
-                    throw new LeopardInvalidArgumentException("Default library unavailable. Please " +
-                            "provide a native Leopard library path (-l <library_path>).");
+                    throw new LeopardInvalidArgumentException("Default library unavailable. Please " + "provide a native Leopard library path (-l <library_path>).");
                 }
                 if (libraryPath == null || !new File(libraryPath).exists()) {
-                    throw new LeopardIOException(String.format("Couldn't find library file at " +
-                            "'%s'", libraryPath));
+                    throw new LeopardIOException(String.format("Couldn't find library file at " + "'%s'", libraryPath));
                 }
             }
 
@@ -208,20 +198,14 @@ public class Leopard {
                 if (Utils.isResourcesAvailable()) {
                     modelPath = MODEL_PATH;
                 } else {
-                    throw new LeopardInvalidArgumentException("Default model unavailable. Please provide a " +
-                            "valid Leopard model path (-m <model_path>).");
+                    throw new LeopardInvalidArgumentException("Default model unavailable. Please provide a " + "valid Leopard model path (-m <model_path>).");
                 }
                 if (!new File(modelPath).exists()) {
-                    throw new LeopardIOException(String.format("Couldn't find model file at " +
-                            "'%s'", modelPath));
+                    throw new LeopardIOException(String.format("Couldn't find model file at " + "'%s'", modelPath));
                 }
             }
 
-            return new Leopard(
-                    accessKey,
-                    modelPath,
-                    libraryPath,
-                    enableAutomaticPunctuation);
+            return new Leopard(accessKey, modelPath, libraryPath, enableAutomaticPunctuation);
         }
     }
 }
