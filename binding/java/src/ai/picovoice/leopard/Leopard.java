@@ -14,14 +14,8 @@ package ai.picovoice.leopard;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.logging.Logger;
-import java.util.Set;
-import java.util.stream.*;
 
 public class Leopard {
-
-    private final long libraryHandle;
 
     public static final String LIBRARY_PATH;
     public static final String MODEL_PATH;
@@ -33,6 +27,8 @@ public class Leopard {
         VALID_EXTENSIONS = Utils.getValidFileExtensions();
     }
 
+    private long handle;
+
     /**
      * Constructor.
      *
@@ -42,27 +38,23 @@ public class Leopard {
      * @param enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
      * @throws LeopardException if there is an error while initializing Leopard.
      */
-    private Leopard(
-            String accessKey,
-            String modelPath,
-            String libraryPath,
-            boolean enableAutomaticPunctuation) throws LeopardException {
+    private Leopard(String accessKey, String modelPath, String libraryPath, boolean enableAutomaticPunctuation) throws LeopardException {
         try {
             System.load(libraryPath);
         } catch (Exception exception) {
             throw new LeopardException(exception);
         }
-        libraryHandle = init(
-                accessKey,
-                modelPath,
-                enableAutomaticPunctuation);
+        handle = LeopardNative.init(accessKey, modelPath, enableAutomaticPunctuation);
     }
 
     /**
      * Releases resources acquired by Leopard.
      */
     public void delete() {
-        delete(libraryHandle);
+        if (handle != 0) {
+            LeopardNative.delete(handle);
+            handle = 0;
+        }
     }
 
     /**
@@ -75,7 +67,15 @@ public class Leopard {
      * @throws LeopardException if there is an error while processing the audio frame.
      */
     public LeopardTranscript process(short[] pcm) throws LeopardException {
-        return process(libraryHandle, pcm, pcm.length);
+        if (handle == 0) {
+            throw new LeopardInvalidStateException("Attempted to call Leopard process after delete.");
+        }
+
+        if (pcm == null) {
+            throw new LeopardInvalidArgumentException("Passed null frame to Leopard process.");
+        }
+
+        return LeopardNative.process(handle, pcm, pcm.length);
     }
 
     /**
@@ -87,8 +87,16 @@ public class Leopard {
      * @throws LeopardException if there is an error while processing the audio frame.
      */
     public LeopardTranscript processFile(String path) throws LeopardException {
+        if (handle == 0) {
+            throw new LeopardInvalidStateException("Attempted to call Leopard processFile after delete.");
+        }
+
+        if (path == null || path.equals("")) {
+            throw new LeopardInvalidArgumentException("Passed null path to Leopard processFile.");
+        }
+
         try {
-            return processFile(libraryHandle, path);
+            return LeopardNative.processFile(handle, path);
         } catch (LeopardInvalidArgumentException e) {
             if (path.contains(".")) {
                 String extension = path.substring(path.lastIndexOf(".") + 1);
@@ -105,25 +113,18 @@ public class Leopard {
      *
      * @return Required audio sample rate for PCM data.
      */
-    public native int getSampleRate();
+    public int getSampleRate() {
+        return LeopardNative.getSampleRate();
+    }
 
     /**
      * Getter for Leopard version.
      *
      * @return Leopard version.
      */
-    public native String getVersion();
-
-    private native long init(
-            String accessKey,
-            String modelPath,
-            boolean enableAutomaticPunctuation) throws LeopardException;
-
-    private native void delete(long object);
-
-    private native LeopardTranscript process(long object, short[] pcm, int numSamples) throws LeopardException;
-
-    private native LeopardTranscript processFile(long object, String path) throws LeopardException;
+    public String getVersion() {
+        return LeopardNative.getVersion();
+    }
 
     public static class Builder {
         private String accessKey = null;
@@ -175,8 +176,7 @@ public class Leopard {
         public Leopard build() throws LeopardException {
 
             if (!Utils.isEnvironmentSupported()) {
-                throw new LeopardRuntimeException("Could not initialize Leopard. " +
-                        "Execution environment not currently supported by Leopard Java.");
+                throw new LeopardRuntimeException("Could not initialize Leopard. " + "Execution environment not currently supported by Leopard Java.");
             }
 
             if (accessKey == null) {
@@ -187,12 +187,10 @@ public class Leopard {
                 if (Utils.isResourcesAvailable()) {
                     libraryPath = LIBRARY_PATH;
                 } else {
-                    throw new LeopardInvalidArgumentException("Default library unavailable. Please " +
-                            "provide a native Leopard library path (-l <library_path>).");
+                    throw new LeopardInvalidArgumentException("Default library unavailable. Please " + "provide a native Leopard library path (-l <library_path>).");
                 }
-                if (!new File(libraryPath).exists()) {
-                    throw new LeopardIOException(String.format("Couldn't find library file at " +
-                            "'%s'", libraryPath));
+                if (libraryPath == null || !new File(libraryPath).exists()) {
+                    throw new LeopardIOException(String.format("Couldn't find library file at " + "'%s'", libraryPath));
                 }
             }
 
@@ -200,20 +198,14 @@ public class Leopard {
                 if (Utils.isResourcesAvailable()) {
                     modelPath = MODEL_PATH;
                 } else {
-                    throw new LeopardInvalidArgumentException("Default model unavailable. Please provide a " +
-                            "valid Leopard model path (-m <model_path>).");
+                    throw new LeopardInvalidArgumentException("Default model unavailable. Please provide a " + "valid Leopard model path (-m <model_path>).");
                 }
                 if (!new File(modelPath).exists()) {
-                    throw new LeopardIOException(String.format("Couldn't find model file at " +
-                            "'%s'", modelPath));
+                    throw new LeopardIOException(String.format("Couldn't find model file at " + "'%s'", modelPath));
                 }
             }
 
-            return new Leopard(
-                    accessKey,
-                    modelPath,
-                    libraryPath,
-                    enableAutomaticPunctuation);
+            return new Leopard(accessKey, modelPath, libraryPath, enableAutomaticPunctuation);
         }
     }
 }
