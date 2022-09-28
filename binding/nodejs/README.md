@@ -35,7 +35,7 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 Create an instance of the engine and transcribe an audio file:
 
 ```javascript
-const Leopard = require("@picovoice/leopard-node");
+const {Leopard} = require("@picovoice/leopard-node");
 
 const accessKey = "${ACCESS_KEY}" // Obtained from the Picovoice Console (https://console.picovoice.ai/)
 const handle = new Leopard(accessKey);
