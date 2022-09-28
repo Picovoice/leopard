@@ -40,7 +40,7 @@ const {Leopard} = require("@picovoice/leopard-node");
 const accessKey = "${ACCESS_KEY}" // Obtained from the Picovoice Console (https://console.picovoice.ai/)
 const handle = new Leopard(accessKey);
 
-const result = engineInstance.processFile('${AUDIO_PATH}');
+const result = handle.processFile('${AUDIO_PATH}');
 console.log(result.transcript);
 ```
 
