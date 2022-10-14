@@ -21,6 +21,11 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 - Firefox
 - Safari
 
+### Restrictions
+
+IndexedDB is required to use `Leopard` in a worker thread. Browsers without IndexedDB support
+(i.e. Firefox Incognito Mode) should use `Leopard` in the main thread.
+
 ## Installation
 
 Using `yarn`:
