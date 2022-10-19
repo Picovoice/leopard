@@ -28,7 +28,7 @@ app's `build.gradle`:
 ```groovy
 dependencies {
     // ...
-    implementation 'ai.picovoice:leopard-android:${VERSION}'
+    implementation 'ai.picovoice:leopard-android:${LATEST_VERSION}'
 }
 ```
 
@@ -43,7 +43,7 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 Add the Leopard model file to your Android application by:
 
 1. Either create a model in [Picovoice Console](https://console.picovoice.ai/) or use the [default model](../../lib/common).
-2. Add the model as a bundled resource by placing it under the `assets` directory of your Android application.
+2. Add the model as a bundled resource by placing it under the assets directory of your Android project (`src/main/assets/`).
 
 Create an instance of the engine with the Leopard Builder class by passing in the `accessKey`, `modelPath` and Android app context:
 
@@ -51,7 +51,7 @@ Create an instance of the engine with the Leopard Builder class by passing in th
 import ai.picovoice.leopard.*;
 
 final String accessKey = "${ACCESS_KEY}"; // AccessKey provided by Picovoice Console (https://console.picovoice.ai/)
-final String modelPath = "${MODEL_FILE}";
+final String modelPath = "${MODEL_PATH}"; // relative path to assets directory
 try {
     Leopard handle = new Leopard.Builder()
         .setAccessKey(accessKey)
@@ -72,7 +72,7 @@ Supported audio file formats are `3gp (AMR)`, `FLAC`, `MP3`, `MP4/m4a (AAC)`, `O
 Transcribe raw audio data (sample rate of 16 kHz, 16-bit linearly encoded and 1 channel):
 ```java
 short[] getAudioData() {
-    // ...    
+    // ...
 }
 LeopardTranscript transcript = handle.process(getAudioData());
 ```
