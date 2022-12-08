@@ -1,4 +1,4 @@
-# Leopard Binding for iOS
+# Leopard Binding for React Native
 
 ## Leopard Speech-to-Text Engine
 
@@ -50,7 +50,7 @@ Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` ac
 You can get your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
 Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get your `AccessKey`.
 
-## Adding custom Leopard models
+## Adding Leopard Models
 
 Create a custom model using the [Picovoice Console](https://console.picovoice.ai/) or use the [default model](https://github.com/Picovoice/leopard/tree/master/lib/common/).
 
@@ -64,18 +64,26 @@ To add a Leopard model file to your iOS application, add the file as a bundled r
 
 ## Usage
 
-Transcribe an audio file either by passing the absolute path or an url to the file:
+Create an instance of `Leopard`:
 
 ```typescript
-import { Leopard, LeopardErrors } from '@picovoice/leopard-react-native';
+import { Leopard, LeopardErrors } from '@picovoice/leopard-react-native'
 
-const getAudioFrame = () => {
-  // get audio frames
-}
+const accessKey = "${ACCESS_KEY}" // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
+const modelPath = "${LEOPARD_MODEL_PATH}" // path relative to the assets folder or absolute path to file on device
 
 try {
-  const leopard = await Leopard.create("${ACCESS_KEY}", "${MODEL_FILE}")
+    const leopard = await Leopard.create(accessKey, modelPath)
+} catch (err: any) {
+  if (err instanceof LeopardErrors) {
+    // handle error
+  }
+}
+```
 
+Transcribe an audio file by passing the file path to Leopard:
+```typescript
+try {
   const { transcript, words } = await leopard.processFile("${AUDIO_FILE_PATH}")
   console.log(transcript)
 } catch (err: any) {
@@ -85,8 +93,6 @@ try {
 }
 ```
 
-Replace `${ACCESS_KEY}` with your `AccessKey` obtained from [Picovoice Console](https://console.picovoice.ai/), `${MODEL_FILE}`
-with the name of the Leopard model file name and `${AUDIO_FILE_PATH}` with the absolute path of the audio file.
 Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
 
 ## Demo App

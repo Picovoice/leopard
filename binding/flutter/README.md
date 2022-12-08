@@ -71,6 +71,8 @@ flutter:
 String modelPath = "assets/leopard_model.pv";
 ```
 
+Alternatively, if the model file is deployed to the device with a different method, the absolute path to the file on device can be used.
+
 ## Usage
 
 An instance of [`Leopard`](https://picovoice.ai/docs/api/leopard-flutter/#leopard) is created by passing a model file path into its static constructor `create`:
@@ -78,11 +80,12 @@ An instance of [`Leopard`](https://picovoice.ai/docs/api/leopard-flutter/#leopar
 ```dart
 import 'package:leopard_flutter/leopard.dart';
 
-const accessKey = "{ACCESS_KEY}"  // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
+String accessKey = '{ACCESS_KEY}' // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
+String modelPath = '{LEOPARD_MODEL_PATH}' // path relative to the assets folder or absolute path to file on device
 
 void createLeopard() async {
     try {
-        _leopard = await Leopard.create(accessKey, '{LEOPARD_MODEL_PATH}');
+        _leopard = await Leopard.create(accessKey, modelPath);
     } on LeopardException catch (err) {
         // handle Leopard init error
     }
