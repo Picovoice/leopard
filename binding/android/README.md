@@ -51,7 +51,7 @@ Create an instance of the engine with the Leopard Builder class by passing in th
 import ai.picovoice.leopard.*;
 
 final String accessKey = "${ACCESS_KEY}"; // AccessKey provided by Picovoice Console (https://console.picovoice.ai/)
-final String modelPath = "${MODEL_PATH}"; // relative path to assets directory
+final String modelPath = "${MODEL_PATH}"; // path relative to the assets folder or absolute path to file on device
 try {
     Leopard handle = new Leopard.Builder()
         .setAccessKey(accessKey)

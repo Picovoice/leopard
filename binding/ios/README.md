@@ -49,6 +49,8 @@ let accessKey = "${ACCESS_KEY}" // AccessKey obtained from https://console.picov
 let leopard = Leopard(accessKey: accessKey, modelPath: modelPath)
 ```
 
+Alternatively, you can provide `modelPath` as an absolute path to the model file on device.
+
 Transcribe an audio file either by passing the absolute path or an url to the file:
 
 ```swift
