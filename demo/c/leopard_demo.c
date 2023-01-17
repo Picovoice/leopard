@@ -172,7 +172,7 @@ int picovoice_main(int argc, char **argv) {
     gettimeofday(&after, NULL);
 
     double init_sec = ((double) (after.tv_sec - before.tv_sec) + ((double) (after.tv_usec - before.tv_usec)) * 1e-6);
-    fprintf(stdout, "init took %.2f sec\n", init_sec);
+    fprintf(stdout, "init took %.1f sec\n", init_sec);
 
     double proc_sec = 0.;
 
