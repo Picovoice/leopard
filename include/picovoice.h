@@ -56,7 +56,7 @@ PV_API const char *pv_status_to_string(pv_status_t status);
 /**
  * Free allocated memory.
  */
-PV_API void pv_free(void *);
+PV_API void pv_free(void *ptr);
 
 #ifdef __cplusplus
 
