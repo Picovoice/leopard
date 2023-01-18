@@ -158,6 +158,12 @@ int picovoice_main(int argc, char **argv) {
         exit(1);
     }
 
+    void (*pv_free_func)(void *) = load_symbol(dl_handle, "pv_free");
+    if (!pv_free_func) {
+        print_dl_error("failed to load `pv_free`");
+        exit(1);
+    }
+
     struct timeval before;
     gettimeofday(&before, NULL);
 
@@ -193,7 +199,7 @@ int picovoice_main(int argc, char **argv) {
         proc_sec += ((double) (after.tv_sec - before.tv_sec) + ((double) (after.tv_usec - before.tv_usec)) * 1e-6);
 
         fprintf(stdout, "%s\n", transcript);
-        free(transcript);
+        pv_free_func(transcript);
 
         if (show_metadata) {
             for (int32_t j = 0; j < num_words; j++) {
@@ -207,7 +213,7 @@ int picovoice_main(int argc, char **argv) {
             }
             printf("\n");
         }
-        free(words);
+        pv_free_func(words);
     }
 
     fprintf(stdout, "proc took %.2f sec\n", proc_sec);

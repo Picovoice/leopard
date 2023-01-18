@@ -17,12 +17,21 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 ## Usage
 
-### Build
+### Build Linux/MacOS
 
 Build the demo by running this from the root of the repository:
 
 ```console
 cmake -S demo/c/ -B demo/c/build
+cmake --build demo/c/build
+```
+
+### Build Windows
+
+Build the demo by running this from the root of the repository:
+
+```console
+cmake -S demo/c/ -B demo/c/build -G "MinGW Makefiles"
 cmake --build demo/c/build
 ```
 
