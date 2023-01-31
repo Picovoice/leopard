@@ -55,6 +55,7 @@ type LeopardWasmOutput = {
   transcriptAddressAddress: number;
   numWordsAddress: number;
   wordsAddressAddress: number;
+  pvError: PvError;
 };
 
 const PV_STATUS_SUCCESS = 10000;
@@ -85,6 +86,8 @@ export class Leopard {
 
   private static _leopardMutex = new Mutex();
 
+  private readonly _pvError;
+
   private constructor(handleWasm: LeopardWasmOutput) {
     Leopard._sampleRate = handleWasm.sampleRate;
     Leopard._version = handleWasm.version;
@@ -105,6 +108,8 @@ export class Leopard {
     this._memoryBufferUint8 = new Uint8Array(handleWasm.memory.buffer);
     this._memoryBufferView = new DataView(handleWasm.memory.buffer);
     this._processMutex = new Mutex();
+    
+    this._pvError = handleWasm.pvError;
   }
 
   /**
@@ -243,7 +248,7 @@ export class Leopard {
             )}`;
       
             throw new Error(
-              `${msg}\nDetails: ${msg}`
+              `${msg}\nDetails: ${this._pvError.getErrorString()}`
             );
           }
 
@@ -415,6 +420,7 @@ export class Leopard {
       transcriptAddressAddress: transcriptAddressAddress,
       numWordsAddress: numWordsAddress,
       wordsAddressAddress: wordsAddressAddress,
+      pvError: pvError,
     };
   }
 }
