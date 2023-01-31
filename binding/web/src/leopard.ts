@@ -21,7 +21,8 @@ import {
   buildWasm,
   arrayBufferToStringAtIndex,
   isAccessKeyValid,
-  loadModel
+  loadModel,
+  PvError
 } from '@picovoice/web-utils';
 
 import { LeopardModel, LeopardOptions, LeopardTranscript, LeopardWord } from './types';
@@ -236,11 +237,13 @@ export class Leopard {
           );
           if (status !== PV_STATUS_SUCCESS) {
             const memoryBuffer = new Uint8Array(this._wasmMemory.buffer);
+            const msg = `process failed with status ${arrayBufferToStringAtIndex(
+              memoryBuffer,
+              await this._pvStatusToString(status),
+            )}`;
+      
             throw new Error(
-              `process failed with status ${arrayBufferToStringAtIndex(
-                memoryBuffer,
-                await this._pvStatusToString(status),
-              )}`,
+              `${msg}\nDetails: ${msg}`
             );
           }
 
@@ -306,7 +309,9 @@ export class Leopard {
 
     const memoryBufferUint8 = new Uint8Array(memory.buffer);
 
-    const exports = await buildWasm(memory, wasmBase64);
+    const pvError = new PvError();
+
+    const exports = await buildWasm(memory, wasmBase64, pvError);
     const aligned_alloc = exports.aligned_alloc as aligned_alloc_type;
     const pv_free = exports.pv_free as pv_free_type;
     const pv_leopard_version = exports.pv_leopard_version as pv_leopard_version_type;
@@ -378,11 +383,13 @@ export class Leopard {
 
     const status = await pv_leopard_init(accessKeyAddress, modelPathAddress, (enableAutomaticPunctuation) ? 1 : 0, objectAddressAddress);
     if (status !== PV_STATUS_SUCCESS) {
+      const msg = `'pv_leopard_init' failed with status ${arrayBufferToStringAtIndex(
+        memoryBufferUint8,
+        await pv_status_to_string(status),
+      )}`;
+
       throw new Error(
-        `'pv_leopard_init' failed with status ${arrayBufferToStringAtIndex(
-          memoryBufferUint8,
-          await pv_status_to_string(status),
-        )}`,
+        `${msg}\nDetails: ${msg}`
       );
     }
     const memoryBufferView = new DataView(memory.buffer);
