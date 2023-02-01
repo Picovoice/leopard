@@ -394,7 +394,7 @@ export class Leopard {
       )}`;
 
       throw new Error(
-        `${msg}\nDetails: ${msg}`
+        `${msg}\nDetails: ${pvError.getErrorString()}`
       );
     }
     const memoryBufferView = new DataView(memory.buffer);
