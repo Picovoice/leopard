@@ -50,8 +50,8 @@ def main():
         enable_automatic_punctuation=not args.disable_automatic_punctuation)
 
     try:
-        for audio_path in args.audio_paths:
-            transcript, words = o.process_file(audio_path)
+        for wav_path in args.wav_paths:
+            transcript, words = o.process_file(wav_path)
             print(transcript)
             if args.verbose:
                 print(tabulate(words, headers=['word', 'start_sec', 'end_sec', 'confidence'], floatfmt='.2f'))
