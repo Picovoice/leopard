@@ -1,5 +1,5 @@
 #
-#    Copyright 2022 Picovoice Inc.
+#    Copyright 2022-2023 Picovoice Inc.
 #
 #    You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 #    file accompanying this source.
@@ -15,17 +15,18 @@ import time
 from argparse import ArgumentParser
 from threading import Thread
 
-from pvleopard import *
+from pvleopard import create, LeopardActivationLimitError
 from pvrecorder import PvRecorder
 from tabulate import tabulate
 
 
 class Recorder(Thread):
-    def __init__(self):
+    def __init__(self, audio_device_index):
         super().__init__()
         self._pcm = list()
         self._is_recording = False
         self._stop = False
+        self._audio_device_index = audio_device_index
 
     def is_recording(self):
         return self._is_recording
@@ -33,7 +34,7 @@ class Recorder(Thread):
     def run(self):
         self._is_recording = True
 
-        recorder = PvRecorder(device_index=-1, frame_length=160)
+        recorder = PvRecorder(device_index=self._audio_device_index, frame_length=160)
         recorder.start()
 
         while not self._stop:
@@ -52,14 +53,40 @@ class Recorder(Thread):
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument('--access_key', required=True)
-    parser.add_argument('--model_path', default=None)
-    parser.add_argument('--library_path', default=None)
-    parser.add_argument('--disable_automatic_punctuation', action='store_true')
-    parser.add_argument('--verbose', action='store_true')
+    parser.add_argument(
+        '--access_key',
+        help='AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)',
+        required=True)
+    parser.add_argument(
+        '--library_path',
+        help='Absolute path to dynamic library. Default: using the library provided by `pvleopard`')
+    parser.add_argument(
+        '--model_path',
+        help='Absolute path to Leopard model. Default: using the model provided by `pvleopard`')
+    parser.add_argument(
+        '--disable_automatic_punctuation',
+        action='store_true',
+        help='Disable insertion of automatic punctuation')
+    parser.add_argument(
+        '--verbose',
+        action='store_true',
+        help='Print verbose output of the transcription')
+    parser.add_argument(
+        '--show_audio_devices',
+        action='store_true',
+        help='Only list available devices and exit')
+    parser.add_argument(
+        '--audio_device_index',
+        action='store_true',
+        help='Audio device index to use from --show_audio_devices')
     args = parser.parse_args()
 
-    o = create(
+    if args.show_audio_devices:
+        for index, name in enumerate(PvRecorder.get_audio_devices()):
+            print('Device #%d: %s' % (index, name))
+        return
+
+    leopard = create(
         access_key=args.access_key,
         model_path=args.model_path,
         library_path=args.library_path,
@@ -68,7 +95,7 @@ def main():
     recorder = None
 
     def on_exit(_, __):
-        o.delete()
+        leopard.delete()
 
         if recorder is not None:
             recorder.stop()
@@ -84,17 +111,17 @@ def main():
         if recorder is not None:
             input('>>> Recording ... Press `ENTER` to stop: ')
             try:
-                transcript, words = o.process(recorder.stop())
+                transcript, words = leopard.process(recorder.stop())
                 print(transcript)
                 if args.verbose:
                     print(tabulate(words, headers=['word', 'start_sec', 'end_sec', 'confidence'], floatfmt='.2f'))
             except LeopardActivationLimitError:
-                print("AccessKey '%s' has reached it's processing limit." % args.access_key)
+                print('AccessKey has reached its processing limit.')
             print()
             recorder = None
         else:
             input('>>> Press `ENTER` to start: ')
-            recorder = Recorder()
+            recorder = Recorder(args.audio_device_index)
             recorder.start()
             time.sleep(.25)
 

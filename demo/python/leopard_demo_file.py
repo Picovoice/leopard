@@ -1,5 +1,5 @@
 #
-#    Copyright 2018-2022 Picovoice Inc.
+#    Copyright 2018-2023 Picovoice Inc.
 #
 #    You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 #    file accompanying this source.
@@ -11,18 +11,36 @@
 
 import argparse
 
-from pvleopard import *
+from pvleopard import create, LeopardActivationLimitError
 from tabulate import tabulate
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--access_key', required=True)
-    parser.add_argument('--model_path', default=None)
-    parser.add_argument('--library_path', default=None)
-    parser.add_argument('--disable_automatic_punctuation', action='store_true')
-    parser.add_argument('--verbose', action='store_true')
-    parser.add_argument('--audio_paths', nargs='+', required=True)
+    parser.add_argument(
+        '--access_key',
+        help='AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)',
+        required=True)
+    parser.add_argument(
+        '--library_path',
+        help='Absolute path to dynamic library. Default: using the library provided by `pvleopard`')
+    parser.add_argument(
+        '--model_path',
+        help='Absolute path to Leopard model. Default: using the model provided by `pvleopard`')
+    parser.add_argument(
+        '--disable_automatic_punctuation',
+        action='store_true',
+        help='Disable insertion of automatic punctuation')
+    parser.add_argument(
+        '--verbose',
+        action='store_true',
+        help='Print verbose output of the transcription')
+    parser.add_argument(
+        '--wav_paths',
+        nargs='+',
+        required=True,
+        metavar='PATH',
+        help='Absolute paths to `.wav` files to be transcribed')
     args = parser.parse_args()
 
     o = create(
@@ -38,7 +56,7 @@ def main():
             if args.verbose:
                 print(tabulate(words, headers=['word', 'start_sec', 'end_sec', 'confidence'], floatfmt='.2f'))
     except LeopardActivationLimitError:
-        print("AccessKey '%s' has reached it's processing limit." % args.access_key)
+        print('AccessKey has reached its processing limit.')
 
 
 if __name__ == '__main__':

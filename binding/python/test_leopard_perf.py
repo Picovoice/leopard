@@ -1,5 +1,5 @@
 #
-#    Copyright 2022 Picovoice Inc.
+#    Copyright 2022-2023 Picovoice Inc.
 #
 #    You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 #    file accompanying this source.
@@ -14,8 +14,8 @@ import sys
 import time
 import unittest
 
-from leopard import Leopard
-from util import *
+from _leopard import Leopard
+from _util import *
 
 
 class LeopardPerformanceTestCase(unittest.TestCase):
@@ -29,13 +29,13 @@ class LeopardPerformanceTestCase(unittest.TestCase):
 
         perf_results = list()
         for i in range(self.NUM_TEST_ITERATIONS):
-            start = time.time()
+            start = time.perf_counter()
             leopard = Leopard(
                 access_key=self.ACCESS_KEY,
                 library_path=default_library_path('../..'),
                 model_path=default_model_path('../..')
             )
-            init_time = time.time() - start
+            init_time = time.perf_counter() - start
 
             if i > 0:
                 perf_results.append(init_time)
@@ -55,9 +55,9 @@ class LeopardPerformanceTestCase(unittest.TestCase):
 
         perf_results = list()
         for i in range(self.NUM_TEST_ITERATIONS):
-            start = time.time()
+            start = time.perf_counter()
             leopard.process_file(self.AUDIO_PATH)
-            proc_time = time.time() - start
+            proc_time = time.perf_counter() - start
 
             if i > 0:
                 perf_results.append(proc_time)

@@ -1,5 +1,5 @@
 #
-# Copyright 2022 Picovoice Inc.
+# Copyright 2022-2023 Picovoice Inc.
 #
 # You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 # file accompanying this source.
@@ -22,8 +22,9 @@ os.mkdir(package_folder)
 shutil.copy(os.path.join(os.path.dirname(__file__), '../../LICENSE'), package_folder)
 
 shutil.copy(os.path.join(os.path.dirname(__file__), '__init__.py'), os.path.join(package_folder, '__init__.py'))
-shutil.copy(os.path.join(os.path.dirname(__file__), 'leopard.py'), os.path.join(package_folder, 'leopard.py'))
-shutil.copy(os.path.join(os.path.dirname(__file__), 'util.py'), os.path.join(package_folder, 'util.py'))
+shutil.copy(os.path.join(os.path.dirname(__file__), '_factory.py'), os.path.join(package_folder, '_factory.py'))
+shutil.copy(os.path.join(os.path.dirname(__file__), '_leopard.py'), os.path.join(package_folder, '_leopard.py'))
+shutil.copy(os.path.join(os.path.dirname(__file__), '_util.py'), os.path.join(package_folder, '_util.py'))
 
 platforms = ('jetson', 'linux', 'mac', 'raspberry-pi', 'windows')
 
@@ -36,8 +37,9 @@ for platform in ('common',) + platforms:
 MANIFEST_IN = """
 include pvleopard/LICENSE
 include pvleopard/__init__.py
-include pvleopard/leopard.py
-include pvleopard/util.py
+include pvleopard/_factory.py
+include pvleopard/_leopard.py
+include pvleopard/_util.py
 recursive-include pvleopard/lib/ *
 """
 
@@ -49,7 +51,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
 
 setuptools.setup(
     name="pvleopard",
-    version="1.1.4",
+    version="1.1.5",
     author="Picovoice",
     author_email="hello@picovoice.ai",
     description="Leopard Speech-to-Text Engine.",
