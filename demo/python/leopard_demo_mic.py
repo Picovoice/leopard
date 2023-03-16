@@ -77,7 +77,8 @@ def main():
         help='Only list available devices and exit')
     parser.add_argument(
         '--audio_device_index',
-        action='store_true',
+        default=-1,
+        type=int,
         help='Audio device index to use from --show_audio_devices')
     args = parser.parse_args()
 
@@ -85,6 +86,12 @@ def main():
         for index, name in enumerate(PvRecorder.get_audio_devices()):
             print('Device #%d: %s' % (index, name))
         return
+
+    if args.audio_device_index != -1:
+        devices_length = len(PvRecorder.get_audio_devices())
+        if args.audio_device_index < 0 or args.audio_device_index >= devices_length:
+            print('Invalid audio device index provided.')
+            sys.exit(1)
 
     leopard = create(
         access_key=args.access_key,
