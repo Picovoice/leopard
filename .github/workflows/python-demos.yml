@@ -26,7 +26,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: [3.7, 3.8, 3.9]
+        python-version: ['3.7', '3.8', '3.9', '3.10']
 
     steps:
     - uses: actions/checkout@v2
@@ -43,7 +43,7 @@ jobs:
       run: pip install -r requirements.txt
 
     - name: Test
-      run: python leopard_demo_file.py --access_key ${{secrets.PV_VALID_ACCESS_KEY}} --audio_paths ../../resources/audio_samples/test.wav
+      run: python leopard_demo_file.py --access_key ${{secrets.PV_VALID_ACCESS_KEY}} --wav_paths ../../resources/audio_samples/test.wav
 
   build-self-hosted:
     runs-on: ${{ matrix.machine }}
@@ -59,4 +59,4 @@ jobs:
       run: pip3 install -r requirements.txt
 
     - name: Test
-      run: python3 leopard_demo_file.py --access_key ${{secrets.PV_VALID_ACCESS_KEY}} --audio_paths ../../resources/audio_samples/test.wav
+      run: python3 leopard_demo_file.py --access_key ${{secrets.PV_VALID_ACCESS_KEY}} --wav_paths ../../resources/audio_samples/test.wav
