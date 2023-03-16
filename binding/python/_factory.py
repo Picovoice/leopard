@@ -11,8 +11,8 @@
 
 from typing import *
 
-from _leopard import Leopard
-from _util import default_library_path, default_model_path
+from ._leopard import Leopard
+from ._util import default_library_path, default_model_path
 
 
 def create(
@@ -42,3 +42,7 @@ def create(
         model_path=model_path,
         library_path=library_path,
         enable_automatic_punctuation=enable_automatic_punctuation)
+
+__all__ = [
+    'create',
+]
