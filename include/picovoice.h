@@ -1,5 +1,5 @@
 /*
-    Copyright 2018-2021 Picovoice Inc.
+    Copyright 2018-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -54,7 +54,6 @@ typedef enum {
 PV_API const char *pv_status_to_string(pv_status_t status);
 
 #ifdef __cplusplus
-
 }
 
 #endif

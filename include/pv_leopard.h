@@ -1,5 +1,5 @@
 /*
-    Copyright 2019-2022 Picovoice Inc.
+    Copyright 2019-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -37,7 +37,7 @@ typedef struct pv_leopard pv_leopard_t;
  * @param[out] object Constructed instance of Leopard.
  * @return Status code. Returns `PV_STATUS_OUT_OF_MEMORY`, `PV_STATUS_IO_ERROR`, `PV_STATUS_INVALID_ARGUMENT`,
  * `PV_STATUS_RUNTIME_ERROR`, `PV_STATUS_ACTIVATION_ERROR`, `PV_STATUS_ACTIVATION_LIMIT_REACHED`,
- * `PV_STATUS_ACTIVATION_THROTTLED`, or `PV_STATUS_ACTIVATION_REFUSED` on failure
+ * `PV_STATUS_ACTIVATION_THROTTLED`, or `PV_STATUS_ACTIVATION_REFUSED` on failure.
  */
 PV_API pv_status_t pv_leopard_init(
         const char *access_key,
@@ -57,8 +57,8 @@ PV_API void pv_leopard_delete(pv_leopard_t *object);
  */
 typedef struct {
     const char *word; /** Transcribed word. */
-    float start_sec;  /** Start of word in seconds. */
-    float end_sec;    /** End of word in seconds. */
+    float start_sec; /** Start of word in seconds. */
+    float end_sec; /** End of word in seconds. */
     float confidence; /** Transcription confidence. It is a number within [0, 1]. */
 } pv_word_t;
 
@@ -90,8 +90,9 @@ PV_API pv_status_t pv_leopard_process(
  * buffer.
  *
  * @param object Leopard object.
- * @param audio_path Absolute path to the audio file.
- * The supported formats are: `3gp (AMR)`, `FLAC`, `MP3`, `MP4/m4a (AAC)`, `Ogg`, `WAV`, and `WebM`
+ * @param audio_path Absolute path to the audio file. The file needs to have a sample rate equal to or greater than
+ * `pv_sample_rate()`. The supported formats are: `3gp (AMR)`, `FLAC`, `MP3`, `MP4/m4a (AAC)`, `Ogg`, `WAV`, `WebM`.
+ * Files with stereo audio are mixed into a single mono channel and then processed.
  * @param[out] transcript Inferred transcription.
  * @param[out] num_words Number of transcribed words
  * @param[out] words Transcribed words and their associated metadata.
@@ -105,6 +106,20 @@ PV_API pv_status_t pv_leopard_process_file(
         char **transcript,
         int32_t *num_words,
         pv_word_t **words);
+
+/**
+ * Deletes transcript returned from `pv_leopard_process()` or `pv_leopard_process_file()`
+ *
+ * @param transcript transcription string returned from `pv_leopard_process()` or `pv_leopard_process_file()`
+ */
+PV_API void pv_leopard_transcript_delete(char *transcript);
+
+/**
+ * Deletes words returned from `pv_leopard_process()` or `pv_leopard_process_file()`
+ *
+ * @param words transcribed words returned from `pv_leopard_process()` or `pv_leopard_process_file()`
+ */
+PV_API void pv_leopard_words_delete(pv_word_t *words);
 
 /**
  * Getter for version.
