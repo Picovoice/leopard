@@ -9,6 +9,8 @@ on:
       - '!binding/java/README.md'
       - 'lib/common/**'
       - 'lib/java/**'
+      - 'resources/audio_samples/**'
+      - 'resources/test/**'
       - '.github/workflows/java.yml'
   pull_request:
     branches: [ master, 'v[0-9]+.[0-9]+' ]
@@ -17,6 +19,8 @@ on:
       - '!binding/java/README.md'
       - 'lib/common/**'
       - 'lib/java/**'
+      - 'resources/audio_samples/**'
+      - 'resources/test/**'
       - '.github/workflows/java.yml'
 
 defaults:
@@ -38,7 +42,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '11'
-        distribution: 'adopt'
+        distribution: 'temurin'
 
     - name: Build
       run: ./gradlew assemble
