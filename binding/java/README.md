@@ -10,10 +10,10 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 - Accurate [[1]](https://picovoice.ai/docs/benchmark/stt/#results)
 - Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
-  - Linux (x86_64), macOS (x86_64, arm64), and Windows (x86_64)
-  - Android and iOS
-  - Chrome, Safari, Firefox, and Edge
-  - Raspberry Pi (4, 3) and NVIDIA Jetson Nano
+    - Linux (x86_64), macOS (x86_64, arm64), and Windows (x86_64)
+    - Android and iOS
+    - Chrome, Safari, Firefox, and Edge
+    - Raspberry Pi (4, 3) and NVIDIA Jetson Nano
 
 ## Compatibility
 
@@ -29,17 +29,21 @@ ai.picovoice:leopard-java:${version}
 ```
 
 If you're using Gradle for your Java project, include the following line in your `build.gradle` file to add Leopard:
+
 ```console
 implementation 'ai.picovoice:leopard-java:${version}'
 ```
 
-If you're using IntelliJ, open the Project Structure dialog (`File > Project Structure`) and go to the `Libraries` section.
-Click the plus button at the top to add a new project library and select `From Maven...`. Search for `ai.picovoice:leopard-java`
+If you're using IntelliJ, open the Project Structure dialog (`File > Project Structure`) and go to the `Libraries`
+section.
+Click the plus button at the top to add a new project library and select `From Maven...`. Search
+for `ai.picovoice:leopard-java`
 in the search box and add the latest version to your project.
 
 ## AccessKey
 
-Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` acts as your credentials when using Leopard SDKs.
+Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` acts as your credentials when using
+Leopard SDKs.
 You can get your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
 Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get your `AccessKey`.
 
@@ -63,7 +67,26 @@ try {
 System.out.println(transcript);
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and `${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
+
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and `${AUDIO_PATH}`
+to the path an audio file.
+Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
+
+## Language Model
+
+The Leopard Java SDK comes preloaded with a default English language model (`.pv` file). 
+Default models for other supported languages can be found in [lib/common](../../lib/common). 
+
+Create custom language models using the [Picovoice Console](https://console.picovoice.ai/). Here you can train
+language models with custom vocabulary and boost words in the existing vocabulary.
+
+Pass in the `.pv` file via the `.setModelPath()` Builder argument:
+```java
+Leopard leopard = new Leopard.Builder()
+        .setAccessKey("${ACCESS_KEY}")
+        .setModelPath("${MODEL_PATH")
+        .build();
+```
 
 ## Demo App
 
