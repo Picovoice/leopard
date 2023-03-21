@@ -117,6 +117,16 @@ const runProcTest = async (
     }
     for (let i = 0; i < words.length; i++) {
       expect(transcriptReducer.slice(0, words[i].word.length).toUpperCase()).to.be.eq(words[i].word.toUpperCase());
+      expect(words[i].startSec).to.be.gt(0);
+      expect(words[i].startSec).to.be.lte(words[i].endSec);
+      if (i < words.length - 1) {
+        expect(words[i].endSec).to.be.lte(words[i + 1].startSec);
+      } else {
+        expect(words[i].endSec).to.be.lte(inputPcm.length / leopard.sampleRate);
+      }
+      expect(words[i].confidence).to.be.gte(0);
+      expect(words[i].confidence).to.be.lte(1);
+
       transcriptReducer = transcriptReducer.slice(words[i].word.length).trim();
     }
 
