@@ -13,8 +13,8 @@ import os.path
 import subprocess
 import sys
 import unittest
-from jiwer import wer
 
+from jiwer import wer
 from parameterized import parameterized
 
 from test_util import *
