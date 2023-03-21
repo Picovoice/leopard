@@ -89,6 +89,7 @@ if (file("${rootDir}/publish-mavencentral.gradle").exists()) {
 }
 
 dependencies {
+    testImplementation 'com.google.code.gson:gson:2.10.1'
     testImplementation 'org.apache.commons:commons-text:1.10.0'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.2'
@@ -105,3 +106,6 @@ test {
     systemProperty 'procPerformanceThresholdSec', System.getProperty('procPerformanceThresholdSec')
     useJUnitPlatform()
 }
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
