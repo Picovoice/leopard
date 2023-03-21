@@ -65,7 +65,7 @@ jobs:
           python-version: '3.10'
 
       - name: Create build directory
-        run: cmake -G ${{ matrix.make_file }} -B ./build
+        run: cmake -G "${{ matrix.make_file }}" -B ./build
 
       - name: Build demo
         run: cmake --build ./build --target leopard_demo
