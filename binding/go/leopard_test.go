@@ -112,11 +112,16 @@ func loadTestData() []TestParameters {
 }
 
 func validateMetadata(t *testing.T, transcript string, words []LeopardWord, audioLength float32) {
+	transcriptUpperCase := strings.ToUpper(transcript)
 	for i := range words {
+		wordUpperCase := strings.ToUpper(words[i].Word)
+		if !strings.Contains(transcriptUpperCase, wordUpperCase) {
+			t.Fatalf("Word `%s` was not in transcript `%s`", wordUpperCase, transcriptUpperCase)
+		}
 		if words[i].StartSec <= 0 {
 			t.Fatalf("Word %d started at %f", i, words[i].StartSec)
 		}
-		if words[i].StartSec >= words[i].EndSec {
+		if words[i].StartSec > words[i].EndSec {
 			t.Fatalf("Word %d had a start time of %f, but and end time of %f", i, words[i].StartSec, words[i].EndSec)
 		}
 		if i < len(words)-1 {

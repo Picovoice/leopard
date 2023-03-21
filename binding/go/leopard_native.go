@@ -157,14 +157,14 @@ void pv_leopard_delete_wrapper(void *f, void *object) {
 
 typedef void (*pv_leopard_transcript_delete_func)(char *);
 
-void pv_leopard_transcript_delete(void *f, char *transcript) {
+void pv_leopard_transcript_delete_wrapper(void *f, char *transcript) {
 	return ((pv_leopard_transcript_delete_func) f)(transcript);
 }
 
 typedef void (*pv_leopard_words_delete_func)(pv_word_t *);
 
 void pv_leopard_words_delete_wrapper(void *f, pv_word_t *words) {
-	return ((pv_leopard_words_delete_wrapper) f)(words);
+	return ((pv_leopard_words_delete_func) f)(words);
 }
 
 */
