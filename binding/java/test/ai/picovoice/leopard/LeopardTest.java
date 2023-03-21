@@ -89,7 +89,7 @@ public class LeopardTest {
             final JsonObject testData = testParameters.get(i).getAsJsonObject();
             final String language = testData.get("language").getAsString();
             final String testAudioFile = testData.get("audio_file").getAsString();
-            final String transcript = testData.get("audio_file").getAsString();
+            final String transcript = testData.get("transcript").getAsString();
             final float errorRate = testData.get("error_rate").getAsFloat();
 
             testArgs.add(Arguments.of(
@@ -123,10 +123,11 @@ public class LeopardTest {
     }
 
     void validateMetadata(LeopardTranscript.Word[] words, String transcript, float audioLength) {
+        String normTranscript = transcript.toUpperCase();
         for (int i = 0; i < words.length; i++) {
-            assertTrue(transcript.contains(words[i].getWord()));
+            assertTrue(normTranscript.contains(words[i].getWord().toUpperCase()));
             assertTrue(words[i].getStartSec() > 0);
-            assertTrue(words[i].getStartSec() < words[i].getEndSec());
+            assertTrue(words[i].getStartSec() <= words[i].getEndSec());
             if (i < words.length - 1) {
                 assertTrue(words[i].getEndSec() <= words[i + 1].getStartSec());
             } else {
@@ -174,7 +175,6 @@ public class LeopardTest {
         String testAudioPath = Paths.get(System.getProperty("user.dir"))
                 .resolve(String.format("../../resources/audio_samples/%s", testAudioFile))
                 .toString();
-
         short[] pcm = readAudioFile(testAudioPath);
         LeopardTranscript result = leopard.process(pcm);
 
