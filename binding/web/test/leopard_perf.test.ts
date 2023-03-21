@@ -4,7 +4,6 @@ const ACCESS_KEY = Cypress.env('ACCESS_KEY');
 const NUM_TEST_ITERATIONS = Number(Cypress.env('NUM_TEST_ITERATIONS'));
 const INIT_PERFORMANCE_THRESHOLD_SEC = Number(Cypress.env('INIT_PERFORMANCE_THRESHOLD_SEC'));
 const PROC_PERFORMANCE_THRESHOLD_SEC = Number(Cypress.env('PROC_PERFORMANCE_THRESHOLD_SEC'));
-const INSTANCES = [Leopard, LeopardWorker];
 
 async function testPerformance(
   instance: typeof Leopard | typeof LeopardWorker,
@@ -16,7 +15,7 @@ async function testPerformance(
   for (let j = 0; j < NUM_TEST_ITERATIONS; j++) {
     let start = Date.now();
 
-    const leopard = await Leopard.create(
+    const leopard = await instance.create(
       ACCESS_KEY,
       { publicPath: '/test/leopard_params.pv', forceWrite: true }
     );
@@ -37,7 +36,6 @@ async function testPerformance(
   }
 
   const initAvgPerf = initPerfResults.reduce((a, b) => a + b) / NUM_TEST_ITERATIONS;
-
   const procAvgPerf = procPerfResults.reduce((a, b) => a + b) / NUM_TEST_ITERATIONS;
 
   // eslint-disable-next-line no-console
@@ -50,10 +48,8 @@ async function testPerformance(
 }
 
 describe('Leopard binding performance test', () => {
-  Cypress.config('defaultCommandTimeout', 60000);
-
-  for (const instance of INSTANCES) {
-    const instanceString = (instance instanceof LeopardWorker) ? 'worker' : 'main';
+  for (const instance of [Leopard, LeopardWorker]) {
+    const instanceString = (instance === LeopardWorker) ? 'worker' : 'main';
 
     it(`should be lower than performance threshold (${instanceString})`, () => {
       cy.getFramesFromFile('audio_samples/test.wav').then( async inputPcm => {
