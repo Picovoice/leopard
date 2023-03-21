@@ -1,5 +1,7 @@
 node_modules
 dist
 lib/pv_leopard*.wasm
-test/leopard_params.js
-test/leopard_params.pv
+cypress/fixtures/audio_samples/*
+test/leopard_params*.js
+test/leopard_params*.pv
+test/test_data.json
