@@ -24,6 +24,7 @@
     "**/*.wasm",
     "**/*.wav",
     "../../lib/ios/**/*",
+    "../test/test_data.json",
 
     // .NET
     "**/*.csproj",
