@@ -1,4 +1,4 @@
-// Copyright 2022 Picovoice Inc.
+// Copyright 2022-2023 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is
 // located in the "LICENSE" file accompanying this source.
@@ -15,21 +15,25 @@ package leopard
 
 import (
 	"encoding/binary"
+	"encoding/json"
 	"flag"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"reflect"
-	"runtime"
+	"strings"
 	"testing"
+
+	"github.com/agnivade/levenshtein"
 )
 
 type TestParameters struct {
-	enableAutomaticPunctuation bool
+	language                   string
+	testAudioFile              string
 	transcript                 string
-	transcriptMetadata         []LeopardWord
-	audioPath                  string
+	errorRate                  float32
+	enableAutomaticPunctuation bool
 }
 
 var (
@@ -38,44 +42,97 @@ var (
 	processTestParameters []TestParameters
 )
 
-var referenceTranscriptMetadata = []LeopardWord{
-	{Word: "Mr", StartSec: 0.58, EndSec: 0.80, Confidence: 0.95},
-	{Word: "quilter", StartSec: 0.86, EndSec: 1.18, Confidence: 0.80},
-	{Word: "is", StartSec: 1.31, EndSec: 1.38, Confidence: 0.96},
-	{Word: "the", StartSec: 1.44, EndSec: 1.50, Confidence: 0.90},
-	{Word: "apostle", StartSec: 1.57, EndSec: 2.08, Confidence: 0.79},
-	{Word: "of", StartSec: 2.18, EndSec: 2.24, Confidence: 0.98},
-	{Word: "the", StartSec: 2.30, EndSec: 2.34, Confidence: 0.98},
-	{Word: "middle", StartSec: 2.40, EndSec: 2.59, Confidence: 0.97},
-	{Word: "classes", StartSec: 2.69, EndSec: 3.17, Confidence: 0.98},
-	{Word: "and", StartSec: 3.36, EndSec: 3.46, Confidence: 0.95},
-	{Word: "we", StartSec: 3.52, EndSec: 3.55, Confidence: 0.96},
-	{Word: "are", StartSec: 3.65, EndSec: 3.65, Confidence: 0.97},
-	{Word: "glad", StartSec: 3.74, EndSec: 4.03, Confidence: 0.93},
-	{Word: "to", StartSec: 4.10, EndSec: 4.16, Confidence: 0.97},
-	{Word: "welcome", StartSec: 4.22, EndSec: 4.58, Confidence: 0.89},
-	{Word: "his", StartSec: 4.67, EndSec: 4.83, Confidence: 0.96},
-	{Word: "gospel", StartSec: 4.93, EndSec: 5.38, Confidence: 0.93},
-}
-
 func TestMain(m *testing.M) {
 
 	flag.StringVar(&testAccessKey, "access_key", "", "AccessKey for testing")
 	flag.Parse()
 
-	_, filename, _, _ := runtime.Caller(0)
-	dir := filepath.Dir(filename)
-
-	var testAudioPath, _ = filepath.Abs(filepath.Join(dir, "../../resources/audio_samples/test.wav"))
-	var emptyAudioPath, _ = filepath.Abs(filepath.Join(dir, "../../resources/audio_samples/empty.wav"))
-
-	processTestParameters = []TestParameters{
-		{false, "Mr quilter is the apostle of the middle classes and we are glad to welcome his gospel", referenceTranscriptMetadata, testAudioPath},
-		{true, "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel.", referenceTranscriptMetadata, testAudioPath},
-		{false, "", nil, emptyAudioPath},
+	processTestParameters = loadTestData()
+	testCaseEmpty := TestParameters{
+		language:                   "en",
+		testAudioFile:              "empty.wav",
+		transcript:                 "",
+		enableAutomaticPunctuation: false,
+		errorRate:                  0.0,
 	}
+	processTestParameters = append(processTestParameters, testCaseEmpty)
 
 	os.Exit(m.Run())
+}
+
+func loadTestData() []TestParameters {
+
+	content, err := ioutil.ReadFile("../../resources/test/test_data.json")
+	if err != nil {
+		log.Fatalf("Could not read test data json: %v", err)
+	}
+
+	var testData struct {
+		Tests struct {
+			Parameters []struct {
+				Language     string   `json:"language"`
+				AudioFile    string   `json:"audio_file"`
+				Transcript   string   `json:"transcript"`
+				Punctuations []string `json:"punctuations"`
+				ErrorRate    float32  `json:"error_rate"`
+			} `json:"parameters"`
+		} `json:"tests"`
+	}
+	err = json.Unmarshal(content, &testData)
+	if err != nil {
+		log.Fatalf("Could not decode test data json: %v", err)
+	}
+
+	for _, x := range testData.Tests.Parameters {
+		testCaseWithPunctuation := TestParameters{
+			language:                   x.Language,
+			testAudioFile:              x.AudioFile,
+			transcript:                 x.Transcript,
+			enableAutomaticPunctuation: true,
+			errorRate:                  x.ErrorRate,
+		}
+		processTestParameters = append(processTestParameters, testCaseWithPunctuation)
+
+		transcriptWithoutPunctuation := x.Transcript
+		for _, p := range x.Punctuations {
+			transcriptWithoutPunctuation = strings.ReplaceAll(transcriptWithoutPunctuation, p, "")
+		}
+		testCaseWithoutPunctuation := TestParameters{
+			language:                   x.Language,
+			testAudioFile:              x.AudioFile,
+			transcript:                 transcriptWithoutPunctuation,
+			enableAutomaticPunctuation: false,
+			errorRate:                  x.ErrorRate,
+		}
+		processTestParameters = append(processTestParameters, testCaseWithoutPunctuation)
+
+	}
+
+	return processTestParameters
+}
+
+func validateMetadata(t *testing.T, transcript string, words []LeopardWord, audioLength float32) {
+	for i := range words {
+		if words[i].StartSec <= 0 {
+			t.Fatalf("Word %d started at %f", i, words[i].StartSec)
+		}
+		if words[i].StartSec >= words[i].EndSec {
+			t.Fatalf("Word %d had a start time of %f, but and end time of %f", i, words[i].StartSec, words[i].EndSec)
+		}
+		if i < len(words)-1 {
+			if words[i].EndSec > words[i+1].StartSec {
+				t.Fatalf("Word %d had an end time of %f, next word had a start time of %f", i, words[i].EndSec, words[i+1].StartSec)
+			}
+		} else {
+			if words[i].EndSec > audioLength {
+				t.Fatalf("Word %d had an end time of %f, audio length is %f", i, words[i].EndSec, audioLength)
+			}
+		}
+
+		if words[i].Confidence < 0 || words[i].Confidence > 1 {
+			t.Fatalf("Word %d had an invalid confidence value of %f", i, words[i].Confidence)
+		}
+	}
 }
 
 func TestVersion(t *testing.T) {
@@ -97,10 +154,11 @@ func TestVersion(t *testing.T) {
 
 func runProcessTestCase(
 	t *testing.T,
-	enableAutomaticPunctuation bool,
+	language string,
+	testAudioFile string,
 	expectedTranscript string,
-	expectedTranscriptMetadata []LeopardWord,
-	audioPath string) {
+	targetErrorRate float32,
+	enableAutomaticPunctuation bool) {
 
 	leopard = NewLeopard(testAccessKey)
 	leopard.EnableAutomaticPunctuation = enableAutomaticPunctuation
@@ -110,7 +168,8 @@ func runProcessTestCase(
 	}
 	defer leopard.Delete()
 
-	data, err := ioutil.ReadFile(audioPath)
+	testAudioPath, _ := filepath.Abs(filepath.Join("../../resources/audio_samples", testAudioFile))
+	data, err := ioutil.ReadFile(testAudioPath)
 	if err != nil {
 		t.Fatalf("Could not read test file: %v", err)
 	}
@@ -127,18 +186,22 @@ func runProcessTestCase(
 	if err != nil {
 		t.Fatalf("Failed to process pcm buffer: %v", err)
 	}
-	if transcript != expectedTranscript {
-		t.Fatalf("Expected '%s' got '%s'", expectedTranscript, transcript)
+
+	errorRate := float32(levenshtein.ComputeDistance(transcript, expectedTranscript) / len(expectedTranscript))
+	if errorRate >= targetErrorRate {
+		t.Fatalf("Expected '%f' got '%f'", targetErrorRate, errorRate)
 	}
-	reflect.DeepEqual(words, expectedTranscriptMetadata)
+
+	validateMetadata(t, transcript, words, float32(len(pcm)/SampleRate))
 }
 
 func runProcessFileTestCase(
 	t *testing.T,
-	enableAutomaticPunctuation bool,
+	language string,
+	testAudioFile string,
 	expectedTranscript string,
-	expectedTranscriptMetadata []LeopardWord,
-	audioPath string) {
+	targetErrorRate float32,
+	enableAutomaticPunctuation bool) {
 
 	leopard = NewLeopard(testAccessKey)
 	leopard.EnableAutomaticPunctuation = enableAutomaticPunctuation
@@ -148,24 +211,35 @@ func runProcessFileTestCase(
 	}
 	defer leopard.Delete()
 
-	transcript, words, err := leopard.ProcessFile(audioPath)
+	testAudioPath, _ := filepath.Abs(filepath.Join("../../resources/audio_samples", testAudioFile))
+	transcript, words, err := leopard.ProcessFile(testAudioPath)
 	if err != nil {
 		t.Fatalf("Failed to process pcm buffer: %v", err)
 	}
-	if transcript != expectedTranscript {
-		t.Fatalf("Expected '%s' got '%s'", expectedTranscript, transcript)
+	errorRate := float32(levenshtein.ComputeDistance(transcript, expectedTranscript) / len(expectedTranscript))
+	if errorRate >= targetErrorRate {
+		t.Fatalf("Expected '%f' got '%f'", targetErrorRate, errorRate)
 	}
-	reflect.DeepEqual(words, expectedTranscriptMetadata)
+
+	data, err := ioutil.ReadFile(testAudioPath)
+	if err != nil {
+		t.Fatalf("Could not read test file: %v", err)
+	}
+	data = data[44:] // skip header
+
+	validateMetadata(t, transcript, words, float32((len(data)/2)/SampleRate))
 }
 
 func TestProcess(t *testing.T) {
 	for _, test := range processTestParameters {
-		runProcessTestCase(t, test.enableAutomaticPunctuation, test.transcript, test.transcriptMetadata, test.audioPath)
+		t.Logf("Running process data test for `%s`", test.language)
+		runProcessTestCase(t, test.language, test.testAudioFile, test.transcript, test.errorRate, test.enableAutomaticPunctuation)
 	}
 }
 
 func TestProcessFile(t *testing.T) {
 	for _, test := range processTestParameters {
-		runProcessFileTestCase(t, test.enableAutomaticPunctuation, test.transcript, test.transcriptMetadata, test.audioPath)
+		t.Logf("Running process file test for `%s`", test.language)
+		runProcessTestCase(t, test.language, test.testAudioFile, test.transcript, test.errorRate, test.enableAutomaticPunctuation)
 	}
 }
