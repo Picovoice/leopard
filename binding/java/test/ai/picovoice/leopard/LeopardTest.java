@@ -28,6 +28,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -57,7 +59,7 @@ public class LeopardTest {
         final Path testDataPath = Paths.get(System.getProperty("user.dir"))
                 .resolve("../../resources/test")
                 .resolve("test_data.json");
-        final String testDataContent = new String(Files.readAllBytes(testDataPath));
+        final String testDataContent = new String(Files.readAllBytes(testDataPath), StandardCharsets.UTF_8);
         return JsonParser.parseString(testDataContent).getAsJsonObject();
     }
 
