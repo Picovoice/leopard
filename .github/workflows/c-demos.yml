@@ -62,7 +62,7 @@ jobs:
           python-version: '3.10'
 
       - name: Create build directory
-        run: cmake -B ./build
+        run: cmake -G "MinGW Makefiles" -B ./build
 
       - name: Build demo
         run: cmake --build ./build --target leopard_demo
@@ -102,7 +102,7 @@ jobs:
           submodules: recursive
 
       - name: Create build directory
-        run: cmake -B ./build
+        run: cmake -G "MinGW Makefiles" -B ./build
 
       - name: Build demo
         run: cmake --build ./build --target leopard_demo
