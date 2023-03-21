@@ -44,12 +44,15 @@ jobs:
           - os: ubuntu-latest
             platform: linux
             arch: x86_64
+            make_file: "Unix Makefiles"
           - os: windows-latest
             platform: windows
             arch: amd64
+            make_file: "MinGW Makefiles"
           - os: macos-latest
             platform: mac
             arch: x86_64
+            make_file: "Unix Makefiles"
 
     steps:
       - uses: actions/checkout@v2
@@ -62,7 +65,7 @@ jobs:
           python-version: '3.10'
 
       - name: Create build directory
-        run: cmake -G "MinGW Makefiles" -B ./build
+        run: cmake -G ${{ matrix.make_file }} -B ./build
 
       - name: Build demo
         run: cmake --build ./build --target leopard_demo
@@ -102,7 +105,7 @@ jobs:
           submodules: recursive
 
       - name: Create build directory
-        run: cmake -G "MinGW Makefiles" -B ./build
+        run: cmake -B ./build
 
       - name: Build demo
         run: cmake --build ./build --target leopard_demo
