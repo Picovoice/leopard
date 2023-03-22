@@ -28,7 +28,6 @@ class LeopardTestCase(unittest.TestCase):
         cls._access_key = sys.argv[1]
         cls._audio_directory = os.path.join('..', '..', 'resources', 'audio_samples')
 
-
     def _validate_metadata(self, words: Sequence[Leopard.Word], transcript: str, audio_length: int):
         norm_transcript = transcript.upper()
         for i in range(len(words)):
@@ -40,7 +39,6 @@ class LeopardTestCase(unittest.TestCase):
             else:
                 self.assertLessEqual(words[i].end_sec, audio_length)
             self.assertTrue(0 <= words[i].confidence <= 1)
-
 
     def test_invalid_access_key(self):
         with self.assertRaises(LeopardInvalidArgumentError):
@@ -56,14 +54,12 @@ class LeopardTestCase(unittest.TestCase):
                 model_path='invalid',
                 library_path=default_library_path('../../'))
 
-
     def test_invalid_library_path(self):
         with self.assertRaises(LeopardIOError):
             Leopard(
                 access_key=self._access_key,
                 model_path=default_model_path('../../'),
                 library_path='invalid')
-
 
     def test_version(self):
         o = Leopard(
@@ -72,7 +68,6 @@ class LeopardTestCase(unittest.TestCase):
                 library_path=default_library_path('../../'))
         self.assertIsInstance(o.version, str)
         self.assertGreater(len(o.version), 0)
-
 
     @parameterized.expand(parameters)
     def test_process(
