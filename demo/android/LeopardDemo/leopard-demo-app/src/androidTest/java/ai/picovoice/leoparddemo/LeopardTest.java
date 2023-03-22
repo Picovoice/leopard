@@ -208,7 +208,7 @@ public class LeopardTest {
             assertTrue(getWordErrorRate(result.getTranscriptString(), normalizedTranscript, useCER) < errorRate);
             validateMetadata(
                     result.getWordArray(),
-                    normalizedTranscript,
+                    result.getTranscriptString(),
                     (float) readAudioFile(audioFile.getAbsolutePath()).length / leopard.getSampleRate()
             );
 
@@ -237,7 +237,7 @@ public class LeopardTest {
 
             validateMetadata(
                     result.getWordArray(),
-                    normalizedTranscript,
+                    result.getTranscriptString(),
                     (float) readAudioFile(audioFile.getAbsolutePath()).length / leopard.getSampleRate()
             );
 
