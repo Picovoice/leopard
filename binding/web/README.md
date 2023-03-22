@@ -178,6 +178,30 @@ Terminate `LeopardWorker` instance:
 await handle.terminate();
 ```
 
+## Language Model
+
+Default models for other supported languages can be found in [lib/common](../../lib/common).
+
+Create custom language models using the [Picovoice Console](https://console.picovoice.ai/). Here you can train
+language models with custom vocabulary and boost words in the existing vocabulary.
+
+Copy the `.pv` file into the public directory or create a base64 file using `pvbase64`.
+Then create an instance of `Leopard` by changing the `leopardModel` variable:
+
+```typescript
+const leopardModel = {
+  publicPath: ${MODEL_PATH},
+  // or
+  base64: ${MODEL_BASE64},
+}
+
+const handle = await LeopardWorker.create(
+        ${ACCESS_KEY},
+        leopardModel,
+        options // optional options
+);
+```
+
 ## Demo
 
 For example usage refer to our [Web demo application](https://github.com/Picovoice/leopard/tree/master/demo/web).

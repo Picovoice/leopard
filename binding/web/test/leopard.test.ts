@@ -7,29 +7,29 @@ import { PvModel } from '@picovoice/web-utils';
 
 const ACCESS_KEY: string = Cypress.env("ACCESS_KEY");
 
-const editDistance = (words1: string[], words2: string[]) => {
-  const res = Array.from(Array(words2.length + 1), () => new Array(words1.length + 1));
+const levenshteinDistance = (words1: string[], words2: string[]) => {
+  const res = Array.from(Array(words1.length + 1), () => new Array(words2.length + 1));
   for (let i = 0; i <= words1.length; i++) {
-    res[0][i] = i;
+    res[i][0] = i;
   }
   for (let j = 0; j <= words2.length; j++) {
-    res[j][0] = j;
+    res[0][j] = j;
   }
-  for (let j = 1; j <= words2.length; j ++) {
-    for (let i = 1; i <= words1.length; i ++) {
-      res[j][i] = Math.min(
-        res[j][i - 1] + 1,
-        res[j - 1][i] + 1,
-        res[j - 1][i - 1] + (words1[i - 1].toUpperCase() === words2[j - 1].toUpperCase() ? 0 : 1),
+  for (let i = 1; i <= words1.length; i++) {
+    for (let j = 1; j <= words2.length; j++) {
+      res[i][j] = Math.min(
+        res[i - 1][j] + 1,
+        res[i][j - 1] + 1,
+        res[i - 1][j - 1] + (words1[i - 1].toUpperCase() === words2[j - 1].toUpperCase() ? 0 : 1),
       );
     }
   }
-  return res[words2.length][words1.length];
+  return res[words1.length][words2.length];
 };
 
 const wordErrorRate = (reference: string, hypothesis: string, useCER = false): number => {
   const splitter = (useCER) ? '' : ' ';
-  const ed = editDistance(reference.split(splitter), hypothesis.split(splitter));
+  const ed = levenshteinDistance(reference.split(splitter), hypothesis.split(splitter));
   return ed / reference.length;
 };
 
