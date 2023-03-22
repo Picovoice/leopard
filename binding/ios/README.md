@@ -74,6 +74,21 @@ with the name of the Leopard model file name, `${AUDIO_FILE_NAME}` with the name
 `${AUDIO_FILE_EXTENSION}` with the extension of the audio file. Finally, when done be sure to explicitly release
 the resources using `leopard.delete()`.
 
+## Language Model
+
+The Leopard iOS SDK comes preloaded with a default English language model (`.pv` file).
+Default models for other supported languages can be found in [lib/common](../../lib/common).
+
+Create custom language models using the [Picovoice Console](https://console.picovoice.ai/). Here you can train
+language models with custom vocabulary and boost words in the existing vocabulary.
+
+Pass in the `.pv` file via the `modelURL` or `modelPath` constructor argument:
+```swift
+let leopard = Leopard(accessKey: accessKey, modelPath: modelPath)
+// or
+let leopard = Leopard(accessKey: accessKey, modelURL: modelURL)
+```
+
 ## Running Unit Tests
 
 Copy your `AccessKey` into the `accessKey` variable in [`LeopardAppTestUITests.swift`](LeopardAppTest/LeopardAppTestUITests/LeopardAppTestUITests.swift). Open `LeopardAppTest.xcworkspace` with XCode and run the tests with `Product > Test`.

@@ -1,16 +1,28 @@
 PODS:
-  - Leopard-iOS (1.1.0)
+  - Leopard-iOS (1.2.0)
+  - SwiftyLevenshtein (0.0.4)
 
 DEPENDENCIES:
-  - Leopard-iOS (~> 1.1.0)
+  - Leopard-iOS (from `https://raw.githubusercontent.com/Picovoice/leopard/v1.2-ios/binding/ios/Leopard-iOS.podspec`)
+  - SwiftyLevenshtein (~> 0.0.1)
 
 SPEC REPOS:
   trunk:
-    - Leopard-iOS
+    - SwiftyLevenshtein
+
+EXTERNAL SOURCES:
+  Leopard-iOS:
+    :podspec: https://raw.githubusercontent.com/Picovoice/leopard/v1.2-ios/binding/ios/Leopard-iOS.podspec
+
+CHECKOUT OPTIONS:
+  Leopard-iOS:
+    :commit: e4debdcc0404147e3654bd787215ea25a64de255
+    :git: https://github.com/Picovoice/leopard.git
 
 SPEC CHECKSUMS:
-  Leopard-iOS: edad5cc511b4dd36e13ce80941c5775174767010
+  Leopard-iOS: 73ddbdac171cf8f7fd72047ff1d0c7ee9beda768
+  SwiftyLevenshtein: 60ed80f0fb2eadbae683d999b16a902540228116
 
-PODFILE CHECKSUM: 17af7614e672a2a1c8b806417a3759733bcd40c8
+PODFILE CHECKSUM: 3de36868ed90faf4cc40f0dc2fedde027b119838
 
 COCOAPODS: 1.11.2
