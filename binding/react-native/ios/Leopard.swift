@@ -124,6 +124,6 @@ class PvLeopard: NSObject {
         }
         resultMap["words"] = wordMapArray
 
-        return resultMap;
+        return resultMap
     }
 }
