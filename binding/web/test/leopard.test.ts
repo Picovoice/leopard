@@ -15,8 +15,8 @@ const editDistance = (words1: string[], words2: string[]) => {
   for (let j = 0; j <= words2.length; j++) {
     res[j][0] = j;
   }
-  for (let j = 1; j <= words2.length; j += 1) {
-    for (let i = 1; i <= words2.length; i += 1) {
+  for (let j = 1; j <= words2.length; j ++) {
+    for (let i = 1; i <= words1.length; i ++) {
       res[j][i] = Math.min(
         res[j][i - 1] + 1,
         res[j - 1][i] + 1,
