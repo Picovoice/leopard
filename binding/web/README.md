@@ -48,7 +48,8 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 ### Usage
 
-Create a model in [Picovoice Console](https://console.picovoice.ai/) or use the [default model](https://github.com/Picovoice/leopard/tree/master/lib/common).
+Create a model in [Picovoice Console](https://console.picovoice.ai/) or use 
+the default models for supported languages found in [lib/common](../../lib/common).
 
 For the web packages, there are two methods to initialize Leopard.
 
@@ -176,30 +177,6 @@ Terminate `LeopardWorker` instance:
 
 ```typescript
 await handle.terminate();
-```
-
-## Language Model
-
-Default models for other supported languages can be found in [lib/common](../../lib/common).
-
-Create custom language models using the [Picovoice Console](https://console.picovoice.ai/). Here you can train
-language models with custom vocabulary and boost words in the existing vocabulary.
-
-Copy the `.pv` file into the public directory or create a base64 file using `pvbase64`.
-Then create an instance of `Leopard` by changing the `leopardModel` variable:
-
-```typescript
-const leopardModel = {
-  publicPath: ${MODEL_PATH},
-  // or
-  base64: ${MODEL_BASE64},
-}
-
-const handle = await LeopardWorker.create(
-        ${ACCESS_KEY},
-        leopardModel,
-        options // optional options
-);
 ```
 
 ## Demo
