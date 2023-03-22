@@ -13,7 +13,7 @@ import Leopard
 
 @objc(PvLeopard)
 class PvLeopard: NSObject {
-    private var leopardPool: Dictionary<String, Leopard> = [:]
+    private var leopardPool: [String: Leopard] = [:]
 
     @objc(create:modelPath:enableAutomaticPunctuation:resolver:rejecter:)
     func create(
@@ -21,7 +21,7 @@ class PvLeopard: NSObject {
             modelPath: String,
             enableAutomaticPunctuation: Bool,
             resolver resolve: RCTPromiseResolveBlock,
-            rejecter reject: RCTPromiseRejectBlock) -> Void {
+            rejecter reject: RCTPromiseRejectBlock) {
 
         do {
             let leopard = try Leopard(
@@ -49,7 +49,7 @@ class PvLeopard: NSObject {
     }
 
     @objc(delete:)
-    func delete(handle: String) -> Void {
+    func delete(handle: String) {
         if let leopard = leopardPool.removeValue(forKey: handle) {
             leopard.delete()
         }
@@ -60,14 +60,15 @@ class PvLeopard: NSObject {
             handle: String,
             pcm: [Int16],
             resolver resolve: RCTPromiseResolveBlock,
-            rejecter reject: RCTPromiseRejectBlock) -> Void {
+            rejecter reject: RCTPromiseRejectBlock) {
         do {
             if let leopard = leopardPool[handle] {
                 let result = try leopard.process(pcm)
                 let resultMap = leopardTranscriptToDictionary(result: result)
                 resolve(resultMap)
             } else {
-                let (code, message) = errorToCodeAndMessage(LeopardRuntimeError("Invalid handle provided to Leopard 'process'"))
+                let (code, message) = errorToCodeAndMessage(
+                        LeopardRuntimeError("Invalid handle provided to Leopard 'process'"))
                 reject(code, message, nil)
             }
         } catch let error as LeopardError {
@@ -84,14 +85,15 @@ class PvLeopard: NSObject {
             handle: String,
             audioPath: String,
             resolver resolve: RCTPromiseResolveBlock,
-            rejecter reject: RCTPromiseRejectBlock) -> Void {
+            rejecter reject: RCTPromiseRejectBlock) {
         do {
             if let leopard = leopardPool[handle] {
                 let result = try leopard.processFile(audioPath)
                 let resultMap = leopardTranscriptToDictionary(result: result)
                 resolve(resultMap)
             } else {
-                let (code, message) = errorToCodeAndMessage(LeopardRuntimeError("Invalid handle provided to Leopard 'process'"))
+                let (code, message) = errorToCodeAndMessage(
+                        LeopardRuntimeError("Invalid handle provided to Leopard 'process'"))
                 reject(code, message, nil)
             }
         } catch let error as LeopardError {
@@ -120,7 +122,7 @@ class PvLeopard: NSObject {
             wordMap["endSec"] = wordMeta.endSec
             wordMapArray.append(wordMap)
         }
-        resultMap["words"] = wordMapArray;
+        resultMap["words"] = wordMapArray
 
         return resultMap;
     }

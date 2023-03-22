@@ -7,8 +7,8 @@
 //  specific language governing permissions and limitations under the License.
 //
 
-public class LeopardError : LocalizedError {
-    private let message: String;
+public class LeopardError: LocalizedError {
+    private let message: String
 
     public init (_ message: String) {
         self.message = message
