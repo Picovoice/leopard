@@ -141,8 +141,8 @@ class LeopardAppTestUITests: XCTestCase {
         
         var normTranscript = transcript
         if (!testPunctuation) {
-            for punc in punctuations {
-                normTranscript = normTranscript.replacingOccurrences(of: punc, with: "")
+            for punctuation in punctuations {
+                normTranscript = normTranscript.replacingOccurrences(of: punctuation, with: "")
             }
         }
         
@@ -171,8 +171,8 @@ class LeopardAppTestUITests: XCTestCase {
         
         var normTranscript = transcript
         if (!testPunctuation) {
-            for punc in punctuations {
-                normTranscript = normTranscript.replacingOccurrences(of: punc, with: "")
+            for punctuation in punctuations {
+                normTranscript = normTranscript.replacingOccurrences(of: punctuation, with: "")
             }
         }
 
