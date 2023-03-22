@@ -166,6 +166,8 @@ public class LeopardTest {
                     modelFile = String.format("model_files/leopard_params_%s.pv", language);
                 }
 
+                String testAudioFile = String.format("audio_samples/%s", audioFile);
+
                 String[] paramPunctuations = new String[punctuations.size()];
                 for (int j = 0; j < punctuations.size(); j++) {
                     paramPunctuations[j] = punctuations.get(j).getAsString();
@@ -174,7 +176,7 @@ public class LeopardTest {
                 parameters.add(new Object[] {
                         language,
                         modelFile,
-                        audioFile,
+                        testAudioFile,
                         transcript,
                         paramPunctuations,
                         errorRate

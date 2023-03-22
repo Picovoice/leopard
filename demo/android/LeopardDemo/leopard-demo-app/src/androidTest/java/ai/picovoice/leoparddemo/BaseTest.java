@@ -66,7 +66,7 @@ public class BaseTest {
         assetManager = testContext.getAssets();
         extractAssetsRecursively("test_resources");
         testResourcesPath = new File(appContext.getFilesDir(), "test_resources").getAbsolutePath();
-        defaultModelPath = new File(testResourcesPath, "leopard_params.pv").getAbsolutePath();
+        defaultModelPath = new File(testResourcesPath, "model_files/leopard_params.pv").getAbsolutePath();
 
         accessKey = appContext.getString(R.string.pvTestingAccessKey);
     }
