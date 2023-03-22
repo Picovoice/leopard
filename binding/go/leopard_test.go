@@ -48,18 +48,16 @@ func TestMain(m *testing.M) {
 	flag.Parse()
 
 	processTestParameters = loadTestData()
-	testCaseEmpty := TestParameters{
-		language:                   "en",
-		testAudioFile:              "empty.wav",
-		transcript:                 "",
-		enableAutomaticPunctuation: false,
-		errorRate:                  0.0,
-	}
-	processTestParameters = append(processTestParameters, testCaseEmpty)
-
 	os.Exit(m.Run())
 }
 
+func appendLanguage(s string, language string) string {
+	if language == "en" {
+		return s
+	} else {
+		return s + "_" + language
+	}
+}
 func loadTestData() []TestParameters {
 
 	content, err := ioutil.ReadFile("../../resources/test/test_data.json")
@@ -105,7 +103,6 @@ func loadTestData() []TestParameters {
 			errorRate:                  x.ErrorRate,
 		}
 		processTestParameters = append(processTestParameters, testCaseWithoutPunctuation)
-
 	}
 
 	return processTestParameters
@@ -167,6 +164,10 @@ func runProcessTestCase(
 
 	leopard = NewLeopard(testAccessKey)
 	leopard.EnableAutomaticPunctuation = enableAutomaticPunctuation
+
+	modelPath, _ := filepath.Abs(filepath.Join("../../lib/common", appendLanguage("leopard_params", language)+".pv"))
+	leopard.ModelPath = modelPath
+
 	err := leopard.Init()
 	if err != nil {
 		log.Fatalf("Failed to init leopard with: %v", err)
@@ -192,12 +193,15 @@ func runProcessTestCase(
 		t.Fatalf("Failed to process pcm buffer: %v", err)
 	}
 
-	errorRate := float32(levenshtein.ComputeDistance(transcript, expectedTranscript) / len(expectedTranscript))
+	t.Logf("%s", transcript)
+	t.Logf("%s", expectedTranscript)
+
+	errorRate := float32(levenshtein.ComputeDistance(transcript, expectedTranscript)) / float32(len(expectedTranscript))
 	if errorRate >= targetErrorRate {
 		t.Fatalf("Expected '%f' got '%f'", targetErrorRate, errorRate)
 	}
 
-	validateMetadata(t, transcript, words, float32(len(pcm)/SampleRate))
+	validateMetadata(t, transcript, words, float32(len(pcm))/float32(SampleRate))
 }
 
 func runProcessFileTestCase(
@@ -210,6 +214,10 @@ func runProcessFileTestCase(
 
 	leopard = NewLeopard(testAccessKey)
 	leopard.EnableAutomaticPunctuation = enableAutomaticPunctuation
+
+	modelPath, _ := filepath.Abs(filepath.Join("../../lib/common", appendLanguage("leopard_params", language)+".pv"))
+	leopard.ModelPath = modelPath
+
 	err := leopard.Init()
 	if err != nil {
 		log.Fatalf("Failed to init leopard with: %v", err)
@@ -221,7 +229,7 @@ func runProcessFileTestCase(
 	if err != nil {
 		t.Fatalf("Failed to process pcm buffer: %v", err)
 	}
-	errorRate := float32(levenshtein.ComputeDistance(transcript, expectedTranscript) / len(expectedTranscript))
+	errorRate := float32(levenshtein.ComputeDistance(transcript, expectedTranscript)) / float32(len(expectedTranscript))
 	if errorRate >= targetErrorRate {
 		t.Fatalf("Expected '%f' got '%f'", targetErrorRate, errorRate)
 	}
@@ -232,7 +240,7 @@ func runProcessFileTestCase(
 	}
 	data = data[44:] // skip header
 
-	validateMetadata(t, transcript, words, float32((len(data)/2)/SampleRate))
+	validateMetadata(t, transcript, words, (float32(len(data))/float32(2))/float32(SampleRate))
 }
 
 func TestProcess(t *testing.T) {
@@ -246,5 +254,27 @@ func TestProcessFile(t *testing.T) {
 	for _, test := range processTestParameters {
 		t.Logf("Running process file test for `%s`", test.language)
 		runProcessTestCase(t, test.language, test.testAudioFile, test.transcript, test.errorRate, test.enableAutomaticPunctuation)
+	}
+}
+
+func TestProcessEmptyFile(t *testing.T) {
+	leopard = NewLeopard(testAccessKey)
+	err := leopard.Init()
+	if err != nil {
+		log.Fatalf("Failed to init leopard with: %v", err)
+	}
+	defer leopard.Delete()
+
+	testAudioPath, _ := filepath.Abs(filepath.Join("../../resources/audio_samples", "empty.wav"))
+	transcript, words, err := leopard.ProcessFile(testAudioPath)
+	if err != nil {
+		t.Fatalf("Failed to process pcm buffer: %v", err)
+	}
+	if len(transcript) > 0 {
+		t.Fatalf("Leopard returned transcript on empty file `%s`", transcript)
+	}
+
+	if len(words) > 0 {
+		t.Fatalf("Leopard returned %d words on empty file", len(words))
 	}
 }
