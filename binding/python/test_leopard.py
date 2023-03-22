@@ -63,9 +63,9 @@ class LeopardTestCase(unittest.TestCase):
 
     def test_version(self):
         o = Leopard(
-                access_key=self._access_key,
-                model_path=default_model_path('../../'),
-                library_path=default_library_path('../../'))
+            access_key=self._access_key,
+            model_path=default_model_path('../../'),
+            library_path=default_library_path('../../'))
         self.assertIsInstance(o.version, str)
         self.assertGreater(len(o.version), 0)
 
@@ -81,9 +81,9 @@ class LeopardTestCase(unittest.TestCase):
 
         try:
             o = Leopard(
-                    access_key=self._access_key,
-                    model_path=get_model_path_by_language(relative='../../', language=language),
-                    library_path=default_library_path('../../'))
+                access_key=self._access_key,
+                model_path=get_model_path_by_language(relative='../../', language=language),
+                library_path=default_library_path('../../'))
 
             pcm = read_wav_file(
                 file_name=os.path.join(self._audio_directory, audio_file),
@@ -117,9 +117,9 @@ class LeopardTestCase(unittest.TestCase):
 
         try:
             o = Leopard(
-                    access_key=self._access_key,
-                    model_path=get_model_path_by_language(relative='../../', language=language),
-                    library_path=default_library_path('../../'))
+                access_key=self._access_key,
+                model_path=get_model_path_by_language(relative='../../', language=language),
+                library_path=default_library_path('../../'))
 
             transcript, words = o.process_file(os.path.join(self._audio_directory, audio_file))
             normalized_transcript = expected_transcript
@@ -153,10 +153,10 @@ class LeopardTestCase(unittest.TestCase):
 
         try:
             o = Leopard(
-                    access_key=self._access_key,
-                    model_path=get_model_path_by_language(relative='../../', language=language),
-                    library_path=default_library_path('../../'),
-                    enable_automatic_punctuation=True)
+                access_key=self._access_key,
+                model_path=get_model_path_by_language(relative='../../', language=language),
+                library_path=default_library_path('../../'),
+                enable_automatic_punctuation=True)
 
             transcript, words = o.process_file(os.path.join(self._audio_directory, audio_file))
 
