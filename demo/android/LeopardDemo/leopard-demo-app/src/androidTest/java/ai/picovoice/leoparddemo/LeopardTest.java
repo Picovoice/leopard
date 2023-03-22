@@ -12,7 +12,6 @@
 
 package ai.picovoice.leoparddemo;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.gson.JsonArray;
@@ -24,14 +23,9 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -129,20 +123,22 @@ public class LeopardTest {
 
     @RunWith(Parameterized.class)
     public static class LanguageTests extends BaseTest {
-
         @Parameterized.Parameter(value = 0)
-        public String modelFile;
+        public String language;
 
         @Parameterized.Parameter(value = 1)
-        public String testAudioFile;
+        public String modelFile;
 
         @Parameterized.Parameter(value = 2)
-        public String expectedTranscript;
+        public String testAudioFile;
 
         @Parameterized.Parameter(value = 3)
-        public String[] punctuations;
+        public String expectedTranscript;
 
         @Parameterized.Parameter(value = 4)
+        public String[] punctuations;
+
+        @Parameterized.Parameter(value = 5)
         public float errorRate;
 
         @Parameterized.Parameters(name = "{0}")
@@ -176,6 +172,7 @@ public class LeopardTest {
                 }
 
                 parameters.add(new Object[] {
+                        language,
                         modelFile,
                         audioFile,
                         transcript,
@@ -189,7 +186,7 @@ public class LeopardTest {
 
 
         @Test
-        public void testTranscribeAudioFile() throws LeopardException {
+        public void testTranscribeAudioFile() throws Exception {
             String modelPath = new File(testResourcesPath, modelFile).getAbsolutePath();
             Leopard leopard = new Leopard.Builder()
                     .setAccessKey(accessKey)
@@ -197,53 +194,69 @@ public class LeopardTest {
                     .build(appContext);
 
             File audioFile = new File(testResourcesPath, testAudioFile);
+            boolean useCER = language.equals("ja");
 
             LeopardTranscript result = leopard.processFile(audioFile.getAbsolutePath());
-            assertEquals(transcript, result.getTranscriptString());
+
+            assertTrue(getWordErrorRate(result.getTranscriptString(), expectedTranscript, useCER) < errorRate);
+            validateMetadata(
+                    result.getWordArray(),
+                    result.getTranscriptString(),
+                    (float) readAudioFile(testAudioFile).length / leopard.getSampleRate()
+            );
 
             leopard.delete();
         }
 
         @Test
-        public void testTranscribeAudioFileWithPunctuation() throws LeopardException {
+        public void testTranscribeAudioFileWithPunctuation() throws Exception {
+            String modelPath = new File(testResourcesPath, modelFile).getAbsolutePath();
             Leopard leopard = new Leopard.Builder()
                     .setAccessKey(accessKey)
-                    .setModelPath(defaultModelPath)
+                    .setModelPath(modelPath)
                     .setEnableAutomaticPunctuation(true)
                     .build(appContext);
 
-            File audioFile = new File(testResourcesPath, "audio/test.wav");
+            File audioFile = new File(testResourcesPath, testAudioFile);
+            boolean useCER = language.equals("ja");
 
             LeopardTranscript result = leopard.processFile(audioFile.getAbsolutePath());
-            assertEquals(transcriptWithPunctuation, result.getTranscriptString());
+
+            String normalizedTranscript = result.getTranscriptString();
+            for (String punctuation: punctuations) {
+                normalizedTranscript = normalizedTranscript.replace(punctuation, "");
+            }
+
+            assertTrue(getWordErrorRate(normalizedTranscript, expectedTranscript, useCER) < errorRate);
+            validateMetadata(
+                    result.getWordArray(),
+                    normalizedTranscript,
+                    (float) readAudioFile(testAudioFile).length / leopard.getSampleRate()
+            );
 
             leopard.delete();
         }
 
         @Test
         public void testTranscribeAudioData() throws Exception {
+            String modelPath = new File(testResourcesPath, modelFile).getAbsolutePath();
             Leopard leopard = new Leopard.Builder()
                     .setAccessKey(accessKey)
-                    .setModelPath(defaultModelPath)
+                    .setModelPath(modelPath)
                     .build(appContext);
 
-            File audioFile = new File(testResourcesPath, "audio/test.wav");
+            File audioFile = new File(testResourcesPath, testAudioFile);
+            short[] pcm = readAudioFile(audioFile.getAbsolutePath());
 
-            FileInputStream audioInputStream = new FileInputStream(audioFile);
-            ByteArrayOutputStream audioByteBuffer = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            for (int length; (length = audioInputStream.read(buffer)) != -1; ) {
-                audioByteBuffer.write(buffer, 0, length);
-            }
-            byte[] rawData = audioByteBuffer.toByteArray();
+            LeopardTranscript result = leopard.process(pcm);
+            boolean useCER = language.equals("ja");
 
-            short[] samples = new short[rawData.length / 2];
-            ByteBuffer pcmBuff = ByteBuffer.wrap(rawData).order(ByteOrder.LITTLE_ENDIAN);
-            pcmBuff.asShortBuffer().get(samples);
-            samples = Arrays.copyOfRange(samples, 44, samples.length);
-
-            LeopardTranscript result = leopard.process(samples);
-            assertEquals(transcript, result.getTranscriptString());
+            assertTrue(getWordErrorRate(result.getTranscriptString(), expectedTranscript, useCER) < errorRate);
+            validateMetadata(
+                    result.getWordArray(),
+                    result.getTranscriptString(),
+                    (float) pcm.length / leopard.getSampleRate()
+            );
 
             leopard.delete();
         }

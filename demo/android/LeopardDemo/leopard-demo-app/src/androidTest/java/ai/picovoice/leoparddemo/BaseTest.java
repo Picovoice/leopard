@@ -30,10 +30,14 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.Arrays;
 
 import ai.picovoice.leopard.LeopardTranscript;
 
@@ -83,6 +87,23 @@ public class BaseTest {
         return result.toString("UTF-8");
     }
 
+    protected static short[] readAudioFile(String audioFile) throws Exception {
+        FileInputStream audioInputStream = new FileInputStream(audioFile);
+        ByteArrayOutputStream audioByteBuffer = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        for (int length; (length = audioInputStream.read(buffer)) != -1; ) {
+            audioByteBuffer.write(buffer, 0, length);
+        }
+        byte[] rawData = audioByteBuffer.toByteArray();
+
+        short[] pcm = new short[rawData.length / 2];
+        ByteBuffer pcmBuff = ByteBuffer.wrap(rawData).order(ByteOrder.LITTLE_ENDIAN);
+        pcmBuff.asShortBuffer().get(pcm);
+        pcm = Arrays.copyOfRange(pcm, 44, pcm.length);
+
+        return pcm;
+    }
+
     protected void validateMetadata(LeopardTranscript.Word[] words, String transcript, float audioLength) {
         String normTranscript = transcript.toUpperCase();
         for (int i = 0; i < words.length; i++) {
@@ -98,9 +119,9 @@ public class BaseTest {
         }
     }
 
-    public static float getWordErrorRate(String transcript, String expectedTranscript, boolean useCER) {
+    protected static float getWordErrorRate(String transcript, String expectedTranscript, boolean useCER) {
         String splitter = (useCER) ? "" : " ";
-        return (float) editDistance(transcript.split(splitter), expectedTranscript.split(splitter)) / (float) transcript.length();
+        return (float) editDistance(transcript.split(splitter), expectedTranscript.split(splitter)) / transcript.length();
     }
 
     private static int editDistance(String[] words1, String[] words2) {
