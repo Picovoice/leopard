@@ -1,5 +1,5 @@
 //
-//  Copyright 2022 Picovoice Inc.
+//  Copyright 2022-2023 Picovoice Inc.
 //  You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 //  file accompanying this source.
 //  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
@@ -136,7 +136,7 @@ public class Leopard {
         try checkStatus(status, "Leopard process failed")
 
         let transcript = String(cString: cTranscript!)
-        cTranscript?.deallocate()
+        pv_leopard_transcript_delete(cTranscript)
 
         var words = [LeopardWord]()
         if numWords > 0 {
@@ -149,7 +149,7 @@ public class Leopard {
                 )
                 words.append(word)
             }
-            cWords?.deallocate()
+            pv_leopard_words_delete(cWords)
         }
 
         return (transcript, words)
@@ -193,7 +193,7 @@ public class Leopard {
         }
 
         let transcript = String(cString: cTranscript!)
-        cTranscript?.deallocate()
+        pv_leopard_transcript_delete(cTranscript)
 
         var words = [LeopardWord]()
         if numWords > 0 {
@@ -206,7 +206,7 @@ public class Leopard {
                 )
                 words.append(word)
             }
-            cWords?.deallocate()
+            pv_leopard_words_delete(cWords)
         }
 
         return (transcript, words)
