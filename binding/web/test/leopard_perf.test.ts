@@ -1,5 +1,4 @@
 import { Leopard, LeopardWorker } from "../";
-import CypressConfig from '../cypress.config';
 
 const ACCESS_KEY = Cypress.env('ACCESS_KEY');
 const NUM_TEST_ITERATIONS = Number(Cypress.env('NUM_TEST_ITERATIONS'));
