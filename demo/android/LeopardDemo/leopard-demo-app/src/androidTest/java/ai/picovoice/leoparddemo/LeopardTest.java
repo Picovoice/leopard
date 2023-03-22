@@ -200,10 +200,15 @@ public class LeopardTest {
 
             LeopardTranscript result = leopard.processFile(audioFile.getAbsolutePath());
 
-            assertTrue(getWordErrorRate(result.getTranscriptString(), expectedTranscript, useCER) < errorRate);
+            String normalizedTranscript = expectedTranscript;
+            for (String punctuation: punctuations) {
+                normalizedTranscript = normalizedTranscript.replace(punctuation, "");
+            }
+
+            assertTrue(getWordErrorRate(result.getTranscriptString(), normalizedTranscript, useCER) < errorRate);
             validateMetadata(
                     result.getWordArray(),
-                    result.getTranscriptString(),
+                    normalizedTranscript,
                     (float) readAudioFile(audioFile.getAbsolutePath()).length / leopard.getSampleRate()
             );
 
@@ -230,7 +235,6 @@ public class LeopardTest {
                 normalizedTranscript = normalizedTranscript.replace(punctuation, "");
             }
 
-
             validateMetadata(
                     result.getWordArray(),
                     normalizedTranscript,
@@ -254,7 +258,12 @@ public class LeopardTest {
             LeopardTranscript result = leopard.process(pcm);
             boolean useCER = language.equals("ja");
 
-            assertTrue(getWordErrorRate(result.getTranscriptString(), expectedTranscript, useCER) < errorRate);
+            String normalizedTranscript = result.getTranscriptString();
+            for (String punctuation: punctuations) {
+                normalizedTranscript = normalizedTranscript.replace(punctuation, "");
+            }
+
+            assertTrue(getWordErrorRate(result.getTranscriptString(), normalizedTranscript, useCER) < errorRate);
             validateMetadata(
                     result.getWordArray(),
                     result.getTranscriptString(),
