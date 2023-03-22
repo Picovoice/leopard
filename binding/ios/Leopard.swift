@@ -91,7 +91,10 @@ public class Leopard {
     ///   - enableAutomaticPunctuation: Set to `true` to enable automatic punctuation insertion.
     /// - Throws: LeopardError
     public convenience init(accessKey: String, modelURL: URL, enableAutomaticPunctuation: Bool = false) throws {
-        try self.init(accessKey: accessKey, modelPath: modelURL.path, enableAutomaticPunctuation: enableAutomaticPunctuation)
+        try self.init(
+                accessKey: accessKey,
+                modelPath: modelURL.path,
+                enableAutomaticPunctuation: enableAutomaticPunctuation)
     }
 
     deinit {
@@ -109,9 +112,9 @@ public class Leopard {
     /// Processes a given audio data and returns its transcription.
     ///
     /// - Parameters:
-    ///   - pcm: An array of 16-bit pcm samples. The audio needs to have a sample rate equal to `.sample_rate` and be 16-bit
-    ///          linearly-encoded. This function operates on single-channel audio. If you wish to process data in a different
-    ///          sample rate or format consider using `.process_file`.
+    ///   - pcm: An array of 16-bit pcm samples. The audio needs to have a sample rate equal to `.sample_rate`
+    ///          and be 16-bit linearly-encoded. This function operates on single-channel audio.
+    ///          If you wish to process data in a different sample rate or format consider using `.process_file`.
     /// - Throws: LeopardError
     /// - Returns: Inferred transcription and sequence of transcribed words with their associated metadata.
     public func process(_ pcm: [Int16]) throws -> (transcript: String, words: [LeopardWord]) {
@@ -235,7 +238,7 @@ public class Leopard {
     /// - Returns: The full path of the resource.
     private func getResourcePath(_ filePath: String) throws -> String {
         if let resourcePath = Bundle(for: type(of: self)).resourceURL?.appendingPathComponent(filePath).path {
-            if (FileManager.default.fileExists(atPath: resourcePath)) {
+            if FileManager.default.fileExists(atPath: resourcePath) {
                 return resourcePath
             }
         }

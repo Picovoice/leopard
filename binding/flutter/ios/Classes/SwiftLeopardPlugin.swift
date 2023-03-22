@@ -69,7 +69,6 @@ public class SwiftLeopardPlugin: NSObject, FlutterPlugin {
             } catch {
                 result(errorToFlutterError(LeopardError(error.localizedDescription)))
             }
-            break
         case .PROCESS:
             do {
                 if let handle = args["handle"] as? String,
@@ -91,7 +90,6 @@ public class SwiftLeopardPlugin: NSObject, FlutterPlugin {
             } catch {
                 result(errorToFlutterError(LeopardError(error.localizedDescription)))
             }
-            break
         case .PROCESSFILE:
             do {
                 if let handle = args["handle"] as? String,
@@ -112,14 +110,12 @@ public class SwiftLeopardPlugin: NSObject, FlutterPlugin {
             } catch {
                 result(errorToFlutterError(LeopardError(error.localizedDescription)))
             }
-            break
         case .DELETE:
             if let handle = args["handle"] as? String {
                 if let leopard = leopardPool.removeValue(forKey: handle) {
                     leopard.delete()
                 }
             }
-            break
         }
     }
 
@@ -143,8 +139,8 @@ public class SwiftLeopardPlugin: NSObject, FlutterPlugin {
             wordMap["endSec"] = wordMeta.endSec
             wordMapArray.append(wordMap)
         }
-        resultDictionary["words"] = wordMapArray;
+        resultDictionary["words"] = wordMapArray
 
-        return resultDictionary;
+        return resultDictionary
     }
 }
