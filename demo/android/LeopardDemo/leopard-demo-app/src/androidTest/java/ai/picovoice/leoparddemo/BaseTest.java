@@ -121,28 +121,28 @@ public class BaseTest {
 
     protected static float getWordErrorRate(String transcript, String expectedTranscript, boolean useCER) {
         String splitter = (useCER) ? "" : " ";
-        return (float) editDistance(transcript.split(splitter), expectedTranscript.split(splitter)) / transcript.length();
+        return (float) levenshteinDistance(transcript.split(splitter), expectedTranscript.split(splitter)) / transcript.length();
     }
 
-    private static int editDistance(String[] words1, String[] words2) {
-        int[][] res = new int[words2.length + 1][words1.length + 1];
+    private static int levenshteinDistance(String[] words1, String[] words2) {
+        int[][] res = new int[words1.length + 1][words2.length + 1];
         for (int i = 0; i <= words1.length; i++) {
-            res[0][i] = i;
+            res[i][0] = i;
         }
         for (int j = 0; j <= words2.length; j++) {
-            res[j][0] = j;
+            res[0][j] = j;
         }
-        for (int j = 1; j <= words2.length; j++) {
-            for (int i = 1; i <= words1.length; i++) {
+        for (int i = 1; i <= words1.length; i++) {
+            for (int j = 1; j <= words2.length; j++) {
                 res[i][j] = Math.min(
                         Math.min(
-                                res[j][i - 1] + 1,
-                                res[j - 1][i] + 1),
-                        res[j - 1][i - 1] + (words1[i - 1].equalsIgnoreCase(words2[j - 1]) ? 0 : 1)
+                                res[i - 1][j] + 1,
+                                res[i][j - 1] + 1),
+                        res[i - 1][j - 1] + (words1[i - 1].equalsIgnoreCase(words2[j - 1]) ? 0 : 1)
                 );
             }
         }
-        return res[words2.length][words1.length];
+        return res[words1.length][words2.length];
     }
 
     private void extractAssetsRecursively(String path) throws IOException {
