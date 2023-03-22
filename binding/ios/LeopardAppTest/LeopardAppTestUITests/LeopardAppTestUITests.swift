@@ -30,8 +30,8 @@ extension String {
             return sCount
         }
 
-        let line : [Int]  = Array(repeating: 0, count: oCount + 1)
-        var mat : [[Int]] = Array(repeating: line, count: sCount + 1)
+        let line: [Int]  = Array(repeating: 0, count: oCount + 1)
+        var mat: [[Int]] = Array(repeating: line, count: sCount + 1)
 
         for i in 0...sCount {
             mat[i][0] = i
@@ -45,8 +45,7 @@ extension String {
             for i in 1...sCount {
                 if self[i - 1] == other[j - 1] {
                     mat[i][j] = mat[i - 1][j - 1]       // no operation
-                }
-                else {
+                } else {
                     let del = mat[i - 1][j] + 1         // deletion
                     let ins = mat[i][j - 1] + 1         // insertion
                     let sub = mat[i - 1][j - 1] + 1     // substitution
@@ -120,7 +119,7 @@ class LeopardAppTestUITests: XCTestCase {
                 subdirectory: "test_resources/audio_samples")!
 
         var normTranscript = transcript
-        if (!testPunctuation) {
+        if !testPunctuation {
             for punctuation in punctuations {
                 normTranscript = normTranscript.replacingOccurrences(of: punctuation, with: "")
             }
@@ -132,7 +131,7 @@ class LeopardAppTestUITests: XCTestCase {
                 enableAutomaticPunctuation: testPunctuation)
 
         let data = try Data(contentsOf: audioFileURL)
-        var pcmBuffer = Array<Int16>(repeating: 0, count: (data.count / MemoryLayout<Int16>.size))
+        var pcmBuffer = [Int16](repeating: 0, count: (data.count / MemoryLayout<Int16>.size))
         _ = pcmBuffer.withUnsafeMutableBytes {
             data.copyBytes(to: $0, from: 0..<data.count)
         }
@@ -161,7 +160,7 @@ class LeopardAppTestUITests: XCTestCase {
                 subdirectory: "test_resources/audio_samples")!
 
         var normTranscript = transcript
-        if (!testPunctuation) {
+        if !testPunctuation {
             for punctuation in punctuations {
                 normTranscript = normTranscript.replacingOccurrences(of: punctuation, with: "")
             }
@@ -173,7 +172,7 @@ class LeopardAppTestUITests: XCTestCase {
                 enableAutomaticPunctuation: testPunctuation)
 
         let data = try Data(contentsOf: audioFileURL)
-        var pcmBuffer = Array<Int16>(repeating: 0, count: (data.count / MemoryLayout<Int16>.size))
+        var pcmBuffer = [Int16](repeating: 0, count: (data.count / MemoryLayout<Int16>.size))
         _ = pcmBuffer.withUnsafeMutableBytes {
             data.copyBytes(to: $0, from: 0..<data.count)
         }
@@ -206,7 +205,7 @@ class LeopardAppTestUITests: XCTestCase {
                 subdirectory: "test_resources/audio_samples")!
 
         var normTranscript = transcript
-        if (!testPunctuation) {
+        if !testPunctuation {
             for punctuation in punctuations {
                 normTranscript = normTranscript.replacingOccurrences(of: punctuation, with: "")
             }
@@ -218,7 +217,7 @@ class LeopardAppTestUITests: XCTestCase {
                 enableAutomaticPunctuation: testPunctuation)
 
         let data = try Data(contentsOf: audioFileURL)
-        var pcmBuffer = Array<Int16>(repeating: 0, count: (data.count / MemoryLayout<Int16>.size))
+        var pcmBuffer = [Int16](repeating: 0, count: (data.count / MemoryLayout<Int16>.size))
         _ = pcmBuffer.withUnsafeMutableBytes {
             data.copyBytes(to: $0, from: 0..<data.count)
         }
@@ -256,7 +255,7 @@ class LeopardAppTestUITests: XCTestCase {
                         punctuations: testCase.punctuations,
                         testPunctuation: false,
                         errorRate: testCase.error_rate,
-                        testAudio: testCase.audio_file);
+                        testAudio: testCase.audio_file)
             }
         }
     }
@@ -284,7 +283,7 @@ class LeopardAppTestUITests: XCTestCase {
                         punctuations: testCase.punctuations,
                         testPunctuation: true,
                         errorRate: testCase.error_rate,
-                        testAudio: testCase.audio_file);
+                        testAudio: testCase.audio_file)
             }
         }
     }
@@ -312,7 +311,7 @@ class LeopardAppTestUITests: XCTestCase {
                         punctuations: testCase.punctuations,
                         testPunctuation: false,
                         errorRate: testCase.error_rate,
-                        testAudio: testCase.audio_file);
+                        testAudio: testCase.audio_file)
             }
         }
     }
@@ -340,7 +339,7 @@ class LeopardAppTestUITests: XCTestCase {
                         punctuations: testCase.punctuations,
                         testPunctuation: false,
                         errorRate: testCase.error_rate,
-                        testAudio: testCase.audio_file);
+                        testAudio: testCase.audio_file)
             }
         }
     }
