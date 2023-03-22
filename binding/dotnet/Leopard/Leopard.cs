@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright 2022 Picovoice Inc.
+    Copyright 2022-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -76,6 +76,12 @@ namespace Pv
         private static extern void pv_leopard_delete(IntPtr handle);
 
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void pv_leopard_transcript_delete(IntPtr transcript);
+
+        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void pv_leopard_word_delete(IntPtr words);
+
+        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
         private static extern PvStatus pv_leopard_process(
             IntPtr handle,
             Int16[] pcm,
@@ -94,9 +100,6 @@ namespace Pv
 
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr pv_leopard_version();
-
-        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void pv_free(IntPtr memoryPtr);
 
         /// <summary>
         /// C Struct for storing word metadata
@@ -206,7 +209,7 @@ namespace Pv
             }
 
             string transcript = Utils.GetUtf8StringFromPtr(transcriptPtr);
-            pv_free(transcriptPtr);
+            pv_leopard_transcript_delete(transcriptPtr);
             List<LeopardWord> wordsList = new List<LeopardWord>();
             IntPtr orgWordsPtr = wordsPtr;
             for (int i = 0; i < numWords; i++)
@@ -217,7 +220,7 @@ namespace Pv
                 wordsPtr += Marshal.SizeOf(typeof(CWord));
             }
 
-            pv_free(orgWordsPtr);
+            pv_leopard_word_delete(orgWordsPtr);
             return new LeopardTranscript(transcript, wordsList.ToArray());
         }
 
@@ -258,7 +261,7 @@ namespace Pv
             }
 
             string transcript = Utils.GetUtf8StringFromPtr(transcriptPtr);
-            pv_free(transcriptPtr);
+            pv_leopard_transcript_delete(transcriptPtr);
             IntPtr orgWordsPtr = wordsPtr;
             List<LeopardWord> wordsList = new List<LeopardWord>();
             for (int i = 0; i < numWords; i++)
@@ -269,7 +272,7 @@ namespace Pv
                 wordsPtr += Marshal.SizeOf(typeof(CWord));
             }
 
-            pv_free(orgWordsPtr);
+            pv_leopard_word_delete(orgWordsPtr);
             return new LeopardTranscript(transcript, wordsList.ToArray());
         }
 
