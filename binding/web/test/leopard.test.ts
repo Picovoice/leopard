@@ -4,6 +4,7 @@ import testData from "./test_data.json";
 // @ts-ignore
 import leopardParams from "./leopard_params";
 import { PvModel } from '@picovoice/web-utils';
+import { LeopardWord } from '../src';
 
 const ACCESS_KEY: string = Cypress.env("ACCESS_KEY");
 
@@ -31,6 +32,21 @@ const wordErrorRate = (reference: string, hypothesis: string, useCER = false): n
   const splitter = (useCER) ? '' : ' ';
   const ed = levenshteinDistance(reference.split(splitter), hypothesis.split(splitter));
   return ed / reference.length;
+};
+
+const validateMetadata = (words: LeopardWord[], transcript: string, audioLength: number) => {
+  const normTranscript = transcript.toUpperCase();
+  for (let i = 0; i < words.length; i++) {
+    expect(normTranscript).to.include(words[i].word.toUpperCase());
+    expect(words[i].startSec).to.be.gt(0);
+    expect(words[i].startSec).to.be.lte(words[i].endSec);
+    if (i < words.length - 1) {
+      expect(words[i].endSec).to.be.lte(words[i + 1].startSec);
+    } else {
+      expect(words[i].endSec).to.be.lte(audioLength);
+    }
+    expect(words[i].confidence >= 0 && words[i].confidence <= 1).to.be.true;
+  }
 };
 
 const runInitTest = async (
@@ -109,26 +125,7 @@ const runProcTest = async (
     const errorRate = wordErrorRate(normalizedTranscript, transcript, useCER);
     expect(errorRate).to.be.lt(expectedErrorRate);
 
-    let transcriptReducer = normalizedTranscript;
-    if (enablePunctuation) {
-      for (const punctuation of punctuations) {
-        transcriptReducer = transcriptReducer.replace(punctuation, "");
-      }
-    }
-    for (let i = 0; i < words.length; i++) {
-      expect(transcriptReducer.slice(0, words[i].word.length).toUpperCase()).to.be.eq(words[i].word.toUpperCase());
-      expect(words[i].startSec).to.be.gt(0);
-      expect(words[i].startSec).to.be.lte(words[i].endSec);
-      if (i < words.length - 1) {
-        expect(words[i].endSec).to.be.lte(words[i + 1].startSec);
-      } else {
-        expect(words[i].endSec).to.be.lte(inputPcm.length / leopard.sampleRate);
-      }
-      expect(words[i].confidence).to.be.gte(0);
-      expect(words[i].confidence).to.be.lte(1);
-
-      transcriptReducer = transcriptReducer.slice(words[i].word.length).trim();
-    }
+    validateMetadata(words, transcript, inputPcm.length / leopard.sampleRate);
 
     if (leopard instanceof LeopardWorker) {
       leopard.terminate();
