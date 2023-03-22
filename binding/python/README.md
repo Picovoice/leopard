@@ -51,6 +51,21 @@ Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://con
 `${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using
 `handle.delete()`.
 
+## Language Model
+
+The Leopard Python SDK comes preloaded with a default English language model (`.pv` file). 
+Default models for other supported languages can be found in [lib/common](../../lib/common). 
+
+Create custom language models using the [Picovoice Console](https://console.picovoice.ai/). Here you can train
+language models with custom vocabulary and boost words in the existing vocabulary.
+
+Pass in the `.pv` file via the `model_path` argument:
+```python
+handle = pvleopard.create(
+    access_key='${ACCESS_KEY}',
+    model_path='${MODEL_PATH}')
+```
+
 ## Demos
 
 [pvleoparddemo](https://pypi.org/project/pvleoparddemo/) provides command-line utilities for processing audio using

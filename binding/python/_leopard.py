@@ -189,9 +189,17 @@ class Leopard(object):
 
         self._sample_rate = library.pv_sample_rate()
 
-        self._pv_free = library.pv_free
-        self._pv_free.argtypes = [c_void_p]
-        self._pv_free.restype = None
+        self._transcript_delete_func = library.pv_leopard_transcript_delete
+        self._transcript_delete_func.argtypes = [
+            c_char_p
+        ]
+        self._transcript_delete_func.restype = None
+
+        self._words_delete_func = library.pv_leopard_words_delete
+        self._words_delete_func.argtypes = [
+            POINTER(self.CWord)
+        ]
+        self._words_delete_func.restype = None
 
     Word = namedtuple('Word', ['word', 'start_sec', 'end_sec', 'confidence'])
 
@@ -230,8 +238,7 @@ class Leopard(object):
                 confidence=c_words[i].confidence)
             words.append(word)
 
-        if num_words.value > 0:
-            self._pv_free(c_words)
+        self._words_delete_func(c_words)
 
         return c_transcript.value.decode('utf-8'), words
 
@@ -273,8 +280,7 @@ class Leopard(object):
                 confidence=c_words[i].confidence)
             words.append(word)
 
-        if num_words.value > 0:
-            self._pv_free(c_words)
+        self._words_delete_func(c_words)
 
         return c_transcript.value.decode('utf-8'), words
 
