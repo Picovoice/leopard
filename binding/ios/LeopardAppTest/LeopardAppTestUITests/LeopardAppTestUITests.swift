@@ -76,7 +76,7 @@ struct ParametersTest: Decodable {
 }
 
 class LeopardAppTestUITests: XCTestCase {
-    let accessKey: String = "{TESTING_ACCESS_KEY_HERE}"
+    let accessKey: String = "lKSJs5JO3IOSiAs7QM6ygNGwpudqWYZ0nOTnwAzZOvpqna9KoM/m2A=="
 
     override func setUp() {
         super.setUp()
@@ -112,8 +112,8 @@ class LeopardAppTestUITests: XCTestCase {
         
         var normTranscript = transcript
         if (!testPunctuation) {
-            for punc in punctuations {
-                normTranscript = normTranscript.replacingOccurrences(of: punc, with: "")
+            for punctuation in punctuations {
+                normTranscript = normTranscript.replacingOccurrences(of: punctuation, with: "")
             }
         }
         
