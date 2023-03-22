@@ -50,7 +50,8 @@ public class Leopard {
         "opus",
         "vorbis",
         "wav",
-        "webm", ]
+        "webm"
+    ]
 
     private var handle: OpaquePointer?
 
@@ -243,7 +244,8 @@ public class Leopard {
             }
         }
 
-        throw LeopardIOError("Could not find file at path '\(filePath)'. If this is a packaged asset, ensure you have added it to your xcode project.")
+        throw LeopardIOError("Could not find file at path '\(filePath)'. " +
+                "If this is a packaged asset, ensure you have added it to your xcode project.")
     }
 
     private func checkStatus(_ status: pv_status_t, _ message: String) throws {

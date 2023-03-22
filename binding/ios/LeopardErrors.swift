@@ -9,11 +9,11 @@
 
 public class LeopardError : LocalizedError {
     private let message: String;
-    
+
     public init (_ message: String) {
         self.message = message
     }
-    
+
     public var errorDescription: String? {
         return message
     }
@@ -25,24 +25,24 @@ public class LeopardError : LocalizedError {
     }
 }
 
-public class LeopardMemoryError : LeopardError {}
+public class LeopardMemoryError: LeopardError {}
 
-public class LeopardIOError : LeopardError {}
+public class LeopardIOError: LeopardError {}
 
-public class LeopardInvalidArgumentError : LeopardError {}
+public class LeopardInvalidArgumentError: LeopardError {}
 
-public class LeopardStopIterationError : LeopardError {}
+public class LeopardStopIterationError: LeopardError {}
 
-public class LeopardKeyError : LeopardError {}
+public class LeopardKeyError: LeopardError {}
 
-public class LeopardInvalidStateError : LeopardError {}
+public class LeopardInvalidStateError: LeopardError {}
 
-public class LeopardRuntimeError : LeopardError {}
+public class LeopardRuntimeError: LeopardError {}
 
-public class LeopardActivationError : LeopardError {}
+public class LeopardActivationError: LeopardError {}
 
-public class LeopardActivationLimitError : LeopardError {}
+public class LeopardActivationLimitError: LeopardError {}
 
-public class LeopardActivationThrottledError : LeopardError {}
+public class LeopardActivationThrottledError: LeopardError {}
 
-public class LeopardActivationRefusedError : LeopardError {}
+public class LeopardActivationRefusedError: LeopardError {}
