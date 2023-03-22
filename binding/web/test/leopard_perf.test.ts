@@ -1,6 +1,4 @@
 import { Leopard, LeopardWorker } from "../";
-// @ts-ignore
-import leopardParams from "./leopard_params";
 
 const ACCESS_KEY = Cypress.env('ACCESS_KEY');
 const NUM_TEST_ITERATIONS = Number(Cypress.env('NUM_TEST_ITERATIONS'));
@@ -19,7 +17,7 @@ async function testPerformance(
 
     const leopard = await instance.create(
       ACCESS_KEY,
-      { base64: leopardParams, forceWrite: true }
+      { publicPath: '/test/leopard_params.pv', forceWrite: true }
     );
 
     let end = Date.now();
