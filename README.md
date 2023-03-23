@@ -310,8 +310,8 @@ for (int32_t i = 0; i < num_words; i++) {
             words[i].confidence);
 }
 
-free(transcript);
-free(words);
+pv_leopard_transcript_delete(transcript);
+pv_leopard_words_delete(words);
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_PATH}` to path to

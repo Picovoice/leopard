@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.4.0
@@ -37,6 +37,13 @@ jobs:
 
       - name: Make build dir
         run: mkdir ddp
+
+      - name: Install resource script dependency
+        run: |
+          brew update
+          brew install convmv
+      - name: Copy test_resources
+        run: ./copy_test_resources.sh
 
       - name: Run Cocoapods
         run: pod install
