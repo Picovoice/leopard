@@ -16,7 +16,6 @@ package leopard
 /*
 #cgo linux LDFLAGS: -ldl
 #cgo darwin LDFLAGS: -ldl
-
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -169,6 +168,7 @@ import (
 	"unsafe"
 )
 
+// private vars
 type nativeLeopardInterface interface {
 	nativeInit(*Leopard)
 	nativeProcess(*Leopard, []int)
