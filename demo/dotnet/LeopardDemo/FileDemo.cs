@@ -45,9 +45,9 @@ namespace LeopardDemo
         {
             // init Leopard speech-to-text engine
             using Leopard leopard = Leopard.Create(
-                accessKey:accessKey,
-                modelPath:modelPath,
-                enableAutomaticPunctuation:enableAutomaticPunctuation);
+                accessKey: accessKey,
+                modelPath: modelPath,
+                enableAutomaticPunctuation: enableAutomaticPunctuation);
 
             try
             {
@@ -71,7 +71,7 @@ namespace LeopardDemo
             {
                 leopard.Dispose();
             }
-            
+
         }
 
         public static void Main(string[] args)
@@ -157,7 +157,7 @@ namespace LeopardDemo
 
             RunDemo(
                 accessKey,
-                inputAudioPath, 
+                inputAudioPath,
                 modelPath,
                 enableAutomaticPunctuation,
                 verbose);

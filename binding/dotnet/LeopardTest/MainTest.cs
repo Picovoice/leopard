@@ -174,7 +174,8 @@ namespace LeopardTest
                 _accessKey,
                 modelPath: GetModelPath(language),
                 enableAutomaticPunctuation: enablePunctuation
-            )) {
+            ))
+            {
 
                 string testAudioPath = Path.Combine(ROOT_DIR, "resources/audio_samples", testAudioFile);
                 LeopardTranscript result = leopard.ProcessFile(testAudioPath);
@@ -206,7 +207,8 @@ namespace LeopardTest
                 _accessKey,
                 modelPath: GetModelPath(language),
                 enableAutomaticPunctuation: enablePunctuation
-            )) { 
+            ))
+            {
                 string testAudioPath = Path.Combine(ROOT_DIR, "resources/audio_samples", testAudioFile);
 
                 List<short> pcm = GetPcmFromFile(testAudioPath, leopard.SampleRate);
