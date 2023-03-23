@@ -139,7 +139,7 @@
         try {
           leopard = await LeopardWeb.LeopardWorker.create(
             accessKey,
-            {base64: modelParams},
+            {base64: modelParams, forceWrite: true},
             {enableAutomaticPunctuation: true}
           );
           document.getElementById("control").style.display = "block";

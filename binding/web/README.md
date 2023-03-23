@@ -48,7 +48,8 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 ### Usage
 
-Create a model in [Picovoice Console](https://console.picovoice.ai/) or use the [default model](https://github.com/Picovoice/leopard/tree/master/lib/common).
+Create a model in [Picovoice Console](https://console.picovoice.ai/) or use 
+the default models for supported languages found in [lib/common](../../lib/common).
 
 For the web packages, there are two methods to initialize Leopard.
 

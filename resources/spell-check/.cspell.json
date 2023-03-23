@@ -68,6 +68,9 @@
     "**/build_defs.bzl",
 
     // rust
-    "**/Cargo.toml"
+    "**/Cargo.toml",
+
+    // test
+    "**/test_data.json"
   ]
 }
