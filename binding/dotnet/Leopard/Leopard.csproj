@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net6.0;netcoreapp3.1;netstandard2.0</TargetFrameworks>
-		<Version>1.1.1</Version>
+		<Version>1.2.0</Version>
 		<Authors>Picovoice</Authors>
 		<Company />
 		<Product>Leopard Speech-to-Text Engine</Product>
@@ -12,7 +12,7 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>Speech-to-Text, Speech Recognition, Voice Recognition, ASR</PackageTags>
 		<PackageReleaseNotes>See https://github.com/Picovoice/leopard/ </PackageReleaseNotes>
-		<Copyright>Picovoice 2022</Copyright>
+		<Copyright>Picovoice 2022-2023</Copyright>
 		<Description>Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally.
@@ -24,63 +24,18 @@
 		<PackageIcon>pv_circle_512.png</PackageIcon>
 	</PropertyGroup>
 	<ItemGroup>
+		<Content Include="Leopard.netstandard2.0.targets">
+		  <PackagePath>
+				build/netstandard2.0/Leopard.targets;
+			</PackagePath>
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 		<Content Include="Leopard.targets">
 			<PackagePath>
-				build/netstandard2.0;
 				build/netcoreapp3.1;
 				build/net6.0;
 			</PackagePath>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="..\..\..\lib\windows\amd64\libpv_leopard.dll">
-			<PackagePath>
-				build/netstandard2.0/lib/windows/amd64/libpv_leopard.dll;
-				build/netcoreapp3.1/lib/windows/amd64/libpv_leopard.dll;
-				build/net6.0/lib/windows/amd64/libpv_leopard.dll;
-			</PackagePath>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<Link>lib\windows\amd64\libpv_leopard.dll</Link>
-			<Visible>false</Visible>
-		</Content>
-		<Content Include="..\..\..\lib\linux\x86_64\libpv_leopard.so">
-			<PackagePath>
-				build/netstandard2.0/lib/linux/x86_64/libpv_leopard.so;
-				build/netcoreapp3.1/lib/linux/x86_64/libpv_leopard.so;
-				build/net6.0/lib/linux/x86_64/libpv_leopard.so;
-			</PackagePath>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<Link>lib\linux\x86_64\libpv_leopard.so</Link>
-			<Visible>false</Visible>
-		</Content>
-		<Content Include="..\..\..\lib\raspberry-pi\**\*" Exclude="..\..\..\lib\raspberry-pi\arm11\*">
-			<PackagePath>
-				build/netstandard2.0/lib/raspberry-pi;
-				build/netcoreapp3.1/lib/raspberry-pi;
-				build/net6.0/lib/raspberry-pi;
-			</PackagePath>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<Link>lib\raspberry-pi\%(RecursiveDir)%(Filename)%(Extension)</Link>
-			<Visible>false</Visible>
-		</Content>
-				<Content Include="..\..\..\lib\jetson\cortex-a57-aarch64\libpv_leopard.so">
-			<PackagePath>
-				build/netstandard2.0/lib/jetson/cortex-a57-aarch64/libpv_leopard.so;
-				build/netcoreapp3.1/lib/jetson/cortex-a57-aarch64/libpv_leopard.so;
-				build/net6.0/lib/jetson/cortex-a57-aarch64/libpv_leopard.so;
-			</PackagePath>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<Link>lib\jetson\cortex-a57-aarch64\libpv_leopard.so</Link>
-			<Visible>false</Visible>
-		</Content>
-		<Content Include="..\..\..\lib\mac\**\*">
-			<PackagePath>
-				build/netstandard2.0/lib/mac;
-				build/netcoreapp3.1/lib/mac;
-				build/net6.0/lib/mac;
-			</PackagePath>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<Link>lib\mac\%(RecursiveDir)%(Filename)%(Extension)</Link>
-			<Visible>false</Visible>
 		</Content>
 		<Content Include="..\..\..\lib\common\leopard_params.pv">
 			<PackagePath>
@@ -90,6 +45,67 @@
 			</PackagePath>
 			<Link>lib\common\leopard_params.pv</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\..\..\lib\windows\amd64\libpv_leopard.dll">
+			<PackagePath>
+				build/netstandard2.0/libpv_leopard.dll;
+				build/netcoreapp3.1/lib/windows/amd64/libpv_leopard.dll;
+				build/net6.0/lib/windows/amd64/libpv_leopard.dll;
+			</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>lib\windows\amd64\libpv_leopard.dll</Link>
+			<Visible>false</Visible>
+		</Content>
+		<Content Include="..\..\..\lib\linux\x86_64\libpv_leopard.so">
+			<PackagePath>
+				build/netstandard2.0/libpv_leopard.so;
+				build/netcoreapp3.1/lib/linux/x86_64/libpv_leopard.so;
+				build/net6.0/lib/linux/x86_64/libpv_leopard.so;
+			</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>lib\linux\x86_64\libpv_leopard.so</Link>
+			<Visible>false</Visible>
+		</Content>
+		<Content Include="..\..\..\lib\mac\x86_64\libpv_leopard.dylib">
+			<PackagePath>
+				build/netstandard2.0/libpv_leopard.dylib;
+				build/netcoreapp3.1/lib/mac/x86_64/libpv_leopard.dylib;
+				build/net6.0/lib/mac/x86_64/libpv_leopard.dylib;
+			</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>lib\mac\x86_64\libpv_leopard.dylib</Link>
+			<Visible>false</Visible>
+		</Content>
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="..\..\..\lib\raspberry-pi\**\*" Exclude="..\..\..\lib\raspberry-pi\arm11\*">
+			<PackagePath>
+				build/netcoreapp3.1/lib/raspberry-pi;
+				build/net6.0/lib/raspberry-pi;
+			</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>lib\raspberry-pi\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<Visible>false</Visible>
+		</Content>
+		<None Remove="Leopard.netstandard2.0.targets" />
+		<Content Include="..\..\..\lib\jetson\cortex-a57-aarch64\libpv_leopard.so">
+			<PackagePath>
+				build/netcoreapp3.1/lib/jetson/cortex-a57-aarch64/libpv_leopard.so;
+				build/net6.0/lib/jetson/cortex-a57-aarch64/libpv_leopard.so;
+			</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>lib\jetson\cortex-a57-aarch64\libpv_leopard.so</Link>
+			<Visible>false</Visible>
+		</Content>
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="..\..\..\lib\mac\arm64\libpv_leopard.dylib">
+			<PackagePath>
+				build/net6.0/lib/mac/arm64/libpv_leopard.dylib;
+			</PackagePath>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>lib\mac\arm64\libpv_leopard.dylib</Link>
+			<Visible>false</Visible>
 		</Content>
 	</ItemGroup>
 	<ItemGroup>

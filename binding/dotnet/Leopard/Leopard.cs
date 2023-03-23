@@ -48,19 +48,25 @@ namespace Pv
 
         static Leopard()
         {
+
 #if NETCOREAPP3_1_OR_GREATER
+
             NativeLibrary.SetDllImportResolver(typeof(Leopard).Assembly, ImportResolver);
+
 #endif
+
             DEFAULT_MODEL_PATH = Utils.PvModelPath();
         }
 
 #if NETCOREAPP3_1_OR_GREATER
+
         private static IntPtr ImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
         {
             IntPtr libHandle = IntPtr.Zero;
             NativeLibrary.TryLoad(Utils.PvLibraryPath(libraryName), out libHandle);
             return libHandle;
         }
+
 #endif
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
         private static extern PvStatus pv_leopard_init(
@@ -79,7 +85,7 @@ namespace Pv
         private static extern void pv_leopard_transcript_delete(IntPtr transcript);
 
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void pv_leopard_word_delete(IntPtr words);
+        private static extern void pv_leopard_words_delete(IntPtr words);
 
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
         private static extern PvStatus pv_leopard_process(
@@ -220,7 +226,7 @@ namespace Pv
                 wordsPtr += Marshal.SizeOf(typeof(CWord));
             }
 
-            pv_leopard_word_delete(orgWordsPtr);
+            pv_leopard_words_delete(orgWordsPtr);
             return new LeopardTranscript(transcript, wordsList.ToArray());
         }
 
@@ -272,7 +278,7 @@ namespace Pv
                 wordsPtr += Marshal.SizeOf(typeof(CWord));
             }
 
-            pv_leopard_word_delete(orgWordsPtr);
+            pv_leopard_words_delete(orgWordsPtr);
             return new LeopardTranscript(transcript, wordsList.ToArray());
         }
 

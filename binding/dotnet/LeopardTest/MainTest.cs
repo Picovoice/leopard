@@ -1,5 +1,5 @@
 /*
-    Copyright 2022 Picovoice Inc.
+    Copyright 2022-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -17,8 +17,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Pv;
 using System;
 using Newtonsoft.Json.Linq;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Fastenshtein;
 
 namespace LeopardTest
@@ -113,17 +111,17 @@ namespace LeopardTest
             }
         }
 
-        private static string AppendLanguage(string s, string language) 
-            => s == "en" ? s : $"{s}_{language}";
+        private static string AppendLanguage(string s, string language)
+            => language == "en" ? s : $"{s}_{language}";
 
-        private static string GetModelPath(string language) 
+        private static string GetModelPath(string language)
             => Path.Combine(
                 ROOT_DIR,
                 "lib/common",
                 $"{AppendLanguage("leopard_params", language)}.pv");
 
         static float GetErrorRate(string transcript, string referenceTranscript)
-            => Levenshtein.Distance(transcript, referenceTranscript) / (float)referenceTranscript.Length;               
+            => Levenshtein.Distance(transcript, referenceTranscript) / (float)referenceTranscript.Length;
 
         private static void ValidateMetadata(LeopardWord[] words, string transcript, float audioLength)
         {
@@ -136,7 +134,7 @@ namespace LeopardTest
                 if (i < words.Length - 1)
                 {
                     Assert.IsTrue(words[i].EndSec <= words[i + 1].StartSec);
-                } 
+                }
                 else
                 {
                     Assert.IsTrue(words[i].EndSec <= audioLength);
@@ -185,7 +183,7 @@ namespace LeopardTest
             }
 
             Assert.IsTrue(GetErrorRate(transcript, referenceTranscript) < targetErrorRate);
-            
+
             float audioLength = GetPcmFromFile(testAudioPath, leopard.SampleRate).Count / (float)leopard.SampleRate;
             ValidateMetadata(result.WordArray, referenceTranscript, audioLength);
         }
@@ -219,7 +217,7 @@ namespace LeopardTest
 
             Assert.IsTrue(GetErrorRate(transcript, referenceTranscript) < targetErrorRate);
 
-            float audioLength = pcm.Count / (float) leopard.SampleRate;
+            float audioLength = pcm.Count / (float)leopard.SampleRate;
             ValidateMetadata(result.WordArray, referenceTranscript, audioLength);
         }
     }
