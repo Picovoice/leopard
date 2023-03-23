@@ -74,10 +74,10 @@ jobs:
         dotnet-version: ${{ matrix.dotnet-version }}
 
     - name: Build binding
-      run: dotnet Leopard/Leopard.csproj --framework ${{ matrix.binding-framework }}
+      run: dotnet build Leopard/Leopard.csproj --framework ${{ matrix.binding-framework }}
 
     - name: Build test
-      run: dotnet LeopardTest/LeopardTest.csproj --framework ${{ matrix.test-framework }}
+      run: dotnet build LeopardTest/LeopardTest.csproj --framework ${{ matrix.test-framework }}
 
     - name: Test
       run: dotnet test --framework ${{ matrix.test-framework }}
