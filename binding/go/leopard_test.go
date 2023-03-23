@@ -158,7 +158,7 @@ func runProcessTestCase(
 	t *testing.T,
 	language string,
 	testAudioFile string,
-	expectedTranscript string,
+	referenceTranscript string,
 	targetErrorRate float32,
 	enableAutomaticPunctuation bool) {
 
@@ -194,9 +194,9 @@ func runProcessTestCase(
 	}
 
 	t.Logf("%s", transcript)
-	t.Logf("%s", expectedTranscript)
+	t.Logf("%s", referenceTranscript)
 
-	errorRate := float32(levenshtein.ComputeDistance(transcript, expectedTranscript)) / float32(len(expectedTranscript))
+	errorRate := float32(levenshtein.ComputeDistance(transcript, referenceTranscript)) / float32(len(referenceTranscript))
 	if errorRate >= targetErrorRate {
 		t.Fatalf("Expected '%f' got '%f'", targetErrorRate, errorRate)
 	}
@@ -208,7 +208,7 @@ func runProcessFileTestCase(
 	t *testing.T,
 	language string,
 	testAudioFile string,
-	expectedTranscript string,
+	referenceTranscript string,
 	targetErrorRate float32,
 	enableAutomaticPunctuation bool) {
 
@@ -229,7 +229,7 @@ func runProcessFileTestCase(
 	if err != nil {
 		t.Fatalf("Failed to process pcm buffer: %v", err)
 	}
-	errorRate := float32(levenshtein.ComputeDistance(transcript, expectedTranscript)) / float32(len(expectedTranscript))
+	errorRate := float32(levenshtein.ComputeDistance(transcript, referenceTranscript)) / float32(len(referenceTranscript))
 	if errorRate >= targetErrorRate {
 		t.Fatalf("Expected '%f' got '%f'", targetErrorRate, errorRate)
 	}
