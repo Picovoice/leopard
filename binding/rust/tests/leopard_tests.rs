@@ -58,13 +58,19 @@ mod tests {
 
     fn validate_metadata(leopard_transcript: LeopardTranscript, audio_length: f32) {
         let norm_transcript = leopard_transcript.transcript.to_uppercase();
-        leopard_transcript.words.iter().for_each(|leopard_word| {
+        for i in 0..leopard_transcript.words.len() {
+            let leopard_word = leopard_transcript.words.get(i).unwrap().clone();
+
             assert!(norm_transcript.contains(&leopard_word.word.to_uppercase()));
             assert!(leopard_word.start_sec > 0.0);
             assert!(leopard_word.start_sec <= leopard_word.end_sec);
+            if i < (leopard_transcript.words.len() - 1) {
+                let next_leopard_word = leopard_transcript.words.get(i + 1).unwrap().clone();
+                assert!(leopard_word.end_sec <= next_leopard_word.start_sec);
+            }
             assert!(leopard_word.end_sec <= audio_length);
             assert!(leopard_word.confidence >= 0.0 && leopard_word.confidence <= 1.0);
-        });
+        }
     }
 
     fn run_test_process(
