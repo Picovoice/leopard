@@ -16,22 +16,22 @@ export type LeopardWord = {
   endSec: number;
   /** Transcription confidence. It is a number within [0, 1]. */
   confidence: number;
-}
+};
 
 export type LeopardTranscript = {
   /** Inferred transcription. */
   transcript: string;
   /** Transcribed words and their associated metadata. */
   words: LeopardWord[];
-}
+};
 
 export type LeopardInitOptions = {
   enableAutomaticPunctuation?: boolean;
-}
+};
 
 export type LeopardInputOptions = {
   modelPath?: string;
   libraryPath?: string;
-}
+};
 
 export type LeopardOptions = LeopardInitOptions & LeopardInputOptions;

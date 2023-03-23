@@ -8,9 +8,9 @@
 // an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 //
-"use strict";
+'use strict';
 
-import PvStatus from "./pv_status_t";
+import PvStatus from './pv_status_t';
 
 export class LeopardError extends Error {}
 
@@ -26,7 +26,10 @@ export class LeopardActivationLimitReached extends LeopardError {}
 export class LeopardActivationThrottled extends LeopardError {}
 export class LeopardActivationRefused extends LeopardError {}
 
-export function pvStatusToException(pvStatus: PvStatus, errorMessage: string) {
+export function pvStatusToException(
+  pvStatus: PvStatus,
+  errorMessage: string
+): void {
   switch (pvStatus) {
     case PvStatus.OUT_OF_MEMORY:
       throw new LeopardOutOfMemoryError(errorMessage);
@@ -51,6 +54,7 @@ export function pvStatusToException(pvStatus: PvStatus, errorMessage: string) {
     case PvStatus.ACTIVATION_REFUSED:
       throw new LeopardActivationRefused(errorMessage);
     default:
+      // eslint-disable-next-line no-console
       console.warn(`Unmapped error code: ${pvStatus}`);
       throw new LeopardError(errorMessage);
   }

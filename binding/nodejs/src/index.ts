@@ -8,11 +8,9 @@
 // an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 //
-"use strict";
+'use strict';
 
-import {
-  Leopard,
-} from "./leopard";
+import { Leopard } from './leopard';
 
 import {
   LeopardActivationError,
@@ -27,7 +25,7 @@ import {
   LeopardOutOfMemoryError,
   LeopardRuntimeError,
   LeopardStopIterationError,
-} from "./errors";
+} from './errors';
 
 import {
   LeopardOptions,
@@ -35,7 +33,7 @@ import {
   LeopardInputOptions,
   LeopardWord,
   LeopardTranscript,
-} from "./types";
+} from './types';
 
 export {
   Leopard,
