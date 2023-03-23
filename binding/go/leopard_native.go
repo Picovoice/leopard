@@ -162,7 +162,9 @@ void pv_leopard_words_delete_wrapper(void *f, pv_word_t *words) {
 }
 
 */
-import "C"
+import (
+	"C"
+)
 
 import (
 	"unsafe"
