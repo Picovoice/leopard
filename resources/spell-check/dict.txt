@@ -1,6 +1,8 @@
 aarch
+agnivade
 androidx
 Appcenter
+arbovm
 armv
 calcsize
 camelcase
@@ -15,6 +17,7 @@ constraintlayout
 convmv
 cstring
 cword
+dgryski
 dlfcn
 dlopen
 dlsym

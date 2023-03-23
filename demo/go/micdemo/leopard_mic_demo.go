@@ -1,4 +1,4 @@
-// Copyright 2022 Picovoice Inc.
+// Copyright 2022-2023 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is
 // located in the "LICENSE" file accompanying this source.
@@ -109,8 +109,11 @@ func main() {
 		<-signalCh
 		fmt.Println()
 		os.Exit(func() int {
-			l.Delete()
 			recorder.Delete()
+			err := l.Delete()
+			if err != nil {
+				log.Fatalf("Failed to release resources: %s", err)
+			}
 			return 0
 		}())
 	}()
