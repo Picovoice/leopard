@@ -21,6 +21,7 @@ dylib
 EACCES
 EADDRINUSE
 exopackage
+Fastenshtein
 favourite
 filedemo
 finalizer
@@ -48,6 +49,7 @@ LPWSTR
 Makefiles
 micdemo
 NETCOREAPP
+Newtonsoft
 okhttp
 pathbuf
 pathstr
