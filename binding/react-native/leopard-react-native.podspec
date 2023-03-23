@@ -16,5 +16,5 @@ Pod::Spec.new do |s|
   s.source_files = "ios/*.{h,m,mm,swift}"
 
   s.dependency "React"
-  s.dependency "Leopard-iOS", '~> 1.1.0'
+  s.dependency "Leopard-iOS", '~> 1.2.0'
 end
