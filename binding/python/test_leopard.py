@@ -118,7 +118,7 @@ class LeopardTestCase(unittest.TestCase):
         try:
             o = Leopard(
                 access_key=self._access_key,
-                model_path=get_model_path_by_language(relative='../../', language=language),
+                model_path=get_model_path_by_language(language=language),
                 library_path=default_library_path('../../'))
 
             transcript, words = o.process_file(os.path.join(self._audio_directory, audio_file))
@@ -154,7 +154,7 @@ class LeopardTestCase(unittest.TestCase):
         try:
             o = Leopard(
                 access_key=self._access_key,
-                model_path=get_model_path_by_language(relative='../../', language=language),
+                model_path=get_model_path_by_language(language=language),
                 library_path=default_library_path('../../'),
                 enable_automatic_punctuation=True)
 
