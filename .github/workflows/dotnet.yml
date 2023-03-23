@@ -95,7 +95,10 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Build binding
-      run: dotnet build --framework net6.0
+      run: dotnet build Leopard/Leopard.csproj --framework net6.0
+
+    - name: Build test
+      run: dotnet build LeopardTest/LeopardTest.csproj --framework net6.0
 
     - name: Test
       run: dotnet test --framework net6.0
