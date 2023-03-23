@@ -53,7 +53,6 @@ class PorcupineCTestCase(unittest.TestCase):
             "-m", self._get_model_path_by_language(language),
             os.path.join(self._root_dir, 'resources/audio_samples', audio_file_name),
         ]
-        print(args)
         process = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         stdout, stderr = process.communicate()
         self.assertEqual(process.poll(), 0)
