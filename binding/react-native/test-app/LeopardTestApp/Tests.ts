@@ -7,7 +7,7 @@ import {Leopard, LeopardWord} from '@picovoice/leopard-react-native';
 const testData = require('./test_data.json');
 const platform = Platform.OS;
 
-const TEST_ACCESS_KEY: string = 'Tw4jothrMMLyRYQ793yD/XF3DeithcbeNVsYlNN0Dc1vY26suWNOkg==';
+const TEST_ACCESS_KEY: string = '{TESTING_ACCESS_KEY_HERE}';
 
 export type Result = {
   testName: string;
@@ -99,6 +99,17 @@ function getPath(filePath: string) {
     return `Assets.bundle/${filePath}`;
   }
   return filePath;
+}
+
+async function absolutePath(subdirectory: string, fileName: string) {
+  if (platform === 'ios') {
+    return `${fs.MainBundlePath}/${subdirectory}/${fileName}`;
+  } else {
+    const writePath = `${fs.TemporaryDirectoryPath}/${subdirectory}/${fileName}`;
+    await fs.mkdir(`${fs.TemporaryDirectoryPath}/${subdirectory}`);
+    await fs.copyFileAssets(`${subdirectory}/${fileName}`, writePath);
+    return writePath;
+  }
 }
 
 async function getBinaryFile(audioFilePath: string) {
@@ -221,13 +232,13 @@ async function runProcTestCase(
     const pcm = await getPcmFromFile(audioPath, leopard.sampleRate);
 
     const {transcript, words} = await (asFile
-      ? leopard.processFile(audioPath)
+      ? leopard.processFile(await absolutePath('audio_samples', audioFile))
       : leopard.process(pcm));
 
     await leopard.delete();
 
     let normalizedTranscript = expectedTranscript;
-    if (enablePunctuation) {
+    if (!enablePunctuation) {
       for (const punctuation of punctuations) {
         normalizedTranscript = normalizedTranscript.replace(punctuation, '');
       }
@@ -260,19 +271,21 @@ async function runProcTestCase(
 async function initTests(): Promise<Result[]> {
   const results: Result[] = [];
 
-  const invalidAccessKeyRes = await runInitTestCase({
+  let result = await runInitTestCase({
     accessKey: 'invalid',
     expectFailure: true,
   });
-  invalidAccessKeyRes.testName = 'Invalid access key test';
-  results.push(invalidAccessKeyRes);
+  result.testName = 'Invalid access key test';
+  logResult(result);
+  results.push(result);
 
-  const invalidModelPathRes = await runInitTestCase({
+  result = await runInitTestCase({
     modelPath: 'invalid',
     expectFailure: true,
   });
-  invalidModelPathRes.testName = 'Invalid model path';
-  results.push(invalidModelPathRes);
+  result.testName = 'Invalid model path';
+  logResult(result);
+  results.push(result);
 
   return results;
 }
