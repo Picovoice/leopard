@@ -44,7 +44,26 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        dotnet-framework: [netcoreapp2.0, netcoreapp3.0, netcoreapp3.1, net5.0, net6.0, net7.0]
+        dotnet-version: [2.0.x, 3.0.x, 3.1.x, 5.0.x, 6.0.x, 7.0.x]
+        include:
+          - dotnet-version: 2.0.x
+            binding-framework: netstandard2.0
+            test-framework: netcoreapp2.0
+          - dotnet-version: 3.0.x
+            binding-framework: netcoreapp3.0
+            test-framework: netcoreapp3.0
+          - dotnet-version: 3.1.x
+            binding-framework: netcoreapp3.0
+            test-framework: netcoreapp3.1
+          - dotnet-version: 5.0.x
+            binding-framework: netcoreapp3.0
+            test-framework: net5.0
+          - dotnet-version: 6.0.x
+            binding-framework: net6.0
+            test-framework: net6.0
+          - dotnet-version: 7.0.x
+            binding-framework: net6.0
+            test-framework: net7.0
 
     steps:
     - uses: actions/checkout@v2
@@ -52,22 +71,16 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: |
-          2.0.x
-          3.0.x
-          3.1.x
-          5.0.x
-          6.0.x
-          7.0.x
+        dotnet-version: ${{ matrix.dotnet-version }}
 
-    - name: Restore dependencies
-      run: dotnet restore
+    - name: Build binding
+      run: dotnet Leopard/Leopard.csproj --framework ${{ matrix.binding-framework }}
 
-    - name: Build
-      run: dotnet build --no-restore
+    - name: Build test
+      run: dotnet LeopardTest/LeopardTest.csproj --framework ${{ matrix.test-framework }}
 
     - name: Test
-      run: dotnet test --framework ${{ matrix.dotnet-framework }}
+      run: dotnet test --framework ${{ matrix.test-framework }}
 
   build-self-hosted:
     runs-on: ${{ matrix.machine }}
@@ -81,11 +94,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Build
-      run: dotnet build --no-restore
+    - name: Build binding
+      run: dotnet build --framework net6.0
 
     - name: Test
       run: dotnet test --framework net6.0
