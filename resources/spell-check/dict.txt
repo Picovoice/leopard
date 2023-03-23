@@ -95,3 +95,4 @@ wargv
 wavefile
 webm
 xcworkspace
+jiwer
