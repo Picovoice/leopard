@@ -33,7 +33,7 @@ class ViewModel: ObservableObject {
     @Published var errorMessage = ""
     @Published var state = UIState.INIT
     @Published var transcript: String = ""
-    @Published var words:[LeopardWord] = []
+    @Published var words: [LeopardWord] = []
     @Published var recordingTimeSec = 0.0
     @Published var transcribeTimeSec = 0.0
 
@@ -50,7 +50,7 @@ class ViewModel: ObservableObject {
                     modelPath: modelPath,
                     enableAutomaticPunctuation: true)
             state = UIState.READY
-        } catch let error as LeopardInvalidArgumentError{
+        } catch let error as LeopardInvalidArgumentError {
             errorMessage = "\(error.localizedDescription)\nEnsure your AccessKey '\(ACCESS_KEY)' is valid."
         } catch is LeopardActivationError {
             errorMessage = "ACCESS_KEY activation error"
@@ -58,7 +58,7 @@ class ViewModel: ObservableObject {
             errorMessage = "ACCESS_KEY activation refused"
         } catch is LeopardActivationLimitError {
             errorMessage = "ACCESS_KEY reached its limit"
-        } catch is LeopardActivationThrottledError  {
+        } catch is LeopardActivationThrottledError {
             errorMessage = "ACCESS_KEY is throttled"
         } catch {
             errorMessage = "\(error)"
@@ -98,9 +98,9 @@ class ViewModel: ObservableObject {
 
     public func toggleRecordingOn() {
         recordingTimeSec = 0
-        recordingTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
+        recordingTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
             self.recordingTimeSec += 0.1
-            if(self.recordingTimeSec >= self.MAX_RECORDING_LENGTH_SEC) {
+            if self.recordingTimeSec >= self.MAX_RECORDING_LENGTH_SEC {
                 self.toggleRecordingOff()
             }
         }
@@ -162,7 +162,9 @@ class ViewModel: ObservableObject {
 
         let fileManager = FileManager.default
         let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let directoryContents = try fileManager.contentsOfDirectory(at: documentDirectory, includingPropertiesForKeys: nil)
+        let directoryContents = try fileManager.contentsOfDirectory(
+                at: documentDirectory,
+                includingPropertiesForKeys: nil)
 
         let path = directoryContents[0].path
 
