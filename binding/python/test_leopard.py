@@ -82,7 +82,7 @@ class LeopardTestCase(unittest.TestCase):
         try:
             o = Leopard(
                 access_key=self._access_key,
-                model_path=get_model_path_by_language(relative='../../', language=language),
+                model_path=get_model_path_by_language(language=language),
                 library_path=default_library_path('../../'))
 
             pcm = read_wav_file(

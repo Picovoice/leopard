@@ -229,6 +229,9 @@ class Leopard(object):
         if status is not self.PicovoiceStatuses.SUCCESS:
             raise self._PICOVOICE_STATUS_TO_EXCEPTION[status]()
 
+        transcript = c_transcript.value.decode('utf-8')
+        self._transcript_delete_func(c_transcript)
+
         words = list()
         for i in range(num_words.value):
             word = self.Word(
@@ -240,7 +243,7 @@ class Leopard(object):
 
         self._words_delete_func(c_words)
 
-        return c_transcript.value.decode('utf-8'), words
+        return transcript, words
 
     def process_file(self, audio_path: str) -> Tuple[str, Sequence[Word]]:
         """
@@ -271,6 +274,9 @@ class Leopard(object):
                     )
             raise self._PICOVOICE_STATUS_TO_EXCEPTION[status]()
 
+        transcript = c_transcript.value.decode('utf-8')
+        self._transcript_delete_func(c_transcript)
+
         words = list()
         for i in range(num_words.value):
             word = self.Word(
@@ -282,7 +288,7 @@ class Leopard(object):
 
         self._words_delete_func(c_words)
 
-        return c_transcript.value.decode('utf-8'), words
+        return transcript, words
 
     def delete(self) -> None:
         """Releases resources acquired by Leopard."""

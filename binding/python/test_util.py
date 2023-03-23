@@ -49,9 +49,9 @@ def read_wav_file(file_name: str, sample_rate: int) -> Tuple:
     return frames[::channels]
 
 
-def get_model_path_by_language(relative: str, language: str) -> str:
-    model_path_subdir = _append_language('lib/common/leopard_params', language)
-    return os.path.join(os.path.dirname(__file__), relative, '%s.pv' % model_path_subdir)
+def get_model_path_by_language(language: str) -> str:
+    model_path_subdir = _append_language('../../lib/common/leopard_params', language)
+    return os.path.join(os.path.dirname(__file__), '%s.pv' % model_path_subdir)
 
 
 def get_word_error_rate(transcript: str, expected_transcript: str, use_cer: bool = False) -> float:
