@@ -27,6 +27,7 @@ dev_dependencies:
     sdk: flutter
   lints: ^1.0.1
   wav: ^1.2.0
+  dart_levenshtein: ^1.0.1
 
 flutter:
   uses-material-design: true
