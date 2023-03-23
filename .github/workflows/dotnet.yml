@@ -76,9 +76,6 @@ jobs:
     - name: Build binding
       run: dotnet build Leopard/Leopard.csproj --framework ${{ matrix.binding-framework }}
 
-    - name: Build test
-      run: dotnet build LeopardTest/LeopardTest.csproj --framework ${{ matrix.test-framework }}
-
     - name: Test
       run: dotnet test --framework ${{ matrix.test-framework }}
 
@@ -96,9 +93,6 @@ jobs:
 
     - name: Build binding
       run: dotnet build Leopard/Leopard.csproj --framework netcoreapp3.0
-
-    - name: Build test
-      run: dotnet build LeopardTest/LeopardTest.csproj --framework netcoreapp3.1
 
     - name: Test
       run: dotnet test --framework netcoreapp3.1
