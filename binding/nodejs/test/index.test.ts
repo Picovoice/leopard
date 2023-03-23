@@ -70,10 +70,15 @@ const validateMetadata = (
   audioLength: number
 ) => {
   const normTranscript = transcript.toUpperCase();
-  for (const word of words) {
+  for (let i = 0; i < words.length; i += 1) {
+    const word = words[i];
     expect(normTranscript.includes(word.word.toUpperCase())).toBeTruthy();
     expect(word.startSec).toBeGreaterThan(0);
     expect(word.startSec).toBeLessThanOrEqual(word.endSec);
+    if (i < (words.length - 1)) {
+      const nextWord = words[i + 1];
+      expect(word.endSec).toBeLessThanOrEqual(nextWord.startSec);
+    }
     expect(word.startSec).toBeLessThan(audioLength);
     expect(word.confidence >= 0 && word.confidence <= 1).toBeTruthy();
   }
