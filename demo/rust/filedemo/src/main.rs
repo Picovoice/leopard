@@ -38,14 +38,14 @@ fn leopard_demo(
     let leopard_transcript = leopard.process_file(input_audio_path).unwrap();
     println!("{}", leopard_transcript.transcript);
     if verbose {
-        println!("");
+        println!();
         let mut tw = TabWriter::new(vec![]);
-        write!(&mut tw, "Word\tStart Sec\tEnd Sec\tConfidence\n").unwrap();
-        write!(&mut tw, "----\t---------\t-------\t----------\n").unwrap();
+        writeln!(&mut tw, "Word\tStart Sec\tEnd Sec\tConfidence").unwrap();
+        writeln!(&mut tw, "----\t---------\t-------\t----------").unwrap();
         leopard_transcript.words.iter().for_each(|word| {
-            write!(
+            writeln!(
                 &mut tw,
-                "{}\t{:.2}\t{:.2}\t{:.2}\n",
+                "{}\t{:.2}\t{:.2}\t{:.2}",
                 word.word, word.start_sec, word.end_sec, word.confidence
             )
             .unwrap();

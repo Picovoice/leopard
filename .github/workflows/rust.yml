@@ -5,27 +5,32 @@ on:
   push:
     branches: [ master ]
     paths:
+      - '.github/workflows/rust.yml'
       - 'binding/rust/**'
       - '!binding/rust/README.md'
       - 'lib/common/**'
-      - 'lib/linux/**'
       - 'lib/jetson/**'
+      - 'lib/linux/**'
       - 'lib/mac/**'
       - 'lib/raspberry-pi/**'
       - 'lib/windows/**'
-      - '.github/workflows/rust.yml'
+      - 'resources/audio_samples/**'
+      - 'resources/test/**'
   pull_request:
     branches: [ master, 'v[0-9]+.[0-9]+' ]
     paths:
+      - '.github/workflows/rust.yml'
       - 'binding/rust/**'
       - '!binding/rust/README.md'
       - 'lib/common/**'
-      - 'lib/linux/**'
       - 'lib/jetson/**'
+      - 'lib/linux/**'
       - 'lib/mac/**'
       - 'lib/raspberry-pi/**'
       - 'lib/windows/**'
-      - '.github/workflows/rust.yml'
+      - 'resources/audio_samples/**'
+      - 'resources/test/**'
+
 
 env:
   CARGO_TERM_COLOR: always
@@ -44,7 +49,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Rust pre-build
       run: bash copy.sh
@@ -74,7 +79,7 @@ jobs:
         machine: [rpi3-32, rpi3-64, rpi4-32, rpi4-64, jetson]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Rust pre-build
       run: bash copy.sh
@@ -89,4 +94,4 @@ jobs:
       run: cargo build --verbose
 
     - name: Rust run tests
-      run: PV_ACCESS_KEY=${{secrets.PV_VALID_ACCESS_KEY}} cargo test --verbose
+      run: PV_ACCESS_KEY=${{secrets.PV_VALID_ACCESS_KEY}} cargo test --verbose -- --test-threads 1
