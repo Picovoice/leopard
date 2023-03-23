@@ -49,7 +49,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Rust pre-build
       run: bash copy.sh
@@ -79,7 +79,7 @@ jobs:
         machine: [rpi3-32, rpi3-64, rpi4-32, rpi4-64, jetson]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Rust pre-build
       run: bash copy.sh
@@ -95,4 +95,3 @@ jobs:
 
     - name: Rust run tests
       run: PV_ACCESS_KEY=${{secrets.PV_VALID_ACCESS_KEY}} cargo test --verbose -- --test-threads 1
-
