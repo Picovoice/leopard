@@ -103,7 +103,8 @@ function getPath(filePath: string) {
 
 async function absolutePath(subdirectory: string, fileName: string) {
   if (platform === 'ios') {
-    return `${fs.MainBundlePath}/${subdirectory}/${fileName}`;
+    const path = getPath(`${subdirectory}/${fileName}`);
+    return `${fs.MainBundlePath}/${path}`;
   } else {
     const writePath = `${fs.TemporaryDirectoryPath}/${subdirectory}/${fileName}`;
     await fs.mkdir(`${fs.TemporaryDirectoryPath}/${subdirectory}`);
