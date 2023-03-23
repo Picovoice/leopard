@@ -86,7 +86,7 @@ jobs:
         machine: [rpi3-32, rpi3-64, rpi4-32, rpi4-64, jetson]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Build binding
       run: dotnet build Leopard/Leopard.csproj --framework net6.0
