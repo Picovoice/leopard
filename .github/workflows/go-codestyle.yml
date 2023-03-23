@@ -29,6 +29,9 @@ jobs:
       uses: golangci/golangci-lint-action@v3
       with:
         working-directory: binding/go
+          skip-cache: true
+          skip-pkg-cache: true
+          skip-build-cache: true
 
   check-go-micdemo-codestyle:
     runs-on: ubuntu-latest
@@ -45,6 +48,9 @@ jobs:
       uses: golangci/golangci-lint-action@v3
       with:
         working-directory: demo/go/micdemo
+        skip-cache: true
+        skip-pkg-cache: true
+        skip-build-cache: true
 
   check-go-filedemo-codestyle:
     runs-on: ubuntu-latest
@@ -61,3 +67,6 @@ jobs:
       uses: golangci/golangci-lint-action@v3
       with:
         working-directory: demo/go/filedemo
+        skip-cache: true
+        skip-pkg-cache: true
+        skip-build-cache: true
