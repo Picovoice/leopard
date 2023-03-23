@@ -7,20 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0BDFC0A822E9A2F6228E92A8 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		0BDFC0A822E9A2F6228E92A8 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		1E00651627CFEF00006FF6E9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E00651527CFEF00006FF6E9 /* AppDelegate.swift */; };
 		1E00651A27CFEF00006FF6E9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E00651927CFEF00006FF6E9 /* ViewController.swift */; };
 		1E00651D27CFEF00006FF6E9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E00651B27CFEF00006FF6E9 /* Main.storyboard */; };
 		1E00651F27CFEF02006FF6E9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1E00651E27CFEF02006FF6E9 /* Assets.xcassets */; };
 		1E00652227CFEF02006FF6E9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1E00652027CFEF02006FF6E9 /* LaunchScreen.storyboard */; };
 		1E00653727CFEF02006FF6E9 /* LeopardAppTestUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E00653627CFEF02006FF6E9 /* LeopardAppTestUITests.swift */; };
-		1E00654827CFF55C006FF6E9 /* test.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1E00654727CFF55C006FF6E9 /* test.wav */; };
-		1E00654A27CFF571006FF6E9 /* leopard_params.pv in Resources */ = {isa = PBXBuildFile; fileRef = 1E00654927CFF571006FF6E9 /* leopard_params.pv */; };
 		1E5B7B1A2800E2B200F8BDDB /* PerformanceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5B7B192800E2B200F8BDDB /* PerformanceTest.swift */; };
 		1E5B7B1E2800E2DA00F8BDDB /* test.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1E5B7B1D2800E2DA00F8BDDB /* test.wav */; };
 		1E5B7B202800E2E300F8BDDB /* leopard_params.pv in Resources */ = {isa = PBXBuildFile; fileRef = 1E5B7B1F2800E2E300F8BDDB /* leopard_params.pv */; };
 		2ACAFA8D37BD29767C20D295 /* libPods-LeopardAppTestUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC9BF6A8819D8BE6F1C29A9 /* libPods-LeopardAppTestUITests.a */; };
 		988C1BA31269C05D013AD6A7 /* libPods-LeopardAppTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FAAD60C0B3177B883F765BC5 /* libPods-LeopardAppTest.a */; };
+		C7C8601229CBA3A300EB6E87 /* test_resources in Resources */ = {isa = PBXBuildFile; fileRef = C7C8601129CBA3A300EB6E87 /* test_resources */; };
 		D11291200B4D3E65A731FC42 /* libPods-PerformanceTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EE8F0242E678B7596CC8AD9 /* libPods-PerformanceTest.a */; };
 /* End PBXBuildFile section */
 
@@ -51,8 +50,6 @@
 		1E00652327CFEF02006FF6E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1E00653227CFEF02006FF6E9 /* LeopardAppTestUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LeopardAppTestUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E00653627CFEF02006FF6E9 /* LeopardAppTestUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeopardAppTestUITests.swift; sourceTree = "<group>"; };
-		1E00654727CFF55C006FF6E9 /* test.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = test.wav; path = ../../../../resources/audio_samples/test.wav; sourceTree = "<group>"; };
-		1E00654927CFF571006FF6E9 /* leopard_params.pv */ = {isa = PBXFileReference; lastKnownFileType = file; name = leopard_params.pv; path = ../../../../lib/common/leopard_params.pv; sourceTree = "<group>"; };
 		1E00658727CFF9A9006FF6E9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1E5B7B172800E21D00F8BDDB /* PerformanceTest.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PerformanceTest.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E5B7B192800E2B200F8BDDB /* PerformanceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTest.swift; sourceTree = "<group>"; };
@@ -67,6 +64,7 @@
 		9EE8F0242E678B7596CC8AD9 /* libPods-PerformanceTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PerformanceTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A628417A52824080EC61AA1F /* Pods-LeopardAppTestUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardAppTestUITests.debug.xcconfig"; path = "Target Support Files/Pods-LeopardAppTestUITests/Pods-LeopardAppTestUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		ABC7F42231559CA8C0EAB4FF /* Pods-LeopardAppTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardAppTest.debug.xcconfig"; path = "Target Support Files/Pods-LeopardAppTest/Pods-LeopardAppTest.debug.xcconfig"; sourceTree = "<group>"; };
+		C7C8601129CBA3A300EB6E87 /* test_resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = test_resources; sourceTree = "<group>"; };
 		FAAD60C0B3177B883F765BC5 /* libPods-LeopardAppTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LeopardAppTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -83,7 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0BDFC0A822E9A2F6228E92A8 /* BuildFile in Frameworks */,
+				0BDFC0A822E9A2F6228E92A8 /* (null) in Frameworks */,
 				2ACAFA8D37BD29767C20D295 /* libPods-LeopardAppTestUITests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -147,8 +145,7 @@
 		1E00653527CFEF02006FF6E9 /* LeopardAppTestUITests */ = {
 			isa = PBXGroup;
 			children = (
-				1E00654727CFF55C006FF6E9 /* test.wav */,
-				1E00654927CFF571006FF6E9 /* leopard_params.pv */,
+				C7C8601129CBA3A300EB6E87 /* test_resources */,
 				1E00653627CFEF02006FF6E9 /* LeopardAppTestUITests.swift */,
 				1E00658727CFF9A9006FF6E9 /* Info.plist */,
 			);
@@ -298,8 +295,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1E00654827CFF55C006FF6E9 /* test.wav in Resources */,
-				1E00654A27CFF571006FF6E9 /* leopard_params.pv in Resources */,
+				C7C8601229CBA3A300EB6E87 /* test_resources in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -546,7 +542,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -600,7 +596,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -625,6 +621,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -654,6 +651,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

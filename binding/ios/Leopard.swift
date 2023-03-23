@@ -1,5 +1,5 @@
 //
-//  Copyright 2022 Picovoice Inc.
+//  Copyright 2022-2023 Picovoice Inc.
 //  You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 //  file accompanying this source.
 //  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
@@ -50,7 +50,8 @@ public class Leopard {
         "opus",
         "vorbis",
         "wav",
-        "webm", ]
+        "webm"
+    ]
 
     private var handle: OpaquePointer?
 
@@ -91,7 +92,10 @@ public class Leopard {
     ///   - enableAutomaticPunctuation: Set to `true` to enable automatic punctuation insertion.
     /// - Throws: LeopardError
     public convenience init(accessKey: String, modelURL: URL, enableAutomaticPunctuation: Bool = false) throws {
-        try self.init(accessKey: accessKey, modelPath: modelURL.path, enableAutomaticPunctuation: enableAutomaticPunctuation)
+        try self.init(
+                accessKey: accessKey,
+                modelPath: modelURL.path,
+                enableAutomaticPunctuation: enableAutomaticPunctuation)
     }
 
     deinit {
@@ -109,9 +113,9 @@ public class Leopard {
     /// Processes a given audio data and returns its transcription.
     ///
     /// - Parameters:
-    ///   - pcm: An array of 16-bit pcm samples. The audio needs to have a sample rate equal to `.sample_rate` and be 16-bit
-    ///          linearly-encoded. This function operates on single-channel audio. If you wish to process data in a different
-    ///          sample rate or format consider using `.process_file`.
+    ///   - pcm: An array of 16-bit pcm samples. The audio needs to have a sample rate equal to `.sample_rate`
+    ///          and be 16-bit linearly-encoded. This function operates on single-channel audio.
+    ///          If you wish to process data in a different sample rate or format consider using `.process_file`.
     /// - Throws: LeopardError
     /// - Returns: Inferred transcription and sequence of transcribed words with their associated metadata.
     public func process(_ pcm: [Int16]) throws -> (transcript: String, words: [LeopardWord]) {
@@ -136,7 +140,7 @@ public class Leopard {
         try checkStatus(status, "Leopard process failed")
 
         let transcript = String(cString: cTranscript!)
-        cTranscript?.deallocate()
+        pv_leopard_transcript_delete(cTranscript)
 
         var words = [LeopardWord]()
         if numWords > 0 {
@@ -149,7 +153,7 @@ public class Leopard {
                 )
                 words.append(word)
             }
-            cWords?.deallocate()
+            pv_leopard_words_delete(cWords)
         }
 
         return (transcript, words)
@@ -193,7 +197,7 @@ public class Leopard {
         }
 
         let transcript = String(cString: cTranscript!)
-        cTranscript?.deallocate()
+        pv_leopard_transcript_delete(cTranscript)
 
         var words = [LeopardWord]()
         if numWords > 0 {
@@ -206,7 +210,7 @@ public class Leopard {
                 )
                 words.append(word)
             }
-            cWords?.deallocate()
+            pv_leopard_words_delete(cWords)
         }
 
         return (transcript, words)
@@ -235,12 +239,13 @@ public class Leopard {
     /// - Returns: The full path of the resource.
     private func getResourcePath(_ filePath: String) throws -> String {
         if let resourcePath = Bundle(for: type(of: self)).resourceURL?.appendingPathComponent(filePath).path {
-            if (FileManager.default.fileExists(atPath: resourcePath)) {
+            if FileManager.default.fileExists(atPath: resourcePath) {
                 return resourcePath
             }
         }
 
-        throw LeopardIOError("Could not find file at path '\(filePath)'. If this is a packaged asset, ensure you have added it to your xcode project.")
+        throw LeopardIOError("Could not find file at path '\(filePath)'. " +
+                "If this is a packaged asset, ensure you have added it to your xcode project.")
     }
 
     private func checkStatus(_ status: pv_status_t, _ message: String) throws {

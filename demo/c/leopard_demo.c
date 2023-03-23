@@ -1,5 +1,5 @@
 /*
-    Copyright 2019-2022 Picovoice Inc.
+    Copyright 2019-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -158,9 +158,17 @@ int picovoice_main(int argc, char **argv) {
         exit(1);
     }
 
-    void (*pv_free_func)(void *) = load_symbol(dl_handle, "pv_free");
-    if (!pv_free_func) {
-        print_dl_error("failed to load `pv_free`");
+    pv_status_t (*pv_leopard_transcript_delete_func)(char *) =
+    load_symbol(dl_handle, "pv_leopard_transcript_delete");
+    if (!pv_leopard_transcript_delete_func) {
+        print_dl_error("failed to load `pv_leopard_transcript_delete`");
+        exit(1);
+    }
+
+    pv_status_t (*pv_leopard_words_delete_func)(pv_word_t *) =
+    load_symbol(dl_handle, "pv_leopard_words_delete");
+    if (!pv_leopard_words_delete_func) {
+        print_dl_error("failed to load `pv_leopard_words_delete`");
         exit(1);
     }
 
@@ -199,7 +207,7 @@ int picovoice_main(int argc, char **argv) {
         proc_sec += ((double) (after.tv_sec - before.tv_sec) + ((double) (after.tv_usec - before.tv_usec)) * 1e-6);
 
         fprintf(stdout, "%s\n", transcript);
-        pv_free_func(transcript);
+        pv_leopard_transcript_delete_func(transcript);
 
         if (show_metadata) {
             for (int32_t j = 0; j < num_words; j++) {
@@ -213,7 +221,7 @@ int picovoice_main(int argc, char **argv) {
             }
             printf("\n");
         }
-        pv_free_func(words);
+        pv_leopard_words_delete_func(words);
     }
 
     fprintf(stdout, "proc took %.2f sec\n", proc_sec);
