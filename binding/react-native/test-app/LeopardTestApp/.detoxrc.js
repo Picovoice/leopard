@@ -12,13 +12,13 @@ module.exports = {
   apps: {
     'ios.debug': {
       type: 'ios.app',
-      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/PorcupineTestApp.app',
-      build: 'xcodebuild -workspace ios/PorcupineTestApp.xcworkspace -scheme PorcupineTestApp -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build'
+      binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/LeopardTestApp.app',
+      build: 'xcodebuild -workspace ios/LeopardTestApp.xcworkspace -scheme LeopardTestApp -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build'
     },
     'ios.release': {
       type: 'ios.app',
-      binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/PorcupineTestApp.app',
-      build: 'xcodebuild -workspace ios/PorcupineTestApp.xcworkspace -scheme PorcupineTestApp -configuration Release -sdk iphonesimulator -derivedDataPath ios/build'
+      binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/LeopardTestApp.app',
+      build: 'xcodebuild -workspace ios/LeopardTestApp.xcworkspace -scheme LeopardTestApp -configuration Release -sdk iphonesimulator -derivedDataPath ios/build'
     },
     'android.debug': {
       type: 'android.apk',

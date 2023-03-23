@@ -20,7 +20,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 This binding is for running Leopard on **React Native 0.62.2+** on the following platforms:
 
 - Android 5.0+ (SDK 21+)
-- iOS 10.0+
+- iOS 11.0+
 
 ## Installation
 

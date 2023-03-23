@@ -10,7 +10,7 @@ on:
       - 'lib/ios/**'
       - '.github/workflows/react-native-tests.yml'
   pull_request:
-    branches: [ master ]
+    branches: [ master, 'v[0-9]+.[0-9]+' ]
     paths:
       - 'binding/react-native/**'
       - 'lib/common/**'

@@ -7,7 +7,7 @@ import {Leopard, LeopardWord} from '@picovoice/leopard-react-native';
 const testData = require('./test_data.json');
 const platform = Platform.OS;
 
-const TEST_ACCESS_KEY: string = '{TESTING_ACCESS_KEY_HERE}';
+const TEST_ACCESS_KEY: string = 'Tw4jothrMMLyRYQ793yD/XF3DeithcbeNVsYlNN0Dc1vY26suWNOkg==';
 
 export type Result = {
   testName: string;
@@ -85,6 +85,14 @@ const validateMetadata = (
   }
   return null;
 };
+
+function logResult(result: Result) {
+  if (result.success) {
+    console.info(result);
+  } else {
+    console.error(result);
+  }
+}
 
 function getPath(filePath: string) {
   if (platform === 'ios') {
@@ -216,6 +224,8 @@ async function runProcTestCase(
       ? leopard.processFile(audioPath)
       : leopard.process(pcm));
 
+    await leopard.delete();
+
     let normalizedTranscript = expectedTranscript;
     if (enablePunctuation) {
       for (const punctuation of punctuations) {
@@ -261,7 +271,7 @@ async function initTests(): Promise<Result[]> {
     modelPath: 'invalid',
     expectFailure: true,
   });
-  invalidAccessKeyRes.testName = 'Invalid model path';
+  invalidModelPathRes.testName = 'Invalid model path';
   results.push(invalidModelPathRes);
 
   return results;
@@ -274,11 +284,12 @@ async function paramTests(): Promise<Result[]> {
     const result = await runProcTestCase(
       testParam.language,
       testParam.audio_file,
-      testParam.trascript,
+      testParam.transcript,
       testParam.punctuations,
       testParam.error_rate,
     );
     result.testName = `Process test for '${testParam.language}'`;
+    logResult(result);
     results.push(result);
   }
 
@@ -286,7 +297,7 @@ async function paramTests(): Promise<Result[]> {
     const result = await runProcTestCase(
       testParam.language,
       testParam.audio_file,
-      testParam.trascript,
+      testParam.transcript,
       testParam.punctuations,
       testParam.error_rate,
       {
@@ -294,6 +305,7 @@ async function paramTests(): Promise<Result[]> {
       },
     );
     result.testName = `Process test with punctuation for '${testParam.language}'`;
+    logResult(result);
     results.push(result);
   }
 
@@ -301,7 +313,7 @@ async function paramTests(): Promise<Result[]> {
     const result = await runProcTestCase(
       testParam.language,
       testParam.audio_file,
-      testParam.trascript,
+      testParam.transcript,
       testParam.punctuations,
       testParam.error_rate,
       {
@@ -309,6 +321,7 @@ async function paramTests(): Promise<Result[]> {
       },
     );
     result.testName = `Process file test for '${testParam.language}'`;
+    logResult(result);
     results.push(result);
   }
 
