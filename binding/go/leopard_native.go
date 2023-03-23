@@ -13,11 +13,6 @@
 
 package leopard
 
-import "C"
-import (
-	"unsafe"
-)
-
 /*
 #cgo linux LDFLAGS: -ldl
 #cgo darwin LDFLAGS: -ldl
@@ -168,6 +163,11 @@ void pv_leopard_words_delete_wrapper(void *f, pv_word_t *words) {
 }
 
 */
+import "C"
+
+import (
+	"unsafe"
+)
 
 type nativeLeopardInterface interface {
 	nativeInit(*Leopard)
