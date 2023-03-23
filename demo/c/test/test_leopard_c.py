@@ -56,7 +56,6 @@ class PorcupineCTestCase(unittest.TestCase):
         print(args)
         process = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         stdout, stderr = process.communicate()
-        print(stderr.decode('utf-8'))
         self.assertEqual(process.poll(), 0)
         self.assertEqual(stderr.decode('utf-8'), '')
         transcript = stdout.decode('utf-8').strip().split('\n')[1]
