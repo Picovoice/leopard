@@ -52,7 +52,12 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: |
+          2.0.x
+          3.0.x
+          5.0.x
+          6.0.x
+          7.0.x
 
     - name: Restore dependencies
       run: dotnet restore
