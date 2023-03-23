@@ -14,7 +14,6 @@
 package leopard
 
 import (
-	"C"
 	"crypto/sha256"
 	"embed"
 	"encoding/hex"
@@ -27,8 +26,8 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"unsafe"
 )
-import "unsafe"
 
 //go:embed embedded
 var embeddedFS embed.FS
