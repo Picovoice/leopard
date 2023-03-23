@@ -102,7 +102,7 @@ const testLeopardProcess = (
   let normTranscript = transcript;
   if (!testPunctuation) {
     for (const punctuation of punctuations) {
-      normTranscript = normTranscript.replaceAll(punctuation, '');
+      normTranscript = normTranscript.replace(new RegExp(`[${punctuation}]`, "g"), '');
     }
   }
 
@@ -139,7 +139,7 @@ const testLeopardProcessFile = (
   let normTranscript = transcript;
   if (!testPunctuation) {
     for (const punctuation of punctuations) {
-      normTranscript = normTranscript.replaceAll(punctuation, '');
+      normTranscript = normTranscript.replace(new RegExp(`[${punctuation}]`, "g"), '');
     }
   }
 
