@@ -146,15 +146,19 @@ namespace LeopardTest
         [TestMethod]
         public void TestVersion()
         {
-            using Leopard leopard = Leopard.Create(_accessKey);
-            Assert.IsFalse(string.IsNullOrWhiteSpace(leopard?.Version), "Leopard did not return a valid version number.");
+            using (Leopard leopard = Leopard.Create(_accessKey))
+            {
+                Assert.IsFalse(string.IsNullOrWhiteSpace(leopard?.Version), "Leopard did not return a valid version number.");
+            }
         }
 
         [TestMethod]
         public void TestSampleRate()
         {
-            using Leopard leopard = Leopard.Create(_accessKey);
-            Assert.IsTrue(leopard.SampleRate > 0, "Leopard did not return a valid sample rate number.");
+            using (Leopard leopard = Leopard.Create(_accessKey))
+            {
+                Assert.IsTrue(leopard.SampleRate > 0, "Leopard did not return a valid sample rate number.");
+            }
         }
 
         [TestMethod]
@@ -166,26 +170,27 @@ namespace LeopardTest
             bool enablePunctuation,
             float targetErrorRate)
         {
-            using Leopard leopard = Leopard.Create(
+            using (Leopard leopard = Leopard.Create(
                 _accessKey,
                 modelPath: GetModelPath(language),
                 enableAutomaticPunctuation: enablePunctuation
-            );
+            )) {
 
-            string testAudioPath = Path.Combine(ROOT_DIR, "resources/audio_samples", testAudioFile);
-            LeopardTranscript result = leopard.ProcessFile(testAudioPath);
+                string testAudioPath = Path.Combine(ROOT_DIR, "resources/audio_samples", testAudioFile);
+                LeopardTranscript result = leopard.ProcessFile(testAudioPath);
 
-            string transcript = result.TranscriptString;
-            if (!enablePunctuation)
-            {
-                referenceTranscript = referenceTranscript.ToUpper();
-                transcript = transcript.ToUpper();
+                string transcript = result.TranscriptString;
+                if (!enablePunctuation)
+                {
+                    referenceTranscript = referenceTranscript.ToUpper();
+                    transcript = transcript.ToUpper();
+                }
+
+                Assert.IsTrue(GetErrorRate(transcript, referenceTranscript) < targetErrorRate);
+
+                float audioLength = GetPcmFromFile(testAudioPath, leopard.SampleRate).Count / (float)leopard.SampleRate;
+                ValidateMetadata(result.WordArray, referenceTranscript, audioLength);
             }
-
-            Assert.IsTrue(GetErrorRate(transcript, referenceTranscript) < targetErrorRate);
-
-            float audioLength = GetPcmFromFile(testAudioPath, leopard.SampleRate).Count / (float)leopard.SampleRate;
-            ValidateMetadata(result.WordArray, referenceTranscript, audioLength);
         }
 
         [TestMethod]
@@ -197,28 +202,28 @@ namespace LeopardTest
             bool enablePunctuation,
             float targetErrorRate)
         {
-            using Leopard leopard = Leopard.Create(
+            using (Leopard leopard = Leopard.Create(
                 _accessKey,
                 modelPath: GetModelPath(language),
                 enableAutomaticPunctuation: enablePunctuation
-            );
+            )) { 
+                string testAudioPath = Path.Combine(ROOT_DIR, "resources/audio_samples", testAudioFile);
 
-            string testAudioPath = Path.Combine(ROOT_DIR, "resources/audio_samples", testAudioFile);
+                List<short> pcm = GetPcmFromFile(testAudioPath, leopard.SampleRate);
+                LeopardTranscript result = leopard.Process(pcm.ToArray());
 
-            List<short> pcm = GetPcmFromFile(testAudioPath, leopard.SampleRate);
-            LeopardTranscript result = leopard.Process(pcm.ToArray());
+                string transcript = result.TranscriptString;
+                if (!enablePunctuation)
+                {
+                    referenceTranscript = referenceTranscript.ToUpper();
+                    transcript = transcript.ToUpper();
+                }
 
-            string transcript = result.TranscriptString;
-            if (!enablePunctuation)
-            {
-                referenceTranscript = referenceTranscript.ToUpper();
-                transcript = transcript.ToUpper();
+                Assert.IsTrue(GetErrorRate(transcript, referenceTranscript) < targetErrorRate);
+
+                float audioLength = pcm.Count / (float)leopard.SampleRate;
+                ValidateMetadata(result.WordArray, referenceTranscript, audioLength);
             }
-
-            Assert.IsTrue(GetErrorRate(transcript, referenceTranscript) < targetErrorRate);
-
-            float audioLength = pcm.Count / (float)leopard.SampleRate;
-            ValidateMetadata(result.WordArray, referenceTranscript, audioLength);
         }
     }
 }

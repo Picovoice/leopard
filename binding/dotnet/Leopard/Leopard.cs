@@ -49,7 +49,7 @@ namespace Pv
         static Leopard()
         {
 
-#if NETCOREAPP3_1_OR_GREATER
+#if NETCOREAPP3_0_OR_GREATER
 
             NativeLibrary.SetDllImportResolver(typeof(Leopard).Assembly, ImportResolver);
 
@@ -58,7 +58,7 @@ namespace Pv
             DEFAULT_MODEL_PATH = Utils.PvModelPath();
         }
 
-#if NETCOREAPP3_1_OR_GREATER
+#if NETCOREAPP3_0_OR_GREATER
 
         private static IntPtr ImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
         {
@@ -68,6 +68,7 @@ namespace Pv
         }
 
 #endif
+
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
         private static extern PvStatus pv_leopard_init(
             IntPtr accessKey,
