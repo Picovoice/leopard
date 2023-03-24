@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.homepage         = 'https://picovoice.ai/'
   s.license          = { :type => 'Apache-2.0' }
   s.author           = { 'Picovoice' => 'hello@picovoice.ai' }
-  s.source           = { :git => "https://github.com/Picovoice/leopard.git", :branch => "v1.2-flutter" }
+  s.source           = { :git => "https://github.com/Picovoice/leopard.git" }
   s.source_files = 'Classes/**/*'
   s.platform = :ios, '11.0'
   s.dependency 'Flutter'
