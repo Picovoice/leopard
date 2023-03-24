@@ -1,5 +1,5 @@
 /*
-    Copyright 2022 Picovoice Inc.
+    Copyright 2022-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -16,38 +16,27 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Pv;
 using System;
+using Newtonsoft.Json.Linq;
+using Fastenshtein;
 
 namespace LeopardTest
 {
     [TestClass]
     public class MainTest
     {
-        private static string ACCESS_KEY;
+        private static string _accessKey;
+        private static readonly string ROOT_DIR = Path.Combine(
+            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+            "../../../../../..");
 
-        private static string REF_TRANSCRIPT = "Mr quilter is the apostle of the middle classes and we are glad to welcome his gospel";
 
-        private static string _relativeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext _)
+        {
+            _accessKey = Environment.GetEnvironmentVariable("ACCESS_KEY");
+        }
 
-        LeopardWord[] referenceTranscriptMetadata = {
-            new LeopardWord("Mr", 0.95f, 0.58f, 0.80f),
-            new LeopardWord("quilter", 0.80f, 0.86f, 1.18f),
-            new LeopardWord("is", 0.96f, 1.31f, 1.38f),
-            new LeopardWord("the", 0.90f, 1.44f, 1.50f),
-            new LeopardWord("apostle", 0.79f, 1.57f, 2.08f),
-            new LeopardWord("of", 0.98f, 2.18f, 2.24f),
-            new LeopardWord("the", 0.98f, 2.30f, 2.34f),
-            new LeopardWord("middle", 0.97f, 2.40f, 2.59f),
-            new LeopardWord("classes", 0.98f, 2.69f, 3.17f),
-            new LeopardWord("and", 0.95f, 3.36f, 3.46f),
-            new LeopardWord("we", 0.96f, 3.52f, 3.55f),
-            new LeopardWord("are", 0.97f, 3.65f, 3.65f),
-            new LeopardWord("glad", 0.93f, 3.74f, 4.03f),
-            new LeopardWord("to", 0.97f, 4.10f, 4.16f),
-            new LeopardWord("welcome", 0.89f, 4.22f, 4.58f),
-            new LeopardWord("his", 0.96f, 4.67f, 4.83f),
-            new LeopardWord("gospel", 0.93f, 4.93f, 5.38f)};
-
-        private List<short> GetPcmFromFile(string audioFilePath, int expectedSampleRate)
+        private static List<short> GetPcmFromFile(string audioFilePath, int expectedSampleRate)
         {
             List<short> data = new List<short>();
             using (BinaryReader reader = new BinaryReader(File.Open(audioFilePath, FileMode.Open)))
@@ -65,57 +54,178 @@ namespace LeopardTest
             return data;
         }
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext _)
+
+        private static JObject LoadJsonTestData()
         {
-            ACCESS_KEY = Environment.GetEnvironmentVariable("ACCESS_KEY");
+            string content = File.ReadAllText(Path.Combine(ROOT_DIR, "resources/test/test_data.json"));
+            return JObject.Parse(content);
+        }
+
+        [Serializable]
+        private class TestParameterJson
+        {
+            public string language { get; set; }
+            public string audio_file { get; set; }
+            public string transcript { get; set; }
+
+            public string[] punctuations { get; set; }
+
+            public float error_rate { get; set; }
+        }
+
+        public static IEnumerable<object[]> TestParameters
+        {
+            get
+            {
+                JObject testDataJson = LoadJsonTestData();
+                IList<TestParameterJson> testParametersJson = ((JArray)testDataJson["tests"]["parameters"]).ToObject<IList<TestParameterJson>>();
+                List<object[]> testParameters = new List<object[]>();
+                foreach (TestParameterJson t in testParametersJson)
+                {
+                    testParameters.Add(new object[]
+                    {
+                        t.language,
+                        t.audio_file,
+                        t.transcript,
+                        true,
+                        t.error_rate
+                    });
+
+                    string transcriptWithoutPunctuation = t.transcript;
+                    foreach (string p in t.punctuations)
+                    {
+                        transcriptWithoutPunctuation = transcriptWithoutPunctuation.Replace(p, "");
+                    }
+
+                    testParameters.Add(new object[]
+                    {
+                        t.language,
+                        t.audio_file,
+                        transcriptWithoutPunctuation,
+                        false,
+                        t.error_rate
+                    });
+                }
+                return testParameters;
+
+            }
+        }
+
+        private static string AppendLanguage(string s, string language)
+            => language == "en" ? s : $"{s}_{language}";
+
+        private static string GetModelPath(string language)
+            => Path.Combine(
+                ROOT_DIR,
+                "lib/common",
+                $"{AppendLanguage("leopard_params", language)}.pv");
+
+        static float GetErrorRate(string transcript, string referenceTranscript)
+            => Levenshtein.Distance(transcript, referenceTranscript) / (float)referenceTranscript.Length;
+
+        private static void ValidateMetadata(LeopardWord[] words, string transcript, float audioLength)
+        {
+            string normTranscript = transcript.ToUpper();
+            for (int i = 0; i < words.Length; i++)
+            {
+                Assert.IsTrue(normTranscript.Contains(words[i].Word.ToUpper()));
+                Assert.IsTrue(words[i].StartSec > 0);
+                Assert.IsTrue(words[i].StartSec <= words[i].EndSec);
+                if (i < words.Length - 1)
+                {
+                    Assert.IsTrue(words[i].EndSec <= words[i + 1].StartSec);
+                }
+                else
+                {
+                    Assert.IsTrue(words[i].EndSec <= audioLength);
+                }
+                Assert.IsTrue(words[i].Confidence >= 0.0f && words[i].Confidence <= 1.0f);
+            }
         }
 
         [TestMethod]
         public void TestVersion()
         {
-            using Leopard leopard = Leopard.Create(ACCESS_KEY);
-            Assert.IsFalse(string.IsNullOrWhiteSpace(leopard?.Version), "Leopard did not return a valid version number.");
-        }
-
-        [TestMethod]
-        public void TestProcessFile()
-        {
-            using Leopard leopard = Leopard.Create(ACCESS_KEY);
-            string testAudioPath = Path.Combine(_relativeDir, "resources/audio_samples/test.wav");
-            LeopardTranscript result = leopard.ProcessFile(testAudioPath);
-            Assert.AreEqual(REF_TRANSCRIPT, result.TranscriptString);
-            for (int i= 0; i < 10; i++)
+            using (Leopard leopard = Leopard.Create(_accessKey))
             {
-                Assert.AreEqual(result.WordArray[i].Word, referenceTranscriptMetadata[i].Word);
-                Assert.AreEqual(result.WordArray[i].Confidence, referenceTranscriptMetadata[i].Confidence, 0.01);
-                Assert.AreEqual(result.WordArray[i].StartSec, referenceTranscriptMetadata[i].StartSec, 0.01);
-                Assert.AreEqual(result.WordArray[i].EndSec, referenceTranscriptMetadata[i].EndSec, 0.01);
+                Assert.IsFalse(string.IsNullOrWhiteSpace(leopard?.Version), "Leopard did not return a valid version number.");
             }
         }
 
         [TestMethod]
-        [DataRow(true, "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel.")]
-        [DataRow(false, "Mr quilter is the apostle of the middle classes and we are glad to welcome his gospel")]
-        public void TestProcess(bool enableAutomaticPunctuation, string expectedTranscript)
+        public void TestSampleRate()
         {
-            using Leopard leopard = Leopard.Create(
-                accessKey: ACCESS_KEY,
-                enableAutomaticPunctuation: enableAutomaticPunctuation);
-            string testAudioPath = Path.Combine(_relativeDir, "resources/audio_samples/test.wav");
-            List<short> pcm = GetPcmFromFile(testAudioPath, leopard.SampleRate);
-            LeopardTranscript result = leopard.Process(pcm.ToArray());
-            Assert.AreEqual(expectedTranscript, result.TranscriptString);
+            using (Leopard leopard = Leopard.Create(_accessKey))
+            {
+                Assert.IsTrue(leopard.SampleRate > 0, "Leopard did not return a valid sample rate number.");
+            }
         }
 
         [TestMethod]
-        public void TestCustomModel()
+        [DynamicData(nameof(TestParameters))]
+        public void TestProcessFile(
+            string language,
+            string testAudioFile,
+            string referenceTranscript,
+            bool enablePunctuation,
+            float targetErrorRate)
         {
-            string testModelPath = Path.Combine(_relativeDir, "lib/common/leopard_params.pv");
-            string testAudioPath = Path.Combine(_relativeDir, "resources/audio_samples/test.wav");
-            using Leopard leopard = Leopard.Create(ACCESS_KEY, testModelPath);
-            LeopardTranscript result = leopard.ProcessFile(testAudioPath);
-            Assert.AreEqual(REF_TRANSCRIPT, result.TranscriptString);
+            using (Leopard leopard = Leopard.Create(
+                _accessKey,
+                modelPath: GetModelPath(language),
+                enableAutomaticPunctuation: enablePunctuation
+            ))
+            {
+
+                string testAudioPath = Path.Combine(ROOT_DIR, "resources/audio_samples", testAudioFile);
+                LeopardTranscript result = leopard.ProcessFile(testAudioPath);
+
+                string transcript = result.TranscriptString;
+                if (!enablePunctuation)
+                {
+                    referenceTranscript = referenceTranscript.ToUpper();
+                    transcript = transcript.ToUpper();
+                }
+
+                Assert.IsTrue(GetErrorRate(transcript, referenceTranscript) < targetErrorRate);
+
+                float audioLength = GetPcmFromFile(testAudioPath, leopard.SampleRate).Count / (float)leopard.SampleRate;
+                ValidateMetadata(result.WordArray, referenceTranscript, audioLength);
+            }
+        }
+
+        [TestMethod]
+        [DynamicData(nameof(TestParameters))]
+        public void TestProcess(
+            string language,
+            string testAudioFile,
+            string referenceTranscript,
+            bool enablePunctuation,
+            float targetErrorRate)
+        {
+            using (Leopard leopard = Leopard.Create(
+                _accessKey,
+                modelPath: GetModelPath(language),
+                enableAutomaticPunctuation: enablePunctuation
+            ))
+            {
+                string testAudioPath = Path.Combine(ROOT_DIR, "resources/audio_samples", testAudioFile);
+
+                List<short> pcm = GetPcmFromFile(testAudioPath, leopard.SampleRate);
+                LeopardTranscript result = leopard.Process(pcm.ToArray());
+
+                string transcript = result.TranscriptString;
+                if (!enablePunctuation)
+                {
+                    referenceTranscript = referenceTranscript.ToUpper();
+                    transcript = transcript.ToUpper();
+                }
+
+                Assert.IsTrue(GetErrorRate(transcript, referenceTranscript) < targetErrorRate);
+
+                float audioLength = pcm.Count / (float)leopard.SampleRate;
+                ValidateMetadata(result.WordArray, referenceTranscript, audioLength);
+            }
         }
     }
 }

@@ -48,9 +48,9 @@ namespace LeopardDemo
             Leopard leopard = null;
 
             leopard = Leopard.Create(
-                accessKey:accessKey,
-                modelPath:modelPath,
-                enableAutomaticPunctuation:enableAutomaticPunctuation);
+                accessKey: accessKey,
+                modelPath: modelPath,
+                enableAutomaticPunctuation: enableAutomaticPunctuation);
 
             PvRecorder recorder = PvRecorder.Create(audioDeviceIndex, PV_RECORDER_FRAME_LENGTH);
 
