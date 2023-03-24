@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,14 +41,14 @@ public class LeopardTest {
     private final String accessKey = System.getProperty("pvTestingAccessKey");
     private Leopard leopard;
 
-    public static String appendLanguage(String s, String language) {
+    private static String appendLanguage(String s, String language) {
         if (language.equals("en")) {
             return s;
         }
         return s + "_" + language;
     }
 
-    public static float getCharacterErrorRate(String transcript, String expectedTranscript) {
+    private static float getErrorRate(String transcript, String expectedTranscript) {
         return (float) LevenshteinDistance
                 .getDefaultInstance()
                 .apply(transcript, expectedTranscript) / (float) expectedTranscript.length();
@@ -180,7 +179,7 @@ public class LeopardTest {
         short[] pcm = readAudioFile(testAudioPath);
         LeopardTranscript result = leopard.process(pcm);
 
-        assertTrue(getCharacterErrorRate(result.getTranscriptString(), referenceTranscript) < targetErrorRate);
+        assertTrue(getErrorRate(result.getTranscriptString(), referenceTranscript) < targetErrorRate);
         validateMetadata(
                 result.getWordArray(),
                 result.getTranscriptString(),
@@ -211,7 +210,7 @@ public class LeopardTest {
                 .toString();
 
         LeopardTranscript result = leopard.processFile(testAudioPath);
-        assertTrue(getCharacterErrorRate(result.getTranscriptString(), referenceTranscript) < targetErrorRate);
+        assertTrue(getErrorRate(result.getTranscriptString(), referenceTranscript) < targetErrorRate);
         validateMetadata(
                 result.getWordArray(),
                 result.getTranscriptString(),

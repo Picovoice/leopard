@@ -22,8 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class LeopardPerformanceTest {
     private final String accessKey = System.getProperty("pvTestingAccessKey");
     private final int numTestIterations = Integer.parseInt(System.getProperty("numTestIterations"));
-    private final double initPerformanceThresholdSec = Double.parseDouble(System.getProperty("initPerformanceThresholdSec"));
-    private final double procPerformanceThresholdSec = Double.parseDouble(System.getProperty("procPerformanceThresholdSec"));
+    private final double initPerformanceThresholdSec = Double.parseDouble(
+            System.getProperty("initPerformanceThresholdSec")
+    );
+    private final double procPerformanceThresholdSec = Double.parseDouble(
+            System.getProperty("procPerformanceThresholdSec")
+    );
 
     @Test
     void initPerformance() throws Exception {

@@ -12,19 +12,15 @@
 
 package ai.picovoice.leoparddemo;
 
-import ai.picovoice.leopard.*;
+import ai.picovoice.leopard.Leopard;
+import ai.picovoice.leopard.LeopardTranscript;
 import org.apache.commons.cli.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import javax.sound.sampled.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Map;
-import javax.sound.sampled.*;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 class Recorder extends Thread {
@@ -62,7 +58,9 @@ class Recorder extends Thread {
         return (TargetDataLine) AudioSystem.getLine(dataLineInfo);
     }
 
-    private static TargetDataLine getAudioDevice(int deviceIndex, DataLine.Info dataLineInfo) throws LineUnavailableException {
+    private static TargetDataLine getAudioDevice(
+            int deviceIndex,
+            DataLine.Info dataLineInfo) throws LineUnavailableException {
         if (deviceIndex >= 0) {
             try {
                 Mixer.Info mixerInfo = AudioSystem.getMixerInfo()[deviceIndex];
@@ -71,8 +69,9 @@ class Recorder extends Thread {
                 if (mixer.isLineSupported(dataLineInfo)) {
                     return (TargetDataLine) mixer.getLine(dataLineInfo);
                 } else {
-                    System.err.printf("Audio capture device at index %s does not support the audio format required by " +
-                            "Picovoice. Using default capture device.", deviceIndex);
+                    System.err.printf(
+                            "Audio capture device at index %s does not support the audio format required by " +
+                                    "Picovoice. Using default capture device.", deviceIndex);
                 }
             } catch (Exception e) {
                 System.err.printf("No capture device found at index %s. Using default capture device.", deviceIndex);
@@ -141,7 +140,8 @@ public class MicDemo {
                     System.out.println(">>> Recording ... Press 'ENTER' to stop:");
                     scanner.nextLine();
                     recorder.end();
-                    while (recorder.isAlive()) { }
+                    while (recorder.isAlive()) {
+                    }
                     short[] pcm = recorder.getPCM();
 
                     LeopardTranscript transcript = leopard.process(pcm);
@@ -194,7 +194,7 @@ public class MicDemo {
     }
 
     public static void main(String[] args) {
-        Options options = BuildCommandLineOptions();
+        Options options = buildCommandLineOptions();
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
 
@@ -260,7 +260,7 @@ public class MicDemo {
                 audioDeviceIndex);
     }
 
-    private static Options BuildCommandLineOptions() {
+    private static Options buildCommandLineOptions() {
         Options options = new Options();
 
         options.addOption(Option.builder("a")

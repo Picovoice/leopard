@@ -15,6 +15,9 @@ package ai.picovoice.leopard;
 import java.io.File;
 import java.util.Arrays;
 
+/**
+ * Class for the Leopard Speech-to-Text engine.
+ */
 public class Leopard {
 
     public static final String LIBRARY_PATH;
@@ -38,7 +41,11 @@ public class Leopard {
      * @param enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
      * @throws LeopardException if there is an error while initializing Leopard.
      */
-    private Leopard(String accessKey, String modelPath, String libraryPath, boolean enableAutomaticPunctuation) throws LeopardException {
+    private Leopard(
+            String accessKey,
+            String modelPath,
+            String libraryPath,
+            boolean enableAutomaticPunctuation) throws LeopardException {
         try {
             System.load(libraryPath);
         } catch (Exception exception) {
@@ -101,7 +108,9 @@ public class Leopard {
             if (path.contains(".")) {
                 String extension = path.substring(path.lastIndexOf(".") + 1);
                 if (!Arrays.asList(VALID_EXTENSIONS).contains(extension)) {
-                    throw new LeopardInvalidArgumentException(String.format("Specified file with extension '%s' is not supported", extension));
+                    throw new LeopardInvalidArgumentException(
+                            String.format("Specified file with extension '%s' is not supported",
+                                    extension));
                 }
             }
             throw e;
@@ -126,6 +135,9 @@ public class Leopard {
         return LeopardNative.getVersion();
     }
 
+    /**
+     * Builder for creating an instance of Leopard with a mixture of default arguments.
+     */
     public static class Builder {
         private String accessKey = null;
         private String libraryPath = null;
@@ -134,7 +146,7 @@ public class Leopard {
         private boolean enableAutomaticPunctuation = false;
 
         /**
-         * Setter the AccessKey
+         * Setter the AccessKey.
          *
          * @param accessKey AccessKey obtained from Picovoice Console
          */
@@ -164,7 +176,7 @@ public class Leopard {
         }
 
         /**
-         * Setter for enabling automatic punctuation insertion
+         * Setter for enabling automatic punctuation insertion.
          *
          * @param enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
          */
@@ -173,10 +185,15 @@ public class Leopard {
             return this;
         }
 
+        /**
+         * Creates an instance of Leopard Speech-to-Text engine.
+         */
         public Leopard build() throws LeopardException {
 
             if (!Utils.isEnvironmentSupported()) {
-                throw new LeopardRuntimeException("Could not initialize Leopard. " + "Execution environment not currently supported by Leopard Java.");
+                throw new LeopardRuntimeException(
+                        "Could not initialize Leopard. " +
+                                "Execution environment not currently supported by Leopard Java.");
             }
 
             if (accessKey == null) {
@@ -187,10 +204,14 @@ public class Leopard {
                 if (Utils.isResourcesAvailable()) {
                     libraryPath = LIBRARY_PATH;
                 } else {
-                    throw new LeopardInvalidArgumentException("Default library unavailable. Please " + "provide a native Leopard library path (-l <library_path>).");
+                    throw new LeopardInvalidArgumentException(
+                            "Default library unavailable. Please " +
+                                    "provide a native Leopard library path (-l <library_path>).");
                 }
                 if (libraryPath == null || !new File(libraryPath).exists()) {
-                    throw new LeopardIOException(String.format("Couldn't find library file at " + "'%s'", libraryPath));
+                    throw new LeopardIOException(
+                            String.format(
+                                    "Couldn't find library file at " + "'%s'", libraryPath));
                 }
             }
 
@@ -198,7 +219,9 @@ public class Leopard {
                 if (Utils.isResourcesAvailable()) {
                     modelPath = MODEL_PATH;
                 } else {
-                    throw new LeopardInvalidArgumentException("Default model unavailable. Please provide a " + "valid Leopard model path (-m <model_path>).");
+                    throw new LeopardInvalidArgumentException(
+                            "Default model unavailable. Please provide a " +
+                                    "valid Leopard model path (-m <model_path>).");
                 }
                 if (!new File(modelPath).exists()) {
                     throw new LeopardIOException(String.format("Couldn't find model file at " + "'%s'", modelPath));
