@@ -46,6 +46,7 @@ leoparddemo
 leopardfiledemo
 leopardgogrpc
 leopardmicdemo
+leopardtestapp
 libc
 libloading
 libpv

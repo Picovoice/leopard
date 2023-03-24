@@ -20,7 +20,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 This binding is for running Leopard on **React Native 0.62.2+** on the following platforms:
 
 - Android 5.0+ (SDK 21+)
-- iOS 10.0+
+- iOS 11.0+
 
 ## Installation
 
@@ -52,7 +52,8 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 ## Adding Leopard Models
 
-Create a custom model using the [Picovoice Console](https://console.picovoice.ai/) or use the [default model](https://github.com/Picovoice/leopard/tree/master/lib/common/).
+Create a custom model using the [Picovoice Console](https://console.picovoice.ai/) or use
+the default models for supported languages found in [lib/common](../../lib/common).
 
 ### Android
 
