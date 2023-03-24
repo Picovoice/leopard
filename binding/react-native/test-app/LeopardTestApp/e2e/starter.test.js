@@ -12,9 +12,7 @@ describe('Leopard', () => {
       .not.toExist()
       .withTimeout(12 * 60 * 1000);
 
-    const numTestCases =
-      testData.tests.singleKeyword.length +
-      testData.tests.multipleKeyword.length;
+    const numTestCases = testData.tests.parameters.length;
     for (let i = 0; i < numTestCases; i += 1) {
       await waitFor(element(by.id('testResult')).atIndex(i)).toExist().withTimeout(1 * 60 * 1000)
       await expect(element(by.id('testResult')).atIndex(i)).toHaveText('true');
