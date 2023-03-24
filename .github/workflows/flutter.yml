@@ -55,6 +55,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Copy assets
+      run: ./copy_assets.sh
+
     - name: Copy test_resources
       run: ./copy_test_resources.sh
 
@@ -96,6 +99,9 @@ jobs:
 
       steps:
       - uses: actions/checkout@v3
+
+      - name: Copy assets
+        run: ./copy_assets.sh
 
       - name: Copy test_resources
         run: ./copy_test_resources.sh
