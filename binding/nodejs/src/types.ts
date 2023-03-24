@@ -1,5 +1,5 @@
 /*
-  Copyright 2022 Picovoice Inc.
+  Copyright 2022-2023 Picovoice Inc.
   You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
   file accompanying this source.
   Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
@@ -16,22 +16,22 @@ export type LeopardWord = {
   endSec: number;
   /** Transcription confidence. It is a number within [0, 1]. */
   confidence: number;
-}
+};
 
 export type LeopardTranscript = {
   /** Inferred transcription. */
   transcript: string;
   /** Transcribed words and their associated metadata. */
   words: LeopardWord[];
-}
+};
 
 export type LeopardInitOptions = {
   enableAutomaticPunctuation?: boolean;
-}
+};
 
 export type LeopardInputOptions = {
   modelPath?: string;
   libraryPath?: string;
-}
+};
 
 export type LeopardOptions = LeopardInitOptions & LeopardInputOptions;
