@@ -9,6 +9,8 @@ on:
       - 'lib/android/**'
       - 'lib/ios/**'
       - '.github/workflows/react-native-tests.yml'
+      - 'resources/audio_samples/**'
+      - 'resources/test/**'
   pull_request:
     branches: [ master, 'v[0-9]+.[0-9]+' ]
     paths:
@@ -17,6 +19,8 @@ on:
       - 'lib/android/**'
       - 'lib/ios/**'
       - '.github/workflows/react-native-tests.yml'
+      - 'resources/audio_samples/**'
+      - 'resources/test/**'
 
 defaults:
   run:
