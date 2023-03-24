@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
@@ -17,27 +16,26 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   final String accessKey = "{TESTING_ACCESS_KEY_HERE}";
-  final String platform = Platform.isAndroid ? "android" : Platform.isIOS ? "ios" : throw ("Unsupported platform");
 
   String getModelPath(String language) {
-    return "assets/test_resources/model_files/leopard_params${language != "en" ? "_${language}" : ""}.pv";
+    return "assets/test_resources/model_files/leopard_params${language != "en" ? "_$language" : ""}.pv";
   }
 
   String getAudioPath(String audioFile) {
-    return "assets/test_resources/audio_samples/${audioFile}";
+    return "assets/test_resources/audio_samples/$audioFile";
   }
 
   Future<List<int>> loadAudioFile(String audioFile) async {
-    const INT16_MAX = 32767;
-    const INT16_MIN = -32768;
+    const int16Max = 32767;
+    const int16Min = -32768;
 
     String audioPath = getAudioPath(audioFile);
     var audioFileData = await rootBundle.load(audioPath);
-    Wav audio = await Wav.read(audioFileData.buffer.asUint8List());
+    Wav audio = Wav.read(audioFileData.buffer.asUint8List());
     List<int> pcm = audio.channels[0].map((f) {
-        var i = (f * INT16_MAX).truncate();
-        if (f > INT16_MAX) i = INT16_MAX;
-        if (f < INT16_MIN) i = INT16_MIN;
+        var i = (f * int16Max).truncate();
+        if (f > int16Max) i = int16Max;
+        if (f < int16Min) i = int16Min;
         return i;
       }).toList();
     return pcm;
@@ -131,9 +129,9 @@ void main() {
 
       String normTranscript = transcript;
       if (!testPunctuations) {
-        punctuations.forEach((p) {
+        for (var p in punctuations) {
           normTranscript = normTranscript.replaceAll(p, "");
-        });
+        }
       }
 
       Leopard leopard;
@@ -143,7 +141,7 @@ void main() {
           modelPath,
           enableAutomaticPunctuation: testPunctuations);
       } on LeopardException catch (ex) {
-        expect(ex, equals(null), reason: "Failed to initialize Leopard for ${language}: ${ex}");
+        expect(ex, equals(null), reason: "Failed to initialize Leopard for $language: $ex");
         return;
       }
 
@@ -152,7 +150,7 @@ void main() {
 
       leopard.delete();
 
-      expect(characterErrorRate(res.transcript, normTranscript), lessThanOrEqualTo(errorRate), reason: "Character error rate for ${language} was incorrect");
+      expect(characterErrorRate(res.transcript, normTranscript), lessThanOrEqualTo(errorRate), reason: "Character error rate for $language was incorrect");
       await validateMetadata(res.words, res.transcript, pcm.length / leopard.sampleRate);
     }
 
@@ -161,9 +159,9 @@ void main() {
 
       String normTranscript = transcript;
       if (!testPunctuations) {
-        punctuations.forEach((p) {
+        for (var p in punctuations) {
           normTranscript = normTranscript.replaceAll(p, "");
-        });
+        }
       }
 
       Leopard leopard;
@@ -173,7 +171,7 @@ void main() {
           modelPath,
           enableAutomaticPunctuation: testPunctuations);
       } on LeopardException catch (ex) {
-        expect(ex, equals(null), reason: "Failed to initialize Leopard for ${language}: ${ex}");
+        expect(ex, equals(null), reason: "Failed to initialize Leopard for $language: $ex");
         return;
       }
 
@@ -183,7 +181,7 @@ void main() {
       leopard.delete();
 
       List<int> pcm = await loadAudioFile(audioFile);
-      expect(characterErrorRate(res.transcript, normTranscript), lessThanOrEqualTo(errorRate), reason: "Character error rate for ${language} was incorrect");
+      expect(characterErrorRate(res.transcript, normTranscript), lessThanOrEqualTo(errorRate), reason: "Character error rate for $language was incorrect");
       await validateMetadata(res.words, res.transcript, pcm.length / leopard.sampleRate);
     }
 
