@@ -59,7 +59,7 @@ jobs:
             make_file: "Unix Makefiles"
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
 
@@ -104,7 +104,7 @@ jobs:
             arch: cortex-a57-aarch64
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
 
