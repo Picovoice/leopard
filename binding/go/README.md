@@ -37,7 +37,7 @@ Create an instance of the engine and transcribe an audio file:
 ```go
 import . "github.com/Picovoice/leopard/binding/go"
 
-leopard = NewLeopard("${ACCESS_KEY}")
+leopard := NewLeopard("${ACCESS_KEY}")
 err := leopard.Init()
 if err != nil {
     // handle err init
@@ -55,6 +55,21 @@ print(transcript)
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and
 `${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using
 `leopard.Delete()`.
+
+## Language Model
+
+The Leopard Go SDK comes preloaded with a default English language model (`.pv` file).
+Default models for other supported languages can be found in [lib/common](../../lib/common).
+
+Create custom language models using the [Picovoice Console](https://console.picovoice.ai/). Here you can train
+language models with custom vocabulary and boost words in the existing vocabulary.
+
+Pass in the `.pv` file by setting `.ModelPath` on an instance of Leopard before initializing:
+```go
+leopard := NewLeopard("${ACCESS_KEY}")
+leopard.ModelPath = "${MODEL_PATH}"
+err := leopard.Init()
+```
 
 ## Demos
 
