@@ -71,7 +71,7 @@ void main() {
 
     List<int> v0 = List<int>.filled(s2.length + 1, 0);
     List<int> v1 = List<int>.filled(s2.length + 1, 0);
-    List<int> vtemp;
+    List<int> vTemp;
 
     for (var i = 0; i < v0.length; i++) {
       v0[i] = i;
@@ -88,9 +88,9 @@ void main() {
         v1[j + 1] = min(v1[j] + 1, min(v0[j + 1] + 1, v0[j] + cost));
       }
 
-      vtemp = v0;
+      vTemp = v0;
       v0 = v1;
-      v1 = vtemp;
+      v1 = vTemp;
     }
 
     return v0[s2.length];
