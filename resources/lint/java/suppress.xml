@@ -6,7 +6,7 @@
 
 <suppressions>
     <suppress files="Utils\.java" checks="LocalVariableName"/>
-    <suppress files=".*(Test|Exception|Callback|demo|Module|Plugin).*\.java" checks="MissingJavadocType"/>
+    <suppress files=".*(Test|Exception|Callback|demo|Module|Plugin|Package).*\.java" checks="MissingJavadocType"/>
     <suppress files=".*(Test|Exception|Error|demo).*\.java" checks="OneTopLevelClass"/>
     <suppress files=".*(Test).*\.java" checks="MethodName"/>
     <suppress files=".*(demo|Module|Plugin).*\.java" checks="MissingJavadocMethod"/>
