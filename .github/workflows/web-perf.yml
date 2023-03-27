@@ -32,7 +32,7 @@ jobs:
           procPerformanceThresholdSec: 0.3
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Set up Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
