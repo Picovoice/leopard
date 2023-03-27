@@ -3,12 +3,11 @@
 echo "Removing old data ..."
 rm -rf ./data
 
-
 echo "Preparing dir ..."
-mkdir -p ./data/lib/
+mkdir -p ./data/lib/common/
 
 echo "Copying Model File ..."
-cp -r ../../lib/common ./data/lib/
+cp -r ../../lib/common/leopard_params.pv ./data/lib/common/
 
 for platform in linux mac raspberry-pi jetson windows
 do
