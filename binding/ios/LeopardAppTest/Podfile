@@ -2,13 +2,13 @@ source 'https://cdn.cocoapods.org/'
 platform :ios, '11.0'
 
 target 'LeopardAppTest' do
-  pod 'Leopard-iOS', :podspec => 'https://raw.githubusercontent.com/Picovoice/leopard/v1.2/binding/ios/Leopard-iOS.podspec'
+  pod 'Leopard-iOS', '~> 1.2.0'
 end
 
 target 'LeopardAppTestUITests' do
-  pod 'Leopard-iOS', :podspec => 'https://raw.githubusercontent.com/Picovoice/leopard/v1.2/binding/ios/Leopard-iOS.podspec'
+  pod 'Leopard-iOS', '~> 1.2.0'
 end
 
 target 'PerformanceTest' do
-  pod 'Leopard-iOS', :podspec => 'https://raw.githubusercontent.com/Picovoice/leopard/v1.2/binding/ios/Leopard-iOS.podspec'
+  pod 'Leopard-iOS', '~> 1.2.0'
 end
