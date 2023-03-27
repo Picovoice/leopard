@@ -1,5 +1,5 @@
 /*
-    Copyright 2022 Picovoice Inc.
+    Copyright 2022-2023 Picovoice Inc.
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
     Unless required by applicable law or agreed to in writing, software distributed under the
@@ -10,6 +10,9 @@
 
 package ai.picovoice.leopard;
 
+/**
+ * Class that contains transcription results returned from Leopard.
+ */
 public class LeopardTranscript {
 
     private final String transcriptString;
@@ -44,6 +47,9 @@ public class LeopardTranscript {
         return wordArray;
     }
 
+    /**
+     * Class for storing word metadata from Leopard.
+     */
     public static class Word {
         private final String word;
         private final float confidence;

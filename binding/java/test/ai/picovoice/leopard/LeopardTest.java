@@ -1,5 +1,5 @@
 /*
-    Copyright 2022 Picovoice Inc.
+    Copyright 2022-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
@@ -12,50 +12,130 @@
 
 package ai.picovoice.leopard;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import java.io.File;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.file.Paths;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class LeopardTest {
-    private Leopard leopard;
-    private final String accessKey = System.getProperty("pvTestingAccessKey");
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.stream.Stream;
 
-    private final LeopardTranscript.Word[] referenceTranscriptMetadata = {
-            new LeopardTranscript.Word("Mr", 0.95f, 0.58f, 0.80f),
-            new LeopardTranscript.Word("quilter", 0.80f, 0.86f, 1.18f),
-            new LeopardTranscript.Word("is", 0.96f, 1.31f, 1.38f),
-            new LeopardTranscript.Word("the", 0.90f, 1.44f, 1.50f),
-            new LeopardTranscript.Word("apostle", 0.79f, 1.57f, 2.08f),
-            new LeopardTranscript.Word("of", 0.98f, 2.18f, 2.24f),
-            new LeopardTranscript.Word("the", 0.98f, 2.30f, 2.34f),
-            new LeopardTranscript.Word("middle", 0.97f, 2.40f, 2.59f),
-            new LeopardTranscript.Word("classes", 0.98f, 2.69f, 3.17f),
-            new LeopardTranscript.Word("and", 0.95f, 3.36f, 3.46f),
-            new LeopardTranscript.Word("we", 0.96f, 3.52f, 3.55f),
-            new LeopardTranscript.Word("are", 0.97f, 3.65f, 3.65f),
-            new LeopardTranscript.Word("glad", 0.93f, 3.74f, 4.03f),
-            new LeopardTranscript.Word("to", 0.97f, 4.10f, 4.16f),
-            new LeopardTranscript.Word("welcome", 0.89f, 4.22f, 4.58f),
-            new LeopardTranscript.Word("his", 0.96f, 4.67f, 4.83f),
-            new LeopardTranscript.Word("gospel", 0.93f, 4.93f, 5.38f),
-    };
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class LeopardTest {
+    private final String accessKey = System.getProperty("pvTestingAccessKey");
+    private Leopard leopard;
+
+    private static String appendLanguage(String s, String language) {
+        if (language.equals("en")) {
+            return s;
+        }
+        return s + "_" + language;
+    }
+
+    private static float getErrorRate(String transcript, String expectedTranscript) {
+        return (float) LevenshteinDistance
+                .getDefaultInstance()
+                .apply(transcript, expectedTranscript) / (float) expectedTranscript.length();
+    }
+
+    private static JsonObject loadTestData() throws IOException {
+        final Path testDataPath = Paths.get(System.getProperty("user.dir"))
+                .resolve("../../resources/test")
+                .resolve("test_data.json");
+        final String testDataContent = new String(Files.readAllBytes(testDataPath), StandardCharsets.UTF_8);
+        return JsonParser.parseString(testDataContent).getAsJsonObject();
+    }
+
+    private static short[] readAudioFile(String testAudioPath) throws Exception {
+
+        File testAudioFile = new File(testAudioPath);
+        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(testAudioFile);
+
+        int byteDepth = audioInputStream.getFormat().getFrameSize();
+        int frameLength = (int) audioInputStream.getFrameLength();
+        byte[] bytes = new byte[frameLength * byteDepth];
+        short[] pcm = new short[frameLength];
+
+        audioInputStream.read(bytes);
+        ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(pcm);
+        return pcm;
+    }
+
+    private static Stream<Arguments> transcribeProvider() throws IOException {
+
+        final JsonObject testDataJson = loadTestData();
+
+        final JsonArray testParameters = testDataJson
+                .getAsJsonObject("tests")
+                .getAsJsonArray("parameters");
+
+        final ArrayList<Arguments> testArgs = new ArrayList<>();
+        for (int i = 0; i < testParameters.size(); i++) {
+            final JsonObject testData = testParameters.get(i).getAsJsonObject();
+            final String language = testData.get("language").getAsString();
+            final String testAudioFile = testData.get("audio_file").getAsString();
+            final String transcript = testData.get("transcript").getAsString();
+            final float errorRate = testData.get("error_rate").getAsFloat();
+
+            testArgs.add(Arguments.of(
+                    language,
+                    testAudioFile,
+                    transcript,
+                    true,
+                    errorRate)
+            );
+
+            String transcriptWithoutPunctuation = transcript;
+            final JsonArray punctuations = testData.get("punctuations").getAsJsonArray();
+            for (int j = 0; j < punctuations.size(); j++) {
+                String punctuation = punctuations.get(j).getAsString();
+                transcriptWithoutPunctuation = transcriptWithoutPunctuation.replace(punctuation, "");
+            }
+            testArgs.add(Arguments.of(
+                    language,
+                    testAudioFile,
+                    transcriptWithoutPunctuation,
+                    false,
+                    errorRate)
+            );
+        }
+        return testArgs.stream();
+    }
 
     @AfterEach
     void tearDown() {
         leopard.delete();
+    }
+
+    void validateMetadata(LeopardTranscript.Word[] words, String transcript, float audioLength) {
+        String normTranscript = transcript.toUpperCase();
+        for (int i = 0; i < words.length; i++) {
+            assertTrue(normTranscript.contains(words[i].getWord().toUpperCase()));
+            assertTrue(words[i].getStartSec() > 0);
+            assertTrue(words[i].getStartSec() <= words[i].getEndSec());
+            if (i < words.length - 1) {
+                assertTrue(words[i].getEndSec() <= words[i + 1].getStartSec());
+            } else {
+                assertTrue(words[i].getEndSec() <= audioLength);
+            }
+            assertTrue(words[i].getConfidence() >= 0.0f && words[i].getConfidence() <= 1.0f);
+        }
     }
 
     @Test
@@ -67,80 +147,74 @@ public class LeopardTest {
         assertTrue(leopard.getVersion() != null && !leopard.getVersion().equals(""));
     }
 
-    @ParameterizedTest(name = "test process with automatic punctuation set to ''{0}''")
-    @MethodSource("transcribeProvider")
-    void process(boolean enableAutomaticPunctuation, String referenceTranscript) throws Exception {
-        leopard = new Leopard.Builder()
-                .setAccessKey(accessKey)
-                .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
-                .build();
-
-        String audioFilePath = Paths.get(System.getProperty("user.dir"))
-                .resolve("../../resources/audio_samples/test.wav")
-                .toString();
-        File testAudioPath = new File(audioFilePath);
-
-        AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(testAudioPath);
-        assertEquals(audioInputStream.getFormat().getFrameRate(), 16000);
-
-        int byteDepth = audioInputStream.getFormat().getFrameSize();
-        int frameLength = (int) audioInputStream.getFrameLength();
-        byte[] pcm = new byte[frameLength * byteDepth];
-        short[] leopardFrame = new short[frameLength];
-
-        audioInputStream.read(pcm);
-        ByteBuffer.wrap(pcm).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(leopardFrame);
-
-        LeopardTranscript result = leopard.process(leopardFrame);
-
-        assertEquals(referenceTranscript, result.getTranscriptString());
-    }
-
-    @ParameterizedTest(name = "test processFile with automatic punctuation set to ''{0}''")
-    @MethodSource("transcribeProvider")
-    void processFile(boolean enableAutomaticPunctuation, String referenceTranscript) throws Exception {
-
-        leopard = new Leopard.Builder()
-                .setAccessKey(accessKey)
-                .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
-                .build();
-
-        String audioFilePath = Paths.get(System.getProperty("user.dir"))
-                .resolve("../../resources/audio_samples/test.wav")
-                .toString();
-
-        LeopardTranscript result = leopard.processFile(audioFilePath);
-
-        assertEquals(referenceTranscript, result.getTranscriptString());
-    }
-
-    private static Stream<Arguments> transcribeProvider() {
-        return Stream.of(
-                Arguments.of(true, "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel."),
-                Arguments.of(false, "Mr quilter is the apostle of the middle classes and we are glad to welcome his gospel")
-        );
-    }
-
     @Test
-    void testMetadata() throws Exception {
-
+    void getSampleRate() throws Exception {
         leopard = new Leopard.Builder()
                 .setAccessKey(accessKey)
                 .build();
+        assertTrue(leopard.getSampleRate() > 0);
+    }
 
-        String audioFilePath = Paths.get(System.getProperty("user.dir"))
-                .resolve("../../resources/audio_samples/test.wav")
+    @ParameterizedTest(name = "test process data for ''{0}'' with punctuation ''{3}''")
+    @MethodSource("transcribeProvider")
+    void process(
+            String language,
+            String testAudioFile,
+            String referenceTranscript,
+            boolean enableAutomaticPunctuation,
+            float targetErrorRate) throws Exception {
+        String modelPath = Paths.get(System.getProperty("user.dir"))
+                .resolve(String.format("../../lib/common/%s.pv", appendLanguage("leopard_params", language)))
                 .toString();
 
-        LeopardTranscript result = leopard.processFile(audioFilePath);
+        leopard = new Leopard.Builder()
+                .setAccessKey(accessKey)
+                .setModelPath(modelPath)
+                .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
+                .build();
 
-        float eps = 0.01f;
-        LeopardTranscript.Word[] words = result.getWordArray();
-        for (int i = 0; i < words.length; i++) {
-            assertEquals(referenceTranscriptMetadata[i].getWord(), words[i].getWord());
-            assertTrue(Math.abs(referenceTranscriptMetadata[i].getStartSec() - words[i].getStartSec()) < eps);
-            assertTrue(Math.abs(referenceTranscriptMetadata[i].getEndSec() - words[i].getEndSec()) < eps);
-            assertTrue(Math.abs(referenceTranscriptMetadata[i].getConfidence() - words[i].getConfidence()) < eps);
-        }
+        String testAudioPath = Paths.get(System.getProperty("user.dir"))
+                .resolve(String.format("../../resources/audio_samples/%s", testAudioFile))
+                .toString();
+        short[] pcm = readAudioFile(testAudioPath);
+        LeopardTranscript result = leopard.process(pcm);
+
+        assertTrue(getErrorRate(result.getTranscriptString(), referenceTranscript) < targetErrorRate);
+        validateMetadata(
+                result.getWordArray(),
+                result.getTranscriptString(),
+                (float) pcm.length / LeopardNative.getSampleRate());
     }
+
+    @ParameterizedTest(name = "test process file for ''{0}'' with punctuation ''{3}''")
+    @MethodSource("transcribeProvider")
+    void processFile(
+            String language,
+            String testAudioFile,
+            String referenceTranscript,
+            boolean enableAutomaticPunctuation,
+            float targetErrorRate) throws Exception {
+
+        String modelPath = Paths.get(System.getProperty("user.dir"))
+                .resolve(String.format("../../lib/common/%s.pv", appendLanguage("leopard_params", language)))
+                .toString();
+
+        leopard = new Leopard.Builder()
+                .setAccessKey(accessKey)
+                .setModelPath(modelPath)
+                .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
+                .build();
+
+        String testAudioPath = Paths.get(System.getProperty("user.dir"))
+                .resolve(String.format("../../resources/audio_samples/%s", testAudioFile))
+                .toString();
+
+        LeopardTranscript result = leopard.processFile(testAudioPath);
+        assertTrue(getErrorRate(result.getTranscriptString(), referenceTranscript) < targetErrorRate);
+        validateMetadata(
+                result.getWordArray(),
+                result.getTranscriptString(),
+                (float) readAudioFile(testAudioPath).length / LeopardNative.getSampleRate());
+    }
+
 }

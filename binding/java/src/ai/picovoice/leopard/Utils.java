@@ -1,5 +1,5 @@
 /*
-    Copyright 2022 Picovoice Inc.
+    Copyright 2022-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
@@ -22,7 +22,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -33,7 +32,7 @@ class Utils {
     private static final Path RESOURCE_DIRECTORY;
     private static final String ENVIRONMENT_NAME;
     private static final String ARCHITECTURE;
-    private final static Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private static final Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     static {
         RESOURCE_DIRECTORY = getResourceDirectory();
@@ -105,8 +104,9 @@ class Utils {
                 // copy contents into resource directory
                 if (jarEntry.isDirectory()) {
                     Path dstPath = resourceDirectoryPath.resolve(jarEntryName);
-                    if (!dstPath.toFile().exists())
+                    if (!dstPath.toFile().exists()) {
                         Files.createDirectory(dstPath);
+                    }
                 } else {
                     Path file = resourceDirectoryPath.resolve(jarEntryName);
                     try (InputStream is = jf.getInputStream(jarEntry)) {
@@ -180,13 +180,19 @@ class Utils {
                     return "cortex-a72" + archInfo;
                 default:
                     throw new RuntimeException(
-                            String.format("Environment (%s) with CPU Part (%s) is not supported by Leopard.", ENVIRONMENT_NAME, cpuPart)
+                            String.format(
+                                    "Environment (%s) with CPU Part (%s) is not supported by Leopard.",
+                                    ENVIRONMENT_NAME,
+                                    cpuPart)
                     );
             }
         }
 
         throw new RuntimeException(
-                String.format("Environment (%s) with architecture (%s) is not supported by Leopard.", ENVIRONMENT_NAME, arch)
+                String.format(
+                        "Environment (%s) with architecture (%s) is not supported by Leopard.",
+                        ENVIRONMENT_NAME,
+                        arch)
         );
     }
 
@@ -212,8 +218,8 @@ class Utils {
                 return RESOURCE_DIRECTORY.resolve("lib/java/windows/amd64/libpv_leopard_jni.dll").toString();
             case "mac":
                 return RESOURCE_DIRECTORY.resolve("lib/java/mac")
-                                         .resolve(ARCHITECTURE)
-                                         .resolve("libpv_leopard_jni.dylib").toString();
+                        .resolve(ARCHITECTURE)
+                        .resolve("libpv_leopard_jni.dylib").toString();
             case "jetson":
             case "raspberry-pi":
             case "linux":

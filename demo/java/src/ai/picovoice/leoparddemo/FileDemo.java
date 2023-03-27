@@ -1,5 +1,5 @@
 /*
-    Copyright 2022 Picovoice Inc.
+    Copyright 2022-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
@@ -12,18 +12,11 @@
 
 package ai.picovoice.leoparddemo;
 
-import ai.picovoice.leopard.*;
+import ai.picovoice.leopard.Leopard;
+import ai.picovoice.leopard.LeopardTranscript;
 import org.apache.commons.cli.*;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.Map;
 
 public class FileDemo {
 
@@ -69,7 +62,7 @@ public class FileDemo {
     }
 
     public static void main(String[] args) {
-        Options options = BuildCommandLineOptions();
+        Options options = buildCommandLineOptions();
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
 
@@ -99,7 +92,7 @@ public class FileDemo {
             throw new IllegalArgumentException("AccessKey is required for Leopard.");
         }
 
-        if(inputAudioPath == null){
+        if (inputAudioPath == null) {
             throw new IllegalArgumentException("No input audio file provided. This is a required argument.");
         }
         File inputAudioFile = new File(inputAudioPath);
@@ -124,7 +117,7 @@ public class FileDemo {
                 inputAudioFile);
     }
 
-    private static Options BuildCommandLineOptions() {
+    private static Options buildCommandLineOptions() {
         Options options = new Options();
 
         options.addOption(Option.builder("a")

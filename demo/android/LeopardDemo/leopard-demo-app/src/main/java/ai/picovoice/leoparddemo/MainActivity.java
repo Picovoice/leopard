@@ -1,5 +1,5 @@
 /*
-    Copyright 2022 Picovoice Inc.
+    Copyright 2022-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
@@ -60,13 +60,6 @@ public class MainActivity extends AppCompatActivity {
 
     private Leopard leopard;
 
-    private enum UIState {
-        RECORDING,
-        TRANSCRIBING,
-        RESULTS,
-        ERROR
-    }
-
     private void setUIState(UIState state) {
         runOnUiThread(() -> {
             TextView errorText = findViewById(R.id.errorTextView);
@@ -100,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
                     verboseResultsLayout.setVisibility(View.INVISIBLE);
                     transcriptTextView.setVisibility(View.INVISIBLE);
                     recordButton.setEnabled(false);
+                    break;
+                default:
                     break;
             }
         });
@@ -149,16 +144,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean hasRecordPermission() {
-        return ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+        return ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestRecordPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 0);
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{Manifest.permission.RECORD_AUDIO}, 0);
     }
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED) {
             ToggleButton toggleButton = findViewById(R.id.recordButton);
@@ -217,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
                         TextView recordingTextView = findViewById(R.id.recordingTextView);
                         recordingTextView.setText(String.format(
                                 "Transcribed %.1f(s) of audio in %.1f(s).",
-                                pcmData.size() / (float)leopard.getSampleRate(),
+                                pcmData.size() / (float) leopard.getSampleRate(),
                                 transcribeTime));
 
                         RecyclerView verboseResultsView = findViewById(R.id.verboseResultsView);
@@ -236,9 +238,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private enum UIState {
+        RECORDING,
+        TRANSCRIBING,
+        RESULTS,
+        ERROR
+    }
+
     private static class VerboseResultsViewAdaptor extends RecyclerView.Adapter<VerboseResultsViewAdaptor.ViewHolder> {
-        final private List<LeopardTranscript.Word> data;
-        final private LayoutInflater inflater;
+        private final List<LeopardTranscript.Word> data;
+        private final LayoutInflater inflater;
 
         VerboseResultsViewAdaptor(Context context, List<LeopardTranscript.Word> data) {
             this.inflater = LayoutInflater.from(context);
@@ -332,7 +341,11 @@ public class MainActivity extends AppCompatActivity {
 
             float readCount = 0;
             while (!stop.get()) {
-                recordingTextView.setText(String.format("Recording : %.1f / %d (seconds)", readCount, maxRecordingLength));
+                recordingTextView.setText(
+                        String.format(
+                                "Recording : %.1f / %d (seconds)",
+                                readCount,
+                                maxRecordingLength));
                 readCount += 0.1;
 
                 if (readCount > maxRecordingLength) {
