@@ -16,9 +16,12 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_voice_processor (from `.symlinks/plugins/flutter_voice_processor/ios`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
-  - Leopard-iOS (from `https://raw.githubusercontent.com/Picovoice/leopard/v1.2/binding/ios/Leopard-iOS.podspec`)
   - leopard_flutter (from `.symlinks/plugins/leopard_flutter/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/ios`)
+
+SPEC REPOS:
+  trunk:
+    - Leopard-iOS
 
 EXTERNAL SOURCES:
   Flutter:
@@ -27,26 +30,19 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_voice_processor/ios"
   integration_test:
     :path: ".symlinks/plugins/integration_test/ios"
-  Leopard-iOS:
-    :podspec: https://raw.githubusercontent.com/Picovoice/leopard/v1.2/binding/ios/Leopard-iOS.podspec
   leopard_flutter:
     :path: ".symlinks/plugins/leopard_flutter/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/ios"
 
-CHECKOUT OPTIONS:
-  Leopard-iOS:
-    :commit: d5fe6d94aa4c13481c9d9d18d81ed235d5988951
-    :git: https://github.com/Picovoice/leopard.git
-
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_voice_processor: afb59b604d99397a1ccf15c935ac8f2c2327f09f
   integration_test: a1e7d09bd98eca2fc37aefd79d4f41ad37bdbbe5
-  Leopard-iOS: 4ec9c3e41c96629bb19b6e97b74e0a6558ce1e56
+  Leopard-iOS: 993bdc6fbdaabfdaa0ddc5def9bd4405abb59bef
   leopard_flutter: 32b8a0e06fba2c487e5efa9dad776ce445f917c4
   path_provider_foundation: c68054786f1b4f3343858c1e1d0caaded73f0be9
 
-PODFILE CHECKSUM: b0c779d30e009859f3d8b055df3f7d85e5b17dad
+PODFILE CHECKSUM: 7368163408c647b7eb699d0d788ba6718e18fb8d
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.12.0
