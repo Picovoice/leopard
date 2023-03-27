@@ -12,3 +12,6 @@
 
 ## [1.1.0] - 2022-08-10
 * True-casing, automatic punctuation insertion and word metadata added.
+
+## [1.2.0] - 2023-03-27
+* Native library features and bugfixes.
