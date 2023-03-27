@@ -173,7 +173,7 @@ public class LeopardTest {
                     paramPunctuations[j] = punctuations.get(j).getAsString();
                 }
 
-                parameters.add(new Object[] {
+                parameters.add(new Object[]{
                         language,
                         modelFile,
                         testAudioFile,
@@ -201,7 +201,7 @@ public class LeopardTest {
             LeopardTranscript result = leopard.processFile(audioFile.getAbsolutePath());
 
             String normalizedTranscript = expectedTranscript;
-            for (String punctuation: punctuations) {
+            for (String punctuation : punctuations) {
                 normalizedTranscript = normalizedTranscript.replace(punctuation, "");
             }
 
@@ -231,7 +231,7 @@ public class LeopardTest {
             assertTrue(getWordErrorRate(result.getTranscriptString(), expectedTranscript, useCER) < errorRate);
 
             String normalizedTranscript = result.getTranscriptString();
-            for (String punctuation: punctuations) {
+            for (String punctuation : punctuations) {
                 normalizedTranscript = normalizedTranscript.replace(punctuation, "");
             }
 
@@ -259,7 +259,7 @@ public class LeopardTest {
             boolean useCER = language.equals("ja");
 
             String normalizedTranscript = result.getTranscriptString();
-            for (String punctuation: punctuations) {
+            for (String punctuation : punctuations) {
                 normalizedTranscript = normalizedTranscript.replace(punctuation, "");
             }
 

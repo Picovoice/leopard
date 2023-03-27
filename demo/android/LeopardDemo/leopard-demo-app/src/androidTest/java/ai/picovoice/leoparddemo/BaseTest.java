@@ -119,9 +119,14 @@ public class BaseTest {
         }
     }
 
-    protected static float getWordErrorRate(String transcript, String expectedTranscript, boolean useCER) {
+    protected static float getWordErrorRate(
+            String transcript,
+            String expectedTranscript,
+            boolean useCER) {
         String splitter = (useCER) ? "" : " ";
-        return (float) levenshteinDistance(transcript.split(splitter), expectedTranscript.split(splitter)) / transcript.length();
+        return (float) levenshteinDistance(
+                transcript.split(splitter),
+                expectedTranscript.split(splitter)) / transcript.length();
     }
 
     private static int levenshteinDistance(String[] words1, String[] words2) {
