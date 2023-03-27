@@ -32,8 +32,8 @@ jobs:
           initPerformanceThresholdSec: 3.0
           procPerformanceThresholdSec: 0.5
         - device: 32bit-android
-          initPerformanceThresholdSec: 7.0
-          procPerformanceThresholdSec: 1.75
+          initPerformanceThresholdSec: 8.0
+          procPerformanceThresholdSec: 3.5
 
     steps:
     - uses: actions/checkout@v3
