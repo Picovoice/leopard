@@ -11,6 +11,7 @@
 package ai.picovoice.leopard;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -146,7 +147,7 @@ public class Leopard {
                         String.format(
                                 "Specified file '%s' does not have an accepted file extension. Valid extensions are: %s",
                                 path,
-                                String.join(", ", VALID_EXTENSIONS)));
+                                TextUtils.join(", ", VALID_EXTENSIONS)));
             }
             throw e;
         }
