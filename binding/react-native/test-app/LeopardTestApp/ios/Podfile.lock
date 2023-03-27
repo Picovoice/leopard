@@ -419,7 +419,6 @@ DEPENDENCIES:
   - FlipperKit/SKIOSNetworkPlugin (= 0.125.0)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
-  - Leopard-iOS (from `https://raw.githubusercontent.com/Picovoice/leopard/v1.2/binding/ios/Leopard-iOS.podspec`)
   - "leopard-react-native (from `../node_modules/@picovoice/leopard-react-native`)"
   - libevent (~> 2.1.12)
   - OpenSSL-Universal (= 1.1.1100)
@@ -469,6 +468,7 @@ SPEC REPOS:
     - Flipper-RSocket
     - FlipperKit
     - fmt
+    - Leopard-iOS
     - libevent
     - OpenSSL-Universal
     - SocketRocket
@@ -487,8 +487,6 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
-  Leopard-iOS:
-    :podspec: https://raw.githubusercontent.com/Picovoice/leopard/v1.2/binding/ios/Leopard-iOS.podspec
   leopard-react-native:
     :path: "../node_modules/@picovoice/leopard-react-native"
   RCT-Folly:
@@ -552,11 +550,6 @@ EXTERNAL SOURCES:
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
-CHECKOUT OPTIONS:
-  Leopard-iOS:
-    :commit: 1c9bed55f1d6d319a621a6a969833181a074aa89
-    :git: https://github.com/Picovoice/leopard.git
-
 SPEC CHECKSUMS:
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
@@ -575,7 +568,7 @@ SPEC CHECKSUMS:
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hermes-engine: f6e715aa6c8bd38de6c13bc85e07b0a337edaa89
-  Leopard-iOS: 4ec9c3e41c96629bb19b6e97b74e0a6558ce1e56
+  Leopard-iOS: 993bdc6fbdaabfdaa0ddc5def9bd4405abb59bef
   leopard-react-native: 4d82b25e1c7d3a924b5626691e955cac38326d43
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
@@ -612,6 +605,6 @@ SPEC CHECKSUMS:
   Yoga: c618b544ff8bd8865cdca602f00cbcdb92fd6d31
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 78f46904e63f09a025c17b77fb79bb3eb901af48
+PODFILE CHECKSUM: 1855e2a7e7f949ac1bbd508ca89efb85a668f6a6
 
 COCOAPODS: 1.11.2
