@@ -41,6 +41,7 @@ instanceof
 Intelli
 itertools
 Jetson
+jiwer
 LDFLAGS
 leoparddemo
 leopardfiledemo
@@ -88,6 +89,7 @@ sizecache
 stdbool
 stdint
 stdlib
+sublist
 syscall
 tabwriter
 timecode
@@ -101,4 +103,3 @@ wargv
 wavefile
 webm
 xcworkspace
-jiwer
