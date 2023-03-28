@@ -1,5 +1,5 @@
 /*
-    Copyright 2022 Picovoice Inc.
+    Copyright 2022-2023 Picovoice Inc.
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
     Unless required by applicable law or agreed to in writing, software distributed under the
@@ -11,6 +11,7 @@
 package ai.picovoice.leopard;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -24,7 +25,7 @@ import java.io.OutputStream;
  */
 public class Leopard {
 
-    private final static String[] VALID_EXTENSIONS = {
+    private static final String[] VALID_EXTENSIONS = {
             "3gp",
             "flac",
             "m4a",
@@ -144,9 +145,10 @@ public class Leopard {
             if (!endsWithValidExt) {
                 throw new LeopardInvalidArgumentException(
                         String.format(
-                                "Specified file '%s' does not have an accepted file extension. Valid extensions are: %s",
+                                "Specified file '%s' does not have an accepted file extension. " +
+                                        "Valid extensions are: %s",
                                 path,
-                                String.join(", ", VALID_EXTENSIONS)));
+                                TextUtils.join(", ", VALID_EXTENSIONS)));
             }
             throw e;
         }
@@ -170,6 +172,9 @@ public class Leopard {
         return LeopardNative.getVersion();
     }
 
+    /**
+     * Builder for creating an instance of Leopard with a mixture of default arguments.
+     */
     public static class Builder {
 
         private String accessKey = null;
@@ -177,7 +182,7 @@ public class Leopard {
         private boolean enableAutomaticPunctuation = false;
 
         /**
-         * Setter the AccessKey
+         * Setter the AccessKey.
          *
          * @param accessKey AccessKey obtained from Picovoice Console
          */
@@ -197,7 +202,7 @@ public class Leopard {
         }
 
         /**
-         * Setter for enabling automatic punctuation insertion
+         * Setter for enabling automatic punctuation insertion.
          *
          * @param enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
          */
@@ -206,6 +211,9 @@ public class Leopard {
             return this;
         }
 
+        /**
+         * Creates an instance of Leopard Speech-to-Text engine.
+         */
         public Leopard build(Context context) throws LeopardException {
             if (accessKey == null || this.accessKey.equals("")) {
                 throw new LeopardInvalidArgumentException("No AccessKey was provided to Leopard");

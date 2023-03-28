@@ -15,7 +15,6 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::{io, process, thread};
 
 use clap::{App, Arg, ArgGroup};
-use ctrlc;
 use leopard::LeopardBuilder;
 use pv_recorder::RecorderBuilder;
 use tabwriter::TabWriter;
@@ -77,9 +76,7 @@ fn leopard_demo(
                 audio_data.extend_from_slice(&pcm);
             }
             recorder.stop().expect("Failed to stop audio recording");
-            let leopard_transcript = leopard.process(&audio_data).unwrap();
-
-            leopard_transcript
+            leopard.process(&audio_data).unwrap()
         });
 
         print!(">>> Recording ... Press 'Enter' to stop: ");
@@ -92,14 +89,14 @@ fn leopard_demo(
         let leopard_transcript = transcript_handle.join().unwrap();
         println!("{}", leopard_transcript.transcript);
         if verbose {
-            println!("");
+            println!();
             let mut tw = TabWriter::new(vec![]);
-            write!(&mut tw, "Word\tStart Sec\tEnd Sec\tConfidence\n").unwrap();
-            write!(&mut tw, "----\t---------\t-------\t----------\n").unwrap();
+            writeln!(&mut tw, "Word\tStart Sec\tEnd Sec\tConfidence").unwrap();
+            writeln!(&mut tw, "----\t---------\t-------\t----------").unwrap();
             leopard_transcript.words.iter().for_each(|word| {
-                write!(
+                writeln!(
                     &mut tw,
-                    "{}\t{:.2}\t{:.2}\t{:.2}\n",
+                    "{}\t{:.2}\t{:.2}\t{:.2}",
                     word.word, word.start_sec, word.end_sec, word.confidence
                 )
                 .unwrap();

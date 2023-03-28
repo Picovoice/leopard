@@ -20,7 +20,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 This binding is for running Leopard on **Flutter 2.8.1+** on the following platforms:
 
 - Android 5.0+ (API 21+)
-- iOS 9.0+
+- iOS 11.0+
 
 ## Installation
 

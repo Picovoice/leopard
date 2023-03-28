@@ -14,7 +14,7 @@
 const { program } = require("commander");
 const readline = require("readline");
 const { Leopard, LeopardActivationLimitReached } = require("@picovoice/leopard-node");
-const PvRecorder = require("@picovoice/pvrecorder-node");
+const { PvRecorder } = require("@picovoice/pvrecorder-node");
 
 const PV_RECORDER_FRAME_LENGTH = 2048;
 

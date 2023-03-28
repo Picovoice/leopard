@@ -40,7 +40,13 @@ include pvleopard/__init__.py
 include pvleopard/_factory.py
 include pvleopard/_leopard.py
 include pvleopard/_util.py
-recursive-include pvleopard/lib/ *
+include pvleopard/lib/common/leopard_params.pv
+recursive-include pvleopard/lib/jetson *
+include pvleopard/lib/linux/x86_64/libpv_leopard.so
+include pvleopard/lib/mac/x86_64/libpv_leopard.dylib
+include pvleopard/lib/mac/arm64/libpv_leopard.dylib
+recursive-include pvleopard/lib/raspberry-pi *
+include pvleopard/lib/windows/amd64/libpv_leopard.dll
 """
 
 with open(os.path.join(os.path.dirname(__file__), 'MANIFEST.in'), 'w') as f:
@@ -51,7 +57,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
 
 setuptools.setup(
     name="pvleopard",
-    version="1.1.5",
+    version="1.2.1",
     author="Picovoice",
     author_email="hello@picovoice.ai",
     description="Leopard Speech-to-Text Engine.",

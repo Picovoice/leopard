@@ -1,4 +1,4 @@
-// Copyright 2022 Picovoice Inc.
+// Copyright 2022-2023 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is
 // located in the "LICENSE" file accompanying this source.
@@ -13,15 +13,9 @@
 
 package leopard
 
-import "C"
-import (
-	"unsafe"
-)
-
 /*
 #cgo linux LDFLAGS: -ldl
 #cgo darwin LDFLAGS: -ldl
-
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -154,8 +148,25 @@ typedef void (*pv_leopard_delete_func)(void *);
 void pv_leopard_delete_wrapper(void *f, void *object) {
     return ((pv_leopard_delete_func) f)(object);
 }
+
+typedef void (*pv_leopard_transcript_delete_func)(char *);
+
+void pv_leopard_transcript_delete_wrapper(void *f, char *transcript) {
+	return ((pv_leopard_transcript_delete_func) f)(transcript);
+}
+
+typedef void (*pv_leopard_words_delete_func)(pv_word_t *);
+
+void pv_leopard_words_delete_wrapper(void *f, pv_word_t *words) {
+	return ((pv_leopard_words_delete_func) f)(words);
+}
+
 */
 import "C"
+
+import (
+	"unsafe"
+)
 
 type nativeLeopardInterface interface {
 	nativeInit(*Leopard)
@@ -166,13 +177,15 @@ type nativeLeopardInterface interface {
 	nativeVersion()
 }
 type nativeLeopardType struct {
-	libraryHandle               unsafe.Pointer
-	pv_leopard_init_ptr         unsafe.Pointer
-	pv_leopard_process_ptr      unsafe.Pointer
-	pv_leopard_process_file_ptr unsafe.Pointer
-	pv_leopard_delete_ptr       unsafe.Pointer
-	pv_leopard_version_ptr      unsafe.Pointer
-	pv_sample_rate_ptr          unsafe.Pointer
+	libraryHandle                    unsafe.Pointer
+	pv_leopard_init_ptr              unsafe.Pointer
+	pv_leopard_process_ptr           unsafe.Pointer
+	pv_leopard_process_file_ptr      unsafe.Pointer
+	pv_leopard_delete_ptr            unsafe.Pointer
+	pv_leopard_transcript_delete_ptr unsafe.Pointer
+	pv_leopard_words_delete_ptr      unsafe.Pointer
+	pv_leopard_version_ptr           unsafe.Pointer
+	pv_sample_rate_ptr               unsafe.Pointer
 }
 
 func (nl *nativeLeopardType) nativeInit(leopard *Leopard) (status PvStatus) {
@@ -191,6 +204,8 @@ func (nl *nativeLeopardType) nativeInit(leopard *Leopard) (status PvStatus) {
 	nl.pv_leopard_process_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_leopard_process"))
 	nl.pv_leopard_process_file_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_leopard_process_file"))
 	nl.pv_leopard_delete_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_leopard_delete"))
+	nl.pv_leopard_transcript_delete_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_leopard_transcript_delete"))
+	nl.pv_leopard_words_delete_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_leopard_words_delete"))
 	nl.pv_leopard_version_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_leopard_version"))
 	nl.pv_sample_rate_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_sample_rate"))
 
@@ -211,25 +226,25 @@ func (nl *nativeLeopardType) nativeDelete(leopard *Leopard) {
 
 func (nl *nativeLeopardType) nativeProcess(leopard *Leopard, pcm []int16) (status PvStatus, transcript string, words []LeopardWord) {
 	var (
-		numWords      int32
-		transcriptPtr unsafe.Pointer
-		wordsPtr      unsafe.Pointer
+		numWords      C.int32_t
+		transcriptPtr *C.char
+		wordsPtr      *C.pv_word_t
 	)
 
 	var ret = C.pv_leopard_process_wrapper(nl.pv_leopard_process_ptr,
 		leopard.handle,
 		(*C.int16_t)(unsafe.Pointer(&pcm[0])),
 		(C.int32_t)(len(pcm)),
-		(**C.char)(unsafe.Pointer(&transcriptPtr)),
-		(*C.int32_t)(unsafe.Pointer(&numWords)),
-		(**C.pv_word_t)(unsafe.Pointer(&wordsPtr)))
-	if (PvStatus(ret) != SUCCESS) {
+		&transcriptPtr,
+		&numWords,
+		&wordsPtr)
+	if PvStatus(ret) != SUCCESS {
 		return PvStatus(ret), "", nil
 	}
 
-	transcript = C.GoString((*C.char)(transcriptPtr))
-	if (wordsPtr != nil) {
-		cWords := (*[1 << 20]C.pv_word_t)(wordsPtr)[:numWords]
+	transcript = C.GoString(transcriptPtr)
+	if wordsPtr != nil {
+		cWords := (*[1 << 20]C.pv_word_t)(unsafe.Pointer(wordsPtr))[:numWords]
 		for i := 0; i < int(numWords); i++ {
 			n := LeopardWord{
 				Word:       C.GoString(cWords[i].word),
@@ -241,8 +256,8 @@ func (nl *nativeLeopardType) nativeProcess(leopard *Leopard, pcm []int16) (statu
 		}
 	}
 
-	C.free(transcriptPtr)
-	C.free(wordsPtr)
+	C.pv_leopard_transcript_delete_wrapper(nl.pv_leopard_transcript_delete_ptr, transcriptPtr)
+	C.pv_leopard_words_delete_wrapper(nl.pv_leopard_words_delete_ptr, wordsPtr)
 
 	return PvStatus(ret), transcript, words
 }
@@ -250,25 +265,25 @@ func (nl *nativeLeopardType) nativeProcess(leopard *Leopard, pcm []int16) (statu
 func (nl *nativeLeopardType) nativeProcessFile(leopard *Leopard, audioPath string) (status PvStatus, transcript string, words []LeopardWord) {
 	var (
 		audioPathC    = C.CString(audioPath)
-		numWords      int32
-		transcriptPtr unsafe.Pointer
-		wordsPtr      unsafe.Pointer
+		numWords      C.int32_t
+		transcriptPtr *C.char
+		wordsPtr      *C.pv_word_t
 	)
 	defer C.free(unsafe.Pointer(audioPathC))
 
 	var ret = C.pv_leopard_process_file_wrapper(nl.pv_leopard_process_file_ptr,
 		leopard.handle,
 		audioPathC,
-		(**C.char)(unsafe.Pointer(&transcriptPtr)),
-		(*C.int32_t)(unsafe.Pointer(&numWords)),
-		(**C.pv_word_t)(unsafe.Pointer(&wordsPtr)))
-	if (PvStatus(ret) != SUCCESS) {
+		&transcriptPtr,
+		&numWords,
+		&wordsPtr)
+	if PvStatus(ret) != SUCCESS {
 		return PvStatus(ret), "", nil
 	}
 
-	transcript = C.GoString((*C.char)(transcriptPtr))
-	if (wordsPtr != nil) {
-		cWords := (*[1 << 20]C.pv_word_t)(wordsPtr)[:numWords]
+	transcript = C.GoString(transcriptPtr)
+	if wordsPtr != nil {
+		cWords := (*[1 << 20]C.pv_word_t)(unsafe.Pointer(wordsPtr))[:numWords]
 		for i := 0; i < int(numWords); i++ {
 			n := LeopardWord{
 				Word:       C.GoString(cWords[i].word),
@@ -280,8 +295,8 @@ func (nl *nativeLeopardType) nativeProcessFile(leopard *Leopard, audioPath strin
 		}
 	}
 
-	C.free(transcriptPtr)
-	C.free(wordsPtr)
+	C.pv_leopard_transcript_delete_wrapper(nl.pv_leopard_transcript_delete_ptr, transcriptPtr)
+	C.pv_leopard_words_delete_wrapper(nl.pv_leopard_words_delete_ptr, wordsPtr)
 
 	return PvStatus(ret), transcript, words
 }

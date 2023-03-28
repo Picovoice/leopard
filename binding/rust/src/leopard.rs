@@ -1,5 +1,5 @@
 /*
-    Copyright 2022 Picovoice Inc.
+    Copyright 2022-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -16,7 +16,7 @@ use std::path::{Path, PathBuf};
 use std::ptr::addr_of_mut;
 use std::sync::Arc;
 
-use libc::{c_char, c_void};
+use libc::c_char;
 #[cfg(unix)]
 use libloading::os::unix::Symbol as RawSymbol;
 #[cfg(windows)]
@@ -78,7 +78,8 @@ type PvLeopardProcessFileFn = unsafe extern "C" fn(
     words: *mut *mut CLeopardWord,
 ) -> PvStatus;
 type PvLeopardDeleteFn = unsafe extern "C" fn(object: *mut CLeopard);
-type PvFreeFn = unsafe extern "C" fn(*mut c_void);
+type PvLeopardTranscriptDeleteFn = unsafe extern "C" fn(transcript: *mut c_char);
+type PvLeopardWordsDeleteFn = unsafe extern "C" fn(words: *mut CLeopardWord);
 
 #[derive(Clone, Debug)]
 pub enum LeopardErrorStatus {
@@ -116,6 +117,12 @@ pub struct LeopardBuilder {
     model_path: PathBuf,
     library_path: PathBuf,
     enable_automatic_punctuation: bool,
+}
+
+impl Default for LeopardBuilder {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl LeopardBuilder {
@@ -189,7 +196,7 @@ impl From<&CLeopardWord> for Result<LeopardWord, LeopardError> {
         };
 
         Ok(LeopardWord {
-            word: word,
+            word,
             start_sec: c_leopard_word.start_sec,
             end_sec: c_leopard_word.end_sec,
             confidence: c_leopard_word.confidence,
@@ -261,7 +268,8 @@ struct LeopardInnerVTable {
     pv_leopard_process: RawSymbol<PvLeopardProcessFn>,
     pv_leopard_process_file: RawSymbol<PvLeopardProcessFileFn>,
     pv_leopard_delete: RawSymbol<PvLeopardDeleteFn>,
-    pv_free: RawSymbol<PvFreeFn>,
+    pv_leopard_transcript_delete: RawSymbol<PvLeopardTranscriptDeleteFn>,
+    pv_leopard_words_delete: RawSymbol<PvLeopardWordsDeleteFn>,
 
     _lib_guard: Library,
 }
@@ -274,7 +282,11 @@ impl LeopardInnerVTable {
                 pv_leopard_process: load_library_fn(&lib, b"pv_leopard_process")?,
                 pv_leopard_process_file: load_library_fn(&lib, b"pv_leopard_process_file")?,
                 pv_leopard_delete: load_library_fn(&lib, b"pv_leopard_delete")?,
-                pv_free: load_library_fn(&lib, b"pv_free")?,
+                pv_leopard_transcript_delete: load_library_fn(
+                    &lib,
+                    b"pv_leopard_transcript_delete",
+                )?,
+                pv_leopard_words_delete: load_library_fn(&lib, b"pv_leopard_words_delete")?,
 
                 _lib_guard: lib,
             })
@@ -300,7 +312,7 @@ impl LeopardInner {
         library_path: P,
         enable_automatic_punctuation: bool,
     ) -> Result<Self, LeopardError> {
-        if access_key == "" {
+        if access_key.is_empty() {
             return Err(LeopardError::new(
                 LeopardErrorStatus::ArgumentError,
                 "AccessKey is empty",
@@ -385,10 +397,10 @@ impl LeopardInner {
     }
 
     pub fn process(&self, pcm: &[i16]) -> Result<LeopardTranscript, LeopardError> {
-        if pcm.len() == 0 {
+        if pcm.is_empty() {
             return Err(LeopardError::new(
                 LeopardErrorStatus::FrameLengthError,
-                format!("Audio data must not be empty"),
+                "Audio data must not be empty",
             ));
         }
 
@@ -415,13 +427,13 @@ impl LeopardInner {
                         "Failed to convert transcript string",
                     )
                 })?);
-            (self.vtable.pv_free)(transcript_ptr as *mut c_void);
+            (self.vtable.pv_leopard_transcript_delete)(transcript_ptr);
 
             let words = std::slice::from_raw_parts(words_ptr, num_words as usize)
                 .iter()
                 .map(|c_word| c_word.into())
                 .collect::<Result<Vec<LeopardWord>, LeopardError>>()?;
-            (self.vtable.pv_free)(words_ptr as *mut c_void);
+            (self.vtable.pv_leopard_words_delete)(words_ptr);
 
             LeopardTranscript { transcript, words }
         };
@@ -484,14 +496,13 @@ impl LeopardInner {
                         "Failed to convert transcript string",
                     )
                 })?);
-
-            (self.vtable.pv_free)(transcript_ptr as *mut c_void);
+            (self.vtable.pv_leopard_transcript_delete)(transcript_ptr);
 
             let words = std::slice::from_raw_parts(words_ptr, num_words as usize)
                 .iter()
                 .map(|c_word| c_word.into())
                 .collect::<Result<Vec<LeopardWord>, LeopardError>>()?;
-            (self.vtable.pv_free)(words_ptr as *mut c_void);
+            (self.vtable.pv_leopard_words_delete)(words_ptr);
 
             LeopardTranscript { transcript, words }
         };

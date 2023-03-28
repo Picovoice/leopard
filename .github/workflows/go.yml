@@ -13,6 +13,8 @@ on:
       - 'lib/mac/**'
       - 'lib/raspberry-pi/**'
       - 'lib/windows/**'
+      - 'resources/audio_samples/**'
+      - 'resources/test/**'
       - '.github/workflows/go.yml'
   pull_request:
     branches: [ master, 'v[0-9]+.[0-9]+' ]
@@ -25,6 +27,8 @@ on:
       - 'lib/mac/**'
       - 'lib/raspberry-pi/**'
       - 'lib/windows/**'
+      - 'resources/audio_samples/**'
+      - 'resources/test/**'
       - '.github/workflows/go.yml'
 
 defaults:
@@ -41,7 +45,7 @@ jobs:
         go: [ '1.16', '1.17', '1.18' ]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Setup go
       uses: actions/setup-go@v1
@@ -58,7 +62,7 @@ jobs:
       run: go build
 
     - name: Test
-      run: go test -v -access_key ${{secrets.PV_VALID_ACCESS_KEY}}
+      run: go test -modfile="go_test.mod" -v -access_key ${{secrets.PV_VALID_ACCESS_KEY}}
 
   build-self-hosted:
     runs-on: ${{ matrix.machine }}
@@ -68,7 +72,7 @@ jobs:
         machine: [rpi3-32, rpi3-64, rpi4-32, rpi4-64, jetson]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Pre-build dependencies
       run: ./copy.sh
@@ -80,4 +84,4 @@ jobs:
       run: go build
 
     - name: Test
-      run: go test -v -access_key ${{secrets.PV_VALID_ACCESS_KEY}}
+      run: go test -modfile=go_test.mod -v -access_key ${{secrets.PV_VALID_ACCESS_KEY}}

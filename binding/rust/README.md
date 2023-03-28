@@ -52,8 +52,8 @@ use leopard::LeopardBuilder;
 
 fn main() {
   let access_key = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
-  
-  let leopard: Leopard = LeopardBuilder::new(access_key).init().expect("Unable to create Leopard");
+
+  let leopard: Leopard = LeopardBuilder::new().access_key(access_key).init().expect("Unable to create Leopard");
   if let Ok(leopard_transcript) = leopard.process_file("${AUDIO_PATH}") {
       println!("{}", leopard_transcript.transcript);
   }
@@ -64,6 +64,23 @@ Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://con
 `${AUDIO_PATH}` to the path an audio file.
 
 The model file contains the parameters for the Leopard engine. You may create bespoke language models using [Picovoice Console](https://console.picovoice.ai/) and then pass in the relevant file.
+
+## Language Model
+
+The Leopard Rust SDK comes preloaded with a default English language model (`.pv` file).
+Default models for other supported languages can be found in [lib/common](../../lib/common).
+
+Create custom language models using the [Picovoice Console](https://console.picovoice.ai/). Here you can train
+language models with custom vocabulary and boost words in the existing vocabulary.
+
+Pass in the `.pv` file via the `.model_path()` Builder argument:
+```rust
+let leopard: Leopard = LeopardBuilder::new()
+    .access_key("${ACCESS_KEY}")
+    .model_path("${MODEL_PATH}")
+    .init()
+    .expect("Unable to create Leopard");
+```
 
 ## Demos
 

@@ -7,7 +7,7 @@ plugins {
 
 ext {
     PUBLISH_GROUP_ID = 'ai.picovoice'
-    PUBLISH_VERSION = '1.1.1'
+    PUBLISH_VERSION = '1.2.0'
     PUBLISH_ARTIFACT_ID = 'leopard-java'
 }
 
@@ -89,8 +89,10 @@ if (file("${rootDir}/publish-mavencentral.gradle").exists()) {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.2'
+    testImplementation 'com.google.code.gson:gson:2.10.1'
+    testImplementation 'org.apache.commons:commons-text:1.10.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.2'
 }
 
 compileTestJava {
@@ -104,3 +106,6 @@ test {
     systemProperty 'procPerformanceThresholdSec', System.getProperty('procPerformanceThresholdSec')
     useJUnitPlatform()
 }
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"

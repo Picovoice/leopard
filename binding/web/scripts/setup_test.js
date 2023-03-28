@@ -1,11 +1,12 @@
 const fs = require('fs');
 const { join } = require('path');
 
-const modelFiles = ['leopard_params.pv'];
-
 console.log('Copying the leopard model...');
 
-const sourceDirectory = join(
+const testDirectory = join(__dirname, '..', 'test');
+const fixturesDirectory = join(__dirname, '..', 'cypress', 'fixtures');
+
+const paramsSourceDirectory = join(
   __dirname,
   '..',
   '..',
@@ -14,12 +15,36 @@ const sourceDirectory = join(
   'common',
 );
 
-const outputDirectory = join(__dirname, '..', 'test');
+const testDataSource = join(
+  __dirname,
+  '..',
+  '..',
+  '..',
+  'resources',
+  'test',
+  'test_data.json'
+);
+
+const sourceDirectory = join(
+  __dirname,
+  "..",
+  "..",
+  "..",
+  "resources",
+);
 
 try {
-  fs.mkdirSync(outputDirectory, { recursive: true });
-  modelFiles.forEach(file => {
-    fs.copyFileSync(join(sourceDirectory, file), join(outputDirectory, file));
+  fs.mkdirSync(testDirectory, { recursive: true });
+
+  fs.readdirSync(paramsSourceDirectory).forEach(file => {
+    fs.copyFileSync(join(paramsSourceDirectory, file), join(testDirectory, file));
+  });
+
+  fs.copyFileSync(testDataSource, join(testDirectory, 'test_data.json'));
+
+  fs.mkdirSync(join(fixturesDirectory, 'audio_samples'), { recursive: true });
+  fs.readdirSync(join(sourceDirectory, 'audio_samples')).forEach(file => {
+    fs.copyFileSync(join(sourceDirectory, 'audio_samples', file), join(fixturesDirectory, 'audio_samples', file));
   });
 } catch (error) {
   console.error(error);

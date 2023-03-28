@@ -5,13 +5,19 @@ on:
   push:
     branches: [ master ]
     paths:
-      - 'demo/flutter/pubspec.yaml'
       - '.github/workflows/flutter.yml'
+      - 'demo/flutter/integration_test'
+      - 'demo/flutter/pubspec.yaml'
+      - 'resources/audio_samples/'
+      - 'resources/test/'
   pull_request:
     branches: [ master, 'v[0-9]+.[0-9]+' ]
     paths:
-      - 'demo/flutter/pubspec.yaml'
       - '.github/workflows/flutter.yml'
+      - 'demo/flutter/integration_test'
+      - 'demo/flutter/pubspec.yaml'
+      - 'resources/audio_samples/'
+      - 'resources/test/'
 
 defaults:
   run:
@@ -48,6 +54,26 @@ jobs:
     - name: Build
       run: flutter build apk
 
+  test-android:
+    name: Test Android
+    runs-on: pv-android
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Copy assets
+      run: ./copy_assets.sh
+
+    - name: Copy test_resources
+      run: ./copy_test_resources.sh
+
+    - name: Inject AppID
+      run: sed -i 's:{TESTING_ACCESS_KEY_HERE}:${{secrets.PV_VALID_ACCESS_KEY}}:'
+        integration_test/app_test.dart
+
+    - name: Run integration tests
+      run: flutter test integration_test
+
   build-ios:
     name: Build iOS demo
     runs-on: macos-11
@@ -72,3 +98,23 @@ jobs:
 
     - name: Build
       run: flutter build ios --release --no-codesign
+
+  test-ios:
+      name: Test iOS
+      runs-on: pv-ios
+
+      steps:
+      - uses: actions/checkout@v3
+
+      - name: Copy assets
+        run: ./copy_assets.sh
+
+      - name: Copy test_resources
+        run: ./copy_test_resources.sh
+
+      - name: Inject AppID
+        run: sed -i '.bak' 's:{TESTING_ACCESS_KEY_HERE}:${{secrets.PV_VALID_ACCESS_KEY}}:'
+          integration_test/app_test.dart
+
+      - name: Run integration tests
+        run: flutter test integration_test

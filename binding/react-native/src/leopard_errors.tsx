@@ -10,100 +10,100 @@
 //
 
 class LeopardError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = "LeopardError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'LeopardError';
+  }
 }
 
 class LeopardMemoryError extends LeopardError {
-    constructor(message: string) {
-        super(message);
-        this.name = "LeopardMemoryError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'LeopardMemoryError';
+  }
 }
 
 class LeopardIOError extends LeopardError {
-    constructor(message: string) {
-        super(message);
-        this.name = "LeopardIOError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'LeopardIOError';
+  }
 }
 
 class LeopardInvalidArgumentError extends LeopardError {
-    constructor(message: string) {
-        super(message);
-        this.name = "LeopardInvalidArgumentError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'LeopardInvalidArgumentError';
+  }
 }
 
 class LeopardStopIterationError extends LeopardError {
-    constructor(message: string) {
-        super(message);
-        this.name = "LeopardStopIterationError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'LeopardStopIterationError';
+  }
 }
 
 class LeopardKeyError extends LeopardError {
-    constructor(message: string) {
-        super(message);
-        this.name = "LeopardKeyError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'LeopardKeyError';
+  }
 }
 
 class LeopardInvalidStateError extends LeopardError {
-    constructor(message: string) {
-        super(message);
-        this.name = "LeopardInvalidStateError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'LeopardInvalidStateError';
+  }
 }
 
 class LeopardRuntimeError extends LeopardError {
-    constructor(message: string) {
-        super(message);
-        this.name = "LeopardRuntimeError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'LeopardRuntimeError';
+  }
 }
 
 class LeopardActivationError extends LeopardError {
-    constructor(message: string) {
-        super(message);
-        this.name = "LeopardActivationError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'LeopardActivationError';
+  }
 }
 
 class LeopardActivationLimitError extends LeopardError {
-    constructor(message: string) {
-        super(message);
-        this.name = "LeopardActivationLimitError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'LeopardActivationLimitError';
+  }
 }
 
 class LeopardActivationThrottledError extends LeopardError {
-    constructor(message: string) {
-        super(message);
-        this.name = "LeopardActivationThrottledError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'LeopardActivationThrottledError';
+  }
 }
 
 class LeopardActivationRefusedError extends LeopardError {
-    constructor(message: string) {
-        super(message);
-        this.name = "LeopardActivationRefusedError";
-    }
+  constructor(message: string) {
+    super(message);
+    this.name = 'LeopardActivationRefusedError';
+  }
 }
 
 export {
-    LeopardError,
-    LeopardMemoryError,
-    LeopardIOError,
-    LeopardInvalidArgumentError,
-    LeopardStopIterationError,
-    LeopardKeyError,
-    LeopardInvalidStateError,
-    LeopardRuntimeError,
-    LeopardActivationError,
-    LeopardActivationLimitError,
-    LeopardActivationThrottledError,
-    LeopardActivationRefusedError
+  LeopardError,
+  LeopardMemoryError,
+  LeopardIOError,
+  LeopardInvalidArgumentError,
+  LeopardStopIterationError,
+  LeopardKeyError,
+  LeopardInvalidStateError,
+  LeopardRuntimeError,
+  LeopardActivationError,
+  LeopardActivationLimitError,
+  LeopardActivationThrottledError,
+  LeopardActivationRefusedError,
 };

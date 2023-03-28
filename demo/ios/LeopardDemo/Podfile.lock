@@ -1,16 +1,16 @@
 PODS:
-  - Leopard-iOS (1.1.0)
+  - Leopard-iOS (1.2.0)
 
 DEPENDENCIES:
-  - Leopard-iOS (~> 1.1.0)
+  - Leopard-iOS (~> 1.2.0)
 
 SPEC REPOS:
   trunk:
     - Leopard-iOS
 
 SPEC CHECKSUMS:
-  Leopard-iOS: edad5cc511b4dd36e13ce80941c5775174767010
+  Leopard-iOS: 993bdc6fbdaabfdaa0ddc5def9bd4405abb59bef
 
-PODFILE CHECKSUM: 6461545f2c3923d7985a70cf3231c350b315094a
+PODFILE CHECKSUM: d96123892aa862388df5042453c1e919dc04e171
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.12.0

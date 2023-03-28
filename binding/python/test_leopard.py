@@ -9,100 +9,171 @@
 #    specific language governing permissions and limitations under the License.
 #
 
-import os
-import struct
 import sys
 import unittest
-import wave
-from typing import *
 
 from parameterized import parameterized
 
-from _leopard import Leopard
+from _leopard import *
 from _util import *
+from test_util import *
 
-WORDS = [
-    Leopard.Word(word="Mr", start_sec=0.58, end_sec=0.80, confidence=0.95),
-    Leopard.Word(word="quilter", start_sec=0.86, end_sec=1.18, confidence=0.80),
-    Leopard.Word(word="is", start_sec=1.31, end_sec=1.38, confidence=0.96),
-    Leopard.Word(word="the", start_sec=1.44, end_sec=1.50, confidence=0.90),
-    Leopard.Word(word="apostle", start_sec=1.57, end_sec=2.08, confidence=0.79),
-    Leopard.Word(word="of", start_sec=2.18, end_sec=2.24, confidence=0.98),
-    Leopard.Word(word="the", start_sec=2.30, end_sec=2.34, confidence=0.98),
-    Leopard.Word(word="middle", start_sec=2.40, end_sec=2.59, confidence=0.97),
-    Leopard.Word(word="classes", start_sec=2.69, end_sec=3.17, confidence=0.98),
-    Leopard.Word(word="and", start_sec=3.36, end_sec=3.46, confidence=0.95),
-    Leopard.Word(word="we", start_sec=3.52, end_sec=3.55, confidence=0.96),
-    Leopard.Word(word="are", start_sec=3.65, end_sec=3.65, confidence=0.97),
-    Leopard.Word(word="glad", start_sec=3.74, end_sec=4.03, confidence=0.93),
-    Leopard.Word(word="to", start_sec=4.10, end_sec=4.16, confidence=0.97),
-    Leopard.Word(word="welcome", start_sec=4.22, end_sec=4.58, confidence=0.89),
-    Leopard.Word(word="his", start_sec=4.67, end_sec=4.83, confidence=0.96),
-    Leopard.Word(word="gospel", start_sec=4.93, end_sec=5.38, confidence=0.93),
-]
 
-TEST_PARAMS = [
-    [False, "Mr quilter is the apostle of the middle classes and we are glad to welcome his gospel"],
-    [True, "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel."],
-]
+parameters = load_test_data()
 
 
 class LeopardTestCase(unittest.TestCase):
-    audio_path = None
-
     @classmethod
     def setUpClass(cls):
-        cls.audio_path = os.path.join(os.path.dirname(__file__), '../../resources/audio_samples/test.wav')
-        with wave.open(cls.audio_path, 'rb') as f:
-            buffer = f.readframes(f.getnframes())
-            cls.pcm = struct.unpack('%dh' % (len(buffer) / struct.calcsize('h')), buffer)
+        cls._access_key = sys.argv[1]
+        cls._audio_directory = os.path.join('..', '..', 'resources', 'audio_samples')
 
-    @staticmethod
-    def _create_leopard(enable_automatic_punctuation: bool) -> Leopard:
-        return Leopard(
-            access_key=sys.argv[1],
-            model_path=default_model_path('../..'),
-            library_path=default_library_path('../..'),
-            enable_automatic_punctuation=enable_automatic_punctuation
-        )
+    def _validate_metadata(self, words: Sequence[Leopard.Word], transcript: str, audio_length: int):
+        norm_transcript = transcript.upper()
+        for i in range(len(words)):
+            self.assertTrue(words[i].word.upper() in norm_transcript)
+            self.assertGreater(words[i].start_sec, 0)
+            self.assertLessEqual(words[i].start_sec, words[i].end_sec)
+            if i < len(words) - 1:
+                self.assertLessEqual(words[i].end_sec, words[i + 1].start_sec)
+            else:
+                self.assertLessEqual(words[i].end_sec, audio_length)
+            self.assertTrue(0 <= words[i].confidence <= 1)
 
-    def _check_result(self, transcript: str, ref_transcript: str, words: Sequence[Leopard.Word]):
-        self.assertEqual(transcript, ref_transcript)
-        self.assertEqual(len(words), len(WORDS))
-        for word, ref_word in zip(words, WORDS):
-            self.assertEqual(word.word, ref_word.word)
-            self.assertAlmostEqual(word.start_sec, ref_word.start_sec, delta=0.01)
-            self.assertAlmostEqual(word.end_sec, ref_word.end_sec, delta=0.01)
-            self.assertAlmostEqual(word.confidence, ref_word.confidence, delta=0.1)
+    def test_invalid_access_key(self):
+        with self.assertRaises(LeopardInvalidArgumentError):
+            Leopard(
+                access_key='invalid',
+                model_path=default_model_path('../../'),
+                library_path=default_library_path('../../'))
 
-    @parameterized.expand(TEST_PARAMS)
-    def test_process(self, enable_automatic_punctuation: bool, ref_transcript: str):
-        o = None
+    def test_invalid_model_path(self):
+        with self.assertRaises(LeopardIOError):
+            Leopard(
+                access_key=self._access_key,
+                model_path='invalid',
+                library_path=default_library_path('../../'))
 
-        try:
-            o = self._create_leopard(enable_automatic_punctuation=enable_automatic_punctuation)
-            transcript, words = o.process(self.pcm)
-            self._check_result(transcript=transcript, ref_transcript=ref_transcript, words=words)
-        finally:
-            if o is not None:
-                o.delete()
-
-    @parameterized.expand(TEST_PARAMS)
-    def test_process_file(self, enable_automatic_punctuation: bool, ref_transcript: str):
-        o = None
-
-        try:
-            o = self._create_leopard(enable_automatic_punctuation=enable_automatic_punctuation)
-            transcript, words = o.process_file(self.audio_path)
-            self._check_result(transcript=transcript, ref_transcript=ref_transcript, words=words)
-        finally:
-            if o is not None:
-                o.delete()
+    def test_invalid_library_path(self):
+        with self.assertRaises(LeopardIOError):
+            Leopard(
+                access_key=self._access_key,
+                model_path=default_model_path('../../'),
+                library_path='invalid')
 
     def test_version(self):
-        o = self._create_leopard(False)
+        o = Leopard(
+            access_key=self._access_key,
+            model_path=default_model_path('../../'),
+            library_path=default_library_path('../../'))
         self.assertIsInstance(o.version, str)
         self.assertGreater(len(o.version), 0)
+
+    @parameterized.expand(parameters)
+    def test_process(
+            self,
+            language: str,
+            audio_file: str,
+            expected_transcript: str,
+            punctuations: List[str],
+            error_rate: float):
+        o = None
+
+        try:
+            o = Leopard(
+                access_key=self._access_key,
+                model_path=get_model_path_by_language(language=language),
+                library_path=default_library_path('../../'))
+
+            pcm = read_wav_file(
+                file_name=os.path.join(self._audio_directory, audio_file),
+                sample_rate=o.sample_rate)
+
+            transcript, words = o.process(pcm)
+            normalized_transcript = expected_transcript
+            for punctuation in punctuations:
+                normalized_transcript = normalized_transcript.replace(punctuation, "")
+
+            use_cer = language == 'ja'
+
+            self.assertLessEqual(
+                get_word_error_rate(transcript, normalized_transcript, use_cer),
+                error_rate)
+            self._validate_metadata(words, transcript, len(pcm))
+
+        finally:
+            if o is not None:
+                o.delete()
+
+    @parameterized.expand(parameters)
+    def test_process_file(
+            self,
+            language: str,
+            audio_file: str,
+            expected_transcript: str,
+            punctuations: List[str],
+            error_rate: float):
+        o = None
+
+        try:
+            o = Leopard(
+                access_key=self._access_key,
+                model_path=get_model_path_by_language(language=language),
+                library_path=default_library_path('../../'))
+
+            transcript, words = o.process_file(os.path.join(self._audio_directory, audio_file))
+            normalized_transcript = expected_transcript
+            for punctuation in punctuations:
+                normalized_transcript = normalized_transcript.replace(punctuation, "")
+
+            pcm = read_wav_file(
+                file_name=os.path.join(self._audio_directory, audio_file),
+                sample_rate=o.sample_rate)
+
+            use_cer = language == 'ja'
+
+            self.assertLessEqual(
+                get_word_error_rate(transcript, normalized_transcript, use_cer),
+                error_rate)
+            self._validate_metadata(words, transcript, len(pcm))
+
+        finally:
+            if o is not None:
+                o.delete()
+
+    @parameterized.expand(parameters)
+    def test_process_file_with_punctuation(
+            self,
+            language: str,
+            audio_file: str,
+            expected_transcript: str,
+            _: List[str],
+            error_rate: float):
+        o = None
+
+        try:
+            o = Leopard(
+                access_key=self._access_key,
+                model_path=get_model_path_by_language(language=language),
+                library_path=default_library_path('../../'),
+                enable_automatic_punctuation=True)
+
+            transcript, words = o.process_file(os.path.join(self._audio_directory, audio_file))
+
+            pcm = read_wav_file(
+                file_name=os.path.join(self._audio_directory, audio_file),
+                sample_rate=o.sample_rate)
+
+            use_cer = language == 'ja'
+
+            self.assertLessEqual(
+                get_word_error_rate(transcript, expected_transcript, use_cer),
+                error_rate)
+            self._validate_metadata(words, transcript, len(pcm))
+
+        finally:
+            if o is not None:
+                o.delete()
 
 
 if __name__ == '__main__':

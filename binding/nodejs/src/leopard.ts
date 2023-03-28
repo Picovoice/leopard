@@ -1,5 +1,5 @@
 //
-// Copyright 2022 Picovoice Inc.
+// Copyright 2022-2023 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -9,42 +9,41 @@
 // specific language governing permissions and limitations under the License.
 //
 
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from 'fs';
+import * as path from 'path';
 
-import PvStatus from "./pv_status_t";
+import PvStatus from './pv_status_t';
 import {
   LeopardInvalidArgumentError,
   LeopardInvalidStateError,
   pvStatusToException,
-} from "./errors";
+} from './errors';
 
-import {
-  LeopardWord,
-  LeopardTranscript,
-  LeopardOptions
-} from "./types";
+import { LeopardWord, LeopardTranscript, LeopardOptions } from './types';
 
-import {getSystemLibraryPath} from "./platforms";
+import { getSystemLibraryPath } from './platforms';
 
-const DEFAULT_MODEL_PATH = "../lib/common/leopard_params.pv";
+const DEFAULT_MODEL_PATH = '../lib/common/leopard_params.pv';
 
 const VALID_AUDIO_EXTENSIONS = [
-  ".flac",
-  ".mp3",
-  ".ogg",
-  ".opus",
-  ".vorbis",
-  ".wav",
-  ".webm",
-  ".mp4",
-  ".m4a",
-  ".3gp"
+  '.flac',
+  '.mp3',
+  '.ogg',
+  '.opus',
+  '.vorbis',
+  '.wav',
+  '.webm',
+  '.mp4',
+  '.m4a',
+  '.3gp',
 ];
 
 type LeopardHandleAndStatus = { handle: any; status: PvStatus };
-type LeopardResult = { transcript: string; words: LeopardWord[]; status: PvStatus };
-
+type LeopardResult = {
+  transcript: string;
+  words: LeopardWord[];
+  status: PvStatus;
+};
 
 /**
  * Node.js binding for Leopard speech-to-text engine.
@@ -68,10 +67,7 @@ export class Leopard {
    * @param {string} options.libraryPath the path to the Leopard dynamic library (.node extension)
    * @param {boolean} options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
    */
-  constructor(
-    accessKey: string,
-    options: LeopardOptions = {}) {
-
+  constructor(accessKey: string, options: LeopardOptions = {}) {
     if (
       accessKey === null ||
       accessKey === undefined ||
@@ -83,7 +79,8 @@ export class Leopard {
     const {
       modelPath = path.resolve(__dirname, DEFAULT_MODEL_PATH),
       libraryPath = getSystemLibraryPath(),
-      enableAutomaticPunctuation = false} = options;
+      enableAutomaticPunctuation = false,
+    } = options;
 
     if (!fs.existsSync(libraryPath)) {
       throw new LeopardInvalidArgumentError(
@@ -97,18 +94,22 @@ export class Leopard {
       );
     }
 
-    const pvLeopard = require(libraryPath);
+    const pvLeopard = require(libraryPath); // eslint-disable-line
 
     let leopardHandleAndStatus: LeopardHandleAndStatus | null = null;
     try {
-      leopardHandleAndStatus = pvLeopard.init(accessKey, modelPath, enableAutomaticPunctuation);
+      leopardHandleAndStatus = pvLeopard.init(
+        accessKey,
+        modelPath,
+        enableAutomaticPunctuation
+      );
     } catch (err: any) {
       pvStatusToException(<PvStatus>err.code, err);
     }
 
     const status = leopardHandleAndStatus!.status;
     if (status !== PvStatus.SUCCESS) {
-      pvStatusToException(status, "Leopard failed to initialize");
+      pvStatusToException(status, 'Leopard failed to initialize');
     }
 
     this._handle = leopardHandleAndStatus!.handle;
@@ -146,7 +147,7 @@ export class Leopard {
       this._handle === null ||
       this._handle === undefined
     ) {
-      throw new LeopardInvalidStateError("Leopard is not initialized");
+      throw new LeopardInvalidStateError('Leopard is not initialized');
     }
 
     if (pcm === undefined || pcm === null) {
@@ -161,24 +162,20 @@ export class Leopard {
 
     let leopardResult: LeopardResult | null = null;
     try {
-      leopardResult = this._pvLeopard.process(
-        this._handle,
-        pcm,
-        pcm.length
-      );
+      leopardResult = this._pvLeopard.process(this._handle, pcm, pcm.length);
     } catch (err: any) {
       pvStatusToException(<PvStatus>err.code, err);
     }
 
     const status = leopardResult!.status;
     if (status !== PvStatus.SUCCESS) {
-      pvStatusToException(status, "Leopard failed to process the audio frame");
+      pvStatusToException(status, 'Leopard failed to process the audio frame');
     }
 
     return {
       transcript: leopardResult!.transcript,
       words: leopardResult!.words,
-    }
+    };
   }
 
   /**
@@ -195,7 +192,7 @@ export class Leopard {
       this._handle === null ||
       this._handle === undefined
     ) {
-      throw new LeopardInvalidStateError("Leopard is not initialized");
+      throw new LeopardInvalidStateError('Leopard is not initialized');
     }
 
     if (!fs.existsSync(audioPath)) {
@@ -206,10 +203,7 @@ export class Leopard {
 
     let leopardResult: LeopardResult | null = null;
     try {
-      leopardResult = this._pvLeopard.process_file(
-        this._handle,
-        audioPath
-      );
+      leopardResult = this._pvLeopard.process_file(this._handle, audioPath);
     } catch (err: any) {
       pvStatusToException(<PvStatus>err.code, err);
     }
@@ -227,12 +221,12 @@ export class Leopard {
           )}' is not supported`
         );
       }
-      pvStatusToException(status, "Leopard failed to process the audio file");
+      pvStatusToException(status, 'Leopard failed to process the audio file');
     }
     return {
       transcript: leopardResult!.transcript,
       words: leopardResult!.words,
-    }
+    };
   }
 
   /**
@@ -241,7 +235,7 @@ export class Leopard {
    * Be sure to call this when finished with the instance
    * to reclaim the memory that was allocated by the C library.
    */
-  release() {
+  release(): void {
     if (this._handle !== 0) {
       try {
         this._pvLeopard.delete(this._handle);
@@ -250,7 +244,8 @@ export class Leopard {
       }
       this._handle = 0;
     } else {
-      console.warn("Leopard is not initialized");
+      // eslint-disable-next-line no-console
+      console.warn('Leopard is not initialized');
     }
   }
 }

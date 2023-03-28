@@ -1,5 +1,5 @@
 /*
-  Copyright 2022 Picovoice Inc.
+  Copyright 2022-2023 Picovoice Inc.
 
   You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
   file accompanying this source.
@@ -34,6 +34,8 @@ import { LeopardModel, LeopardOptions, LeopardTranscript, LeopardWord } from './
 type pv_leopard_init_type = (accessKey: number, modelPath: number, enableAutomaticPunctuation: number, object: number) => Promise<number>;
 type pv_leopard_process_type = (object: number, pcm: number, numSamples: number, transcript: number, numWords: number, words: number) => Promise<number>;
 type pv_leopard_delete_type = (object: number) => Promise<void>;
+type pv_leopard_transcript_delete_type = (transcript: number) => Promise<void>;
+type pv_leopard_words_delete_type = (words: number) => Promise<void>;
 type pv_status_to_string_type = (status: number) => Promise<number>
 type pv_sample_rate_type = () => Promise<number>;
 type pv_leopard_version_type = () => Promise<number>;
@@ -48,6 +50,8 @@ type LeopardWasmOutput = {
   pvFree: pv_free_type;
   objectAddress: number;
   pvLeopardDelete: pv_leopard_delete_type;
+  pvLeopardTranscriptDelete: pv_leopard_transcript_delete_type;
+  pvLeopardWordsDelete: pv_leopard_words_delete_type;
   pvLeopardProcess: pv_leopard_process_type;
   pvStatusToString: pv_status_to_string_type;
   sampleRate: number;
@@ -63,6 +67,8 @@ const MAX_PCM_LENGTH_SEC = 60 * 15;
 
 export class Leopard {
   private readonly _pvLeopardDelete: pv_leopard_delete_type;
+  private readonly _pvLeopardTranscriptDelete: pv_leopard_transcript_delete_type;
+  private readonly _pvLeopardWordsDelete: pv_leopard_words_delete_type;
   private readonly _pvLeopardProcess: pv_leopard_process_type;
   private readonly _pvStatusToString: pv_status_to_string_type;
 
@@ -95,6 +101,8 @@ export class Leopard {
     this._pvLeopardDelete = handleWasm.pvLeopardDelete;
     this._pvLeopardProcess = handleWasm.pvLeopardProcess;
     this._pvStatusToString = handleWasm.pvStatusToString;
+    this._pvLeopardTranscriptDelete = handleWasm.pvLeopardTranscriptDelete;
+    this._pvLeopardWordsDelete = handleWasm.pvLeopardWordsDelete;
 
     this._wasmMemory = handleWasm.memory;
     this._pvFree = handleWasm.pvFree;
@@ -108,7 +116,7 @@ export class Leopard {
     this._memoryBufferUint8 = new Uint8Array(handleWasm.memory.buffer);
     this._memoryBufferView = new DataView(handleWasm.memory.buffer);
     this._processMutex = new Mutex();
-    
+
     this._pvError = handleWasm.pvError;
   }
 
@@ -246,7 +254,7 @@ export class Leopard {
               memoryBuffer,
               await this._pvStatusToString(status),
             )}`;
-      
+
             throw new Error(
               `${msg}\nDetails: ${this._pvError.getErrorString()}`
             );
@@ -280,8 +288,8 @@ export class Leopard {
             words.push({ word, startSec, endSec, confidence });
           }
 
-          await this._pvFree(transcriptAddress);
-          await this._pvFree(wordsAddress);
+          await this._pvLeopardTranscriptDelete(transcriptAddress);
+          await this._pvLeopardWordsDelete(wordsAddress);
           await this._pvFree(inputBufferAddress);
 
           return { transcript, words };
@@ -310,7 +318,7 @@ export class Leopard {
     const { enableAutomaticPunctuation = false } = options;
 
     // A WebAssembly page has a constant size of 64KiB. -> 1MiB ~= 16 pages
-    const memory = new WebAssembly.Memory({ initial: 3500 });
+    const memory = new WebAssembly.Memory({ initial: 11500 });
 
     const memoryBufferUint8 = new Uint8Array(memory.buffer);
 
@@ -322,6 +330,8 @@ export class Leopard {
     const pv_leopard_version = exports.pv_leopard_version as pv_leopard_version_type;
     const pv_leopard_process = exports.pv_leopard_process as pv_leopard_process_type;
     const pv_leopard_delete = exports.pv_leopard_delete as pv_leopard_delete_type;
+    const pv_leopard_transcript_delete = exports.pv_leopard_transcript_delete as pv_leopard_transcript_delete_type;
+    const pv_leopard_words_delete = exports.pv_leopard_words_delete as pv_leopard_words_delete_type;
     const pv_leopard_init = exports.pv_leopard_init as pv_leopard_init_type;
     const pv_status_to_string = exports.pv_status_to_string as pv_status_to_string_type;
     const pv_sample_rate = exports.pv_sample_rate as pv_sample_rate_type;
@@ -413,6 +423,8 @@ export class Leopard {
       pvFree: pv_free,
       objectAddress: objectAddress,
       pvLeopardDelete: pv_leopard_delete,
+      pvLeopardTranscriptDelete: pv_leopard_transcript_delete,
+      pvLeopardWordsDelete: pv_leopard_words_delete,
       pvLeopardProcess: pv_leopard_process,
       pvStatusToString: pv_status_to_string,
       sampleRate: sampleRate,
