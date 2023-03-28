@@ -73,14 +73,16 @@ LeopardTranscript result = leopard.ProcessFile(audioPath);
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/). Finally, when done release the resources using `handle.Dispose()`.
 
-The model file contains the parameters for the Leopard engine. You may create bespoke language models using [Picovoice Console](https://console.picovoice.ai/) and then pass in the relevant file.
+## Language Model
 
+The Leopard .NET SDK comes preloaded with a default English language model (`.pv` file).
+Default models for other supported languages can be found in [lib/common](../../lib/common).
+
+Create custom language models using the [Picovoice Console](https://console.picovoice.ai/). Here you can train
+language models with custom vocabulary and boost words in the existing vocabulary.
+
+Pass in the `.pv` file via the `modelPath` argument in the `Create()` constructor:
 ```csharp
-using Pv;
-
-const string accessKey = "${ACCESS_KEY}";
-string modelPath = "/absolute/path/to/model.pv";
-
 Leopard handle = Leopard.Create(accessKey, modelPath);
 ```
 

@@ -491,7 +491,7 @@ try {
 }
 ```
 
-Replace `${ACCESS_KEY}` with your `AccessKey` obtained from Picovoice Console, `${MODEL_FILE}` with a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](./lib/common/leopard_params.pv) and `${AUDIO_FILE_PATH}` with the absolute path of the audio file. 
+Replace `${ACCESS_KEY}` with your `AccessKey` obtained from Picovoice Console, `${MODEL_FILE}` with a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](./lib/common/leopard_params.pv) and `${AUDIO_FILE_PATH}` with the absolute path of the audio file.
 When done be sure to explicitly release the resources using `leopard.delete()`.
 
 ### Java
@@ -561,7 +561,7 @@ use leopard::LeopardBuilder;
 fn main() {
     let access_key = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
     let leopard: Leopard = LeopardBuilder::new().access_key(access_key).init().expect("Unable to create Leopard");
-    
+
     if let Ok(leopard_transcript) = leopard.process_file("/absolute/path/to/audio_file") {
         println!("{}", leopard_transcript.transcript);
     }
@@ -609,14 +609,21 @@ Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://con
 
 ## Releases
 
+### v1.2.0 — March 27th, 2023
+
+* Added language support for French, German, Italian, Japanese, Korean, Portuguese and Spanish
+* Added support for .NET 7.0 and fixed support for .NET Standard 2.0
+* iOS minimum support moved to 11.0
+* Improved stability and performance
+
 ### v1.1.0 — August 11th, 2022
 
-* added true-casing by default for transcription results
-* added option to enable automatic punctuation insertion
-* word timestamps and confidence returned as part of transcription
-* support for 3gp (AMR) and MP4/m4a (AAC) audio files
+* Added true-casing by default for transcription results
+* Added option to enable automatic punctuation insertion
+* Word timestamps and confidence returned as part of transcription
+* Support for 3gp (AMR) and MP4/m4a (AAC) audio files
 * Leopard Web SDK release
 
 ### v1.0.0 — January 10th, 2022
 
-* Initial release.
+* Initial release

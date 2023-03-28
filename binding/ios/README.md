@@ -17,7 +17,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 
 ## Installation
 
-The Leopard iOS binding is available via [CocoaPods](https://cocoapods.org/pods/Leopard-iOS). To import it into your iOS project, add the following line to your Podfile: 
+The Leopard iOS binding is available via [CocoaPods](https://cocoapods.org/pods/Leopard-iOS). To import it into your iOS project, add the following line to your Podfile:
 
 ```ruby
 pod 'Leopard-iOS'
@@ -33,7 +33,7 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 Add the Leopard model file in `Xcode`:
 
-1. Create a model in [Picovoice Console](https://console.picovoice.ai/) or use the [default model](../../lib/common/).
+1. Create a model in [Picovoice Console](https://console.picovoice.ai/) or use a [default model](../../lib/common/).
 2. Add the model as a bundled resource by selecting Build Phases and adding it to `Copy Bundle Resources` step.
 
 Create an instance of the engine:
@@ -57,9 +57,9 @@ Transcribe an audio file either by passing the absolute path or an url to the fi
 
 do {
     let audioPath = Bundle(for: type(of: self)).path(forResource: "${AUDIO_FILE_NAME}", ofType: "${AUDIO_FILE_EXTENSION}")
-    var result = leopard.process_file(audioPath)  
+    var result = leopard.process_file(audioPath)
     print(result.transcript)
-  
+
     let audioURL = Bundle(for: type(of: self)).url(forResource: "${AUDIO_FILE_NAME}", withExtension: "${AUDIO_FILE_EXTENSION}")
     result = leopard.process_file(audioURL)
     print(result.transcript)
@@ -69,15 +69,14 @@ do {
 ```
 
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/), `${MODEL_FILE}` 
-with the name of the Leopard model file name, `${AUDIO_FILE_NAME}` with the name of the audio file and 
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/), `${MODEL_FILE}`
+with the name of the Leopard model file name, `${AUDIO_FILE_NAME}` with the name of the audio file and
 `${AUDIO_FILE_EXTENSION}` with the extension of the audio file. Finally, when done be sure to explicitly release
 the resources using `leopard.delete()`.
 
 ## Language Model
 
-The Leopard iOS SDK comes preloaded with a default English language model (`.pv` file).
-Default models for other supported languages can be found in [lib/common](../../lib/common).
+Default models for supported languages can be found in [lib/common](../../lib/common).
 
 Create custom language models using the [Picovoice Console](https://console.picovoice.ai/). Here you can train
 language models with custom vocabulary and boost words in the existing vocabulary.

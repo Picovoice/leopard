@@ -58,7 +58,7 @@ On Android, open your AndroidManifest.xml and add the following line:
 
 Add the Leopard model file to your Flutter application:
 
-1. Create a model in [Picovoice Console](https://console.picovoice.ai/) or use the [default model](https://github.com/Picovoice/leopard/tree/master/lib/common).
+1. Create a model in [Picovoice Console](https://console.picovoice.ai/) or use one of the [default language models](https://github.com/Picovoice/leopard/tree/master/lib/common).
 2. Add the model file to an `assets` folder in your project directory.
 3. Add the asset to your `pubspec.yaml`:
 ```yaml

@@ -42,8 +42,7 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 Add the Leopard model file to your Android application by:
 
-1. Either create a model in [Picovoice Console](https://console.picovoice.ai/) or use 
-default models for other supported languages found in [lib/common](../../lib/common).
+1. Either create a model in [Picovoice Console](https://console.picovoice.ai/) or use one of the default language models found in [lib/common](../../lib/common).
 2. Add the model as a bundled resource by placing it under the assets directory of your Android project (`src/main/assets/`).
 
 Create an instance of the engine with the Leopard Builder class by passing in the `accessKey`, `modelPath` and Android app context:

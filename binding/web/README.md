@@ -48,8 +48,7 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 ### Usage
 
-Create a model in [Picovoice Console](https://console.picovoice.ai/) or use 
-the default models for supported languages found in [lib/common](../../lib/common).
+Create a model in [Picovoice Console](https://console.picovoice.ai/) or use one of the default language models found in [lib/common](../../lib/common).
 
 For the web packages, there are two methods to initialize Leopard.
 
@@ -93,7 +92,7 @@ const leopardModel = {
   publicPath: ${MODEL_RELATIVE_PATH},
   // or
   base64: ${MODEL_BASE64_STRING},
-  
+
   // Optionals
   customWritePath: "leopard_model",
   forceWrite: false,

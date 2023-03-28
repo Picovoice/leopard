@@ -52,8 +52,7 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 ## Adding Leopard Models
 
-Create a custom model using the [Picovoice Console](https://console.picovoice.ai/) or use
-the default models for supported languages found in [lib/common](../../lib/common).
+Create a custom model using the [Picovoice Console](https://console.picovoice.ai/) or use one of the default language models found in [lib/common](../../lib/common).
 
 ### Android
 
