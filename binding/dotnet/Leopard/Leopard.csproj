@@ -86,8 +86,7 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Link>lib\raspberry-pi\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<Visible>false</Visible>
-		</Content>
-		<None Remove="Leopard.netstandard2.0.targets" />
+		</Content>		
 		<Content Include="..\..\..\lib\jetson\cortex-a57-aarch64\libpv_leopard.so">
 			<PackagePath>
 				build/netcoreapp3.0/lib/jetson/cortex-a57-aarch64/libpv_leopard.so;
