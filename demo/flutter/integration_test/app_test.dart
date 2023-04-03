@@ -25,7 +25,9 @@ void main() {
     return "assets/test_resources/audio_samples/$audioFile";
   }
 
-  Future<List<int>> loadAudioFile(String audioPath) async {
+  Future<List<int>> loadAudioFile(String audioFile) async {
+    String audioPath = getAudioPath(audioFile);
+
     List<int> pcm = [];
     var audioFileData = await rootBundle.load(audioPath);
     for (int i = 44; i < audioFileData.lengthInBytes; i += 2) {
