@@ -10,10 +10,9 @@ binding/go/leopard_test.go linguist-detectable=false
 binding/ios/LeopardAppTest/** linguist-detectable=false
 binding/java/src/ai/picovoice/leopard/exception/** linguist-detectable=false
 binding/java/test/** linguist-detectable=false
-binding/nodejs/** linguist-detectable=false
+binding/nodejs/test/** linguist-detectable=false
 binding/react-native/** linguist-detectable=false
 binding/rust/tests/** linguist-detectable=false
-binding/web/cypress/** linguist-detectable=false
-binding/web/test/** linguist-detectable=false
+binding/web/** linguist-detectable=false
 
 *.py linguist-detectable=true
