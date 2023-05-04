@@ -29,7 +29,9 @@ jobs:
         device: [ios-perf]
         include:
         - device: ios-perf
-
+          initPerformanceThresholdSec: 1.5
+          procPerformanceThresholdSec: 0.2
+          
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -65,11 +67,11 @@ jobs:
           PerformanceTest/PerformanceTest.swift
 
       - name: Inject Performance Threshold
-        run: sed -i '.bak' 's:{INIT_PERFORMANCE_THRESHOLD_SEC}:${{ matrix.indexPerformanceThresholdSec }}:'
+        run: sed -i '.bak' 's:{INIT_PERFORMANCE_THRESHOLD_SEC}:${{ matrix.initPerformanceThresholdSec }}:'
           PerformanceTest/PerformanceTest.swift
 
       - name: Inject Performance Threshold
-        run: sed -i '.bak' 's:{PROC_PERFORMANCE_THRESHOLD_SEC}:${{ matrix.searchPerformanceThresholdSec }}:'
+        run: sed -i '.bak' 's:{PROC_PERFORMANCE_THRESHOLD_SEC}:${{ matrix.procPerformanceThresholdSec }}:'
           PerformanceTest/PerformanceTest.swift
 
       - name: XCode Build
