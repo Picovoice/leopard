@@ -64,7 +64,7 @@ jobs:
         --token ${{secrets.APPCENTERAPITOKEN}}
         --app "Picovoice/Leopard-Android"
         --devices "Picovoice/android-min-max"
-        --app-path leopard-demo-app/build/outputs/apk/en/debug/leopard-demo-app-debug.apk
+        --app-path leopard-demo-app/build/outputs/apk/en/debug/leopard-demo-app-en-debug.apk
         --test-series "leopard-android"
         --locale "en_US"
         --build-dir leopard-demo-app/build/outputs/apk/androidTest/en/debug
