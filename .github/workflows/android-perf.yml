@@ -69,18 +69,17 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build app
-      run: ./gradlew assembleDebug
+      run: ./gradlew assembleEnDebug
 
     - name: Build androidTest
-      run: ./gradlew assembleAndroidTest
+      run: ./gradlew assembleEnDebugAndroidTest
 
     - name: Run tests on AppCenter
       run: appcenter test run espresso
         --token ${{secrets.APPCENTERAPITOKEN}}
         --app "Picovoice/Leopard-Android"
         --devices "Picovoice/${{ matrix.device }}"
-        --app-path leopard-demo-app/build/outputs/apk/debug/leopard-demo-app-debug.apk
+        --app-path leopard-demo-app/build/outputs/apk/en/debug/leopard-demo-app-debug.apk
         --test-series "leopard-android"
         --locale "en_US"
-        --build-dir leopard-demo-app/build/outputs/apk/androidTest/debug
-
+        --build-dir leopard-demo-app/build/outputs/apk/androidTest/en/debug

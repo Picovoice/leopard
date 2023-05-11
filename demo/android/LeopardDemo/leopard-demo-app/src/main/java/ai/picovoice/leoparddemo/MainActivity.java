@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Objects;
 
 import ai.picovoice.leopard.Leopard;
 import ai.picovoice.leopard.LeopardActivationException;
@@ -52,7 +53,6 @@ import ai.picovoice.leopard.LeopardTranscript;
 
 public class MainActivity extends AppCompatActivity {
     private static final String ACCESS_KEY = "${YOUR_ACCESS_KEY_HERE}";
-    private static final String MODEL_FILE = "leopard_params.pv";
     private static final int maxRecordingLength = 120;
 
     private final MicrophoneReader microphoneReader = new MicrophoneReader();
@@ -106,11 +106,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.leopard_demo);
 
         try {
-            leopard = new Leopard.Builder()
+            Leopard.Builder builder = new Leopard.Builder()
                     .setAccessKey(ACCESS_KEY)
-                    .setModelPath(MODEL_FILE)
-                    .setEnableAutomaticPunctuation(true)
-                    .build(getApplicationContext());
+                    .setEnableAutomaticPunctuation(true);
+
+            String model;
+            if (Objects.equals(BuildConfig.FLAVOR, "en")) {
+                model = "leopard_params.pv";
+            } else {
+                model = "leopard_params_" + BuildConfig.FLAVOR + ".pv";
+            }
+            builder.setModelPath("models/" + model);
+
+            leopard = builder.build(getApplicationContext());
         } catch (LeopardInvalidArgumentException e) {
             displayError(String.format("%s\nEnsure your AccessKey '%s' is valid", e.getMessage(), ACCESS_KEY));
         } catch (LeopardActivationException e) {

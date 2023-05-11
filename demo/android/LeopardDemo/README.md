@@ -11,9 +11,11 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 Replace `"${YOUR_ACCESS_KEY_HERE}"` inside [MainActivity.java](leopard-demo-app/src/main/java/ai/picovoice/leoparddemo/MainActivity.java)
 with your AccessKey obtained from [Picovoice Console](https://console.picovoice.ai/).
 
-## Usage
+1. Open the project in Android Studio
+2. Go to `Build > Select Build Variant...` and select the language you would like to run the demo in (e.g. enDebug -> English, itRelease -> Italian)
+3. Build and run on an installed simulator or a connected Android device
 
-Launch the demo on your phone using Android Studio.
+## Usage
 
 1. Press the record button.
 2. Start talking. Record some phrases or whatever audio you would like to transcribe.
