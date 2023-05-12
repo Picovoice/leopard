@@ -126,6 +126,7 @@ Sameline
 Signup
 sizecache
 SLIST
+SRCROOT
 stdbool
 stdint
 stdlib
@@ -147,4 +148,8 @@ wargv
 wavefile
 webm
 wurde
+xcodeproj
+xcshareddata
+xcscheme
+xcschemes
 xcworkspace
