@@ -18,7 +18,7 @@ pod install
 
 2) Open `LeopardDemo/LeopardDemo.xcworkspace` in XCode.
 
-3) Replace `let accessKey = "${YOUR_ACCESS_KEY_HERE}"` in the file [ViewModel.swift](./LeopardDemo/ViewModel.swift) with your `AccessKey`.
+3) Replace `let accessKey = "${YOUR_ACCESS_KEY_HERE}"` in the file [ViewModel.swift](./LeopardDemo/LeopardDemo/ViewModel.swift) with your `AccessKey`.
 
 4) Go to `Product > Scheme` and select the scheme for the language you would like to demo (e.g. `esScheme` -> Spanish Demo, `deScheme` -> German Demo)
 
