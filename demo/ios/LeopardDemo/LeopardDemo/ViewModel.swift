@@ -44,7 +44,11 @@ class ViewModel: ObservableObject {
     public func initialize() {
         state = UIState.INIT
         do {
-            let modelPath = Bundle(for: type(of: self)).path(forResource: "leopard_params", ofType: "pv")!
+            let token = (language == "en") ? "" : "_\(language)"
+            let modelPath = Bundle.main.url(
+                forResource: "leopard_params\(token)",
+                withExtension: "pv",
+                subdirectory: "models")!.path
             try leopard = Leopard(
                     accessKey: ACCESS_KEY,
                     modelPath: modelPath,
