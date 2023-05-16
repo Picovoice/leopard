@@ -1,7 +1,7 @@
 {
   "name": "leopard-web-demo",
   "version": "1.0.0",
-  "description": "A basic demo to show how to use Cheetah for web browsers, using the IIFE version of the library",
+  "description": "A basic demo to show how to use Leopard for web browsers, using the IIFE version of the library",
   "main": "index.js",
   "private": true,
   "scripts": {
