@@ -43,6 +43,40 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    def testDataFile = file('../../../../resources/test/test_data.json')
+    def parsedJson = new groovy.json.JsonSlurper().parseText(testDataFile.text)
+    def languages = []
+    parsedJson.tests.parameters.each { a ->
+        languages.add(a.language)
+    }
+
+    flavorDimensions "language"
+    productFlavors {
+        languages.each { language ->
+            "$language" {
+                applicationIdSuffix ".$language"
+
+            }
+        }
+
+        all { flavor ->
+            delete fileTree("$projectDir/src/main/assets") {
+                exclude '**/.gitkeep'
+            }
+            task("${flavor.name}CopyParams", type: Copy) {
+                if (flavor.name != 'en') {
+                    from("$projectDir/../../../../lib/common/")
+                    include("leopard_params_${flavor.name}.pv")
+                    into("$projectDir/src/main/assets/models")
+                } else {
+                    from("$projectDir/../../../../lib/common/")
+                    include("leopard_params.pv")
+                    into("$projectDir/src/main/assets/models")
+                }
+            }
+        }
+    }
     sourceSets {
         androidTest {
             java {
@@ -80,10 +114,10 @@ dependencies {
     androidTestImplementation('com.microsoft.appcenter:espresso-test-extension:1.4')
 }
 
-task copyParams(type: Copy) {
-    from("${rootDir}/../../../lib/common")
-    include('leopard_params.pv')
-    into("${rootDir}/leopard-demo-app/src/main/assets")
+afterEvaluate {
+    android.productFlavors.all {
+        flavor ->
+            tasks."merge${flavor.name.capitalize()}DebugAssets".dependsOn "${flavor.name}CopyParams"
+            tasks."merge${flavor.name.capitalize()}ReleaseAssets".dependsOn "${flavor.name}CopyParams"
+    }
 }
-
-preBuild.dependsOn(copyParams)
