@@ -3,7 +3,7 @@
 <head>
     <script src="node_modules/@picovoice/leopard-web/dist/iife/index.js"></script>
     <script src="node_modules/@picovoice/web-voice-processor/dist/iife/index.js"></script>
-    <script src="leopard_params.js"></script>
+    <script src="models/leopardModel.js"></script>
     <script type="application/javascript">
       let leopard = null;
 
@@ -139,7 +139,7 @@
         try {
           leopard = await LeopardWeb.LeopardWorker.create(
             accessKey,
-            {base64: modelParams, forceWrite: true},
+            leopardModel,
             {enableAutomaticPunctuation: true}
           );
           document.getElementById("control").style.display = "block";
@@ -155,7 +155,7 @@
 <p>This demo uses Leopard for Web to:</p>
 <ol>
     <li>
-        Create an instance of Leopard with the model file provided or default model file.
+        Create an instance of Leopard with the default language model.
     </li>
     <li>
         Process/transcribe an audio file or a recorded audio stream in browser: the data does not leave the browser

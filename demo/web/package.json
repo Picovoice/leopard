@@ -1,12 +1,11 @@
 {
-  "name": "cheetah-web-demo",
+  "name": "leopard-web-demo",
   "version": "1.0.0",
-  "description": "A basic demo to show how to use Cheetah for web browsers, using the IIFE version of the library",
+  "description": "A basic demo to show how to use Leopard for web browsers, using the IIFE version of the library",
   "main": "index.js",
   "private": true,
   "scripts": {
-    "postinstall": "npx pvbase64 -i ../../lib/common/leopard_params.pv -o ./leopard_params.js",
-    "start": "yarn run http-server -a localhost -p 5000"
+    "start": "run(){ if node scripts/prepare_demo.js $1 == 0; then http-server -a localhost -p 5000; fi }; run"
   },
   "keywords": [
     "Picovoice",
