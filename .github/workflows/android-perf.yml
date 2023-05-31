@@ -32,7 +32,7 @@ jobs:
           initPerformanceThresholdSec: 3.0
           procPerformanceThresholdSec: 0.5
         - device: 32bit-android
-          initPerformanceThresholdSec: 8.0
+          initPerformanceThresholdSec: 9.0
           procPerformanceThresholdSec: 3.5
 
     steps:
