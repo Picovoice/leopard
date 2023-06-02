@@ -58,5 +58,6 @@ buck-out/
 # CocoaPods
 /ios/Pods/
 
-# Leopard
-leopard_params.pv
+# Pv Files
+params.json
+*.pv
