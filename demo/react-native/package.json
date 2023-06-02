@@ -16,7 +16,7 @@
     "@picovoice/react-native-voice-processor": "~1.1.0",
     "@react-native-picker/picker": "^1.9.2",
     "react": "^17.0.2",
-    "react-native": "0.68.5",
+    "react-native": "0.68.7",
     "react-native-fs": "^2.20.0"
   },
   "devDependencies": {
@@ -24,7 +24,7 @@
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^3.2.0",
     "@types/react": "^17.0.33",
-    "@types/react-native": "^0.68.5",
+    "@types/react-native": "^0.68.7",
     "eslint": "^8.28.0",
     "metro-react-native-babel-preset": "^0.64.0",
     "mkdirp": "^1.0.4",

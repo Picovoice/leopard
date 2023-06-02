@@ -11,7 +11,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1ED4677C27BF24E0001E4AB7 /* leopard_params.pv in Resources */ = {isa = PBXBuildFile; fileRef = 1ED4677B27BF24E0001E4AB7 /* leopard_params.pv */; };
+		1E5BCFB82A2A8EF300B23148 /* models in Resources */ = {isa = PBXBuildFile; fileRef = 1E5BCFB72A2A8EF300B23148 /* models */; };
 		545D08A9865AA1DC2FE16674 /* libPods-LeopardDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 262FE5E535CF9CF9DD6AEBC8 /* libPods-LeopardDemo.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
@@ -25,7 +25,7 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = LeopardDemo/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = LeopardDemo/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = LeopardDemo/main.m; sourceTree = "<group>"; };
-		1ED4677B27BF24E0001E4AB7 /* leopard_params.pv */ = {isa = PBXFileReference; lastKnownFileType = file; name = leopard_params.pv; path = LeopardDemo/leopard_params.pv; sourceTree = "<group>"; };
+		1E5BCFB72A2A8EF300B23148 /* models */ = {isa = PBXFileReference; lastKnownFileType = folder; name = models; path = LeopardDemo/models; sourceTree = "<group>"; };
 		262FE5E535CF9CF9DD6AEBC8 /* libPods-LeopardDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LeopardDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		43ED59E665B01E99A2746971 /* Pods-LeopardDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardDemo.release.xcconfig"; path = "Target Support Files/Pods-LeopardDemo/Pods-LeopardDemo.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = LeopardDemo/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -88,7 +88,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				1ED4677B27BF24E0001E4AB7 /* leopard_params.pv */,
+				1E5BCFB72A2A8EF300B23148 /* models */,
 				13B07FAE1A68108700A75B9A /* LeopardDemo */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
@@ -171,7 +171,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				1ED4677C27BF24E0001E4AB7 /* leopard_params.pv in Resources */,
+				1E5BCFB82A2A8EF300B23148 /* models in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -25,13 +25,13 @@ const androidAssetDir = path.join(
   __dirname,
   '..',
   'android',
-  'rhino-rn-demo-app',
+  'leopard-rn-demo-app',
   'src',
   'main',
   'assets',
 );
 
-const iosBundleDir = path.join(__dirname, '..', 'ios', 'RhinoDemo');
+const iosBundleDir = path.join(__dirname, '..', 'ios', 'LeopardDemo');
 
 fs.rmSync(path.join(androidAssetDir, 'models'), {
   recursive: true,
