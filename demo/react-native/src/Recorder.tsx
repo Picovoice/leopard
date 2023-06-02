@@ -1,4 +1,4 @@
-import {Platform} from 'react-native';
+import { Platform } from 'react-native';
 import RNFS from 'react-native-fs';
 
 class Recorder {
