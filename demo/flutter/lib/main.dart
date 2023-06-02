@@ -1,5 +1,5 @@
 //
-// Copyright 2022 Picovoice Inc.
+// Copyright 2022-2023 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -10,7 +10,9 @@
 //
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:leopard_demo/mic_recorder.dart';
 import 'package:leopard_flutter/leopard.dart';
@@ -36,6 +38,7 @@ class _MyAppState extends State<MyApp> {
   bool isError = false;
   String errorMessage = "";
 
+  bool isButtonDisabled = false;
   bool isRecording = false;
   bool isProcessing = false;
   double recordedLength = 0.0;
@@ -50,9 +53,9 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     setState(() {
+      isButtonDisabled = true;
       recordedLength = 0.0;
-      statusAreaText =
-          "Press START to start recording some audio to transcribe";
+      statusAreaText = "Initializing Leopard...";
       transcriptText = "";
       words = [];
     });
@@ -61,19 +64,24 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initLeopard() async {
-    String platform = Platform.isAndroid
-        ? "android"
-        : Platform.isIOS
-            ? "ios"
-            : throw LeopardRuntimeException(
-                "This demo supports iOS and Android only.");
-    String modelPath = "assets/models/$platform/leopard_params.pv";
+    final paramsString =
+        await DefaultAssetBundle.of(context).loadString('assets/params.json');
+    final params = json.decode(paramsString);
+
+    final String language = params["language"];
+    final String suffix = language != "en" ? "_$language" : "";
+    final String modelPath = "assets/models/leopard_params$suffix.pv";
 
     try {
       _leopard = await Leopard.create(accessKey, modelPath,
           enableAutomaticPunctuation: true);
       _micRecorder = await MicRecorder.create(
           _leopard!.sampleRate, recordedCallback, errorCallback);
+      setState(() {
+        statusAreaText =
+            "Press START to start recording some audio to transcribe";
+        isButtonDisabled = false;
+      });
     } on LeopardInvalidArgumentException catch (ex) {
       errorCallback(LeopardInvalidArgumentException(
           "${ex.message}\nEnsure your accessKey '$accessKey' is a valid access key."));
@@ -101,6 +109,7 @@ class _MyAppState extends State<MyApp> {
       });
     } else {
       setState(() {
+        isButtonDisabled = true;
         recordedLength = length;
         statusAreaText = "Transcribing, please wait...";
       });
@@ -140,6 +149,7 @@ class _MyAppState extends State<MyApp> {
       setState(() {
         statusAreaText = "Transcribing, please wait...";
         isRecording = false;
+        isButtonDisabled = true;
       });
       _processAudio(recordedFile);
     } on LeopardException catch (ex) {
@@ -165,6 +175,7 @@ class _MyAppState extends State<MyApp> {
           "Transcribed $audioLength(s) of audio in $transcriptionTime(s)";
       transcriptText = result?.transcript ?? "";
       words = result?.words ?? [];
+      isButtonDisabled = false;
     });
   }
 
@@ -208,7 +219,7 @@ class _MyAppState extends State<MyApp> {
               height: 65,
               child: ElevatedButton(
                 style: buttonStyle,
-                onPressed: isError
+                onPressed: (isButtonDisabled || isError)
                     ? null
                     : isRecording
                         ? _stopRecording

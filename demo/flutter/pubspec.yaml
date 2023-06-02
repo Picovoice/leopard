@@ -14,7 +14,7 @@ dependencies:
     sdk: flutter
 
   path_provider: ^2.0.9
-  flutter_voice_processor: ^1.0.7
+  flutter_voice_processor: ^1.0.10
   leopard_flutter: ^1.2.0
 
 dev_dependencies:
@@ -27,8 +27,8 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/models/android/leopard_params.pv
-    - assets/models/ios/leopard_params.pv
+    - assets/
+    - assets/models/
     - assets/test_resources/
     - assets/test_resources/audio_samples/
     - assets/test_resources/model_files/
