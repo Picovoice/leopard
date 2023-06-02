@@ -10,13 +10,17 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 
 ## Usage
 
+Run the `prepare_demo` script from [demo/flutter](.) with a language code to set up the demo in the language of your choice (e.g. `de` -> German, `ko` -> Korean). To see a list of available languages, run `prepare_demo` without a language code.
+
+```console
+dart scripts/prepare_demo.dart ${LANGUAGE}
+```
+
 Replace your `AccessKey` in [lib/main.dart](lib/main.dart) file:
 
 ```dart
 final String accessKey = "{YOUR_ACCESS_KEY_HERE}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
 ```
-
-Before launching the app, use the copy_assets.sh script to copy the leopard demo model file into the demo project. (**NOTE**: on Windows, Git Bash or another bash shell is required, or you will have to manually copy the context into the project.).
 
 Run the following command from [demo/flutter](./) to build and deploy the demo to your device:
 ```console

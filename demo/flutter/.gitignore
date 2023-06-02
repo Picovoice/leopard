@@ -42,4 +42,5 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
+assets/models/*
 assets/test_resources/*
