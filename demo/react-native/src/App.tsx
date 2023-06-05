@@ -1,5 +1,5 @@
 //
-// Copyright 2022 Picovoice Inc.
+// Copyright 2022-2023 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -9,7 +9,7 @@
 // specific language governing permissions and limitations under the License.
 //
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   EventSubscription,
   NativeEventEmitter,
@@ -35,6 +35,8 @@ import {
 } from '@picovoice/react-native-voice-processor';
 
 import Recorder from './Recorder';
+
+import { language } from '../params.json';
 
 enum UIState {
   LOADING,
@@ -93,11 +95,13 @@ export default class App extends Component<Props, State> {
   }
 
   async init() {
+    const suffix = language === 'en' ? '' : `_${language}`;
+
     try {
       this._leopard = await Leopard.create(
         this._accessKey,
-        'leopard_params.pv',
-        {enableAutomaticPunctuation: true},
+        `leopard_params${suffix}.pv`,
+        { enableAutomaticPunctuation: true },
       );
       this._voiceProcessor = VoiceProcessor.getVoiceProcessor(
         512,
@@ -200,7 +204,9 @@ export default class App extends Component<Props, State> {
       try {
         const audioPath = await this._recorder.finalize();
         const start = Date.now();
-        const {transcript, words} = await this._leopard!.processFile(audioPath);
+        const { transcript, words } = await this._leopard!.processFile(
+          audioPath,
+        );
         const end = Date.now();
         this.setState({
           transcription: transcript,
@@ -269,7 +275,7 @@ export default class App extends Component<Props, State> {
           <Text style={styles.statusBarText}>Leopard</Text>
         </View>
 
-        <View style={{flex: 4}}>
+        <View style={{ flex: 4 }}>
           {this.state.appState === UIState.TRANSCRIBED && (
             <ScrollView style={styles.transcriptionBox}>
               <Text style={styles.transcriptionText}>
@@ -279,7 +285,7 @@ export default class App extends Component<Props, State> {
           )}
         </View>
 
-        <View style={{flex: 2}}>
+        <View style={{ flex: 2 }}>
           {this.state.appState === UIState.TRANSCRIBED && (
             <>
               <View style={styles.wordTableHeader}>
@@ -310,7 +316,7 @@ export default class App extends Component<Props, State> {
         ) : (
           <View style={styles.stateContainer}>
             {this.state.appState === UIState.INIT && (
-              <Text style={{textAlign: 'center'}}>
+              <Text style={{ textAlign: 'center' }}>
                 Record up to 2 minutes of audio to be transcribed by Leopard
               </Text>
             )}
@@ -335,7 +341,7 @@ export default class App extends Component<Props, State> {
         )}
 
         <View
-          style={{flex: 1, justifyContent: 'center', alignContent: 'center'}}>
+          style={{ flex: 1, justifyContent: 'center', alignContent: 'center' }}>
           <TouchableOpacity
             style={[styles.buttonStyle, disabled ? styles.buttonDisabled : {}]}
             onPress={() => this._toggleListening()}
@@ -347,7 +353,7 @@ export default class App extends Component<Props, State> {
         </View>
 
         <View
-          style={{flex: 0.5, justifyContent: 'flex-end', paddingBottom: 10}}>
+          style={{ flex: 0.5, justifyContent: 'flex-end', paddingBottom: 10 }}>
           <Text style={styles.instructions}>
             Made in Vancouver, Canada by Picovoice
           </Text>
