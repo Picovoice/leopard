@@ -64,11 +64,19 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initLeopard() async {
-    final paramsString =
-        await DefaultAssetBundle.of(context).loadString('assets/params.json');
-    final params = json.decode(paramsString);
+    String language = "";
+    try {
+      final paramsString =
+          await DefaultAssetBundle.of(context).loadString('assets/params.json');
+      final params = json.decode(paramsString);
 
-    final String language = params["language"];
+      language = params["language"];
+    } catch (_) {
+      errorCallback(LeopardException(
+          "Could not find `params.json`. Ensure 'prepare_demo.dart' script was run before launching the demo."));
+      return;
+    }
+
     final String suffix = language != "en" ? "_$language" : "";
     final String modelPath = "assets/models/leopard_params$suffix.pv";
 
