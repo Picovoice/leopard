@@ -23,6 +23,8 @@ enum UIState {
 class ViewModel: ObservableObject {
     private let ACCESS_KEY = "${YOUR_ACCESS_KEY_HERE}" // Obtained from Picovoice Console (https://console.picovoice.ai)
 
+    private let language: String = ProcessInfo.processInfo.environment["LANGUAGE"]!
+
     private var leopard: Leopard!
 
     private var recordingTimer = Timer()
