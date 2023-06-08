@@ -9,7 +9,7 @@ on:
       - '!demo/android/LeopardDemo/README.md'
       - '.github/workflows/android-appcenter.yml'
       - 'resources/audio_samples/**'
-      - 'resources/test/**'
+      - 'resources/.test/**'
   pull_request:
     branches: [ master, 'v[0-9]+.[0-9]+' ]
     paths:
@@ -17,7 +17,7 @@ on:
       - '!demo/android/LeopardDemo/README.md'
       - '.github/workflows/android-appcenter.yml'
       - 'resources/audio_samples/**'
-      - 'resources/test/**'
+      - 'resources/.test/**'
 
 defaults:
   run:

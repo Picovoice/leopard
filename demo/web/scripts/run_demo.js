@@ -1,7 +1,7 @@
 const child_process = require("child_process");
 const fs = require("fs");
 const path = require("path");
-const testData = require("../../../resources/test/test_data.json");
+const testData = require("../../../resources/.test/test_data.json");
 
 availableLanguages = testData["tests"]["parameters"].map((x) => x["language"]);
 

@@ -11,7 +11,7 @@ on:
       - 'lib/common/**'
       - 'lib/node/**'
       - 'resources/audio_samples/**'
-      - 'resources/test/**'
+      - 'resources/.test/**'
 
   pull_request:
     branches: [ master, 'v[0-9]+.[0-9]+' ]
@@ -22,7 +22,7 @@ on:
       - 'lib/common/**'
       - 'lib/node/**'
       - 'resources/audio_samples/**'
-      - 'resources/test/**'
+      - 'resources/.test/**'
 
 defaults:
   run:
