@@ -6,18 +6,12 @@ on:
     branches: [ master ]
     paths:
       - '.github/workflows/flutter.yml'
-      - 'demo/flutter/integration_test'
       - 'demo/flutter/pubspec.yaml'
-      - 'resources/audio_samples/'
-      - 'resources/.test/'
   pull_request:
     branches: [ master, 'v[0-9]+.[0-9]+' ]
     paths:
       - '.github/workflows/flutter.yml'
-      - 'demo/flutter/integration_test'
       - 'demo/flutter/pubspec.yaml'
-      - 'resources/audio_samples/'
-      - 'resources/.test/'
 
 defaults:
   run:
