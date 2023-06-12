@@ -2,10 +2,14 @@ const testData = require('../test_data.json');
 
 describe('Leopard', () => {
   beforeEach(async () => {
-    await device.launchApp({ newInstance: true });
+    await device.launchApp({newInstance: true});
   });
 
   it('should pass all tests', async () => {
+    await waitFor(element(by.id('runTests')))
+      .toBeVisible()
+      .withTimeout(5 * 1000);
+
     await element(by.id('runTests')).tap();
 
     await waitFor(element(by.id('testStatus')))
@@ -14,7 +18,9 @@ describe('Leopard', () => {
 
     const numTestCases = testData.tests.parameters.length;
     for (let i = 0; i < numTestCases; i += 1) {
-      await waitFor(element(by.id('testResult')).atIndex(i)).toExist().withTimeout(1 * 60 * 1000)
+      await waitFor(element(by.id('testResult')).atIndex(i))
+        .toExist()
+        .withTimeout(60 * 1000);
       await expect(element(by.id('testResult')).atIndex(i)).toHaveText('true');
     }
   });

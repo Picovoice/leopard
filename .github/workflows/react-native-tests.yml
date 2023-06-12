@@ -40,6 +40,7 @@ jobs:
       run: |
         yarn install
         ./copy_test_resources.sh
+
     - name: Inject AppID
       run: sed -i 's:{TESTING_ACCESS_KEY_HERE}:${{secrets.PV_VALID_ACCESS_KEY}}:' Tests.ts
 
