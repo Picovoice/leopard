@@ -73,10 +73,6 @@ jobs:
         toolchain: nightly
         override: true
 
-    - name: Rust build micdemo
-      run: cargo build --verbose
-      working-directory: demo/rust/micdemo
-
     - name: Rust build filedemo
       run: cargo build --verbose
       working-directory: demo/rust/filedemo
