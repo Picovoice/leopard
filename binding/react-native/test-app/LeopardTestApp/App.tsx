@@ -70,7 +70,11 @@ function App(): JSX.Element {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Button title="Run Tests" testID="runTests" onPress={runTests} />
+          <Button
+            title="Run Tests"
+            testID="runTests"
+            onPress={() => runTests()}
+          />
           {printResults(results)}
           {running ? (
             <Text testID="testStatus">Tests running, please wait...</Text>

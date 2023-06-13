@@ -7,7 +7,7 @@ final String resourcePath =
     join(dirname(Platform.script.path), "..", "..", "..", "resources");
 final String libPath =
     join(dirname(Platform.script.path), "..", "..", "..", "lib");
-final String testDataPath = join(resourcePath, "test", "test_data.json");
+final String testDataPath = join(resourcePath, ".test", "test_data.json");
 
 final String assetsPath = join(dirname(Platform.script.path), "..", "assets");
 final String modelsPath = join(assetsPath, "models");

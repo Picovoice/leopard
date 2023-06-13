@@ -10,7 +10,7 @@ on:
       - 'lib/ios/**'
       - '.github/workflows/react-native-tests.yml'
       - 'resources/audio_samples/**'
-      - 'resources/test/**'
+      - 'resources/.test/**'
   pull_request:
     branches: [ master, 'v[0-9]+.[0-9]+' ]
     paths:
@@ -20,7 +20,7 @@ on:
       - 'lib/ios/**'
       - '.github/workflows/react-native-tests.yml'
       - 'resources/audio_samples/**'
-      - 'resources/test/**'
+      - 'resources/.test/**'
 
 defaults:
   run:
@@ -40,6 +40,7 @@ jobs:
       run: |
         yarn install
         ./copy_test_resources.sh
+
     - name: Inject AppID
       run: sed -i 's:{TESTING_ACCESS_KEY_HERE}:${{secrets.PV_VALID_ACCESS_KEY}}:' Tests.ts
 

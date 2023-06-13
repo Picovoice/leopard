@@ -17,4 +17,4 @@ echo "Copying leopard model files ..."
 cp ../../../lib/common/*.pv ./leopard-demo-app/src/androidTest/assets/test_resources/model_files
 
 echo "Copying test data file..."
-cp ../../../resources/test/test_data.json ./leopard-demo-app/src/androidTest/assets/test_resources
+cp ../../../resources/.test/test_data.json ./leopard-demo-app/src/androidTest/assets/test_resources

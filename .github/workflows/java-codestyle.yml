@@ -6,12 +6,12 @@ on:
     branches: [ master ]
     paths:
       - '**/*.java'
-      - 'resources/lint/java/**'
+      - 'resources/.lint/java/**'
   pull_request:
     branches: [ master, 'v[0-9]+.[0-9]+' ]
     paths:
       - '**/*.java'
-      - 'resources/lint/java/**'
+      - 'resources/.lint/java/**'
 
 jobs:
   check-java-codestyle:
@@ -27,4 +27,4 @@ jobs:
         distribution: 'temurin'
 
     - name: Check Java CodeStyle
-      run: java -Dconfig_loc=resources/lint/java/ -jar resources/lint/java/checkstyle-10.5.0-all.jar -c resources/lint/java/checkstyle.xml binding/android/ binding/java/ binding/flutter/android/ binding/react-native/android/ demo/android/ demo/java/
+      run: java -Dconfig_loc=resources/.lint/java/ -jar resources/.lint/java/checkstyle-10.5.0-all.jar -c resources/.lint/java/checkstyle.xml binding/android/ binding/java/ binding/flutter/android/ binding/react-native/android/ demo/android/ demo/java/

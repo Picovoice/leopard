@@ -60,7 +60,7 @@ namespace LeopardTest
 
         private static JObject LoadJsonTestData()
         {
-            string content = File.ReadAllText(Path.Combine(ROOT_DIR, "resources/test/test_data.json"));
+            string content = File.ReadAllText(Path.Combine(ROOT_DIR, "resources/.test/test_data.json"));
             return JObject.Parse(content);
         }
 

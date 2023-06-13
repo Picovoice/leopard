@@ -45,7 +45,7 @@ def update_ios_demo(languages):
 
 
 def main():
-    with open(os.path.join(os.path.dirname(__file__), "../test/test_data.json"), encoding='utf-8') as f:
+    with open(os.path.join(os.path.dirname(__file__), "../.test/test_data.json"), encoding='utf-8') as f:
         json_content = json.loads(f.read())
 
     languages = [x['language'] for x in json_content['tests']['parameters']]

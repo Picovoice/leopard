@@ -60,7 +60,7 @@ func appendLanguage(s string, language string) string {
 }
 func loadTestData() []TestParameters {
 
-	content, err := ioutil.ReadFile("../../resources/test/test_data.json")
+	content, err := ioutil.ReadFile("../../resources/.test/test_data.json")
 	if err != nil {
 		log.Fatalf("Could not read test data json: %v", err)
 	}
