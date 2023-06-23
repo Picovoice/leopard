@@ -6,13 +6,17 @@ on:
     branches: [ master ]
     paths:
       - 'demo/go/**'
+      - 'demo/go-grpc/**'
       - '!demo/go/README.md'
+      - '!demo/go-grpc/README.md'
       - '.github/workflows/go-demos.yml'
   pull_request:
     branches: [ master, 'v[0-9]+.[0-9]+' ]
     paths:
       - 'demo/go/**'
+      - 'demo/go-grpc/**'
       - '!demo/go/README.md'
+      - '!demo/go-grpc/README.md'
       - '.github/workflows/go-demos.yml'
 
 defaults:
@@ -63,3 +67,25 @@ jobs:
 
     - name: Test filedemo
       run: ./leopard_file_demo -access_key ${{secrets.PV_VALID_ACCESS_KEY}} -input_audio_path ../../resources/audio_samples/test.wav
+  
+  build-grpc-demo:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        go: ['1.18']
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup go
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go }}
+
+    - name: Build server
+      run: go build server.go
+
+    - name: Build client
+      run: go build client.go

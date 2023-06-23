@@ -5,7 +5,7 @@ latest episode of a given podcast.
 
 ## Compatibility
 
-- Node.js 12+
+- Node.js 14+
 
 ## Picovoice AccessKey
 

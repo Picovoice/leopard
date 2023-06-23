@@ -60,3 +60,63 @@ jobs:
 
     - name: Test
       run: python3 leopard_demo_file.py --access_key ${{secrets.PV_VALID_ACCESS_KEY}} --wav_paths ../../resources/audio_samples/test.wav
+  
+  build-subtitle-demo:
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: demo/python-subtitle
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.10']
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Pre-build dependencies
+      run: python -m pip install --upgrade pip
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Test
+      run: python main.py --access_key ${{secrets.PV_VALID_ACCESS_KEY}} --youtube_url https://www.youtube.com/watch?v=b7wzFEDU0U8&t
+
+  build-youtube-demo:
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: demo/python-youtube
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.10']
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Pre-build dependencies
+      run: python -m pip install --upgrade pip
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Test
+      run: python main.py 
+        --access_key ${{secrets.PV_VALID_ACCESS_KEY}}
+        --url https://www.youtube.com/watch?v=b7wzFEDU0U8&t
+        --transcript_path test.txt
+        --work_folder .

@@ -1,2 +1,2 @@
 pvleopard==1.2.1
-pytube==12.1.0
+yt-dlp
