@@ -10,6 +10,7 @@ arbovm
 armv
 asistencia
 Atclause
+bestaudio
 blanquecinas
 BXOR
 calcsize
@@ -91,6 +92,7 @@ notest
 OBJBLOCK
 ofício
 okhttp
+outtmpl
 Paren
 pathbuf
 pathstr
@@ -153,3 +155,4 @@ xcshareddata
 xcscheme
 xcschemes
 xcworkspace
+ytdlp
