@@ -70,6 +70,8 @@ jobs:
   
   build-grpc-demo:
     runs-on: ${{ matrix.os }}
+    run:
+      working-directory: demo/go-grpc
 
     strategy:
       matrix:
