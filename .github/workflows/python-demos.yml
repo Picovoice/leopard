@@ -119,4 +119,3 @@ jobs:
         --access_key ${{secrets.PV_VALID_ACCESS_KEY}}
         --url https://www.youtube.com/watch?v=b7wzFEDU0U8&t
         --transcript_path test.txt
-        --work_folder .
