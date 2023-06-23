@@ -87,7 +87,9 @@ jobs:
       run: pip install -r requirements.txt
 
     - name: Test
-      run: python main.py --access_key ${{secrets.PV_VALID_ACCESS_KEY}} --youtube_url https://www.youtube.com/watch?v=b7wzFEDU0U8&t
+      run: python main.py
+        --access_key ${{secrets.PV_VALID_ACCESS_KEY}}
+        --youtube_url https://www.youtube.com/watch?v=b7wzFEDU0U8
 
   build-youtube-demo:
     runs-on: ${{ matrix.os }}
@@ -117,5 +119,5 @@ jobs:
     - name: Test
       run: python main.py 
         --access_key ${{secrets.PV_VALID_ACCESS_KEY}}
-        --url https://www.youtube.com/watch?v=b7wzFEDU0U8&t
+        --url https://www.youtube.com/watch?v=b7wzFEDU0U8
         --transcript_path test.txt
