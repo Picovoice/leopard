@@ -90,6 +90,7 @@ jobs:
       run: python main.py
         --access_key ${{secrets.PV_VALID_ACCESS_KEY}}
         --youtube_url https://www.youtube.com/watch?v=b7wzFEDU0U8
+        --subtitle_path test.txt
 
   build-youtube-demo:
     runs-on: ${{ matrix.os }}
