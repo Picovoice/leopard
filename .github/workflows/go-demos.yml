@@ -36,7 +36,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Setup go
-      uses: actions/setup-go@v1
+      uses: actions/setup-go@v4
       with:
         go-version: ${{ matrix.go }}
 
@@ -70,8 +70,9 @@ jobs:
   
   build-grpc-demo:
     runs-on: ${{ matrix.os }}
-    run:
-      working-directory: demo/go-grpc
+    defaults:
+      run:
+        working-directory: demo/go-grpc
 
     strategy:
       matrix:
