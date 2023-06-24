@@ -55,7 +55,7 @@ app.post('/rss-transcribe', async (req, res) => {
   console.log("Transcribing audio...")
   try {
     const leo = new Leopard("${YOUR ACCESS KEY HERE}")
-    const transcript = leo.processFile(fileName)
+    const { transcript } = leo.processFile(fileName)
     console.log("Transcription complete")
     leo.release()
     res.send(transcript)

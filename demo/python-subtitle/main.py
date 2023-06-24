@@ -1,5 +1,5 @@
 #
-#    Copyright 2022 Picovoice Inc.
+#    Copyright 2022-2023 Picovoice Inc.
 #
 #    You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 #    file accompanying this source.
@@ -17,7 +17,7 @@ from threading import Thread
 from typing import *
 
 import pvleopard
-from pytube import YouTube
+from yt_dlp import YoutubeDL
 
 
 class ProgressAnimation(Thread):
@@ -84,19 +84,36 @@ def to_srt(words: Sequence[pvleopard.Leopard.Word], endpoint_sec: float = 1., le
     return '\n'.join(lines)
 
 
+def download_ytdlp(url: str, output_dir: str, options: Optional[Dict[str, Any]] = None) -> List[str]:
+    ydl_opts = {
+        'outtmpl': "%(id)s.%(ext)s",
+        'format': 'bestaudio',
+        'paths': {
+            'home': output_dir
+        },
+        'geo_bypass': True,
+    }
+    if options is not None:
+        ydl_opts.update(**options)
+    with YoutubeDL(ydl_opts) as ydl:
+        info = ydl.sanitize_info(ydl.extract_info(url, download=False))
+        ydl.download([url])
+        return os.path.join(output_dir, f"{info['id']}.webm")
+
+
 def main() -> None:
     parser = ArgumentParser()
-    parser.add_argument('--access-key', required=True)
+    parser.add_argument('--access_key', required=True)
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('--youtube-url', default=None)
-    group.add_argument('--audio-path', default=None)
-    parser.add_argument('--subtitle-path', required=True)
-    parser.add_argument('--model-path', default=None)
+    group.add_argument('--youtube_url', default=None)
+    group.add_argument('--output_dir', default=None)
+    parser.add_argument('--subtitle_path', required=True)
+    parser.add_argument('--model_path', default=None)
     args = parser.parse_args()
 
     access_key = args.access_key
     youtube_url = args.youtube_url
-    audio_path = args.audio_path
+    output_dir = args.output_dir
     subtitle_path = args.subtitle_path
     model_path = args.model_path
 
@@ -110,24 +127,18 @@ def main() -> None:
     finally:
         anime.stop()
 
-    if audio_path is not None:
-        if not os.path.exists(audio_path):
-            print("`%s` does not exist" % audio_path)
+    if output_dir is not None:
+        if not os.path.exists(output_dir):
+            print("`%s` does not exist" % output_dir)
             exit(1)
     else:
-        audio_path = os.path.join(os.path.dirname(subtitle_path), '%s.webm' % youtube_url.split("watch?v=")[1])
+        output_dir = os.path.dirname(__file__)
 
-    if youtube_url is not None and not os.path.exists(audio_path):
+    if youtube_url is not None:
         anime = ProgressAnimation('Downloading `%s`' % youtube_url)
         anime.start()
         try:
-            youtube = YouTube(youtube_url)
-            audio_stream = youtube \
-                .streams \
-                .filter(only_audio=True, audio_codec='opus') \
-                .order_by('bitrate') \
-                .last()
-            audio_stream.download(output_path=os.path.dirname(audio_path), filename=os.path.basename(audio_path))
+            audio_path = download_ytdlp(youtube_url, output_dir)
         except Exception as e:
             print("Failed to download from YouTube with `%s`" % e)
             exit(1)

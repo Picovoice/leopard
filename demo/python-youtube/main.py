@@ -14,9 +14,10 @@ import sys
 import time
 from argparse import ArgumentParser
 from threading import Thread
+from typing import *
 
 import pvleopard
-from pytube import YouTube
+from yt_dlp import YoutubeDL
 
 
 class ProgressAnimation(Thread):
@@ -51,14 +52,31 @@ class ProgressAnimation(Thread):
             pass
 
 
+def download_ytdlp(url: str, output_dir: str, options: Optional[Dict[str, Any]] = None) -> List[str]:
+    ydl_opts = {
+        'outtmpl': "%(id)s.%(ext)s",
+        'format': 'bestaudio',
+        'paths': {
+            'home': output_dir
+        },
+        'geo_bypass': True,
+    }
+    if options is not None:
+        ydl_opts.update(**options)
+    with YoutubeDL(ydl_opts) as ydl:
+        info = ydl.sanitize_info(ydl.extract_info(url, download=False))
+        ydl.download([url])
+        return os.path.join(output_dir, f"{info['id']}.webm"), info['duration']
+
+
 def main():
     parser = ArgumentParser()
-    parser.add_argument('--access-key', required=True)
+    parser.add_argument('--access_key', required=True)
     parser.add_argument('--url', required=True)
-    parser.add_argument('--transcript-path', required=True)
-    parser.add_argument('--model-path', default=None)
-    parser.add_argument('--work-folder', default=os.path.expanduser('~/'))
-    parser.add_argument('--retain-webm', action='store_true')
+    parser.add_argument('--transcript_path', required=True)
+    parser.add_argument('--model_path', default=None)
+    parser.add_argument('--work_folder', default=os.path.expanduser('~/'))
+    parser.add_argument('--retain_webm', action='store_true')
     args = parser.parse_args()
     access_key = args.access_key
     url = args.url
@@ -72,22 +90,19 @@ def main():
     leopard = pvleopard.create(access_key=access_key, model_path=model_path)
     anime.stop()
 
-    webm_path = os.path.join(work_folder, '%s.webm' % url.split("watch?v=")[1])
     anime = ProgressAnimation('Downloading `%s`' % url)
     anime.start()
-    youtube = YouTube(url)
-    audio_stream = youtube.streams.filter(only_audio=True, audio_codec='opus').order_by('bitrate').last()
-    audio_stream.download(output_path=work_folder, filename=os.path.basename(webm_path), skip_existing=True)
+    audio_path, duration = download_ytdlp(url, work_folder)
     anime.stop()
 
     try:
         anime = ProgressAnimation('Transcribing `%s`' % url)
         anime.start()
         start_sec = time.time()
-        transcript, words = leopard.process_file(webm_path)
+        transcript, words = leopard.process_file(audio_path)
         proc_sec = time.time() - start_sec
         anime.stop()
-        print("Transcribed `%d` seconds in `%.2f` seconds" % (youtube.length, proc_sec))
+        print("Transcribed `%d` seconds in `%.2f` seconds" % (duration, proc_sec))
 
         if os.path.exists(transcript_path):
             os.remove(transcript_path)
@@ -97,7 +112,7 @@ def main():
         print('Saved transcription into `%s`' % transcript_path)
     finally:
         if not retain_webm:
-            os.remove(webm_path)
+            os.remove(audio_path)
 
 
 if __name__ == '__main__':

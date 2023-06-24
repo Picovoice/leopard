@@ -6,7 +6,9 @@ on:
     branches: [ master ]
     paths:
       - 'demo/nodejs/**'
+      - 'demo/expressjs/**'
       - '!demo/nodejs/README.md'
+      - '!demo/expressjs/README.md'
       - 'lib/node/**'
       - '.github/workflows/nodejs-demos.yml'
 
@@ -14,7 +16,9 @@ on:
     branches: [ master, 'v[0-9]+.[0-9]+' ]
     paths:
       - 'demo/nodejs/**'
+      - 'demo/expressjs/**'
       - '!demo/nodejs/README.md'
+      - '!demo/expressjs/README.md'
       - 'lib/node/**'
       - '.github/workflows/nodejs-demos.yml'
 
@@ -66,3 +70,25 @@ jobs:
 
     - name: Test
       run: yarn file -a ${{secrets.PV_VALID_ACCESS_KEY}} -i ../../resources/audio_samples/test.wav
+
+  build-expressjs-demo:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [lts/*]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Pre-build dependencies
+      run: npm install yarn
+
+    - name: Install dependencies
+      run: yarn install
