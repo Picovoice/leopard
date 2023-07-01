@@ -38,7 +38,6 @@ defaults:
 jobs:
   build-github-hosted:
     runs-on: ${{ matrix.os }}
-
     env:
       ACCESS_KEY: ${{secrets.PV_VALID_ACCESS_KEY}}
 

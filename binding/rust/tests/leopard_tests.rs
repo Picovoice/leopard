@@ -283,7 +283,7 @@ mod tests {
     fn test_version() {
         let access_key = env::var("PV_ACCESS_KEY")
             .expect("Pass the AccessKey in using the PV_ACCESS_KEY env variable");
-
+        assert_eq!(access_key, "");
         let leopard = LeopardBuilder::new()
             .access_key(access_key)
             .init()
