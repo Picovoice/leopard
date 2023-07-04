@@ -115,6 +115,8 @@ jobs:
 
     - name: Rust build
       run: cargo build --verbose
+      shell: pwsh
 
     - name: Rust run tests
-      run: cargo test --verbose -- --test-threads 1
+      run: cargo test --verbose
+      shell: pwsh
