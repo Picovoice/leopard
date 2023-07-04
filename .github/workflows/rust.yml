@@ -111,6 +111,7 @@ jobs:
       run: |
         dos2unix copy.sh
         bash copy.sh
+      shell: pwsh
 
     - name: Rust build
       run: cargo build --verbose
