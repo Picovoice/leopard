@@ -81,8 +81,8 @@ mod tests {
         error_rate: f32,
         test_audio: &str,
     ) {
-        let access_key = env::var("ACCESS_KEY")
-            .expect("Pass the AccessKey in using the ACCESS_KEY env variable");
+        let access_key = env::var("PV_ACCESS_KEY")
+            .expect("Pass the AccessKey in using the PV_ACCESS_KEY env variable");
 
         let model_path = model_path_by_language(language);
 
@@ -126,8 +126,8 @@ mod tests {
         error_rate: f32,
         test_audio: &str,
     ) {
-        let access_key = env::var("ACCESS_KEY")
-            .expect("Pass the AccessKey in using the ACCESS_KEY env variable");
+        let access_key = env::var("PV_ACCESS_KEY")
+            .expect("Pass the AccessKey in using the PV_ACCESS_KEY env variable");
 
         let model_path = model_path_by_language(language);
 
@@ -163,143 +163,126 @@ mod tests {
         validate_metadata(result, audio_file_duration);
     }
 
-    // #[test]
-    // fn test_process() -> Result<(), String> {
-    //     let test_json: Value = load_test_data();
+    #[test]
+    fn test_process() -> Result<(), String> {
+        let test_json: Value = load_test_data();
 
-    //     for t in test_json["tests"]["parameters"].as_array().unwrap() {
-    //         let language = t["language"].as_str().unwrap();
-    //         let transcript = t["transcript"].as_str().unwrap();
-    //         let punctuations = t["punctuations"]
-    //             .as_array()
-    //             .unwrap()
-    //             .iter()
-    //             .map(|v| v.as_str().unwrap())
-    //             .collect_vec();
-    //         let error_rate = t["error_rate"].as_f64().unwrap() as f32;
+        for t in test_json["tests"]["parameters"].as_array().unwrap() {
+            let language = t["language"].as_str().unwrap();
+            let transcript = t["transcript"].as_str().unwrap();
+            let punctuations = t["punctuations"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|v| v.as_str().unwrap())
+                .collect_vec();
+            let error_rate = t["error_rate"].as_f64().unwrap() as f32;
 
-    //         let test_audio = t["audio_file"].as_str().unwrap();
+            let test_audio = t["audio_file"].as_str().unwrap();
 
-    //         run_test_process(
-    //             language,
-    //             transcript,
-    //             punctuations,
-    //             false,
-    //             error_rate,
-    //             &test_audio,
-    //         );
-    //     }
-    //     Ok(())
-    // }
+            run_test_process(
+                language,
+                transcript,
+                punctuations,
+                false,
+                error_rate,
+                &test_audio,
+            );
+        }
+        Ok(())
+    }
 
-    // #[test]
-    // fn test_process_punctuation() -> Result<(), String> {
-    //     let test_json: Value = load_test_data();
+    #[test]
+    fn test_process_punctuation() -> Result<(), String> {
+        let test_json: Value = load_test_data();
 
-    //     for t in test_json["tests"]["parameters"].as_array().unwrap() {
-    //         let language = t["language"].as_str().unwrap();
-    //         let transcript = t["transcript"].as_str().unwrap();
-    //         let punctuations = t["punctuations"]
-    //             .as_array()
-    //             .unwrap()
-    //             .iter()
-    //             .map(|v| v.as_str().unwrap())
-    //             .collect_vec();
-    //         let error_rate = t["error_rate"].as_f64().unwrap() as f32;
+        for t in test_json["tests"]["parameters"].as_array().unwrap() {
+            let language = t["language"].as_str().unwrap();
+            let transcript = t["transcript"].as_str().unwrap();
+            let punctuations = t["punctuations"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|v| v.as_str().unwrap())
+                .collect_vec();
+            let error_rate = t["error_rate"].as_f64().unwrap() as f32;
 
-    //         let test_audio = t["audio_file"].as_str().unwrap();
+            let test_audio = t["audio_file"].as_str().unwrap();
 
-    //         run_test_process(
-    //             language,
-    //             transcript,
-    //             punctuations,
-    //             true,
-    //             error_rate,
-    //             &test_audio,
-    //         );
-    //     }
-    //     Ok(())
-    // }
+            run_test_process(
+                language,
+                transcript,
+                punctuations,
+                true,
+                error_rate,
+                &test_audio,
+            );
+        }
+        Ok(())
+    }
 
-    // #[test]
-    // fn test_process_file() -> Result<(), String> {
-    //     let test_json: Value = load_test_data();
+    #[test]
+    fn test_process_file() -> Result<(), String> {
+        let test_json: Value = load_test_data();
 
-    //     for t in test_json["tests"]["parameters"].as_array().unwrap() {
-    //         let language = t["language"].as_str().unwrap();
-    //         let transcript = t["transcript"].as_str().unwrap();
-    //         let punctuations = t["punctuations"]
-    //             .as_array()
-    //             .unwrap()
-    //             .iter()
-    //             .map(|v| v.as_str().unwrap())
-    //             .collect_vec();
-    //         let error_rate = t["error_rate"].as_f64().unwrap() as f32;
+        for t in test_json["tests"]["parameters"].as_array().unwrap() {
+            let language = t["language"].as_str().unwrap();
+            let transcript = t["transcript"].as_str().unwrap();
+            let punctuations = t["punctuations"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|v| v.as_str().unwrap())
+                .collect_vec();
+            let error_rate = t["error_rate"].as_f64().unwrap() as f32;
 
-    //         let test_audio = t["audio_file"].as_str().unwrap();
+            let test_audio = t["audio_file"].as_str().unwrap();
 
-    //         run_test_process_file(
-    //             language,
-    //             transcript,
-    //             punctuations,
-    //             false,
-    //             error_rate,
-    //             &test_audio,
-    //         );
-    //     }
-    //     Ok(())
-    // }
+            run_test_process_file(
+                language,
+                transcript,
+                punctuations,
+                false,
+                error_rate,
+                &test_audio,
+            );
+        }
+        Ok(())
+    }
 
-    // #[test]
-    // fn test_process_file_punctuation() -> Result<(), String> {
-    //     let test_json: Value = load_test_data();
+    #[test]
+    fn test_process_file_punctuation() -> Result<(), String> {
+        let test_json: Value = load_test_data();
 
-    //     for t in test_json["tests"]["parameters"].as_array().unwrap() {
-    //         let language = t["language"].as_str().unwrap();
-    //         let transcript = t["transcript"].as_str().unwrap();
-    //         let punctuations = t["punctuations"]
-    //             .as_array()
-    //             .unwrap()
-    //             .iter()
-    //             .map(|v| v.as_str().unwrap())
-    //             .collect_vec();
-    //         let error_rate = t["error_rate"].as_f64().unwrap() as f32;
+        for t in test_json["tests"]["parameters"].as_array().unwrap() {
+            let language = t["language"].as_str().unwrap();
+            let transcript = t["transcript"].as_str().unwrap();
+            let punctuations = t["punctuations"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|v| v.as_str().unwrap())
+                .collect_vec();
+            let error_rate = t["error_rate"].as_f64().unwrap() as f32;
 
-    //         let test_audio = t["audio_file"].as_str().unwrap();
+            let test_audio = t["audio_file"].as_str().unwrap();
 
-    //         run_test_process_file(
-    //             language,
-    //             transcript,
-    //             punctuations,
-    //             true,
-    //             error_rate,
-    //             &test_audio,
-    //         );
-    //     }
-    //     Ok(())
-    // }
+            run_test_process_file(
+                language,
+                transcript,
+                punctuations,
+                true,
+                error_rate,
+                &test_audio,
+            );
+        }
+        Ok(())
+    }
 
     #[test]
     fn test_version() {
-        let access_key = env::var("ACCESS_KEY")
-            .expect("Pass the AccessKey in using the ACCESS_KEY env variable");
-        let u = match env::var_os("ACCESS_KEY") {
-            Some(v) => v.into_string().unwrap(),
-            None => panic!("$USER is not set")
-        };
-        println!("var_os ________________________________________________________________");
-        println!("{}", u);
-        println!("env! ________________________________________________________________");
-        println!("{}", env!("ACCESS_KEY", "ACCESS_KEY is not set"));
-        println!("list env vars ________________________________________________________________");
-        for (n,v) in env::vars() {
-            println!("{}: {}", n,v);
-        }
-        println!("list env vars_os ________________________________________________________________");
-        for (n,v) in env::vars_os() {
-            println!("{}: {}", n.into_string().unwrap(), v.into_string().unwrap());
-        }
-
+        let access_key = env::var("PV_ACCESS_KEY")
+            .expect("Pass the AccessKey in using the PV_ACCESS_KEY env variable");
 
         let leopard = LeopardBuilder::new()
             .access_key(access_key)
