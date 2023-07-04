@@ -38,7 +38,7 @@ env:
 defaults:
   run:
     working-directory: binding/rust
-    shell: bash
+    # shell: bash
 
 jobs:
   # build-github-hosted:
