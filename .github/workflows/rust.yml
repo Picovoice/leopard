@@ -60,12 +60,12 @@ jobs:
     #   if: matrix.os == 'ubuntu-latest'
     #   run: sudo apt install libasound2-dev -y
 
-    # - name: Install stable toolchain
-    #   uses: actions-rs/toolchain@v1
-    #   with:
-    #     profile: minimal
-    #     toolchain: 1.65.0
-    #     override: true
+    - name: Install stable toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        profile: default
+        toolchain: 1.61.0
+        override: true
 
     - name: Rust build
       run: cargo build --verbose
