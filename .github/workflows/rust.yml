@@ -86,7 +86,9 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Rust pre-build
-      run: bash copy.sh
+      run: |
+        dos2unix copy.sh
+        bash copy.sh
 
     - name: Install stable toolchain
       uses: actions-rs/toolchain@v1
