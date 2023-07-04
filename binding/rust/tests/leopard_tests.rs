@@ -81,8 +81,8 @@ mod tests {
         error_rate: f32,
         test_audio: &str,
     ) {
-        let access_key = env::var("PV_ACCESS_KEY")
-            .expect("Pass the AccessKey in using the PV_ACCESS_KEY env variable");
+        let access_key = env::var("ACCESS_KEY")
+            .expect("Pass the AccessKey in using the ACCESS_KEY env variable");
 
         let model_path = model_path_by_language(language);
 
@@ -126,8 +126,8 @@ mod tests {
         error_rate: f32,
         test_audio: &str,
     ) {
-        let access_key = env::var("PV_ACCESS_KEY")
-            .expect("Pass the AccessKey in using the PV_ACCESS_KEY env variable");
+        let access_key = env::var("ACCESS_KEY")
+            .expect("Pass the AccessKey in using the ACCESS_KEY env variable");
 
         let model_path = model_path_by_language(language);
 
@@ -281,8 +281,8 @@ mod tests {
 
     #[test]
     fn test_version() {
-        let access_key = env::var("PV_ACCESS_KEY")
-            .expect("Pass the AccessKey in using the PV_ACCESS_KEY env variable");
+        let access_key = env::var("ACCESS_KEY")
+            .expect("Pass the AccessKey in using the ACCESS_KEY env variable");
 
         let leopard = LeopardBuilder::new()
             .access_key(access_key)
