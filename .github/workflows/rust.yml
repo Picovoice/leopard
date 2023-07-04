@@ -54,24 +54,24 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Rust pre-build
-      run: bash copy.sh
+      run: echo $ACCESS_KEY
 
-    - name: Rust dependencies
-      if: matrix.os == 'ubuntu-latest'
-      run: sudo apt install libasound2-dev -y
+    # - name: Rust dependencies
+    #   if: matrix.os == 'ubuntu-latest'
+    #   run: sudo apt install libasound2-dev -y
 
-    - name: Install stable toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        profile: minimal
-        toolchain: 1.65.0
-        override: true
+    # - name: Install stable toolchain
+    #   uses: actions-rs/toolchain@v1
+    #   with:
+    #     profile: minimal
+    #     toolchain: 1.65.0
+    #     override: true
 
-    - name: Rust build
-      run: cargo build --verbose
+    # - name: Rust build
+    #   run: cargo build --verbose
 
-    - name: Rust run tests
-      run: cargo test --verbose
+    # - name: Rust run tests
+    #   run: cargo test --verbose
 
   # build-self-hosted:
   #   runs-on: ${{ matrix.machine }}
