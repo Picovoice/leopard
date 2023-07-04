@@ -38,7 +38,7 @@ env:
 defaults:
   run:
     working-directory: binding/rust
-    # shell: bash
+    shell: bash
 
 jobs:
   # build-github-hosted:
@@ -89,10 +89,10 @@ jobs:
       run: |
         dos2unix copy.sh
         bash copy.sh
+      shell: pwsh
 
     - name: Install stable toolchain
       uses: actions-rs/toolchain@v1
-      shell: bash
       with:
         toolchain: stable
         override: true
