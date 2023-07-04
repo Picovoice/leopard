@@ -38,7 +38,6 @@ env:
 defaults:
   run:
     working-directory: binding/rust
-    shell: bash
 
 jobs:
   # build-github-hosted:
@@ -89,13 +88,6 @@ jobs:
       run: |
         dos2unix copy.sh
         bash copy.sh
-      shell: pwsh
-
-    - name: Install stable toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
-        override: true
 
     - name: Rust build
       run: cargo build --verbose
