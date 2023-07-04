@@ -92,6 +92,7 @@ jobs:
 
     - name: Install stable toolchain
       uses: actions-rs/toolchain@v1
+      shell: bash
       with:
         toolchain: stable
         override: true
