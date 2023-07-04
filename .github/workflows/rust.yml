@@ -41,45 +41,14 @@ defaults:
     shell: bash
 
 jobs:
-  build-github-hosted:
-    runs-on: ${{ matrix.os }}
-    env:
-      ACCESS_KEY: ${{secrets.PV_VALID_ACCESS_KEY}}
-
-    strategy:
-      matrix:
-        os: [windows-latest]
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Rust pre-build
-      run: bash copy.sh
-
-    # - name: Rust dependencies
-    #   if: matrix.os == 'ubuntu-latest'
-    #   run: sudo apt install libasound2-dev -y
-
-    - name: Install stable toolchain
-      uses: actions-rs/toolchain@v1
-      with:
-        profile: default
-        toolchain: 1.61.0
-        override: true
-
-    - name: Rust build
-      run: cargo build --verbose
-
-    - name: Rust run tests
-      run: cargo test --verbose
-
-  # build-self-hosted:
-  #   runs-on: ${{ matrix.machine }}
+  # build-github-hosted:
+  #   runs-on: ${{ matrix.os }}
   #   env:
-  #     PV_ACCESS_KEY: ${{secrets.PV_VALID_ACCESS_KEY}}
+  #     ACCESS_KEY: ${{secrets.PV_VALID_ACCESS_KEY}}
+
   #   strategy:
   #     matrix:
-  #       machine: [rpi3-32, rpi3-64, rpi4-32, rpi4-64, jetson]
+  #       os: [windows-latest]
 
   #   steps:
   #   - uses: actions/checkout@v3
@@ -87,14 +56,46 @@ jobs:
   #   - name: Rust pre-build
   #     run: bash copy.sh
 
+  #   # - name: Rust dependencies
+  #   #   if: matrix.os == 'ubuntu-latest'
+  #   #   run: sudo apt install libasound2-dev -y
+
   #   - name: Install stable toolchain
   #     uses: actions-rs/toolchain@v1
   #     with:
-  #       toolchain: nightly
+  #       profile: default
+  #       toolchain: 1.61.0
   #       override: true
 
   #   - name: Rust build
   #     run: cargo build --verbose
 
   #   - name: Rust run tests
-  #     run: PV_ACCESS_KEY=${{secrets.PV_VALID_ACCESS_KEY}} cargo test --verbose -- --test-threads 1
+  #     run: cargo test --verbose
+
+  build-self-hosted:
+    runs-on: ${{ matrix.machine }}
+    env:
+      ACCESS_KEY: ${{secrets.PV_VALID_ACCESS_KEY}}
+
+    strategy:
+      matrix:
+        machine: [pv-windows]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Rust pre-build
+      run: bash copy.sh
+
+    - name: Install stable toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+
+    - name: Rust build
+      run: cargo build --verbose
+
+    - name: Rust run tests
+      run: cargo test --verbose -- --test-threads 1
