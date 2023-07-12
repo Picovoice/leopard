@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 //
-// Copyright 2022 Picovoice Inc.
+// Copyright 2022-2023 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -57,7 +57,7 @@ async function micDemo() {
   let showAudioDevicesDefined = showAudioDevices !== undefined;
 
   if (showAudioDevicesDefined) {
-    const devices = PvRecorder.getAudioDevices();
+    const devices = PvRecorder.getAvailableDevices();
     for (let i = 0; i < devices.length; i++) {
       console.log(`index: ${i}, device name: ${devices[i]}`);
     }
@@ -77,7 +77,7 @@ async function micDemo() {
         'enableAutomaticPunctuation': !disableAutomaticPunctuation
       });
 
-  const recorder = new PvRecorder(audioDeviceIndex, PV_RECORDER_FRAME_LENGTH);
+  const recorder = new PvRecorder(PV_RECORDER_FRAME_LENGTH, audioDeviceIndex);
 
   console.log(`Using device: ${recorder.getSelectedDevice()}`);
 

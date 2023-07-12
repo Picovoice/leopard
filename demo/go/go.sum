@@ -1,5 +1,7 @@
 github.com/Picovoice/leopard/binding/go v1.2.0 h1:NbUW+Fni5UydvcFlMx8RZtk2pccFaRJFG14kGaUa4CA=
 github.com/Picovoice/leopard/binding/go v1.2.0/go.mod h1:5kaEg9ZcH2dLkrX/H1xMVF6QFM7l3vd9GKxeXSanA8s=
+github.com/Picovoice/pvrecorder/binding/go v1.2.0 h1:MbfURadQ2C5c4HLv+0nXU9zStqwhnKsAF6D16t7sUn0=
+github.com/Picovoice/pvrecorder/binding/go v1.2.0/go.mod h1:gQdvBAjoKmRxMFh8W9cVKWcqHsWvu+d13sCPVFm7dhg=
 github.com/Picovoice/pvrecorder/sdk/go v1.1.1 h1:Tx49q+A5DwgURrTxMDTKeCChPuaFTVNlfDk4LCnU6Xk=
 github.com/Picovoice/pvrecorder/sdk/go v1.1.1/go.mod h1:IoSKWuM28e0wWzVSn7B4WvHWmOpcPg85JdwlueTJgGk=
 github.com/agnivade/levenshtein v1.1.1 h1:QY8M92nrzkmr798gCo3kmMyqXFzdQVpxLlGPRBij0P8=
