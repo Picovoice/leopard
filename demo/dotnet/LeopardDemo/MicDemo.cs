@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright 2020-2021 Picovoice Inc.
+    Copyright 2020-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -45,44 +45,35 @@ namespace LeopardDemo
             bool verbose,
             int audioDeviceIndex)
         {
-
-            Leopard leopard = null;
-
-            leopard = Leopard.Create(
+            using Leopard leopard = Leopard.Create(
                 accessKey: accessKey,
                 modelPath: modelPath,
                 enableAutomaticPunctuation: enableAutomaticPunctuation);
 
-            PvRecorder recorder = PvRecorder.Create(audioDeviceIndex, PV_RECORDER_FRAME_LENGTH);
-
-            List<short> audioFrame = new List<short>();
-
-
-            Console.CancelKeyPress += (s, o) =>
+            using PvRecorder recorder = PvRecorder.Create(PV_RECORDER_FRAME_LENGTH, audioDeviceIndex);
+            Console.WriteLine($"Using device: {recorder.SelectedDevice}");
+            Console.CancelKeyPress += delegate (object sender, ConsoleCancelEventArgs e)
             {
                 Console.WriteLine("Stopping...");
-
-                leopard?.Dispose();
-                recorder.Dispose();
             };
 
-
-            Console.WriteLine($"\nUsing device: {recorder.SelectedDevice}");
+            List<short> audioFrames = new List<short>();
+            recorder.Start();
             Console.WriteLine(">>> Press `CTRL+C` to exit:\n");
 
             while (true)
             {
-                Console.WriteLine(">>> Recording ... Press `ENTER` to stop:\n");
+                Console.WriteLine(">>> Recording ... Press `ENTER` to stop:");
                 var tokenSource = new CancellationTokenSource();
                 CancellationToken token = tokenSource.Token;
                 Task recordingTask = Task.Run(() =>
                 {
-                    audioFrame.Clear();
+                    audioFrames.Clear();
                     recorder.Start();
                     while (!token.IsCancellationRequested)
                     {
-                        short[] pcm = recorder.Read();
-                        audioFrame.AddRange(pcm);
+                        short[] frame = recorder.Read();
+                        audioFrames.AddRange(frame);
                     }
                     recorder.Stop();
                 });
@@ -96,7 +87,7 @@ namespace LeopardDemo
                 tokenSource.Cancel();
                 recordingTask.Wait();
 
-                short[] pcm = audioFrame.ToArray();
+                short[] pcm = audioFrames.ToArray();
 
                 Console.WriteLine(">>> Processing ... \n");
                 try
@@ -105,12 +96,13 @@ namespace LeopardDemo
                     Console.WriteLine(result.TranscriptString);
                     if (verbose)
                     {
-                        Console.WriteLine(String.Format("\n|{0,-15}|{1,-10:0.00}|{2,-10:0.00}|{3,-10:0.00}|\n", "word", "Confidence", "StartSec", "EndSec"));
+                        Console.WriteLine(string.Format("\n|{0,-15}|{1,-10:0.00}|{2,-10:0.00}|{3,-10:0.00}|\n", "word", "Confidence", "StartSec", "EndSec"));
                         for (int i = 0; i < result.WordArray.Length; i++)
                         {
                             LeopardWord word = result.WordArray[i];
-                            Console.WriteLine(String.Format("|{0,-15}|{1,10:0.00}|{2,10:0.00}|{3,10:0.00}|", word.Word, word.Confidence, word.StartSec, word.EndSec));
+                            Console.WriteLine(string.Format("|{0,-15}|{1,10:0.00}|{2,10:0.00}|{3,10:0.00}|", word.Word, word.Confidence, word.StartSec, word.EndSec));
                         }
+                        Console.WriteLine();
                     }
                 }
                 catch (LeopardActivationLimitException)
@@ -125,7 +117,7 @@ namespace LeopardDemo
         /// </summary>
         public static void ShowAudioDevices()
         {
-            string[] devices = PvRecorder.GetAudioDevices();
+            string[] devices = PvRecorder.GetAvailableDevices();
             for (int i = 0; i < devices.Length; i++)
             {
                 Console.WriteLine($"index: {i}, device name: {devices[i]}");
