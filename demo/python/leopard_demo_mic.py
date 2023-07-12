@@ -34,7 +34,7 @@ class Recorder(Thread):
     def run(self):
         self._is_recording = True
 
-        recorder = PvRecorder(device_index=self._audio_device_index, frame_length=160)
+        recorder = PvRecorder(frame_length=160, device_index=self._audio_device_index)
         recorder.start()
 
         while not self._stop:
@@ -55,8 +55,7 @@ def main():
     parser = ArgumentParser()
     parser.add_argument(
         '--access_key',
-        help='AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)',
-        required=True)
+        help='AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)')
     parser.add_argument(
         '--library_path',
         help='Absolute path to dynamic library. Default: using the library provided by `pvleopard`')
@@ -83,15 +82,19 @@ def main():
     args = parser.parse_args()
 
     if args.show_audio_devices:
-        for index, name in enumerate(PvRecorder.get_audio_devices()):
+        for index, name in enumerate(PvRecorder.get_available_devices()):
             print('Device #%d: %s' % (index, name))
         return
 
     if args.audio_device_index != -1:
-        devices_length = len(PvRecorder.get_audio_devices())
+        devices_length = len(PvRecorder.get_available_devices())
         if args.audio_device_index < 0 or args.audio_device_index >= devices_length:
             print('Invalid audio device index provided.')
             sys.exit(1)
+
+    if not args.access_key:
+        print('--access_key is required.')
+        return
 
     leopard = create(
         access_key=args.access_key,

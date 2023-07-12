@@ -20,7 +20,7 @@ import (
 	"path/filepath"
 
 	leopard "github.com/Picovoice/leopard/binding/go"
-	pvrecorder "github.com/Picovoice/pvrecorder/sdk/go"
+	pvrecorder "github.com/Picovoice/pvrecorder/binding/go"
 )
 
 func readFrames(recorder *pvrecorder.PvRecorder, data *[]int16, stopCh chan struct{}, stoppedCh chan struct{}) {
@@ -83,12 +83,8 @@ func main() {
 	}
 
 	frameLength := 512
-	recorder := pvrecorder.PvRecorder{
-		DeviceIndex:    *audioDeviceIndex,
-		FrameLength:    frameLength,
-		BufferSizeMSec: 1000,
-		LogOverflow:    0,
-	}
+	recorder := pvrecorder.NewPvRecorder(frameLength)
+	recorder.DeviceIndex = *audioDeviceIndex
 
 	if err := recorder.Init(); err != nil {
 		log.Fatalf("Error: %s.\n", err.Error())
@@ -164,7 +160,7 @@ func main() {
 }
 
 func printAudioDevices() {
-	if devices, err := pvrecorder.GetAudioDevices(); err != nil {
+	if devices, err := pvrecorder.GetAvailableDevices(); err != nil {
 		log.Fatalf("Error: %s.\n", err.Error())
 	} else {
 		for i, device := range devices {
