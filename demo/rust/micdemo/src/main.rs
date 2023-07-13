@@ -16,7 +16,7 @@ use std::{io, process, thread};
 
 use clap::{App, Arg, ArgGroup};
 use leopard::LeopardBuilder;
-use pv_recorder::RecorderBuilder;
+use pv_recorder::PvRecorderBuilder;
 use tabwriter::TabWriter;
 
 static RECORDING: AtomicBool = AtomicBool::new(false);
@@ -40,9 +40,8 @@ fn leopard_demo(
         .init()
         .expect("Failed to create Leopard");
 
-    let recorder = RecorderBuilder::new()
+    let recorder = PvRecorderBuilder::new(512)
         .device_index(audio_device_index)
-        .frame_length(512)
         .init()
         .expect("Failed to initialize pvrecorder");
 
@@ -71,9 +70,8 @@ fn leopard_demo(
         let transcript_handle = thread::spawn(move || {
             recorder.start().expect("Failed to start audio recording");
             while RECORDING.load(Ordering::SeqCst) {
-                let mut pcm = vec![0; recorder.frame_length()];
-                recorder.read(&mut pcm).expect("Failed to read audio frame");
-                audio_data.extend_from_slice(&pcm);
+                let frame = recorder.read().expect("Failed to read audio frame");
+                audio_data.extend_from_slice(&frame);
             }
             recorder.stop().expect("Failed to stop audio recording");
             leopard.process(&audio_data).unwrap()
@@ -108,10 +106,7 @@ fn leopard_demo(
 }
 
 fn show_audio_devices() {
-    let audio_devices = RecorderBuilder::new()
-        .init()
-        .expect("Failed to initialize pvrecorder")
-        .get_audio_devices();
+    let audio_devices = PvRecorderBuilder::default().get_available_devices();
     match audio_devices {
         Ok(audio_devices) => {
             for (idx, device) in audio_devices.iter().enumerate() {
