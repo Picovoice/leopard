@@ -1,3 +1,3 @@
 -keep class ai.picovoice.leopard.*Exception { <init>(...); }
--keep class ai.picovoice.leopard.LeopardTranscript
--keep class ai.picovoice.leopard.LeopardTranscript$Word
+-keep class ai.picovoice.leopard.LeopardTranscript { <init>(...); }
+-keep class ai.picovoice.leopard.LeopardTranscript$Word { <init>(...); }
