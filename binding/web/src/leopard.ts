@@ -214,7 +214,7 @@ export class Leopard {
    * @return The transcript.
    */
   public async process(pcm: Int16Array): Promise<LeopardTranscript> {
-    if (!this._isWasmMemoryDetached) {
+    if (this._isWasmMemoryDetached) {
       throw new Error("Invalid memory state: browser might have cleaned resources automatically. Re-initialize Leopard.");
     }
 
