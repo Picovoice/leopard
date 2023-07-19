@@ -92,6 +92,8 @@ export class Leopard {
 
   private static _leopardMutex = new Mutex();
 
+  private _isWasmMemoryDetached: boolean = false;
+
   private readonly _pvError;
 
   private constructor(handleWasm: LeopardWasmOutput) {
@@ -212,6 +214,10 @@ export class Leopard {
    * @return The transcript.
    */
   public async process(pcm: Int16Array): Promise<LeopardTranscript> {
+    if (this._isWasmMemoryDetached) {
+      throw new Error("Invalid memory state: browser might have cleaned resources automatically. Re-initialize Leopard.");
+    }
+
     if (!(pcm instanceof Int16Array)) {
       throw new Error('The argument \'pcm\' must be provided as an Int16Array');
     }
@@ -297,8 +303,14 @@ export class Leopard {
         .then((result: LeopardTranscript) => {
           resolve(result);
         })
-        .catch((error: any) => {
-          reject(error);
+        .catch(async (error: any) => {
+          if (this._memoryBuffer.length === 0) {
+            this._isWasmMemoryDetached = true;
+            await this.release();
+            reject(new Error("Invalid memory state: browser might have cleaned resources automatically. Re-initialize Leopard."));
+          } else {
+            reject(error);
+          }
         });
     });
 
