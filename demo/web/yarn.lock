@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@picovoice/leopard-web@~1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@picovoice/leopard-web/-/leopard-web-1.2.0.tgz#9babee5d09f4b5989975a781f99473520e8ae0d5"
-  integrity sha512-n1Gyit7A6bJt4pPJleOtmRWN4cFq5fpJvbRcjcy1D+OvEeS7TZNbaGHh2j5I8IwKa6qBNcmpvVkNcpoh5TBvng==
+"@picovoice/leopard-web@~1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@picovoice/leopard-web/-/leopard-web-1.2.1.tgz#3783c04bba028c3748113d89de66ae8746b510b0"
+  integrity sha512-kn1Smv2akhQTBVT+PP2YvCXMlXeEHH+ifY7ozUm3Qb3QOmBOPsv7j6PVbcdluwdxePC5oTNyzZGHA4f6dS+s4w==
   dependencies:
     "@picovoice/web-utils" "=1.3.1"
 
@@ -16,10 +16,12 @@
   dependencies:
     commander "^9.2.0"
 
-"@picovoice/web-voice-processor@~4.0.6":
-  version "4.0.6"
-  resolved "https://registry.yarnpkg.com/@picovoice/web-voice-processor/-/web-voice-processor-4.0.6.tgz#4769283b82f64d3625794f7290d47c6d477a3f41"
-  integrity sha512-Ykfy6hrWFpOklfeN7rSJb5CGim8wDu7J+l8imRYyQxWHWVV1Wu5S8FW69zkJmwiDG2Wx+M2+h0SCMS+hNM5qow==
+"@picovoice/web-voice-processor@~4.0.7":
+  version "4.0.7"
+  resolved "https://registry.yarnpkg.com/@picovoice/web-voice-processor/-/web-voice-processor-4.0.7.tgz#5df76c3b283a4c90ee53865cdd5dab0099acb823"
+  integrity sha512-LtZDNrtezi7B/1CWeda4YE7M+SAKN7ALvGf+j357TmmJRqnMnt21urAiZ90zSMUbFCoYqKIeq8rMGU7RkKaeEw==
+  dependencies:
+    "@picovoice/web-utils" "=1.3.1"
 
 ansi-styles@^4.1.0:
   version "4.3.0"
