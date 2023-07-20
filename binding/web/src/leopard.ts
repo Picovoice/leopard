@@ -74,9 +74,6 @@ export class Leopard {
 
   private _wasmMemory?: WebAssembly.Memory;
   private _pvFree: pv_free_type;
-  private readonly _memoryBuffer: Int16Array;
-  private readonly _memoryBufferUint8: Uint8Array;
-  private readonly _memoryBufferView: DataView;
   private readonly _processMutex: Mutex;
 
   private readonly _objectAddress: number;
@@ -91,8 +88,6 @@ export class Leopard {
   private static _wasmSimd: string;
 
   private static _leopardMutex = new Mutex();
-
-  private _isWasmMemoryDetached: boolean = false;
 
   private readonly _pvError;
 
@@ -114,9 +109,6 @@ export class Leopard {
     this._numWordsAddress = handleWasm.numWordsAddress;
     this._wordsAddressAddress = handleWasm.wordsAddressAddress;
 
-    this._memoryBuffer = new Int16Array(handleWasm.memory.buffer);
-    this._memoryBufferUint8 = new Uint8Array(handleWasm.memory.buffer);
-    this._memoryBufferView = new DataView(handleWasm.memory.buffer);
     this._processMutex = new Mutex();
 
     this._pvError = handleWasm.pvError;
@@ -214,10 +206,6 @@ export class Leopard {
    * @return The transcript.
    */
   public async process(pcm: Int16Array): Promise<LeopardTranscript> {
-    if (this._isWasmMemoryDetached) {
-      throw new Error("Invalid memory state: browser might have cleaned resources automatically. Re-initialize Leopard.");
-    }
-
     if (!(pcm instanceof Int16Array)) {
       throw new Error('The argument \'pcm\' must be provided as an Int16Array');
     }
@@ -242,7 +230,10 @@ export class Leopard {
             throw new Error('malloc failed: Cannot allocate memory');
           }
 
-          this._memoryBuffer.set(
+
+          const memoryBuffer = new Int16Array(this._wasmMemory.buffer);
+
+          memoryBuffer.set(
             pcm,
             inputBufferAddress / Int16Array.BYTES_PER_ELEMENT,
           );
@@ -254,10 +245,13 @@ export class Leopard {
             this._numWordsAddress,
             this._wordsAddressAddress,
           );
+
+          const memoryBufferUint8 = new Uint8Array(this._wasmMemory.buffer);
+          const memoryBufferView = new DataView(this._wasmMemory.buffer);
+
           if (status !== PV_STATUS_SUCCESS) {
-            const memoryBuffer = new Uint8Array(this._wasmMemory.buffer);
             const msg = `process failed with status ${arrayBufferToStringAtIndex(
-              memoryBuffer,
+              memoryBufferUint8,
               await this._pvStatusToString(status),
             )}`;
 
@@ -266,30 +260,30 @@ export class Leopard {
             );
           }
 
-          const transcriptAddress = this._memoryBufferView.getInt32(
+          const transcriptAddress = memoryBufferView.getInt32(
             this._transcriptAddressAddress,
             true,
           );
 
           const transcript = arrayBufferToStringAtIndex(
-            this._memoryBufferUint8,
+            memoryBufferUint8,
             transcriptAddress,
           );
 
-          const numWords = this._memoryBufferView.getInt32(this._numWordsAddress, true);
-          const wordsAddress = this._memoryBufferView.getInt32(this._wordsAddressAddress, true);
+          const numWords = memoryBufferView.getInt32(this._numWordsAddress, true);
+          const wordsAddress = memoryBufferView.getInt32(this._wordsAddressAddress, true);
 
           let ptr = wordsAddress;
           const words: LeopardWord[] = [];
           for (let i = 0; i < numWords; i++) {
-            const wordAddress = this._memoryBufferView.getInt32(ptr, true);
-            const word = arrayBufferToStringAtIndex(this._memoryBufferUint8, wordAddress);
+            const wordAddress = memoryBufferView.getInt32(ptr, true);
+            const word = arrayBufferToStringAtIndex(memoryBufferUint8, wordAddress);
             ptr += Uint32Array.BYTES_PER_ELEMENT;
-            const startSec = this._memoryBufferView.getFloat32(ptr, true);
+            const startSec = memoryBufferView.getFloat32(ptr, true);
             ptr += Uint32Array.BYTES_PER_ELEMENT;
-            const endSec = this._memoryBufferView.getFloat32(ptr, true);
+            const endSec = memoryBufferView.getFloat32(ptr, true);
             ptr += Uint32Array.BYTES_PER_ELEMENT;
-            const confidence = this._memoryBufferView.getFloat32(ptr, true);
+            const confidence = memoryBufferView.getFloat32(ptr, true);
             ptr += Uint32Array.BYTES_PER_ELEMENT;
             words.push({ word, startSec, endSec, confidence });
           }
@@ -304,13 +298,7 @@ export class Leopard {
           resolve(result);
         })
         .catch(async (error: any) => {
-          if (this._memoryBuffer.length === 0) {
-            this._isWasmMemoryDetached = true;
-            await this.release();
-            reject(new Error("Invalid memory state: browser might have cleaned resources automatically. Re-initialize Leopard."));
-          } else {
-            reject(error);
-          }
+          reject(error);
         });
     });
 
