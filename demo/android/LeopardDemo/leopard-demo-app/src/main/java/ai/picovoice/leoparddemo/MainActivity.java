@@ -175,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
             voiceProcessor.start(FRAME_LENGTH, leopard.getSampleRate());
         } catch (VoiceProcessorException e) {
             displayError(e.toString());
+            return;
         }
 
         recordingTimeSec = 0;
