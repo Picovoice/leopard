@@ -16,11 +16,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.media.AudioFormat;
-import android.media.AudioRecord;
-import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Process;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,11 +33,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import ai.picovoice.android.voiceprocessor.VoiceProcessor;
+import ai.picovoice.android.voiceprocessor.VoiceProcessorException;
 import ai.picovoice.leopard.Leopard;
 import ai.picovoice.leopard.LeopardActivationException;
 import ai.picovoice.leopard.LeopardActivationLimitException;
@@ -53,10 +50,14 @@ import ai.picovoice.leopard.LeopardTranscript;
 
 public class MainActivity extends AppCompatActivity {
     private static final String ACCESS_KEY = "${YOUR_ACCESS_KEY_HERE}";
-    private static final int maxRecordingLength = 120;
+    private static final int MAX_RECORDING_SEC = 120;
+    private static final int FRAME_LENGTH = 512;
 
-    private final MicrophoneReader microphoneReader = new MicrophoneReader();
+    private final VoiceProcessor voiceProcessor = VoiceProcessor.getInstance();
     private final ArrayList<Short> pcmData = new ArrayList<>();
+
+    private Timer recordingTimer;
+    private double recordingTimeSec = 0;
 
     private Leopard leopard;
 
@@ -73,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
                     errorText.setVisibility(View.INVISIBLE);
                     verboseResultsLayout.setVisibility(View.INVISIBLE);
                     transcriptTextView.setVisibility(View.INVISIBLE);
-                    recordingTextView.setText("Recording...");
                     recordButton.setEnabled(true);
                     break;
                 case TRANSCRIBING:
@@ -132,6 +132,16 @@ public class MainActivity extends AppCompatActivity {
         } catch (LeopardException e) {
             displayError("Failed to initialize Leopard " + e.getMessage());
         }
+
+        voiceProcessor.addFrameListener(frame -> {
+            for (short sample : frame) {
+                pcmData.add(sample);
+            }
+        });
+
+        voiceProcessor.addErrorListener(error -> {
+            runOnUiThread(() -> displayError(error.toString()));
+        });
     }
 
     @Override
@@ -151,19 +161,100 @@ public class MainActivity extends AppCompatActivity {
         recordButton.setEnabled(false);
     }
 
-    private boolean hasRecordPermission() {
-        return ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
-    }
-
     private void requestRecordPermission() {
         ActivityCompat.requestPermissions(
                 this,
                 new String[]{Manifest.permission.RECORD_AUDIO}, 0);
     }
 
-    @SuppressLint("SetTextI18n")
+    private void startRecording() {
+        setUIState(UIState.RECORDING);
+
+        pcmData.clear();
+        try {
+            voiceProcessor.start(FRAME_LENGTH, leopard.getSampleRate());
+        } catch (VoiceProcessorException e) {
+            displayError(e.toString());
+            return;
+        }
+
+        recordingTimeSec = 0;
+        TextView timerValue = findViewById(R.id.recordingTextView);
+        recordingTimer = new Timer();
+        recordingTimer.scheduleAtFixedRate(new TimerTask() {
+            @SuppressLint("DefaultLocale")
+            @Override
+            public void run() {
+                recordingTimeSec += 0.1;
+                runOnUiThread(() -> {
+                    timerValue.setText(String.format(
+                            "Recording : %.1f / %d (seconds)",
+                            recordingTimeSec,
+                            MAX_RECORDING_SEC));
+                    if (recordingTimeSec >= MAX_RECORDING_SEC) {
+                        ToggleButton recordButton = findViewById(R.id.recordButton);
+                        recordButton.setChecked(false);
+                        stopRecording();
+                    }
+                });
+            }
+        }, 100, 100);
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void stopRecording() {
+        if (recordingTimer != null) {
+            recordingTimer.cancel();
+            recordingTimer = null;
+        }
+
+        try {
+            voiceProcessor.stop();
+        } catch (VoiceProcessorException e) {
+            displayError(e.toString());
+        }
+
+        setUIState(UIState.TRANSCRIBING);
+        short[] pcmDataArray = new short[pcmData.size()];
+        for (int i = 0; i < pcmData.size(); i++) {
+            pcmDataArray[i] = pcmData.get(i);
+        }
+
+        new Thread(() -> {
+            try {
+                long transcribeStart = System.currentTimeMillis();
+                LeopardTranscript transcript = leopard.process(pcmDataArray);
+                long transcribeEnd = System.currentTimeMillis();
+
+                float transcribeTime = (transcribeEnd - transcribeStart) / 1000f;
+
+                runOnUiThread(() -> {
+                    setUIState(UIState.RESULTS);
+
+                    TextView transcriptTextView = findViewById(R.id.transcriptTextView);
+                    transcriptTextView.setText(transcript.getTranscriptString());
+
+                    TextView recordingTextView = findViewById(R.id.recordingTextView);
+                    recordingTextView.setText(String.format(
+                            "Transcribed %.1f(s) of audio in %.1f(s).",
+                            pcmDataArray.length / (float) leopard.getSampleRate(),
+                            transcribeTime));
+
+                    RecyclerView verboseResultsView = findViewById(R.id.verboseResultsView);
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    verboseResultsView.setLayoutManager(linearLayoutManager);
+
+                    VerboseResultsViewAdaptor searchResultsViewAdaptor = new VerboseResultsViewAdaptor(
+                            getApplicationContext(),
+                            Arrays.asList(transcript.getWordArray()));
+                    verboseResultsView.setAdapter(searchResultsViewAdaptor);
+                });
+            } catch (LeopardException e) {
+                runOnUiThread(() -> displayError("Transcription failed\n" + e));
+            }
+        }).start();
+    }
+
     @Override
     public void onRequestPermissionsResult(
             int requestCode,
@@ -171,15 +262,14 @@ public class MainActivity extends AppCompatActivity {
             @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults.length == 0 || grantResults[0] == PackageManager.PERMISSION_DENIED) {
-            ToggleButton toggleButton = findViewById(R.id.recordButton);
-            toggleButton.toggle();
+            ToggleButton recordButton = findViewById(R.id.recordButton);
+            recordButton.setChecked(false);
+            displayError("Microphone permission is required for this demo");
         } else {
-            setUIState(UIState.RECORDING);
-            microphoneReader.start();
+            startRecording();
         }
     }
 
-    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     public void onRecordClick(View view) {
         ToggleButton recordButton = findViewById(R.id.recordButton);
 
@@ -190,59 +280,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (recordButton.isChecked()) {
-            if (hasRecordPermission()) {
-                setUIState(UIState.RECORDING);
-                microphoneReader.start();
+            if (voiceProcessor.hasRecordAudioPermission(this)) {
+                startRecording();
             } else {
                 requestRecordPermission();
             }
         } else {
-            try {
-                microphoneReader.stop();
-            } catch (InterruptedException e) {
-                displayError("Audio stop command interrupted\n" + e);
-            }
-
-            setUIState(UIState.TRANSCRIBING);
-
-            new Thread(() -> {
-                short[] pcmDataArray = new short[pcmData.size()];
-                for (int i = 0; i < pcmData.size(); ++i) {
-                    pcmDataArray[i] = pcmData.get(i);
-                }
-
-                try {
-                    long transcribeStart = System.currentTimeMillis();
-                    LeopardTranscript transcript = leopard.process(pcmDataArray);
-                    long transcribeEnd = System.currentTimeMillis();
-
-                    float transcribeTime = (transcribeEnd - transcribeStart) / 1000f;
-
-                    runOnUiThread(() -> {
-                        setUIState(UIState.RESULTS);
-
-                        TextView transcriptTextView = findViewById(R.id.transcriptTextView);
-                        transcriptTextView.setText(transcript.getTranscriptString());
-
-                        TextView recordingTextView = findViewById(R.id.recordingTextView);
-                        recordingTextView.setText(String.format(
-                                "Transcribed %.1f(s) of audio in %.1f(s).",
-                                pcmData.size() / (float) leopard.getSampleRate(),
-                                transcribeTime));
-
-                        RecyclerView verboseResultsView = findViewById(R.id.verboseResultsView);
-                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
-                        verboseResultsView.setLayoutManager(linearLayoutManager);
-
-                        VerboseResultsViewAdaptor searchResultsViewAdaptor = new VerboseResultsViewAdaptor(
-                                getApplicationContext(),
-                                Arrays.asList(transcript.getWordArray()));
-                        verboseResultsView.setAdapter(searchResultsViewAdaptor);
-                    });
-                } catch (LeopardException e) {
-                    runOnUiThread(() -> displayError("Audio failed\n" + e));
-                }
-            }).start();
+            stopRecording();
         }
     }
 
@@ -296,119 +340,6 @@ public class MainActivity extends AppCompatActivity {
                 startSec = itemView.findViewById(R.id.startSec);
                 endSec = itemView.findViewById(R.id.endSec);
                 confidence = itemView.findViewById(R.id.confidence);
-            }
-        }
-    }
-
-    private class MicrophoneReader {
-        private final AtomicBoolean started = new AtomicBoolean(false);
-        private final AtomicBoolean stop = new AtomicBoolean(false);
-        private final AtomicBoolean stopped = new AtomicBoolean(false);
-
-        void start() {
-            if (started.get()) {
-                return;
-            }
-
-            started.set(true);
-
-            Executors.newSingleThreadExecutor().submit((Callable<Void>) () -> {
-                Process.setThreadPriority(Process.THREAD_PRIORITY_URGENT_AUDIO);
-                read();
-                return null;
-            });
-
-            Executors.newSingleThreadExecutor().submit((Callable<Void>) () -> {
-                Process.setThreadPriority(Process.THREAD_PRIORITY_DEFAULT);
-                readCounter();
-                return null;
-            });
-        }
-
-        void stop() throws InterruptedException {
-            if (!started.get()) {
-                return;
-            }
-
-            stop.set(true);
-
-            synchronized (stopped) {
-                while (!stopped.get()) {
-                    stopped.wait(500);
-                }
-            }
-
-            started.set(false);
-            stop.set(false);
-            stopped.set(false);
-        }
-
-        @SuppressLint("DefaultLocale")
-        private void readCounter() {
-            TextView recordingTextView = findViewById(R.id.recordingTextView);
-
-            float readCount = 0;
-            while (!stop.get()) {
-                recordingTextView.setText(
-                        String.format(
-                                "Recording : %.1f / %d (seconds)",
-                                readCount,
-                                maxRecordingLength));
-                readCount += 0.1;
-
-                if (readCount > maxRecordingLength) {
-                    stop.set(true);
-                }
-
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            recordingTextView.invalidate();
-        }
-
-        private void read() throws LeopardException {
-            final int bufferSize = AudioRecord.getMinBufferSize(
-                    leopard.getSampleRate(),
-                    AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT);
-
-            AudioRecord audioRecord = null;
-
-            short[] buffer = new short[bufferSize];
-            pcmData.clear();
-
-            try {
-                audioRecord = new AudioRecord(
-                        MediaRecorder.AudioSource.MIC,
-                        leopard.getSampleRate(),
-                        AudioFormat.CHANNEL_IN_MONO,
-                        AudioFormat.ENCODING_PCM_16BIT,
-                        bufferSize);
-                audioRecord.startRecording();
-
-
-                while (!stop.get()) {
-                    if (audioRecord.read(buffer, 0, buffer.length) == buffer.length) {
-                        for (short value : buffer) {
-                            pcmData.add(value);
-                        }
-                    }
-                }
-
-                audioRecord.stop();
-            } catch (IllegalArgumentException | IllegalStateException | SecurityException e) {
-                throw new LeopardException(e);
-            } finally {
-                if (audioRecord != null) {
-                    audioRecord.release();
-                }
-
-                stopped.set(true);
-                stopped.notifyAll();
             }
         }
     }
