@@ -47,7 +47,7 @@ jobs:
           -configuration Debug
           -workspace LeopardDemo.xcworkspace
           -sdk iphoneos
-          -scheme enDemo
+          -scheme _enDemo
           -derivedDataPath ddp
           CODE_SIGNING_ALLOWED=NO
 

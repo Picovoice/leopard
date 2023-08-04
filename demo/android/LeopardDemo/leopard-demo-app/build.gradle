@@ -50,6 +50,10 @@ android {
 
     flavorDimensions "language"
     productFlavors {
+        en {
+            getIsDefault().set(true)
+        }
+
         languages.each { language ->
             "$language" {
                 applicationIdSuffix ".$language"
