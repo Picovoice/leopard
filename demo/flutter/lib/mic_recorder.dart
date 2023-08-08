@@ -1,5 +1,5 @@
 //
-// Copyright 2022 Picovoice Inc.
+// Copyright 2022-2023 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -23,12 +23,9 @@ typedef ProcessErrorCallback = Function(LeopardException error);
 
 class MicRecorder {
   final VoiceProcessor? _voiceProcessor;
-  final int _sampleRate;
 
-  final RecordedCallback _recordedCallback;
-  final ProcessErrorCallback _processErrorCallback;
-  RemoveListener? _removeVoiceProcessorListener;
-  RemoveListener? _removeErrorListener;
+  final int _frameLength = 512;
+  final int _sampleRate;
 
   final List<int> _pcmData = [];
 
@@ -39,48 +36,33 @@ class MicRecorder {
     return MicRecorder._(sampleRate, recordedCallback, processErrorCallback);
   }
 
-  MicRecorder._(
-      this._sampleRate, this._recordedCallback, this._processErrorCallback)
-      : _voiceProcessor = VoiceProcessor.getVoiceProcessor(512, _sampleRate) {
-    if (_voiceProcessor == null) {
-      throw LeopardRuntimeException("flutter_voice_processor not available.");
-    }
-    _removeVoiceProcessorListener =
-        _voiceProcessor!.addListener((buffer) async {
-      List<int> frame;
-      try {
-        frame = (buffer as List<dynamic>).cast<int>();
-      } on Error {
-        LeopardException castError = LeopardException(
-            "flutter_voice_processor sent an unexpected data type.");
-        _processErrorCallback(castError);
-        return;
+  MicRecorder._(this._sampleRate, RecordedCallback recordedCallback,
+      ProcessErrorCallback processErrorCallback)
+      : _voiceProcessor = VoiceProcessor.instance {
+    _voiceProcessor?.addFrameListener((frame) async {
+      if (await _voiceProcessor?.isRecording() ?? false) {
+        _pcmData.addAll(frame);
+        recordedCallback(_pcmData.length / _sampleRate);
       }
-
-      _pcmData.addAll(frame);
-      _recordedCallback(_pcmData.length / _sampleRate);
     });
-
-    _removeErrorListener = _voiceProcessor!.addErrorListener((errorMsg) {
-      LeopardException nativeError = LeopardException(errorMsg as String);
-      _processErrorCallback(nativeError);
+    _voiceProcessor?.addErrorListener((error) {
+      processErrorCallback(LeopardException(error.message));
     });
   }
 
   Future<void> startRecord() async {
-    if (_voiceProcessor == null) {
-      throw LeopardInvalidStateException(
-          "Cannot start audio recording - resources have already been released");
+    if (await _voiceProcessor?.isRecording() ?? false) {
+      return;
     }
 
     _pcmData.clear();
 
     if (await _voiceProcessor?.hasRecordAudioPermission() ?? false) {
       try {
-        await _voiceProcessor!.start();
-      } on PlatformException {
+        await _voiceProcessor?.start(_frameLength, _sampleRate);
+      } on PlatformException catch (e) {
         throw LeopardRuntimeException(
-            "Audio engine failed to start. Hardware may not be supported.");
+            "Failed to start audio recording: ${e.message}");
       }
     } else {
       throw LeopardRuntimeException(
@@ -89,13 +71,13 @@ class MicRecorder {
   }
 
   Future<File> stopRecord() async {
-    if (_voiceProcessor == null) {
-      throw LeopardInvalidStateException(
-          "Cannot stop audio recording - resources have already been released");
-    }
-
-    if (_voiceProcessor?.isRecording ?? false) {
-      await _voiceProcessor!.stop();
+    if (await _voiceProcessor?.isRecording() ?? false) {
+      try {
+        await _voiceProcessor?.stop();
+      } on PlatformException catch (e) {
+        throw LeopardRuntimeException(
+            "Failed to stop audio recording: ${e.message}");
+      }
     }
 
     try {
@@ -108,7 +90,6 @@ class MicRecorder {
   Future<File> writeWavFile() async {
     final int channelCount = 1;
     final int bitDepth = 16;
-    final int sampleRate = 16000;
 
     final directory = await getApplicationDocumentsDirectory();
     final wavFile = File('${directory.path}/recording.wav');
@@ -145,8 +126,8 @@ class MicRecorder {
     writeUint32(16);
     writeUint16(1);
     writeUint16(channelCount);
-    writeUint32(sampleRate);
-    writeUint32((sampleRate * channelCount * bitDepth) ~/ 8);
+    writeUint32(_sampleRate);
+    writeUint32((_sampleRate * channelCount * bitDepth) ~/ 8);
     writeUint16((channelCount * bitDepth) ~/ 8);
     writeUint16(bitDepth);
     writeString('data');
@@ -157,13 +138,5 @@ class MicRecorder {
     }
 
     return wavFile.writeAsBytes(bytesBuilder.toBytes());
-  }
-
-  Future<void> delete() async {
-    if (_voiceProcessor?.isRecording ?? false) {
-      await _voiceProcessor!.stop();
-    }
-    _removeVoiceProcessorListener?.call();
-    _removeErrorListener?.call();
   }
 }
