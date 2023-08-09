@@ -143,7 +143,7 @@ class _MyAppState extends State<MyApp> {
         isRecording = true;
       });
     } on LeopardException catch (ex) {
-      print("Failed to start audio capture: ${ex.message}");
+      errorCallback(ex);
     }
   }
 
@@ -161,7 +161,7 @@ class _MyAppState extends State<MyApp> {
       });
       _processAudio(recordedFile);
     } on LeopardException catch (ex) {
-      print("Failed to stop audio capture: ${ex.message}");
+      errorCallback(ex);
     }
   }
 
