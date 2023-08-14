@@ -2,9 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/kyeo/work/github/leopard/demo/react-native/ios/LeopardDemo.xcodeproj">
+      location = "group:Pods/Pods.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Pods/Pods.xcodeproj">
+      location = "group:LeopardDemo.xcodeproj">
    </FileRef>
 </Workspace>

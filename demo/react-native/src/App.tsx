@@ -11,10 +11,6 @@
 
 import React, { Component } from 'react';
 import {
-  EventSubscription,
-  NativeEventEmitter,
-  PermissionsAndroid,
-  Platform,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -30,8 +26,8 @@ import {
   LeopardWord,
 } from '@picovoice/leopard-react-native';
 import {
-  BufferEmitter,
   VoiceProcessor,
+  VoiceProcessorError,
 } from '@picovoice/react-native-voice-processor';
 
 import Recorder from './Recorder';
@@ -58,13 +54,12 @@ type State = {
 };
 
 export default class App extends Component<Props, State> {
-  _leopard?: Leopard;
   _accessKey: string = '${YOUR_ACCESS_KEY_HERE}'; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
+  _frameLength: number = 512;
 
+  _leopard?: Leopard;
   _recorder: Recorder = new Recorder();
   _voiceProcessor?: VoiceProcessor;
-  _bufferListener?: EventSubscription;
-  _bufferEmitter?: NativeEventEmitter;
 
   _recordInterval?: NodeJS.Timer;
 
@@ -80,16 +75,16 @@ export default class App extends Component<Props, State> {
     };
   }
 
-  componentDidMount() {
-    this.init();
+  async componentDidMount() {
+    await this.init();
   }
 
-  componentWillUnmount() {
+  async componentWillUnmount() {
     if (this.state.appState === UIState.RECORDING) {
-      this._stopProcessing();
+      await this._stopProcessing();
     }
     if (this._leopard !== undefined) {
-      this._leopard.delete();
+      await this._leopard.delete();
       this._leopard = undefined;
     }
   }
@@ -100,32 +95,39 @@ export default class App extends Component<Props, State> {
     try {
       this._leopard = await Leopard.create(
         this._accessKey,
-        `leopard_params${suffix}.pv`,
+        `models/leopard_params${suffix}.pv`,
         { enableAutomaticPunctuation: true },
       );
-      this._voiceProcessor = VoiceProcessor.getVoiceProcessor(
-        512,
-        this._leopard.sampleRate,
-      );
-      this._bufferEmitter = new NativeEventEmitter(BufferEmitter);
-      this._bufferListener = this._bufferEmitter.addListener(
-        BufferEmitter.BUFFER_EMITTER_KEY,
-        async (buffer: number[]) => {
-          if (this.state.appState !== UIState.ERROR) {
-            try {
-              await this._recorder.writeSamples(buffer);
-            } catch {
-              this.handleError('Failed to write to wav file.');
-            }
-          }
-        },
-      );
-      this.setState({
-        appState: UIState.INIT,
-      });
     } catch (err: any) {
       this.handleError(err);
+      return;
     }
+
+    this._voiceProcessor = VoiceProcessor.instance;
+    this._voiceProcessor.addFrameListener(async (buffer: number[]) => {
+      if (!(await this._voiceProcessor?.isRecording())) {
+        return;
+      }
+      try {
+        if (this.state.appState !== UIState.ERROR) {
+          try {
+            await this._recorder.writeSamples(buffer);
+          } catch {
+            this.handleError('Failed to write to wav file.');
+          }
+        }
+      } catch (e: any) {
+        this.handleError(e);
+      }
+    });
+
+    this._voiceProcessor.addErrorListener((error: VoiceProcessorError) => {
+      this.handleError(error);
+    });
+
+    this.setState({
+      appState: UIState.INIT,
+    });
   }
 
   handleError(err: any) {
@@ -151,101 +153,66 @@ export default class App extends Component<Props, State> {
     });
   }
 
-  _startProcessing() {
+  async _startProcessing() {
     this.setState({
       appState: UIState.RECORDING,
       recordSeconds: 0,
     });
 
-    let recordAudioRequest;
-    if (Platform.OS === 'android') {
-      recordAudioRequest = this._requestRecordAudioPermission();
-    } else {
-      recordAudioRequest = new Promise(function (resolve, _) {
-        resolve(true);
-      });
+    try {
+      await this._recorder.resetFile();
+      await this._recorder.writeWavHeader();
+      await this._voiceProcessor?.start(
+        this._frameLength,
+        this._leopard!.sampleRate,
+      );
+
+      this._recordInterval = setInterval(() => {
+        if (this.state.recordSeconds < 120 - 0.1) {
+          this.setState({
+            recordSeconds: this.state.recordSeconds + 0.1,
+          });
+        } else {
+          this._stopProcessing();
+        }
+      }, 100);
+    } catch (err: any) {
+      this.handleError(err);
     }
-
-    recordAudioRequest.then(async (hasPermission) => {
-      if (!hasPermission) {
-        this.handleError(
-          'Required permissions (Microphone) were not found. Please add to platform code.',
-        );
-        return;
-      }
-
-      try {
-        await this._recorder.resetFile();
-        await this._recorder.writeWavHeader();
-        await this._voiceProcessor?.start();
-
-        this._recordInterval = setInterval(() => {
-          if (this.state.recordSeconds < 120 - 0.1) {
-            this.setState({
-              recordSeconds: this.state.recordSeconds + 0.1,
-            });
-          } else {
-            this._stopProcessing();
-          }
-        }, 100);
-      } catch (err: any) {
-        this.handleError(err);
-      }
-    });
   }
 
-  _stopProcessing() {
+  async _stopProcessing() {
     this.setState({
       appState: UIState.PROCESSING,
     });
     clearInterval(this._recordInterval!);
 
-    this._voiceProcessor?.stop().then(async () => {
-      try {
-        const audioPath = await this._recorder.finalize();
-        const start = Date.now();
-        const { transcript, words } = await this._leopard!.processFile(
-          audioPath,
-        );
-        const end = Date.now();
-        this.setState({
-          transcription: transcript,
-          words: words,
-          appState: UIState.TRANSCRIBED,
-          processSeconds: (end - start) / 1000,
-        });
-      } catch (err: any) {
-        this.handleError(err);
-      }
-    });
+    try {
+      await this._voiceProcessor?.stop();
+
+      const audioPath = await this._recorder.finalize();
+      const start = Date.now();
+      const { transcript, words } = await this._leopard!.processFile(audioPath);
+      const end = Date.now();
+      this.setState({
+        transcription: transcript,
+        words: words,
+        appState: UIState.TRANSCRIBED,
+        processSeconds: (end - start) / 1000,
+      });
+    } catch (err: any) {
+      this.handleError(err);
+    }
   }
 
-  _toggleListening() {
+  async _toggleListening() {
     if (this.state.appState === UIState.RECORDING) {
-      this._stopProcessing();
+      await this._stopProcessing();
     } else if (
       this.state.appState === UIState.INIT ||
       this.state.appState === UIState.TRANSCRIBED
     ) {
-      this._startProcessing();
-    }
-  }
-
-  async _requestRecordAudioPermission() {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-        {
-          title: 'Microphone Permission',
-          message: 'Leopard needs access to your microphone to record audio',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
-    } catch (err: any) {
-      this.handleError(err);
-      return false;
+      await this._startProcessing();
     }
   }
 
