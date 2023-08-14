@@ -95,7 +95,7 @@ export default class App extends Component<Props, State> {
     try {
       this._leopard = await Leopard.create(
         this._accessKey,
-        `leopard_params${suffix}.pv`,
+        `models/leopard_params${suffix}.pv`,
         { enableAutomaticPunctuation: true },
       );
     } catch (err: any) {
