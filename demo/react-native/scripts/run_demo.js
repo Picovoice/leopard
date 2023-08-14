@@ -48,12 +48,12 @@ let params = {
 
 fs.copyFileSync(
   path.join(modelDir, `leopard_params${suffix}.pv`),
-  path.join(androidAssetDir, 'models', `leopard_params${suffix}.pv`),
+  path.join(androidAssetDir, `leopard_params${suffix}.pv`),
 );
 
 fs.copyFileSync(
   path.join(modelDir, `leopard_params${suffix}.pv`),
-  path.join(iosBundleDir, 'models', `leopard_params${suffix}.pv`),
+  path.join(iosBundleDir, `leopard_params${suffix}.pv`),
 );
 
 fs.writeFileSync(
@@ -61,7 +61,7 @@ fs.writeFileSync(
   JSON.stringify(params),
 );
 
-const command = (process.platform === "win32") ? "npx.cmd" : "npx";
+const command = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 
 child_process.fork('react-native', commands, {
   execPath: command,
