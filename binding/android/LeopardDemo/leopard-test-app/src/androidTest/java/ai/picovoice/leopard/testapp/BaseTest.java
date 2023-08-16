@@ -10,7 +10,7 @@
     limitations under the License.
 */
 
-package ai.picovoice.leoparddemo;
+package ai.picovoice.leopard.testapp;
 
 import static org.junit.Assert.assertTrue;
 
@@ -68,7 +68,7 @@ public class BaseTest {
         testResourcesPath = new File(appContext.getFilesDir(), "test_resources").getAbsolutePath();
         defaultModelPath = new File(testResourcesPath, "model_files/leopard_params.pv").getAbsolutePath();
 
-        accessKey = appContext.getString(R.string.pvTestingAccessKey);
+        accessKey = appContext.getString(ai.picovoice.leopard.R.string.pvTestingAccessKey);
     }
 
     public static String getTestDataString() throws IOException {

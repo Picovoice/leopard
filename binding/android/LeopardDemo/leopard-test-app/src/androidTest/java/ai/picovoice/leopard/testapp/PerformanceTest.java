@@ -10,12 +10,11 @@
     limitations under the License.
 */
 
-package ai.picovoice.leoparddemo;
+package ai.picovoice.leopard.testapp;
 
 import static org.junit.Assert.assertTrue;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Assume;
 import org.junit.Before;
@@ -35,7 +34,7 @@ public class PerformanceTest extends BaseTest {
     @Before
     public void Setup() throws IOException {
         super.Setup();
-        String iterationString = appContext.getString(R.string.numTestIterations);
+        String iterationString = appContext.getString(ai.picovoice.leopard.R.string.numTestIterations);
 
         try {
             numTestIterations = Integer.parseInt(iterationString);
@@ -44,7 +43,7 @@ public class PerformanceTest extends BaseTest {
 
     @Test
     public void testInitPerformance() throws Exception {
-        String initThresholdString = appContext.getString(R.string.initPerformanceThresholdSec);
+        String initThresholdString = appContext.getString(ai.picovoice.leopard.R.string.initPerformanceThresholdSec);
         Assume.assumeNotNull(initThresholdString);
         Assume.assumeFalse(initThresholdString.equals(""));
         double initPerformanceThresholdSec = Double.parseDouble(initThresholdString);
@@ -75,7 +74,7 @@ public class PerformanceTest extends BaseTest {
 
     @Test
     public void testProcPerformance() throws Exception {
-        String procThresholdString = appContext.getString(R.string.procPerformanceThresholdSec);
+        String procThresholdString = appContext.getString(ai.picovoice.leopard.R.string.procPerformanceThresholdSec);
         Assume.assumeNotNull(procThresholdString);
         Assume.assumeFalse(procThresholdString.equals(""));
 

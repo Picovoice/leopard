@@ -17,7 +17,7 @@ on:
 
 defaults:
   run:
-    working-directory: demo/android/LeopardDemo
+    working-directory: binding/android/LeopardTestApp
 
 jobs:
   build:
@@ -58,6 +58,16 @@ jobs:
     - name: Inject AccessKey
       run: echo pvTestingAccessKey="${{secrets.PV_VALID_ACCESS_KEY}}" >> local.properties
 
+    - name: Inject Android keystore variables
+      run: |
+        echo storePassword="${{secrets.ANDROID_RELEASE_KEYSTORE_PASSWORD}}" >> local.properties
+        echo keyPassword="${{secrets.ANDROID_RELEASE_KEYSTORE_PASSWORD}}" >> local.properties
+        echo keyAlias=picovoice >> local.properties
+        echo storeFile=../picovoice.jks >> local.properties
+
+    - name: Setup Android keystore file
+      run: echo "${{secrets.ANDROID_RELEASE_KEYSTORE_FILE_B64}}" | base64 -d > picovoice.jks
+
     - name: Inject Number of Iterations
       run: echo numTestIterations="30" >> local.properties
 
@@ -74,14 +84,14 @@ jobs:
       run: ./gradlew assembleEnDebug
 
     - name: Build androidTest
-      run: ./gradlew assembleEnDebugAndroidTest
+      run: ./gradlew assembleEnDebugAndroidTest -DtestBuildType=perf
 
     - name: Run tests on AppCenter
       run: appcenter test run espresso
         --token ${{secrets.APPCENTERAPITOKEN}}
         --app "Picovoice/Leopard-Android"
         --devices "Picovoice/${{ matrix.device }}"
-        --app-path leopard-demo-app/build/outputs/apk/en/debug/leopard-demo-app-en-debug.apk
+        --app-path leopard-test-app/build/outputs/apk/en/debug/leopard-test-app-en-debug.apk
         --test-series "leopard-android"
         --locale "en_US"
-        --build-dir leopard-demo-app/build/outputs/apk/androidTest/en/debug
+        --build-dir leopard-test-app/build/outputs/apk/androidTest/en/debug
