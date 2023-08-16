@@ -43,9 +43,6 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
 
-    - name: Binding pre-build
-      run: ./gradlew assemble
-
     - name: Copy test_resources
       run: ./copy_test_resources.sh
 
@@ -61,6 +58,9 @@ jobs:
 
     - name: Setup Android keystore file
       run: echo "${{secrets.ANDROID_RELEASE_KEYSTORE_FILE_B64}}" | base64 -d > picovoice.jks
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
 
     - name: Build app
       run: ./gradlew assembleEnDebug
@@ -127,7 +127,7 @@ jobs:
     - name: Run tests on AppCenter
       run: appcenter test run espresso
         --token ${{secrets.APPCENTERAPITOKEN}}
-        --app "Picovoice/Leopard-Android
+        --app "Picovoice/Leopard-Android"
         --devices "Picovoice/android-min-max"
         --app-path leopard-test-app/build/outputs/apk/en/release/leopard-test-app-en-release.apk
         --test-series "leopard-android"
