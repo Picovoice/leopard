@@ -116,9 +116,8 @@ public class MainActivity extends AppCompatActivity {
 
         result = new TestResult();
         result.testName = "Test Exception";
-        Leopard leopard = null;
         try {
-            leopard = new Leopard.Builder()
+            new Leopard.Builder()
                     .setAccessKey("")
                     .setModelPath(modelFile)
                     .build(getApplicationContext());
