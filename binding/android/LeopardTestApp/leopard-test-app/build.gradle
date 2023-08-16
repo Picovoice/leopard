@@ -34,7 +34,7 @@ android {
     compileSdkVersion defaultTargetSdkVersion
 
     defaultConfig {
-        applicationId "ai.picovoice.leoparddemo"
+        applicationId "ai.picovoice.leopard.testapp"
         minSdkVersion 21
         targetSdkVersion defaultTargetSdkVersion
         versionCode 1

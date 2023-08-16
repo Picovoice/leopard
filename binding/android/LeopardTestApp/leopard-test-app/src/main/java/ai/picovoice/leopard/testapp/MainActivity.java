@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 suffix = "";
             }
 
-            String audioPath = "audio_samples/multiple_keywords" + suffix + ".wav";
+            String audioPath = "audio_samples/test" + suffix + ".wav";
 
             LeopardTranscript processResult = processTestAudio(leopard, audioPath);
             if (processResult != null) {
@@ -110,6 +110,22 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             result.success = false;
             result.errorMessage = String.format("Failed to process with '%s'", e);
+        } finally {
+            results.add(result);
+        }
+
+        result = new TestResult();
+        result.testName = "Test Exception";
+        Leopard leopard = null;
+        try {
+            leopard = new Leopard.Builder()
+                    .setAccessKey("")
+                    .setModelPath(modelFile)
+                    .build(getApplicationContext());
+            result.success = false;
+            result.errorMessage = "Init should have throw an exception";
+        } catch (LeopardException e) {
+            result.success = true;
         } finally {
             results.add(result);
         }
