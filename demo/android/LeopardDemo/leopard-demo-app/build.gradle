@@ -1,22 +1,5 @@
 apply plugin: 'com.android.application'
 
-Properties properties = new Properties()
-if (rootProject.file("local.properties").exists()) {
-    properties.load(rootProject.file("local.properties").newDataInputStream())
-    if (project.hasProperty("pvTestingAccessKey")) {
-        properties.put("pvTestingAccessKey", project.getProperty("pvTestingAccessKey"))
-    }
-    if (project.hasProperty("numTestIterations")) {
-        properties.put("numTestIterations", project.getProperty("numTestIterations"))
-    }
-    if (project.hasProperty("initPerformanceThresholdSec")) {
-        properties.put("initPerformanceThresholdSec", project.getProperty("initPerformanceThresholdSec"))
-    }
-    if (project.hasProperty("procPerformanceThresholdSec")) {
-        properties.put("procPerformanceThresholdSec", project.getProperty("procPerformanceThresholdSec"))
-    }
-}
-
 android {
     compileSdkVersion defaultTargetSdkVersion
 
@@ -28,11 +11,6 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        resValue 'string', 'pvTestingAccessKey', properties.getProperty("pvTestingAccessKey", "")
-        resValue 'string', 'numTestIterations', properties.getProperty("numTestIterations", "")
-        resValue 'string', 'initPerformanceThresholdSec', properties.getProperty("initPerformanceThresholdSec", "")
-        resValue 'string', 'procPerformanceThresholdSec', properties.getProperty("procPerformanceThresholdSec", "")
     }
     buildTypes {
         release {
@@ -78,18 +56,6 @@ android {
             }
         }
     }
-    sourceSets {
-        androidTest {
-            java {
-                if (properties.getProperty("initPerformanceThresholdSec", "").length() == 0 ||
-                    properties.getProperty("procPerformanceThresholdSec", "").length() == 0) {
-                    exclude "**/PerformanceTest.java"
-                } else {
-                    exclude "**/LeopardTest.java"
-                }
-            }
-        }
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -106,14 +72,6 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'ai.picovoice:leopard-android:1.2.1'
     implementation 'ai.picovoice:android-voice-processor:1.0.2'
-
-    // Espresso UI Testing
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.2.0', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-
-    androidTestImplementation('com.microsoft.appcenter:espresso-test-extension:1.4')
 }
 
 afterEvaluate {

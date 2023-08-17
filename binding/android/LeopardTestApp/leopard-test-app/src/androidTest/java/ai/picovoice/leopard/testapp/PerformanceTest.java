@@ -10,12 +10,11 @@
     limitations under the License.
 */
 
-package ai.picovoice.leoparddemo;
+package ai.picovoice.leopard.testapp;
 
 import static org.junit.Assert.assertTrue;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.junit.Assume;
 import org.junit.Before;

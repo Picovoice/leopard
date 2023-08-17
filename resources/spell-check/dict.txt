@@ -116,6 +116,7 @@ raposa
 Raum
 RCURLY
 reactnative
+Readables
 Realtek
 recyclerview
 repr
@@ -137,6 +138,7 @@ suppressionfilter
 suppressionxpathfilter
 syscall
 tabwriter
+testapp
 tiene
 timecode
 tmpdir
