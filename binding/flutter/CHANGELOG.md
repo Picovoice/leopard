@@ -15,3 +15,6 @@
 
 ## [1.2.0] - 2023-03-27
 * Native library features and bugfixes.
+
+## [1.2.1] - 2023-08-24
+* Native packages updated.
