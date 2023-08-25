@@ -1,17 +1,20 @@
 ## [1.0.0] - 2022-02-25
-* Initial Leopard v1.0 release.
+* Initial Leopard v1.0 release
 
 ## [1.0.1] - 2022-03-11
 * Docs update
 
 ## [1.0.2] - 2022-04-11
-* Improved native library performance.
+* Improved native library performance
 
 ## [1.0.3] - 2022-05-13
-* Android/iOS lib patch.
+* Android/iOS lib patch
 
 ## [1.1.0] - 2022-08-10
-* True-casing, automatic punctuation insertion and word metadata added.
+* True-casing, automatic punctuation insertion and word metadata added
 
 ## [1.2.0] - 2023-03-27
-* Native library features and bugfixes.
+* Native library features and bugfixes
+
+## [1.2.1] - 2023-08-25
+* Native packages updated
