@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright 2022 Picovoice Inc.
+    Copyright 2022-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -18,7 +18,7 @@ namespace LeopardDemo
 {
     /// <summary>
     /// File Demo for Leopard Speech-to-Text engine. The demo takes an input audio file and returns prints the the transcription.
-    /// </summary>                
+    /// </summary>
     public class FileDemo
     {
 
@@ -44,34 +44,31 @@ namespace LeopardDemo
             )
         {
             // init Leopard speech-to-text engine
-            using Leopard leopard = Leopard.Create(
+            using (Leopard leopard = Leopard.Create(
                 accessKey: accessKey,
                 modelPath: modelPath,
-                enableAutomaticPunctuation: enableAutomaticPunctuation);
-
-            try
+                enableAutomaticPunctuation: enableAutomaticPunctuation))
             {
-                LeopardTranscript result = leopard.ProcessFile(inputAudioPath);
-                Console.WriteLine(result.TranscriptString);
-                if (verbose)
+
+                try
                 {
-                    Console.WriteLine(String.Format("\n|{0,-15}|{1,-10:0.00}|{2,-10:0.00}|{3,-10:0.00}|\n", "word", "Confidence", "StartSec", "EndSec"));
-                    for (int i = 0; i < result.WordArray.Length; i++)
+                    LeopardTranscript result = leopard.ProcessFile(inputAudioPath);
+                    Console.WriteLine(result.TranscriptString);
+                    if (verbose)
                     {
-                        LeopardWord word = result.WordArray[i];
-                        Console.WriteLine(String.Format("|{0,-15}|{1,10:0.00}|{2,10:0.00}|{3,10:0.00}|", word.Word, word.Confidence, word.StartSec, word.EndSec));
+                        Console.WriteLine(String.Format("\n|{0,-15}|{1,-10:0.00}|{2,-10:0.00}|{3,-10:0.00}|\n", "word", "Confidence", "StartSec", "EndSec"));
+                        for (int i = 0; i < result.WordArray.Length; i++)
+                        {
+                            LeopardWord word = result.WordArray[i];
+                            Console.WriteLine(String.Format("|{0,-15}|{1,10:0.00}|{2,10:0.00}|{3,10:0.00}|", word.Word, word.Confidence, word.StartSec, word.EndSec));
+                        }
                     }
                 }
+                catch (LeopardActivationLimitException)
+                {
+                    Console.WriteLine($"AccessKey '{accessKey}' has reached it's processing limit.");
+                }
             }
-            catch (LeopardActivationLimitException)
-            {
-                Console.WriteLine($"AccessKey '{accessKey}' has reached it's processing limit.");
-            }
-            finally
-            {
-                leopard.Dispose();
-            }
-
         }
 
         public static void Main(string[] args)

@@ -1,25 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<OutputType>Exe</OutputType>
-		<TargetFramework>net6.0</TargetFramework>
-		<Configurations>FileDemo.Debug;FileDemo.Release;MicDemo.Debug;MicDemo.Release</Configurations>
-	</PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <Configurations>FileDemo.Debug;FileDemo.Release;MicDemo.Debug;MicDemo.Release</Configurations>
+    </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)' == 'FileDemo.Debug' Or '$(Configuration)' == 'FileDemo.Release'">
-		<StartupObject>LeopardDemo.FileDemo</StartupObject>
-		<TargetName>LeopardFileDemo</TargetName>
-		<AssemblyName>LeopardFileDemo</AssemblyName>
-	</PropertyGroup>
-	
-	<PropertyGroup Condition="'$(Configuration)' == 'MicDemo.Debug' Or '$(Configuration)' == 'MicDemo.Release'">
-		<StartupObject>LeopardDemo.MicDemo</StartupObject>
-		<TargetName>LeopardMicDemo</TargetName>
-		<AssemblyName>LeopardMicDemo</AssemblyName>
-	</PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'FileDemo.Debug' Or '$(Configuration)' == 'FileDemo.Release'">
+        <StartupObject>LeopardDemo.FileDemo</StartupObject>
+        <TargetName>LeopardFileDemo</TargetName>
+        <AssemblyName>LeopardFileDemo</AssemblyName>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="PvRecorder" Version="1.2.1" />
-		<PackageReference Include="Leopard" Version="1.2.0" />
-	</ItemGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'MicDemo.Debug' Or '$(Configuration)' == 'MicDemo.Release'">
+        <StartupObject>LeopardDemo.MicDemo</StartupObject>
+        <TargetName>LeopardMicDemo</TargetName>
+        <AssemblyName>LeopardMicDemo</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="PvRecorder" Version="1.2.3" />
+        <PackageReference Include="Leopard" Version="1.2.1" />
+    </ItemGroup>
 </Project>

@@ -45,69 +45,73 @@ namespace LeopardDemo
             bool verbose,
             int audioDeviceIndex)
         {
-            using Leopard leopard = Leopard.Create(
+            using (Leopard leopard = Leopard.Create(
                 accessKey: accessKey,
                 modelPath: modelPath,
-                enableAutomaticPunctuation: enableAutomaticPunctuation);
-
-            using PvRecorder recorder = PvRecorder.Create(PV_RECORDER_FRAME_LENGTH, audioDeviceIndex);
-            Console.WriteLine($"Using device: {recorder.SelectedDevice}");
-            Console.CancelKeyPress += delegate (object sender, ConsoleCancelEventArgs e)
+                enableAutomaticPunctuation: enableAutomaticPunctuation))
             {
-                Console.WriteLine("Stopping...");
-            };
 
-            List<short> audioFrames = new List<short>();
-            recorder.Start();
-            Console.WriteLine(">>> Press `CTRL+C` to exit:\n");
-
-            while (true)
-            {
-                Console.WriteLine(">>> Recording ... Press `ENTER` to stop:");
-                var tokenSource = new CancellationTokenSource();
-                CancellationToken token = tokenSource.Token;
-                Task recordingTask = Task.Run(() =>
+                using (PvRecorder recorder = PvRecorder.Create(PV_RECORDER_FRAME_LENGTH, audioDeviceIndex))
                 {
-                    audioFrames.Clear();
+                    Console.WriteLine($"Using device: {recorder.SelectedDevice}");
+                    Console.CancelKeyPress += delegate (object sender, ConsoleCancelEventArgs e)
+                    {
+                        Console.WriteLine("Stopping...");
+                    };
+
+                    List<short> audioFrames = new List<short>();
                     recorder.Start();
-                    while (!token.IsCancellationRequested)
+                    Console.WriteLine(">>> Press `CTRL+C` to exit:\n");
+
+                    while (true)
                     {
-                        short[] frame = recorder.Read();
-                        audioFrames.AddRange(frame);
-                    }
-                    recorder.Stop();
-                });
-
-                string s = Console.ReadLine();
-                if (s == null)
-                {
-                    break;
-                }
-
-                tokenSource.Cancel();
-                recordingTask.Wait();
-
-                short[] pcm = audioFrames.ToArray();
-
-                Console.WriteLine(">>> Processing ... \n");
-                try
-                {
-                    LeopardTranscript result = leopard.Process(pcm);
-                    Console.WriteLine(result.TranscriptString);
-                    if (verbose)
-                    {
-                        Console.WriteLine(string.Format("\n|{0,-15}|{1,-10:0.00}|{2,-10:0.00}|{3,-10:0.00}|\n", "word", "Confidence", "StartSec", "EndSec"));
-                        for (int i = 0; i < result.WordArray.Length; i++)
+                        Console.WriteLine(">>> Recording ... Press `ENTER` to stop:");
+                        var tokenSource = new CancellationTokenSource();
+                        CancellationToken token = tokenSource.Token;
+                        Task recordingTask = Task.Run(() =>
                         {
-                            LeopardWord word = result.WordArray[i];
-                            Console.WriteLine(string.Format("|{0,-15}|{1,10:0.00}|{2,10:0.00}|{3,10:0.00}|", word.Word, word.Confidence, word.StartSec, word.EndSec));
+                            audioFrames.Clear();
+                            recorder.Start();
+                            while (!token.IsCancellationRequested)
+                            {
+                                short[] frame = recorder.Read();
+                                audioFrames.AddRange(frame);
+                            }
+                            recorder.Stop();
+                        });
+
+                        string s = Console.ReadLine();
+                        if (s == null)
+                        {
+                            break;
                         }
-                        Console.WriteLine();
+
+                        tokenSource.Cancel();
+                        recordingTask.Wait();
+
+                        short[] pcm = audioFrames.ToArray();
+
+                        Console.WriteLine(">>> Processing ... \n");
+                        try
+                        {
+                            LeopardTranscript result = leopard.Process(pcm);
+                            Console.WriteLine(result.TranscriptString);
+                            if (verbose)
+                            {
+                                Console.WriteLine(string.Format("\n|{0,-15}|{1,-10:0.00}|{2,-10:0.00}|{3,-10:0.00}|\n", "word", "Confidence", "StartSec", "EndSec"));
+                                for (int i = 0; i < result.WordArray.Length; i++)
+                                {
+                                    LeopardWord word = result.WordArray[i];
+                                    Console.WriteLine(string.Format("|{0,-15}|{1,10:0.00}|{2,10:0.00}|{3,10:0.00}|", word.Word, word.Confidence, word.StartSec, word.EndSec));
+                                }
+                                Console.WriteLine();
+                            }
+                        }
+                        catch (LeopardActivationLimitException)
+                        {
+                            Console.WriteLine($"AccessKey '{accessKey}' has reached its processing limit.");
+                        }
                     }
-                }
-                catch (LeopardActivationLimitException)
-                {
-                    Console.WriteLine($"AccessKey '{accessKey}' has reached its processing limit.");
                 }
             }
         }
