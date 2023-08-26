@@ -28,10 +28,7 @@ namespace LeopardTest
     public class MainTest
     {
         private static string _accessKey;
-        private static readonly string ROOT_DIR = Path.Combine(
-            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-            "../../../../../..");
-
+        private static readonly string ROOT_DIR = Path.Combine(AppContext.BaseDirectory, "../../../../../..");
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext _)

@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright 2022 Picovoice Inc.
+    Copyright 2022-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -32,26 +32,26 @@ namespace Pv
 
         public static string PvModelPath()
         {
-            return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "lib/common/leopard_params.pv");
+            return Path.Combine(AppContext.BaseDirectory, "lib/common/leopard_params.pv");
         }
 
         public static string PvLibraryPath(string libName)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && _arch == Architecture.X64)
             {
-                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"lib/{_env}/amd64/{libName}.dll");
+                return Path.Combine(AppContext.BaseDirectory, $"lib/{_env}/amd64/{libName}.dll");
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && _arch == Architecture.X64)
             {
-                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"lib/{_env}/x86_64/{libName}.dylib");
+                return Path.Combine(AppContext.BaseDirectory, $"lib/{_env}/x86_64/{libName}.dylib");
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && _isArm)
             {
-                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"lib/{_env}/arm64/{libName}.dylib");
+                return Path.Combine(AppContext.BaseDirectory, $"lib/{_env}/arm64/{libName}.dylib");
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"lib/{_env}/{PvLinuxMachine()}/{libName}.so");
+                return Path.Combine(AppContext.BaseDirectory, $"lib/{_env}/{PvLinuxMachine()}/{libName}.so");
             }
             else
             {
