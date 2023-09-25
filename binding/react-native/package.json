@@ -40,7 +40,7 @@
     "@release-it/conventional-changelog": "^5.1.1",
     "@types/jest": "^26.0.0",
     "@types/react": "^16.9.19",
-    "@types/react-native": "0.68.5",
+    "@types/react-native": "0.68.7",
     "commitlint": "^17.3.0",
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^6.11.0",
