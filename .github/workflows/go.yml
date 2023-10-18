@@ -54,7 +54,7 @@ jobs:
         version: 11.2.0
 
     - name: Setup go
-      uses: actions/setup-go@v1
+      uses: actions/setup-go@v4
       with:
         go-version: ${{ matrix.go }}
 
