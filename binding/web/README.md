@@ -105,7 +105,7 @@ const leopardModel = {
 Set `enableAutomaticPunctuation` to true, if you wish to enable punctuation in transcript.
 
 ```typescript
-// Optional, these are default
+// Optional
 const options = {
   enableAutomaticPunctuation: true
 }
