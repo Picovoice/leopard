@@ -108,8 +108,16 @@ describe('Leopard binding', () => {
       cy.getFramesFromFile(`audio_samples/${testInfo.audio_file}`).then(
         async (pcm: Int16Array) => {
           cy.wrapHook(() => result.current.process(pcm)).then(() => {
-            expect(result.current.transcript.transcript).to.be.eq(
-              testInfo.transcript
+            const transcript = result.current.transcript?.transcript;
+            expect(transcript).to.be.eq(testInfo.transcript);
+            result.current.transcript?.words.forEach(
+              ({ word, startSec, endSec, confidence }) => {
+                const wordRegex = new RegExp(`${word}`, 'i');
+                expect(transcript).to.match(wordRegex);
+                expect(startSec).to.be.gt(0);
+                expect(endSec).to.be.gt(0);
+                expect(confidence).to.be.gt(0).and.lt(1);
+              }
             );
           });
         }

@@ -19,7 +19,7 @@ import {
 } from '@picovoice/leopard-web';
 
 export const useLeopard = (): {
-  transcript: LeopardTranscript;
+  transcript: LeopardTranscript | null;
   isLoaded: boolean;
   error: Error | null;
   init: (
@@ -89,7 +89,7 @@ export const useLeopard = (): {
   const release = useCallback(async (): Promise<void> => {
     if (leopardRef.current) {
       await stop();
-      leopardRef.current?.terminate(); // .release()? (ppn web also only calls `terminate`)
+      leopardRef.current?.terminate();
       leopardRef.current = null;
 
       setIsLoaded(false);
