@@ -20,6 +20,7 @@ import {
 
 export const useLeopard = (): {
   transcript: LeopardTranscript | null;
+  sampleRate: number | null;
   isLoaded: boolean;
   error: Error | null;
   init: (
@@ -39,6 +40,7 @@ export const useLeopard = (): {
   const leopardRef = useRef<LeopardWorker | null>(null);
 
   const [transcript, setTranscript] = useState<LeopardTranscript | null>(null);
+  const [sampleRate, setSampleRate] = useState<number | null>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -59,6 +61,7 @@ export const useLeopard = (): {
             model,
             options
           );
+          setSampleRate(leopardRef.current?.sampleRate);
           setIsLoaded(true);
           setError(null);
         }
@@ -107,6 +110,7 @@ export const useLeopard = (): {
 
   return {
     transcript,
+    sampleRate,
     isLoaded,
     error,
     init,

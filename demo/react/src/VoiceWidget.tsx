@@ -25,7 +25,8 @@ export default function VoiceWidget() {
   const [audioData, setAudioData] = useState<Int16Array[]>([]);
   const [isRecording, setIsRecording] = useState<boolean>(false);
 
-  const { transcript, isLoaded, error, init, process, release } = useLeopard();
+  const { transcript, sampleRate, isLoaded, error, init, process, release } =
+    useLeopard();
 
   const initEngine = useCallback(async () => {
     if (accessKeyRef.current.length === 0) {
@@ -38,9 +39,13 @@ export default function VoiceWidget() {
   }, [init]);
 
   const processAudioFile = async (audioFile) => {
+    if (sampleRate === null) {
+      return;
+    }
+
     // @ts-ignore
     const audioContext = new (window.AudioContext || window.webKitAudioContext)(
-      { sampleRate: 16000 }
+      { sampleRate }
     );
 
     function readAudioFile(selectedFile, callback) {
@@ -54,7 +59,7 @@ export default function VoiceWidget() {
 
     readAudioFile(audioFile, async (audioBuffer) => {
       const f32PCM = audioBuffer.getChannelData(0);
-      let i16PCM = new Int16Array(f32PCM.length);
+      const i16PCM = new Int16Array(f32PCM.length);
 
       const INT16_MAX = 32767;
       const INT16_MIN = -32768;
@@ -69,9 +74,6 @@ export default function VoiceWidget() {
 
       await process(i16PCM, {
         transfer: true,
-        transferCallback: (data) => {
-          i16PCM = data;
-        },
       });
     });
   };
@@ -105,16 +107,13 @@ export default function VoiceWidget() {
     await WebVoiceProcessor.unsubscribe(recorderEngineRef.current);
     timerRef.current && clearInterval(timerRef.current);
 
-    let frames = new Int16Array(audioData.length * 512);
+    const frames = new Int16Array(audioData.length * 512);
     for (let i = 0; i < audioData.length; i++) {
       frames.set(audioData[i], i * 512);
     }
 
     await process(frames, {
       transfer: true,
-      transferCallback: (data) => {
-        frames = data;
-      },
     });
 
     setIsRecording(false);
