@@ -150,6 +150,7 @@ vorbis
 vtable
 wargv
 wavefile
+webfonts
 webm
 wurde
 xcodeproj
