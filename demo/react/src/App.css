@@ -21,7 +21,7 @@ input {
   margin: 0 1rem;
 }
 
-.transcriber {
+.voice-widget {
   border: 2px double #377dff;
   padding: 2rem;
 }

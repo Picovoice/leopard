@@ -144,7 +144,7 @@ The process result is an object with:
 - `words`: A list of objects containing a `word`, `startSec`, `endSec`, and `confidence`. Each object indicates the start, end time and confidence (between 0 and 1) of the word.
 
 ```typescript
-const pcm = new Int16Array();
+let pcm = new Int16Array();
 await process(pcm);
 useEffect(() => {
   if (transcript !== null) {

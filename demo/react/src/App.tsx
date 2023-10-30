@@ -1,7 +1,7 @@
 import "./App.css";
 import { useState } from "react";
 
-import Transcriber from "./Transcriber";
+import VoiceWidget from "./VoiceWidget";
 
 function App() {
   const [show, setShow] = useState(true);
@@ -9,11 +9,11 @@ function App() {
     <div className="App">
       <h1>Leopard React Hook ("useLeopard" from @picovoice/leopard-react)</h1>
       <button onClick={() => setShow(!show)}>
-        Toggle Transcriber {show ? "OFF" : "ON"}
+        Toggle VoiceWidget {show ? "OFF" : "ON"}
       </button>
       <br />
       <br />
-      {show && <Transcriber />}
+      {show && <VoiceWidget />}
     </div>
   );
 }

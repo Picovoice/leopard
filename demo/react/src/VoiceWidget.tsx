@@ -8,7 +8,7 @@ import leopardModel from "./lib/leopardModel";
 
 const MAX_REC_SEC = 2 * 60;
 
-export default function Transcriber() {
+export default function VoiceWidget() {
   const accessKeyRef = useRef<string>("");
   const timerRef = useRef<null | ReturnType<typeof setTimeout>>(null);
   const recorderEngineRef = useRef<PvEngine>({
@@ -54,7 +54,7 @@ export default function Transcriber() {
 
     readAudioFile(audioFile, async (audioBuffer) => {
       const f32PCM = audioBuffer.getChannelData(0);
-      const i16PCM = new Int16Array(f32PCM.length);
+      let i16PCM = new Int16Array(f32PCM.length);
 
       const INT16_MAX = 32767;
       const INT16_MIN = -32768;
@@ -69,6 +69,9 @@ export default function Transcriber() {
 
       await process(i16PCM, {
         transfer: true,
+        transferCallback: (data) => {
+          i16PCM = data;
+        },
       });
     });
   };
@@ -102,13 +105,16 @@ export default function Transcriber() {
     await WebVoiceProcessor.unsubscribe(recorderEngineRef.current);
     timerRef.current && clearInterval(timerRef.current);
 
-    const frames = new Int16Array(audioData.length * 512);
+    let frames = new Int16Array(audioData.length * 512);
     for (let i = 0; i < audioData.length; i++) {
       frames.set(audioData[i], i * 512);
     }
 
     await process(frames, {
       transfer: true,
+      transferCallback: (data) => {
+        frames = data;
+      },
     });
 
     setIsRecording(false);
@@ -123,8 +129,8 @@ export default function Transcriber() {
   };
 
   return (
-    <div className="transcriber">
-      <h2>Transcriber</h2>
+    <div className="voice-widget">
+      <h2>VoiceWidget</h2>
       <h3>
         <label>
           AccessKey obtained from{" "}
@@ -185,20 +191,24 @@ export default function Transcriber() {
       <h3>Words:</h3>
       {transcript?.words && (
         <table>
-          <tr>
-            <th>word</th>
-            <th>startSec</th>
-            <th>endSec</th>
-            <th>confidence</th>
-          </tr>
-          {transcript?.words.map((obj) => (
+          <thead>
             <tr>
-              <td>{obj.word}</td>
-              <td>{obj.startSec.toFixed(3)}</td>
-              <td>{obj.endSec.toFixed(3)}</td>
-              <td>{obj.confidence.toFixed(3)}</td>
+              <th>word</th>
+              <th>startSec</th>
+              <th>endSec</th>
+              <th>confidence</th>
             </tr>
-          ))}
+          </thead>
+          <tbody>
+            {transcript?.words.map((obj) => (
+              <tr key={obj.startSec}>
+                <td>{obj.word}</td>
+                <td>{obj.startSec.toFixed(3)}</td>
+                <td>{obj.endSec.toFixed(3)}</td>
+                <td>{obj.confidence.toFixed(3)}</td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       )}
     </div>

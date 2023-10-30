@@ -1,10 +1,10 @@
 # leopard-web-react-demo
 
-This demo application consists of a `Transcriber` component which uses the `useLeopard` react hook to perform speech-to-text. It instantiates a Leopard worker engine and uses it with the [@picovoice/web-voice-processor](https://www.npmjs.com/package/@picovoice/web-voice-processor) to access (and automatically downsample) microphone audio.
+This demo application consists of a `VoiceWidget` component which uses the `useLeopard` react hook to perform speech-to-text. It instantiates a Leopard worker engine and uses it with the [@picovoice/web-voice-processor](https://www.npmjs.com/package/@picovoice/web-voice-processor) to access (and automatically downsample) microphone audio.
 
 If you decline microphone permission in the browser, or another such issue prevents Leopard from starting, the error will be displayed.
 
-The demo also shows the various loading and error states, as well as mounting/unmounting the `Transcriber` with a toggle, demonstrating the complete lifecycle of Leopard within a React app.
+The demo also shows the various loading and error states, as well as mounting/unmounting the `VoiceWidget` with a toggle, demonstrating the complete lifecycle of Leopard within a React app.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

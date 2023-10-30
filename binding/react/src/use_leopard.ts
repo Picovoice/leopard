@@ -34,7 +34,7 @@ export const useLeopard = (): {
       transferCallback?: (data: Int16Array) => void;
     }
   ) => Promise<void>;
-  release: () => Promise<void>;
+  release: () => void;
 } => {
   const leopardRef = useRef<LeopardWorker | null>(null);
 
@@ -86,9 +86,8 @@ export const useLeopard = (): {
     }
   }, []);
 
-  const release = useCallback(async (): Promise<void> => {
+  const release = useCallback(() => {
     if (leopardRef.current) {
-      await stop();
       leopardRef.current?.terminate();
       leopardRef.current = null;
 
@@ -97,7 +96,7 @@ export const useLeopard = (): {
   }, []);
 
   useEffect(
-    () => () => {
+    () => (): void => {
       if (leopardRef.current) {
         leopardRef.current.terminate();
         leopardRef.current = null;
