@@ -19,8 +19,6 @@
     "types": ["cypress", "node"]
   },
   "include": [
-    "../../../porcupine/binding/react/src"
+    "src"
   ],
-  "exclude": ["node_modules", "dist",
-    "../../../porcupine/binding/react/cypress", "test", "cypress.config.ts"]
 }
