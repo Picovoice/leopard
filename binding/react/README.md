@@ -224,4 +224,4 @@ supported languages are available [here](https://github.com/Picovoice/leopard/tr
 
 ## Demo
 
-For example usage refer to our [React demo application](https://github.com/Picovoice/leopard/tree/master/demo/react).
+[//]: # (For example usage refer to our [React demo application]&#40;https://github.com/Picovoice/leopard/tree/master/demo/react&#41;.)
