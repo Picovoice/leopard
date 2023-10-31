@@ -81,7 +81,7 @@ describe('Leopard binding', () => {
   });
 
   for (const testInfo of testData.tests.parameters) {
-    it.only(`should be able to process audio (${testInfo.language})`, () => {
+    it(`should be able to process audio (${testInfo.language})`, () => {
       const { result } = renderHook(() => useLeopard());
 
       cy.wrapHook(() =>
@@ -108,9 +108,9 @@ describe('Leopard binding', () => {
       cy.getFramesFromFile(`audio_samples/${testInfo.audio_file}`).then(
         async (pcm: Int16Array) => {
           cy.wrapHook(() => result.current.process(pcm)).then(() => {
-            const transcript = result.current.transcript?.transcript;
+            const transcript = result.current.result?.transcript;
             expect(transcript).to.be.eq(testInfo.transcript);
-            result.current.transcript?.words.forEach(
+            result.current.result?.words.forEach(
               ({ word, startSec, endSec, confidence }) => {
                 const wordRegex = new RegExp(`${word}`, 'i');
                 expect(transcript).to.match(wordRegex);
