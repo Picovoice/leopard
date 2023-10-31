@@ -89,9 +89,9 @@ Either `base64` or `publicPath` must be set to instantiate Leopard. If both are 
 
 ```typescript
 const leopardModel = {
-  publicPath: ${MODEL_RELATIVE_PATH},
+  publicPath: "${MODEL_RELATIVE_PATH}",
   // or
-  base64: ${MODEL_BASE64_STRING},
+  base64: "${MODEL_BASE64_STRING}",
 
   // Optionals
   customWritePath: "custom_model",
@@ -172,7 +172,7 @@ While running in a component, you can call `release` to clean up all resources u
 release();
 ```
 
-This will set `isLoaded` and `error` to false.
+This will set `isLoaded` to false and `error` to null.
 
 If any arguments require changes, call `release`, then `init` again to initialize Leopard with the new settings.
 
