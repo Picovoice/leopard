@@ -2,7 +2,6 @@ import React, { useCallback, useRef, useState } from "react";
 
 import { useLeopard } from "@picovoice/leopard-react";
 import { WebVoiceProcessor } from "@picovoice/web-voice-processor";
-import { PvEngine } from "@picovoice/web-voice-processor/dist/types/types";
 
 import leopardModel from "./lib/leopardModel";
 
@@ -11,7 +10,7 @@ const MAX_REC_SEC = 2 * 60;
 export default function VoiceWidget() {
   const accessKeyRef = useRef<string>("");
   const timerRef = useRef<null | ReturnType<typeof setTimeout>>(null);
-  const recorderEngineRef = useRef<PvEngine>({
+  const recorderEngineRef = useRef({
     onmessage: (event) => {
       switch (event.data.command) {
         case "process":
@@ -25,7 +24,7 @@ export default function VoiceWidget() {
   const [audioData, setAudioData] = useState<Int16Array[]>([]);
   const [isRecording, setIsRecording] = useState<boolean>(false);
 
-  const { transcript, sampleRate, isLoaded, error, init, process, release } =
+  const { result, sampleRate, isLoaded, error, init, process, release } =
     useLeopard();
 
   const initEngine = useCallback(async () => {
@@ -89,7 +88,7 @@ export default function VoiceWidget() {
       const intervalTime = new Date().getTime();
       const elapsedTime = intervalTime - startTime;
       const elapsedSeconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
-      if (elapsedSeconds > MAX_REC_SEC) {
+      if (elapsedSeconds >= MAX_REC_SEC) {
         handleRecordStop();
         setCounter(0);
         timerRef.current && clearInterval(timerRef.current);
@@ -102,8 +101,6 @@ export default function VoiceWidget() {
   };
 
   const handleRecordStop = async () => {
-    setCounter(0);
-
     await WebVoiceProcessor.unsubscribe(recorderEngineRef.current);
     timerRef.current && clearInterval(timerRef.current);
 
@@ -182,13 +179,13 @@ export default function VoiceWidget() {
       <button id="record-audio" className="record-audio" onClick={toggleRecord}>
         {isRecording ? "Stop Recording" : "Start Recording"}
       </button>
-      <span>{counter}</span>
+      <span>{counter}s</span>
       <br />
       <br />
       <h3>Transcript:</h3>
-      <p>{transcript?.transcript}</p>
+      <p>{result?.transcript}</p>
       <h3>Words:</h3>
-      {transcript?.words && (
+      {result?.words && (
         <table>
           <thead>
             <tr>
@@ -199,7 +196,7 @@ export default function VoiceWidget() {
             </tr>
           </thead>
           <tbody>
-            {transcript?.words.map((obj) => (
+            {result?.words.map((obj) => (
               <tr key={obj.startSec}>
                 <td>{obj.word}</td>
                 <td>{obj.startSec.toFixed(3)}</td>

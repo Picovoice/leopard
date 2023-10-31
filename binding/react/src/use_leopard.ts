@@ -1,5 +1,5 @@
 // /*
-//   Copyright 2021-2023 Picovoice Inc.
+//   Copyright 2023 Picovoice Inc.
 //
 //   You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 //   file accompanying this source.
@@ -19,7 +19,7 @@ import {
 } from '@picovoice/leopard-web';
 
 export const useLeopard = (): {
-  transcript: LeopardTranscript | null;
+  result: LeopardTranscript | null;
   sampleRate: number | null;
   isLoaded: boolean;
   error: Error | null;
@@ -39,7 +39,7 @@ export const useLeopard = (): {
 } => {
   const leopardRef = useRef<LeopardWorker | null>(null);
 
-  const [transcript, setTranscript] = useState<LeopardTranscript | null>(null);
+  const [result, setResult] = useState<LeopardTranscript | null>(null);
   const [sampleRate, setSampleRate] = useState<number | null>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
@@ -81,8 +81,8 @@ export const useLeopard = (): {
         return;
       }
 
-      const result = await leopardRef.current?.process(pcm, options);
-      setTranscript(result);
+      const processResult = await leopardRef.current?.process(pcm, options);
+      setResult(processResult);
       setError(null);
     } catch (e: any) {
       setError(e);
@@ -94,6 +94,7 @@ export const useLeopard = (): {
       leopardRef.current?.terminate();
       leopardRef.current = null;
 
+      setError(null);
       setIsLoaded(false);
     }
   }, []);
@@ -109,7 +110,7 @@ export const useLeopard = (): {
   );
 
   return {
-    transcript,
+    result,
     sampleRate,
     isLoaded,
     error,

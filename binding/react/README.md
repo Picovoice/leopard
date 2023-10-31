@@ -7,7 +7,7 @@ Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 Leopard is an on-device speech-to-text engine. Leopard is:
 
 - Private; All voice processing runs locally.
-- [Accurate](https://picovoice.ai/docs/benchmark/stt/)
+- [Accurate](https://picovoice.ai/docs/benchmark/stt/#accuracy)
 - [Compact and Computationally-Efficient](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
   - Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64)
@@ -23,12 +23,15 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 
 ### Restrictions
 
-IndexedDB is required to use `Leopard` in a worker thread. Browsers without IndexedDB support
-(i.e. Firefox Incognito Mode) should use the [`LeopardWeb binding`](https://github.com/Picovoice/leopard/tree/master/binding/web) in the main thread.
+IndexedDB and WebWorkers are required to use `Leopard React`. Browsers without support (i.e. Firefox Incognito Mode) should use the [`LeopardWeb binding`](https://github.com/Picovoice/leopard/tree/master/binding/web) main thread method.
+
+## AccessKey
+
+Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` acts as your credentials when using Leopard SDKs.
+You can get your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
+Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get your `AccessKey`.
 
 ## Installation
-
-### Package
 
 Using `yarn`:
 
@@ -42,19 +45,15 @@ or using `npm`:
 npm install --save @picovoice/leopard-react
 ```
 
-### AccessKey
-
-Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` acts as your credentials when using Leopard SDKs.
-You can get your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
-Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get your `AccessKey`.
-
 ## Usage
 
-Create a model in [Picovoice Console](https://console.picovoice.ai/) or use one of the default language models found in [lib/common](../../lib/common).
+### Leopard Model
+
+Leopard requires a model file (`.pv`) at initialization. Use one of the default language models found in [lib/common](../../lib/common), or create a custom Leopard model (`.pv`) in the [Picovoice Console](https://console.picovoice.ai/) for the target platform `Web (WASM)`.
 
 There are two methods to initialize Leopard.
 
-### Public Directory
+#### Public Directory
 
 **NOTE**: Due to modern browser limitations of using a file URL, this method does __not__ work if used without hosting a server.
 
@@ -64,7 +63,7 @@ This method fetches the model file from the public directory and feeds it to Leo
 cp ${LEOPARD_MODEL_FILE} ${PATH_TO_PUBLIC_DIRECTORY}
 ```
 
-### Base64
+#### Base64
 
 **NOTE**: This method works without hosting a server, but increases the size of the model file roughly by 33%.
 
@@ -82,10 +81,9 @@ run:
 npx pvbase64 -h
 ```
 
-### Leopard Model
+#### Model Object
 
-Leopard saves and caches your model file in IndexedDB to be used by WebAssembly. Use a different `customWritePath` variable
-to hold multiple models and set the `forceWrite` value to true to force re-save a model file.
+Leopard saves and caches your model file in IndexedDB to be used by WebAssembly. Use a different `customWritePath` variable to hold multiple models and set the `forceWrite` value to true to force re-save a model file.
 If the model file changes, `version` should be incremented to force the cached models to be updated.
 Either `base64` or `publicPath` must be set to instantiate Leopard. If both are set, Leopard will use the `base64` model.
 
@@ -104,7 +102,7 @@ const leopardModel = {
 
 ### Init options
 
-Set `enableAutomaticPunctuation` to true, if you wish to enable punctuation in transcript.
+Additional engine options are provided via the `options` parameter. Set `enableAutomaticPunctuation` to true if you wish to enable punctuation in the transcript.
 
 ```typescript
 // Optional
@@ -118,10 +116,9 @@ const options = {
 Use `useLeopard` and `init` to initialize `Leopard`:
 
 ```typescript
-import { useLeopard } from '@picovoice/leopard-react';
-
 const {
-  transcript,
+  result,
+  sampleRate,
   isLoaded,
   error,
   init,
@@ -129,29 +126,33 @@ const {
   release,
 } = useLeopard();
 
-await init(
-  ${ACCESS_KEY},
-  leopardModel
-)
+const initLeopard = async () => {
+  await init(
+    "${ACCESS_KEY}",
+    leopardModel,
+    options
+  )
+}
 ```
 
 In case of any errors, use the `error` state variable to check the error message. Use the `isLoaded` state variable to check if `Leopard` has loaded. 
 
 ### Process Audio Frames
 
-The process result is an object with:
+The process result is a `result` state variable (object) with:
 - `transcript`: A string containing the transcribed data.
 - `words`: A list of objects containing a `word`, `startSec`, `endSec`, and `confidence`. Each object indicates the start, end time and confidence (between 0 and 1) of the word.
 
 ```typescript
 let pcm = new Int16Array();
 await process(pcm);
+
 useEffect(() => {
-  if (transcript !== null) {
-    console.log(transcript.transcript);
-    console.log(transcript.words);
+  if (result !== null) {
+    console.log(result.transcript);
+    console.log(result.words);
   }
-}, [transcript])
+}, [result])
 ```
 
 You may consider transferring the buffer for performance:
@@ -165,57 +166,17 @@ await process(pcm, {
 
 ### Clean Up
 
-While running in a component, you can call `release` to clean up all resources used by `Leopard`:
+While running in a component, you can call `release` to clean up all resources used by Leopard:
 
 ```typescript
-await release();
+release();
 ```
 
-## Custom Model
+This will set `isLoaded` and `error` to false.
 
-Create custom models using the [Picovoice Console](https://console.picovoice.ai/).
-Train and download a Leopard model (`.pv`) for the target platform `Web (WASM)`.
-This model file can be used directly with `publicPath`, but, if `base64` is preferable, convert the `.pv` file to a base64
-JavaScript variable using the built-in `pvbase64` script:
+If any arguments require changes, call `release`, then `init` again to initialize Leopard with the new settings.
 
-```console
-npx pvbase64 -i ${LEOPARD_MODEL_FILE} -o ${OUTPUT_DIRECTORY}/${MODEL_NAME}.js
-```
-
-Model files (`.pv`) are saved in IndexedDB to be used by Web Assembly.
-Either `base64` or `publicPath` must be set for each keyword to instantiate Leopard.
-If both are set, Leopard will use the `base64` model.
-
-```typescript
-const leopardModel = {
-  publicPath: ${MODEL_RELATIVE_PATH},
-  // or
-  base64: ${MODEL_BASE64_STRING},
-
-  // Optionals
-  customWritePath: "custom_model",
-  forceWrite: true,
-  version: 1,
-}
-```
-
-Then, initialize an instance of `Leopard`:
-
-```typescript
-const {
-  transcript,
-  isLoaded,
-  error,
-  init,
-  process,
-  release,
-} = useLeopard();
-
-await init(
-  ${ACCESS_KEY},
-  leopardModel
-)
-```
+You do not need to call `release` when your component is unmounted - the hook will clean up automatically on unmount.
 
 ## Non-English Languages
 
