@@ -90,4 +90,4 @@ jobs:
       run: go build
 
     - name: Test
-      run: go test timeout 30m -modfile=go_test.mod -v -access_key ${{secrets.PV_VALID_ACCESS_KEY}}
+      run: go test -timeout 30m -modfile=go_test.mod -v -access_key ${{secrets.PV_VALID_ACCESS_KEY}}
