@@ -23,7 +23,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 
 ### Restrictions
 
-IndexedDB and WebWorkers are required to use `Leopard React`. Browsers without support (i.e. Firefox Incognito Mode) should use the [`LeopardWeb binding`](https://github.com/Picovoice/leopard/tree/master/binding/web) main thread method.
+IndexedDB and WebWorkers are required to use `Leopard React`. Browsers without support (e.g. Firefox Incognito Mode) should use the [`LeopardWeb binding`](https://github.com/Picovoice/leopard/tree/master/binding/web) main thread method.
 
 ## AccessKey
 
