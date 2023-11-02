@@ -1,31 +1,25 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef } from "react";
 
 import { useLeopard } from "@picovoice/leopard-react";
-import { WebVoiceProcessor } from "@picovoice/web-voice-processor";
 
 import leopardModel from "./lib/leopardModel";
 
-const MAX_REC_SEC = 2 * 60;
-
 export default function VoiceWidget() {
   const accessKeyRef = useRef<string>("");
-  const timerRef = useRef<null | ReturnType<typeof setTimeout>>(null);
-  const recorderEngineRef = useRef({
-    onmessage: (event) => {
-      switch (event.data.command) {
-        case "process":
-          setAudioData((prev) => [...prev, event.data.inputFrame]);
-          break;
-      }
-    },
-  });
 
-  const [counter, setCounter] = useState<number>(0);
-  const [audioData, setAudioData] = useState<Int16Array[]>([]);
-  const [isRecording, setIsRecording] = useState<boolean>(false);
-
-  const { result, sampleRate, isLoaded, error, init, process, release } =
-    useLeopard();
+  const {
+    result,
+    isRecording,
+    start,
+    stop,
+    recordingElapsedSec,
+    sampleRate,
+    isLoaded,
+    error,
+    init,
+    process,
+    release,
+  } = useLeopard();
 
   const initEngine = useCallback(async () => {
     if (accessKeyRef.current.length === 0) {
@@ -77,50 +71,11 @@ export default function VoiceWidget() {
     });
   };
 
-  const handleRecordStart = async () => {
-    setCounter(0);
-    setAudioData([]);
-
-    const startTime = new Date().getTime();
-
-    await WebVoiceProcessor.subscribe(recorderEngineRef.current);
-    timerRef.current = setInterval(() => {
-      const intervalTime = new Date().getTime();
-      const elapsedTime = intervalTime - startTime;
-      const elapsedSeconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
-      if (elapsedSeconds >= MAX_REC_SEC) {
-        handleRecordStop();
-        setCounter(0);
-        timerRef.current && clearInterval(timerRef.current);
-      } else {
-        setCounter(elapsedSeconds);
-      }
-    }, 1000);
-
-    setIsRecording(true);
-  };
-
-  const handleRecordStop = async () => {
-    await WebVoiceProcessor.unsubscribe(recorderEngineRef.current);
-    timerRef.current && clearInterval(timerRef.current);
-
-    const frames = new Int16Array(audioData.length * 512);
-    for (let i = 0; i < audioData.length; i++) {
-      frames.set(audioData[i], i * 512);
-    }
-
-    await process(frames, {
-      transfer: true,
-    });
-
-    setIsRecording(false);
-  };
-
   const toggleRecord = async () => {
     if (isRecording) {
-      await handleRecordStop();
+      await stop();
     } else {
-      await handleRecordStart();
+      await start();
     }
   };
 
@@ -179,7 +134,7 @@ export default function VoiceWidget() {
       <button id="record-audio" className="record-audio" onClick={toggleRecord}>
         {isRecording ? "Stop Recording" : "Start Recording"}
       </button>
-      <span>{counter}s</span>
+      <span>{recordingElapsedSec}s</span>
       <br />
       <br />
       <h3>Transcript:</h3>

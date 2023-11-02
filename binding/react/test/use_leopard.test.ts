@@ -26,12 +26,11 @@ describe('Leopard binding', () => {
       ).to.be.true;
     });
 
-    cy.wrapHook(result.current.release).then(() => {
-      expect(
-        result.current.isLoaded,
-        `Failed to release leopard with ${result.current.error}`
-      ).to.be.false;
-    });
+    result.current.release();
+    expect(
+      result.current.isLoaded,
+      `Failed to release leopard with ${result.current.error}`
+    ).to.be.false;
   });
 
   it('should be able to init via base64', () => {
@@ -81,7 +80,7 @@ describe('Leopard binding', () => {
   });
 
   for (const testInfo of testData.tests.parameters) {
-    it(`should be able to process audio (${testInfo.language})`, () => {
+    it(`should be able to process audio file (${testInfo.language})`, () => {
       const { result } = renderHook(() => useLeopard());
 
       cy.wrapHook(() =>
@@ -123,12 +122,65 @@ describe('Leopard binding', () => {
         }
       );
 
-      cy.wrapHook(result.current.release).then(() => {
+      result.current.release();
+      expect(
+        result.current.isLoaded,
+        `Failed to release leopard with ${result.current.error}`
+      ).to.be.false;
+    });
+  }
+
+  for (const testInfo of testData.tests.parameters) {
+    it(`should be able to process audio recording (${testInfo.language})`, () => {
+      const { result } = renderHook(() => useLeopard());
+
+      cy.wrapHook(() =>
+        result.current.init(
+          ACCESS_KEY,
+          {
+            publicPath:
+              testInfo.language === 'en'
+                ? `/test/leopard_params.pv`
+                : `/test/leopard_params_${testInfo.language}.pv`,
+            forceWrite: true,
+          },
+          {
+            enableAutomaticPunctuation: true,
+          }
+        )
+      ).then(() => {
         expect(
           result.current.isLoaded,
-          `Failed to release leopard with ${result.current.error}`
-        ).to.be.false;
+          `Failed to load ${testInfo.audio_file} (${testInfo.language}) with ${result.current.error}`
+        ).to.be.true;
       });
+
+      cy.wrapHook(() => result.current.start()).then(() => {
+        expect(result.current.isRecording).to.be.true;
+      });
+
+      cy.mockRecording(`audio_samples/${testInfo.audio_file}`).then(() => {
+        cy.wrapHook(result.current.stop).then(() => {
+          const transcript = result.current.result?.transcript;
+          expect(transcript).to.be.eq(testInfo.transcript);
+          result.current.result?.words.forEach(
+            ({ word, startSec, endSec, confidence }) => {
+              const wordRegex = new RegExp(`${word}`, 'i');
+              expect(transcript).to.match(wordRegex);
+              expect(startSec).to.be.gt(0);
+              expect(endSec).to.be.gt(0);
+              expect(confidence).to.be.gt(0).and.lt(1);
+              expect(result.current.isRecording).to.be.false;
+            }
+          );
+        });
+      });
+
+      result.current.release();
+      expect(
+        result.current.isLoaded,
+        `Failed to release leopard with ${result.current.error}`
+      ).to.be.false;
     });
   }
 });
