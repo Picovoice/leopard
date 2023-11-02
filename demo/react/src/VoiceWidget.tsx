@@ -12,6 +12,7 @@ export default function VoiceWidget() {
     isRecording,
     start,
     stop,
+    getCurrentTranscript,
     recordingElapsedSec,
     sampleRate,
     isLoaded,
@@ -137,6 +138,7 @@ export default function VoiceWidget() {
       <span>{recordingElapsedSec}s</span>
       <br />
       <br />
+      <button onClick={getCurrentTranscript}>Get current</button>
       <h3>Transcript:</h3>
       <p>{result?.transcript}</p>
       <h3>Words:</h3>

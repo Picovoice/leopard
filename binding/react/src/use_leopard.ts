@@ -40,6 +40,7 @@ export const useLeopard = (): {
     }
   ) => Promise<void>;
   start: (macRecordingSec?: number) => Promise<void>;
+  getCurrentTranscript: () => Promise<void>;
   stop: () => Promise<void>;
   isRecording: boolean;
   recordingElapsedSec: number;
@@ -116,6 +117,23 @@ export const useLeopard = (): {
     []
   );
 
+  const getFrames = (audioDataSection: Int16Array[]): Int16Array => {
+    const frames = new Int16Array(audioDataSection.length * 512);
+    for (let i = 0; i < audioDataSection.length; i++) {
+      frames.set(audioDataSection[i], i * 512);
+    }
+    return frames;
+  };
+
+  const getCurrentTranscript = useCallback(async (): Promise<void> => {
+    const frames = getFrames(audioData);
+    setAudioData([]);
+
+    await process(frames, {
+      transfer: true,
+    });
+  }, [audioData]);
+
   const stop = useCallback(async (): Promise<void> => {
     try {
       await WebVoiceProcessor.unsubscribe(recorderEngineRef.current);
@@ -124,11 +142,7 @@ export const useLeopard = (): {
         clearInterval(timerRef.current);
       }
 
-      const frames = new Int16Array(audioData.length * 512);
-      for (let i = 0; i < audioData.length; i++) {
-        frames.set(audioData[i], i * 512);
-      }
-
+      const frames = getFrames(audioData);
       await process(frames, {
         transfer: true,
       });
@@ -199,6 +213,7 @@ export const useLeopard = (): {
     process,
     start,
     stop,
+    getCurrentTranscript,
     isRecording,
     recordingElapsedSec,
     release,
