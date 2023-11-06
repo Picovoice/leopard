@@ -36,24 +36,22 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 Using `yarn`:
 
 ```console
-yarn add @picovoice/leopard-react
+yarn add @picovoice/leopard-react @picovoice/web-voice-processor
 ```
 
 or using `npm`:
 
 ```console
-npm install --save @picovoice/leopard-react
+npm install --save @picovoice/leopard-react @picovoice/web-voice-processor
 ```
 
 ## Usage
 
-### Leopard Model
-
-Leopard requires a model file (`.pv`) at initialization. Use one of the default language models found in [lib/common](../../lib/common), or create a custom Leopard model (`.pv`) in the [Picovoice Console](https://console.picovoice.ai/) for the target platform `Web (WASM)`.
+Leopard requires a model file (`.pv`) at initialization. Use one of the default language models found in [lib/common](../../lib/common), or create a custom Leopard model in the [Picovoice Console](https://console.picovoice.ai/) for the target platform `Web (WASM)`.
 
 There are two methods to initialize Leopard.
 
-#### Public Directory
+### Public Directory
 
 **NOTE**: Due to modern browser limitations of using a file URL, this method does __not__ work if used without hosting a server.
 
@@ -63,12 +61,11 @@ This method fetches the model file from the public directory and feeds it to Leo
 cp ${LEOPARD_MODEL_FILE} ${PATH_TO_PUBLIC_DIRECTORY}
 ```
 
-#### Base64
+### Base64
 
 **NOTE**: This method works without hosting a server, but increases the size of the model file roughly by 33%.
 
-This method uses a base64 string of the model file and feeds it to Leopard. Use the built-in script `pvbase64` to
-base64 your model file:
+This method uses a base64 string of the model file and feeds it to Leopard. Use the built-in script `pvbase64` to base64 your model file:
 
 ```console
 npx pvbase64 -i ${LEOPARD_MODEL_FILE} -o ${OUTPUT_DIRECTORY}/${MODEL_NAME}.js
@@ -81,7 +78,7 @@ run:
 npx pvbase64 -h
 ```
 
-#### Model Object
+### Leopard Model
 
 Leopard saves and caches your model file in IndexedDB to be used by WebAssembly. Use a different `customWritePath` variable to hold multiple models and set the `forceWrite` value to true to force re-save a model file.
 If the model file changes, `version` should be incremented to force the cached models to be updated.
@@ -100,8 +97,6 @@ const leopardModel = {
 }
 ```
 
-### Init options
-
 Additional engine options are provided via the `options` parameter. Set `enableAutomaticPunctuation` to true if you wish to enable punctuation in the transcript.
 
 ```typescript
@@ -111,26 +106,39 @@ const options = {
 }
 ```
 
+For processing, you may also consider transferring the buffer for performance:
+
+```typescript
+const processOptions = {
+  transfer: true,
+  transferCallback: (data) => { pcm = data }
+}
+```
+
 ### Initialize Leopard
 
 Use `useLeopard` and `init` to initialize `Leopard`:
 
 ```typescript
 const {
-  result,
-  sampleRate,
-  isLoaded,
-  error,
   init,
-  process,
+  isLoaded,
+  processFile,
+  startRecording,
+  stopRecording,
+  isRecording,
+  recordingElapsedSec,
+  result,
   release,
+  error,
 } = useLeopard();
 
 const initLeopard = async () => {
   await init(
     "${ACCESS_KEY}",
     leopardModel,
-    options
+    options,
+    processOptions
   )
 }
 ```
@@ -139,14 +147,49 @@ In case of any errors, use the `error` state variable to check the error message
 
 ### Process Audio Frames
 
-The process result is a `result` state variable (object) with:
-- `transcript`: A string containing the transcribed data.
-- `words`: A list of objects containing a `word`, `startSec`, `endSec`, and `confidence`. Each object indicates the start, end time and confidence (between 0 and 1) of the word.
+The audio that you want to transcribe can either be uploaded as a File object or recorded.
+
+#### File Object
+
+Transcribe File objects directly using the `processFile` function:
+
+```typescript jsx
+<input
+  type="file"
+  accept="audio/*"
+  onChange={async (e) => {
+    if (!!e.target.files?.length) {
+      await processFile(e.target.files[0]);
+    }
+  }}
+/>
+```
+
+Once the audio has been processed, the transcript will be available in the [`result`](#result) state variable.
+
+#### Record Audio
+
+Leopard React binding uses [WebVoiceProcessor](https://github.com/Picovoice/web-voice-processor) to record audio. To start recording audio for a transcription, call `startRecording`:
 
 ```typescript
-let pcm = new Int16Array();
-await process(pcm);
+await startRecording();
+```
 
+If `WebVoiceProcessor` has started correctly, `isRecording` will be set to true.
+
+Call `stopRecording` to stop recording audio:
+
+```typescript
+await stopRecording();
+```
+
+If `WebVoiceProcessor` has stopped correctly, `isRecording` will be set to false. Once stopped, audio processing will automatically begin. Once completed, the transcript will be available in [`result`](#result).
+
+#### Result
+
+Once audio has been processed, the transcript will be available in the `result` state variable:
+
+```typescript
 useEffect(() => {
   if (result !== null) {
     console.log(result.transcript);
@@ -155,24 +198,18 @@ useEffect(() => {
 }, [result])
 ```
 
-You may consider transferring the buffer for performance:
+- `transcript`: A string containing the transcribed data.
+- `words`: A list of objects containing a `word`, `startSec`, `endSec`, and `confidence`. Each object indicates the start, end time and confidence (between 0 and 1) of the word.
+
+### Release
+
+While running in a component, you can call `release` to clean up all resources used by Leopard and WebVoiceProcessor:
 
 ```typescript
-await process(pcm, {
-  transfer: true,
-  transferCallback: (data) => { pcm = data }
-})
+await release();
 ```
 
-### Clean Up
-
-While running in a component, you can call `release` to clean up all resources used by Leopard:
-
-```typescript
-release();
-```
-
-This will set `isLoaded` to false and `error` to null.
+This will set `isLoaded` and `isRecording` to false and `error` to null.
 
 If any arguments require changes, call `release`, then `init` again to initialize Leopard with the new settings.
 
@@ -180,8 +217,7 @@ You do not need to call `release` when your component is unmounted - the hook wi
 
 ## Non-English Languages
 
-In order to detect non-English wake words you need to use the corresponding model file (`.pv`). The model files for all
-supported languages are available [here](https://github.com/Picovoice/leopard/tree/master/lib/common).
+In order to transcribe non-English audio files and recordings you need to use the corresponding model file (`.pv`). The model files for all supported languages are available [here](https://github.com/Picovoice/leopard/tree/master/lib/common).
 
 ## Demo
 

@@ -26,11 +26,12 @@ describe('Leopard binding', () => {
       ).to.be.true;
     });
 
-    result.current.release();
-    expect(
-      result.current.isLoaded,
-      `Failed to release leopard with ${result.current.error}`
-    ).to.be.false;
+    cy.wrapHook(result.current.release).then(() => {
+      expect(
+        result.current.isLoaded,
+        `Failed to release leopard with ${result.current.error}`
+      ).to.be.false;
+    });
   });
 
   it('should be able to init via base64', () => {
@@ -104,29 +105,21 @@ describe('Leopard binding', () => {
         ).to.be.true;
       });
 
-      cy.getFramesFromFile(`audio_samples/${testInfo.audio_file}`).then(
-        async (pcm: Int16Array) => {
-          cy.wrapHook(() => result.current.process(pcm)).then(() => {
-            const transcript = result.current.result?.transcript;
-            expect(transcript).to.be.eq(testInfo.transcript);
-            result.current.result?.words.forEach(
-              ({ word, startSec, endSec, confidence }) => {
-                const wordRegex = new RegExp(`${word}`, 'i');
-                expect(transcript).to.match(wordRegex);
-                expect(startSec).to.be.gt(0);
-                expect(endSec).to.be.gt(0);
-                expect(confidence).to.be.gt(0).and.lt(1);
-              }
-            );
-          });
-        }
-      );
-
-      result.current.release();
-      expect(
-        result.current.isLoaded,
-        `Failed to release leopard with ${result.current.error}`
-      ).to.be.false;
+      cy.getFileObj(`audio_samples/${testInfo.audio_file}`).then(file => {
+        cy.wrapHook(() => result.current.processFile(file)).then(() => {
+          const transcript = result.current.result?.transcript;
+          expect(transcript).to.be.eq(testInfo.transcript);
+          result.current.result?.words.forEach(
+            ({ word, startSec, endSec, confidence }) => {
+              const wordRegex = new RegExp(`${word}`, 'i');
+              expect(transcript).to.match(wordRegex);
+              expect(startSec).to.be.gt(0);
+              expect(endSec).to.be.gt(0);
+              expect(confidence).to.be.gt(0).and.lt(1);
+            }
+          );
+        });
+      });
     });
   }
 
@@ -155,12 +148,12 @@ describe('Leopard binding', () => {
         ).to.be.true;
       });
 
-      cy.wrapHook(() => result.current.start()).then(() => {
+      cy.wrapHook(result.current.startRecording).then(() => {
         expect(result.current.isRecording).to.be.true;
       });
 
       cy.mockRecording(`audio_samples/${testInfo.audio_file}`).then(() => {
-        cy.wrapHook(result.current.stop).then(() => {
+        cy.wrapHook(result.current.stopRecording).then(() => {
           const transcript = result.current.result?.transcript;
           expect(transcript).to.be.eq(testInfo.transcript);
           result.current.result?.words.forEach(
@@ -175,12 +168,6 @@ describe('Leopard binding', () => {
           );
         });
       });
-
-      result.current.release();
-      expect(
-        result.current.isLoaded,
-        `Failed to release leopard with ${result.current.error}`
-      ).to.be.false;
     });
   }
 });

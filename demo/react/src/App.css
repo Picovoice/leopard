@@ -10,15 +10,10 @@ button {
 
 .init-button,
 .release-button,
-.record-audio,
 input {
   padding: 0;
   margin: 0;
   font-size: medium;
-}
-
-.record-audio {
-  margin: 0 1rem;
 }
 
 .voice-widget {

@@ -61,6 +61,7 @@ export default {
       globals: {
         react: 'React',
         'react-dom': 'ReactDOM',
+        '@picovoice/web-voice-processor': 'WebVoiceProcessor',
       },
     },
   ],

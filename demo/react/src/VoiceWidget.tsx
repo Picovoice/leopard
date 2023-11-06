@@ -1,5 +1,4 @@
 import React, { useCallback, useRef } from "react";
-
 import { useLeopard } from "@picovoice/leopard-react";
 
 import leopardModel from "./lib/leopardModel";
@@ -8,18 +7,16 @@ export default function VoiceWidget() {
   const accessKeyRef = useRef<string>("");
 
   const {
-    result,
-    isRecording,
-    start,
-    stop,
-    getCurrentTranscript,
-    recordingElapsedSec,
-    sampleRate,
-    isLoaded,
-    error,
     init,
-    process,
+    result,
+    isLoaded,
+    processFile,
+    startRecording,
+    stopRecording,
+    isRecording,
+    recordingElapsedSec,
     release,
+    error,
   } = useLeopard();
 
   const initEngine = useCallback(async () => {
@@ -27,56 +24,23 @@ export default function VoiceWidget() {
       return;
     }
 
-    await init(accessKeyRef.current, leopardModel, {
-      enableAutomaticPunctuation: true,
-    });
-  }, [init]);
-
-  const processAudioFile = async (audioFile) => {
-    if (sampleRate === null) {
-      return;
-    }
-
-    // @ts-ignore
-    const audioContext = new (window.AudioContext || window.webKitAudioContext)(
-      { sampleRate }
-    );
-
-    function readAudioFile(selectedFile, callback) {
-      let reader = new FileReader();
-      reader.onload = function (ev) {
-        let wavBytes = reader.result;
-        audioContext.decodeAudioData(wavBytes as ArrayBuffer, callback);
-      };
-      reader.readAsArrayBuffer(selectedFile);
-    }
-
-    readAudioFile(audioFile, async (audioBuffer) => {
-      const f32PCM = audioBuffer.getChannelData(0);
-      const i16PCM = new Int16Array(f32PCM.length);
-
-      const INT16_MAX = 32767;
-      const INT16_MIN = -32768;
-      i16PCM.set(
-        f32PCM.map((f) => {
-          let i = Math.trunc(f * INT16_MAX);
-          if (f > INT16_MAX) i = INT16_MAX;
-          if (f < INT16_MIN) i = INT16_MIN;
-          return i;
-        })
-      );
-
-      await process(i16PCM, {
+    await init(
+      accessKeyRef.current,
+      leopardModel,
+      {
+        enableAutomaticPunctuation: true,
+      },
+      {
         transfer: true,
-      });
-    });
-  };
+      }
+    );
+  }, [init]);
 
   const toggleRecord = async () => {
     if (isRecording) {
-      await stop();
+      await stopRecording();
     } else {
-      await start();
+      await startRecording();
     }
   };
 
@@ -111,6 +75,7 @@ export default function VoiceWidget() {
         </label>
       </h3>
       <h3>Loaded: {JSON.stringify(isLoaded)}</h3>
+      <h3>Recording: {JSON.stringify(isRecording)}</h3>
       <h3>Error: {JSON.stringify(error !== null)}</h3>
       {error && <p className="error-message">{error.toString()}</p>}
       <br />
@@ -121,8 +86,8 @@ export default function VoiceWidget() {
         id="audio-file"
         name="audio-file"
         onChange={async (e) => {
-          if (e.target.files) {
-            await processAudioFile(e.target.files[0]);
+          if (!!e.target.files?.length) {
+            await processFile(e.target.files[0]);
           }
         }}
       />
@@ -130,18 +95,16 @@ export default function VoiceWidget() {
         <b>OR</b>
       </p>
       <label htmlFor="record-audio">
-        Record audio to transcribe (up to 2 minutes):
+        Record audio to transcribe (up to 2 minutes):{" "}
       </label>
-      <button id="record-audio" className="record-audio" onClick={toggleRecord}>
-        {isRecording ? "Stop Recording" : "Start Recording"}
-      </button>
       <span>{recordingElapsedSec}s</span>
       <br />
       <br />
-      <button onClick={getCurrentTranscript}>Get current</button>
+      <button id="record-audio" onClick={toggleRecord}>
+        {isRecording ? "Stop Recording" : "Start Recording"}
+      </button>
       <h3>Transcript:</h3>
       <p>{result?.transcript}</p>
-      <h3>Words:</h3>
       {result?.words && (
         <table>
           <thead>
