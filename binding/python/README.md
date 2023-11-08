@@ -37,9 +37,9 @@ Create an instance of the engine and transcribe an audio file:
 ```python
 import pvleopard
 
-handle = pvleopard.create(access_key='${ACCESS_KEY}')
+leopard = pvleopard.create(access_key='${ACCESS_KEY}')
 
-transcript, words = handle.process_file('${AUDIO_PATH}')
+transcript, words = leopard.process_file('${AUDIO_PATH}')
 print(transcript)
 for word in words:
     print(
@@ -48,8 +48,12 @@ for word in words:
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and
-`${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using
-`handle.delete()`.
+`${AUDIO_PATH}` to the path an audio file. 
+
+Finally, when done be sure to explicitly release the resources:
+```python
+leopard.delete()
+```
 
 ## Language Model
 
@@ -61,7 +65,7 @@ language models with custom vocabulary and boost words in the existing vocabular
 
 Pass in the `.pv` file via the `model_path` argument:
 ```python
-handle = pvleopard.create(
+leopard = pvleopard.create(
     access_key='${ACCESS_KEY}',
     model_path='${MODEL_PATH}')
 ```
