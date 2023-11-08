@@ -21,6 +21,9 @@ import {
 const DEFAULT_MAX_RECORDING_SEC = 120;
 
 export const useLeopard = (): {
+  result: LeopardTranscript | null;
+  isLoaded: boolean;
+  error: Error | null;
   init: (
     accessKey: string,
     model: LeopardModel,
@@ -30,15 +33,12 @@ export const useLeopard = (): {
       transferCallback?: (data: Int16Array) => void;
     }
   ) => Promise<void>;
-  isLoaded: boolean;
   processFile: (file: File) => Promise<void>;
   startRecording: (maxRecordingSec?: number) => Promise<void>;
   stopRecording: () => Promise<void>;
   isRecording: boolean;
   recordingElapsedSec: number;
-  result: LeopardTranscript | null;
   release: () => Promise<void>;
-  error: Error | null;
 } => {
   const [result, setResult] = useState<LeopardTranscript | null>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
@@ -93,13 +93,18 @@ export const useLeopard = (): {
 
   const process = useCallback(async (pcm: Int16Array): Promise<void> => {
     try {
-      if (leopardRef.current) {
-        const processResult = await leopardRef.current.process(
-          pcm,
-          processOptionsRef.current
+      if (!leopardRef.current) {
+        setError(
+          new Error('Leopard has not been initialized or has been released')
         );
-        setResult(processResult);
+        return;
       }
+
+      const processResult = await leopardRef.current.process(
+        pcm,
+        processOptionsRef.current
+      );
+      setResult(processResult);
     } catch (e: any) {
       setError(e);
     }
@@ -235,15 +240,15 @@ export const useLeopard = (): {
   );
 
   return {
-    init,
+    result,
     isLoaded,
+    error,
+    init,
     processFile,
     startRecording,
     stopRecording,
     isRecording,
     recordingElapsedSec,
-    result,
     release,
-    error,
   };
 };
