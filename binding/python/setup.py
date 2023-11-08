@@ -14,50 +14,41 @@ import shutil
 
 import setuptools
 
+INCLUDE_FILES = ('../../LICENSE', '__init__.py', '_factory.py', '_leopard.py', '_util.py')
+INCLUDE_LIBS = ('linux', 'mac', 'windows', 'jetson', 'raspberry-pi')
+
 os.system('git clean -dfx')
 
 package_folder = os.path.join(os.path.dirname(__file__), 'pvleopard')
 os.mkdir(package_folder)
+manifest_in = ""
 
-shutil.copy(os.path.join(os.path.dirname(__file__), '../../LICENSE'), package_folder)
+for rel_path in INCLUDE_FILES:
+    shutil.copy(os.path.join(os.path.dirname(__file__), rel_path), package_folder)
+    manifest_in += "include pvleopard/%s\n" % os.path.basename(rel_path)
 
-shutil.copy(os.path.join(os.path.dirname(__file__), '__init__.py'), os.path.join(package_folder, '__init__.py'))
-shutil.copy(os.path.join(os.path.dirname(__file__), '_factory.py'), os.path.join(package_folder, '_factory.py'))
-shutil.copy(os.path.join(os.path.dirname(__file__), '_leopard.py'), os.path.join(package_folder, '_leopard.py'))
-shutil.copy(os.path.join(os.path.dirname(__file__), '_util.py'), os.path.join(package_folder, '_util.py'))
+model_file = 'lib/common/leopard_params.pv'
+os.makedirs(os.path.join(package_folder, os.path.split(model_file)[0]))
+shutil.copy(
+    os.path.join(os.path.dirname(__file__), '../..', model_file),
+    os.path.join(package_folder, model_file))
+manifest_in += "include pvleopard/%s\n" % model_file
 
-platforms = ('jetson', 'linux', 'mac', 'raspberry-pi', 'windows')
-
-os.mkdir(os.path.join(package_folder, 'lib'))
-for platform in ('common',) + platforms:
+for platform in INCLUDE_LIBS:
     shutil.copytree(
         os.path.join(os.path.dirname(__file__), '../../lib', platform),
         os.path.join(package_folder, 'lib', platform))
-
-MANIFEST_IN = """
-include pvleopard/LICENSE
-include pvleopard/__init__.py
-include pvleopard/_factory.py
-include pvleopard/_leopard.py
-include pvleopard/_util.py
-include pvleopard/lib/common/leopard_params.pv
-recursive-include pvleopard/lib/jetson *
-include pvleopard/lib/linux/x86_64/libpv_leopard.so
-include pvleopard/lib/mac/x86_64/libpv_leopard.dylib
-include pvleopard/lib/mac/arm64/libpv_leopard.dylib
-recursive-include pvleopard/lib/raspberry-pi *
-include pvleopard/lib/windows/amd64/libpv_leopard.dll
-"""
+    manifest_in += "recursive-include pvleopard/lib/%s *\n" % platform
 
 with open(os.path.join(os.path.dirname(__file__), 'MANIFEST.in'), 'w') as f:
-    f.write(MANIFEST_IN.strip('\n '))
+    f.write(manifest_in)
 
 with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
     long_description = f.read()
 
 setuptools.setup(
     name="pvleopard",
-    version="1.2.2",
+    version="2.0.0",
     author="Picovoice",
     author_email="hello@picovoice.ai",
     description="Leopard Speech-to-Text Engine.",

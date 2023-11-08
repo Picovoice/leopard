@@ -67,6 +67,10 @@ def main():
         action='store_true',
         help='Disable insertion of automatic punctuation')
     parser.add_argument(
+        '--disable_speaker_diarization',
+        action='store_true',
+        help='Disable identification of unique speakers')
+    parser.add_argument(
         '--verbose',
         action='store_true',
         help='Print verbose output of the transcription')
@@ -100,7 +104,8 @@ def main():
         access_key=args.access_key,
         model_path=args.model_path,
         library_path=args.library_path,
-        enable_automatic_punctuation=not args.disable_automatic_punctuation)
+        enable_automatic_punctuation=not args.disable_automatic_punctuation,
+        enable_diarization=not args.disable_speaker_diarization)
 
     recorder = None
 
@@ -124,7 +129,7 @@ def main():
                 transcript, words = leopard.process(recorder.stop())
                 print(transcript)
                 if args.verbose:
-                    print(tabulate(words, headers=['word', 'start_sec', 'end_sec', 'confidence'], floatfmt='.2f'))
+                    print(tabulate(words, headers=['word', 'start_sec', 'end_sec', 'confidence', 'speaker_tag'], floatfmt='.2f'))
             except LeopardActivationLimitError:
                 print('AccessKey has reached its processing limit.')
             print()

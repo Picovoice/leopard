@@ -18,7 +18,27 @@ from typing import *
 
 
 class LeopardError(Exception):
-    pass
+    def __init__(self, message: str = '', message_stack: Sequence[str] = None):
+        super().__init__(message)
+
+        self._message = message
+        self._message_stack = list() if message_stack is None else message_stack
+
+    def __str__(self):
+        message = self._message
+        if len(self._message_stack) > 0:
+            message += ':'
+            for i in range(len(self._message_stack)):
+                message += '\n  [%d] %s' % (i, self._message_stack[i])
+        return message
+
+    @property
+    def message(self) -> str:
+        return self._message
+
+    @property
+    def message_stack(self) -> Sequence[str]:
+        return self._message_stack
 
 
 class LeopardMemoryError(LeopardError):
@@ -119,14 +139,16 @@ class Leopard(object):
             ("word", c_char_p),
             ("start_sec", c_float),
             ("end_sec", c_float),
-            ("confidence", c_float)]
+            ("confidence", c_float),
+            ("speaker_tag", c_int32)]
 
     def __init__(
             self,
             access_key: str,
             model_path: str,
             library_path: str,
-            enable_automatic_punctuation: bool = False) -> None:
+            enable_automatic_punctuation: bool = False,
+            enable_diarization: bool = False) -> None:
         """
         Constructor.
 
@@ -134,6 +156,9 @@ class Leopard(object):
         :param model_path: Absolute path to the file containing model parameters.
         :param library_path: Absolute path to Leopard's dynamic library.
         :param enable_automatic_punctuation Set to `True` to enable automatic punctuation insertion.
+        :param enable_diarization Set to `true` to enable speaker diarization, which allows Leopard to differentiate
+        speakers as part of the transcription process. Word metadata will include a `speaker_tag` to
+        identify unique speakers.
         """
 
         if not isinstance(access_key, str) or len(access_key) == 0:
@@ -147,15 +172,36 @@ class Leopard(object):
 
         library = cdll.LoadLibrary(library_path)
 
+        set_sdk_func = library.pv_set_sdk
+        set_sdk_func.argtypes = [c_char_p]
+        set_sdk_func.restype = None
+
+        set_sdk_func('python'.encode('utf-8'))
+
+        self._get_error_stack_func = library.pv_get_error_stack
+        self._get_error_stack_func.argtypes = [POINTER(POINTER(c_char_p)), POINTER(c_int)]
+        self._get_error_stack_func.restype = self.PicovoiceStatuses
+
+        self._free_error_stack_func = library.pv_free_error_stack
+        self._free_error_stack_func.argtypes = [POINTER(c_char_p)]
+        self._free_error_stack_func.restype = None
+
         init_func = library.pv_leopard_init
-        init_func.argtypes = [c_char_p, c_char_p, c_bool, POINTER(POINTER(self.CLeopard))]
+        init_func.argtypes = [c_char_p, c_char_p, c_bool, c_bool, POINTER(POINTER(self.CLeopard))]
         init_func.restype = self.PicovoiceStatuses
 
         self._handle = POINTER(self.CLeopard)()
 
-        status = init_func(access_key.encode(), model_path.encode(), enable_automatic_punctuation, byref(self._handle))
+        status = init_func(
+            access_key.encode(),
+            model_path.encode(),
+            enable_automatic_punctuation,
+            enable_diarization,
+            byref(self._handle))
         if status is not self.PicovoiceStatuses.SUCCESS:
-            raise self._PICOVOICE_STATUS_TO_EXCEPTION[status]()
+            raise self._PICOVOICE_STATUS_TO_EXCEPTION[status](
+                message='Initialization failed',
+                message_stack=self._get_error_stack())
 
         self._delete_func = library.pv_leopard_delete
         self._delete_func.argtypes = [POINTER(self.CLeopard)]
@@ -201,7 +247,7 @@ class Leopard(object):
         ]
         self._words_delete_func.restype = None
 
-    Word = namedtuple('Word', ['word', 'start_sec', 'end_sec', 'confidence'])
+    Word = namedtuple('Word', ['word', 'start_sec', 'end_sec', 'confidence', 'speaker_tag'])
 
     def process(self, pcm: Sequence[int]) -> Tuple[str, Sequence[Word]]:
         """
@@ -227,7 +273,9 @@ class Leopard(object):
             byref(num_words),
             byref(c_words))
         if status is not self.PicovoiceStatuses.SUCCESS:
-            raise self._PICOVOICE_STATUS_TO_EXCEPTION[status]()
+            raise self._PICOVOICE_STATUS_TO_EXCEPTION[status](
+                message='Process failed',
+                message_stack=self._get_error_stack())
 
         transcript = c_transcript.value.decode('utf-8')
         self._transcript_delete_func(c_transcript)
@@ -238,7 +286,8 @@ class Leopard(object):
                 word=c_words[i].word.decode('utf-8'),
                 start_sec=c_words[i].start_sec,
                 end_sec=c_words[i].end_sec,
-                confidence=c_words[i].confidence)
+                confidence=c_words[i].confidence,
+                speaker_tag=c_words[i].speaker_tag)
             words.append(word)
 
         self._words_delete_func(c_words)
@@ -267,12 +316,9 @@ class Leopard(object):
             byref(num_words),
             byref(c_words))
         if status is not self.PicovoiceStatuses.SUCCESS:
-            if status is self.PicovoiceStatuses.INVALID_ARGUMENT:
-                if not audio_path.lower().endswith(self._VALID_EXTENSIONS):
-                    raise self._PICOVOICE_STATUS_TO_EXCEPTION[status](
-                        "Specified file with extension '%s' is not supported" % pathlib.Path(audio_path).suffix
-                    )
-            raise self._PICOVOICE_STATUS_TO_EXCEPTION[status]()
+            raise self._PICOVOICE_STATUS_TO_EXCEPTION[status](
+                message='Process file failed',
+                message_stack=self._get_error_stack())
 
         transcript = c_transcript.value.decode('utf-8')
         self._transcript_delete_func(c_transcript)
@@ -283,7 +329,8 @@ class Leopard(object):
                 word=c_words[i].word.decode('utf-8'),
                 start_sec=c_words[i].start_sec,
                 end_sec=c_words[i].end_sec,
-                confidence=c_words[i].confidence)
+                confidence=c_words[i].confidence,
+                speaker_tag=c_words[i].speaker_tag)
             words.append(word)
 
         self._words_delete_func(c_words)
@@ -306,6 +353,21 @@ class Leopard(object):
         """Audio sample rate accepted by `.process`."""
 
         return self._sample_rate
+
+    def _get_error_stack(self) -> Sequence[str]:
+        message_stack_ref = POINTER(c_char_p)()
+        message_stack_depth = c_int()
+        status = self._get_error_stack_func(byref(message_stack_ref), byref(message_stack_depth))
+        if status is not self.PicovoiceStatuses.SUCCESS:
+            raise self._PICOVOICE_STATUS_TO_EXCEPTION[status](message='Unable to get Porcupine error state')
+
+        message_stack = list()
+        for i in range(message_stack_depth.value):
+            message_stack.append(message_stack_ref[i].decode('utf-8'))
+
+        self._free_error_stack_func(message_stack_ref)
+
+        return message_stack
 
 
 __all__ = [
