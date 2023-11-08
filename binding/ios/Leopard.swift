@@ -23,6 +23,11 @@ public struct LeopardWord {
     /// Transcription confidence. It is a number within [0, 1].
     public let confidence: Float
 
+    /// The speaker tag is `-1` if diarization is not enabled during initialization;
+    /// otherwise, it's a non-negative integer identifying unique speakers, with `0` reserved for
+    /// unknown speakers.
+    public let speakerTag: Int
+
     /// Constructor.
     ///
     /// - Parameters:
@@ -30,11 +35,13 @@ public struct LeopardWord {
     ///   - startSec: Start of word in seconds.
     ///   - endSec: End of word in seconds.
     ///   - confidence: Transcription confidence. It is a number within [0, 1].
-    public init(word: String, startSec: Float, endSec: Float, confidence: Float) {
+    ///   - speakerTag: Integer identifying unique speakers, `0` reserved for unknown speakers.
+    public init(word: String, startSec: Float, endSec: Float, confidence: Float, speakerTag: Int) {
         self.word = word
         self.startSec = startSec
         self.endSec = endSec
         self.confidence = confidence
+        self.speakerTag = speakerTag
     }
 }
 
@@ -64,8 +71,14 @@ public class Leopard {
     ///   - accessKey: The AccessKey obtained from Picovoice Console (https://console.picovoice.ai).
     ///   - modelPath: Absolute path to file containing model parameters.
     ///   - enableAutomaticPunctuation: Set to `true` to enable automatic punctuation insertion.
+    ///   - enableDiarization: Set to `true` to enable speaker diarization, which allows Leopard to differentiate speakers
+    ///     as part of the transcription process. Word metadata will include a `speakerTag` to identify unique speakers.
     /// - Throws: LeopardError
-    public init(accessKey: String, modelPath: String, enableAutomaticPunctuation: Bool = false) throws {
+    public init(
+        accessKey: String,
+        modelPath: String,
+        enableAutomaticPunctuation: Bool = false,
+        enableDiarization: Bool = false) throws {
 
         if accessKey.count == 0 {
             throw LeopardInvalidArgumentError("AccessKey is required for Leopard initialization")
@@ -80,8 +93,12 @@ public class Leopard {
                 accessKey,
                 modelPathArg,
                 enableAutomaticPunctuation,
+                enableDiarization,
                 &handle)
-        try checkStatus(status, "Leopard init failed")
+        if status != PV_STATUS_SUCCESS {
+            let messageStack = try getMessageStack()
+            throw pvStatusToLeopardError(status, "Leopard init failed", messageStack)
+        }
     }
 
     /// Constructor.
@@ -90,12 +107,19 @@ public class Leopard {
     ///   - accessKey: The AccessKey obtained from Picovoice Console (https://console.picovoice.ai).
     ///   - modelURL: URL to the file containing model parameters.
     ///   - enableAutomaticPunctuation: Set to `true` to enable automatic punctuation insertion.
+    ///   - enableDiarization: Set to `true` to enable speaker diarization, which allows Leopard to differentiate speakers
+    ///     as part of the transcription process. Word metadata will include a `speakerTag` to identify unique speakers.
     /// - Throws: LeopardError
-    public convenience init(accessKey: String, modelURL: URL, enableAutomaticPunctuation: Bool = false) throws {
+    public convenience init(
+        accessKey: String,
+        modelURL: URL,
+        enableAutomaticPunctuation: Bool = false,
+        enableDiarization: Bool = false) throws {
         try self.init(
                 accessKey: accessKey,
                 modelPath: modelURL.path,
-                enableAutomaticPunctuation: enableAutomaticPunctuation)
+                enableAutomaticPunctuation: enableAutomaticPunctuation,
+                enableDiarization: enableDiarization)
     }
 
     deinit {
@@ -137,7 +161,10 @@ public class Leopard {
                 &cTranscript,
                 &numWords,
                 &cWords)
-        try checkStatus(status, "Leopard process failed")
+        if status != PV_STATUS_SUCCESS {
+            let messageStack = try getMessageStack()
+            throw pvStatusToLeopardError(status, "Leopard process failed", messageStack)
+        }
 
         let transcript = String(cString: cTranscript!)
         pv_leopard_transcript_delete(cTranscript)
@@ -149,7 +176,8 @@ public class Leopard {
                         word: String(cString: cWord.word),
                         startSec: Float(cWord.start_sec),
                         endSec: Float(cWord.end_sec),
-                        confidence: Float(cWord.confidence)
+                        confidence: Float(cWord.confidence),
+                        speakerTag: Int(cWord.speaker_tag)
                 )
                 words.append(word)
             }
@@ -185,15 +213,9 @@ public class Leopard {
                 &cTranscript,
                 &numWords,
                 &cWords)
-        do {
-            try checkStatus(status, "Leopard process failed")
-        } catch let error as LeopardInvalidArgumentError {
-            let fileExtension = (audioPath as NSString).pathExtension.lowercased()
-            if !Leopard.supportedAudioTypes.contains(fileExtension) {
-                throw LeopardInvalidArgumentError("Audio file with format '\(fileExtension)' is not supported")
-            } else {
-                throw error
-            }
+        if status != PV_STATUS_SUCCESS {
+            let messageStack = try getMessageStack()
+            throw pvStatusToLeopardError(status, "Leopard process failed", messageStack)
         }
 
         let transcript = String(cString: cTranscript!)
@@ -206,7 +228,8 @@ public class Leopard {
                         word: String(cString: cWord.word),
                         startSec: Float(cWord.start_sec),
                         endSec: Float(cWord.end_sec),
-                        confidence: Float(cWord.confidence)
+                        confidence: Float(cWord.confidence),
+                        speakerTag: Int(cWord.speaker_tag)
                 )
                 words.append(word)
             }
@@ -248,37 +271,54 @@ public class Leopard {
                 "If this is a packaged asset, ensure you have added it to your xcode project.")
     }
 
-    private func checkStatus(_ status: pv_status_t, _ message: String) throws {
-        if status == PV_STATUS_SUCCESS {
-            return
-        }
-
+    private func pvStatusToLeopardError(
+        _ status: pv_status_t,
+        _ message: String,
+        _ messageStack: [String] = []) -> LeopardError {
         switch status {
         case PV_STATUS_OUT_OF_MEMORY:
-            throw LeopardMemoryError(message)
+            return LeopardMemoryError(message, messageStack)
         case PV_STATUS_IO_ERROR:
-            throw LeopardIOError(message)
+            return LeopardIOError(message, messageStack)
         case PV_STATUS_INVALID_ARGUMENT:
-            throw LeopardInvalidArgumentError(message)
+            return LeopardInvalidArgumentError(message, messageStack)
         case PV_STATUS_STOP_ITERATION:
-            throw LeopardStopIterationError(message)
+            return LeopardStopIterationError(message, messageStack)
         case PV_STATUS_KEY_ERROR:
-            throw LeopardKeyError(message)
+            return LeopardKeyError(message, messageStack)
         case PV_STATUS_INVALID_STATE:
-            throw LeopardInvalidStateError(message)
+            return LeopardInvalidStateError(message, messageStack)
         case PV_STATUS_RUNTIME_ERROR:
-            throw LeopardRuntimeError(message)
+            return LeopardRuntimeError(message, messageStack)
         case PV_STATUS_ACTIVATION_ERROR:
-            throw LeopardActivationError(message)
+            return LeopardActivationError(message, messageStack)
         case PV_STATUS_ACTIVATION_LIMIT_REACHED:
-            throw LeopardActivationLimitError(message)
+            return LeopardActivationLimitError(message, messageStack)
         case PV_STATUS_ACTIVATION_THROTTLED:
-            throw LeopardActivationThrottledError(message)
+            return LeopardActivationThrottledError(message, messageStack)
         case PV_STATUS_ACTIVATION_REFUSED:
-            throw LeopardActivationRefusedError(message)
+            return LeopardActivationRefusedError(message, messageStack)
         default:
             let pvStatusString = String(cString: pv_status_to_string(status))
-            throw LeopardError("\(pvStatusString): \(message)")
+            return LeopardError("\(pvStatusString): \(message)", messageStack)
         }
+    }
+
+    private func getMessageStack() throws -> [String] {
+        var messageStackRef: UnsafeMutablePointer<UnsafeMutablePointer<Int8>?>?
+        var messageStackDepth: Int32 = 0
+        let status = pv_get_error_stack(&messageStackRef, &messageStackDepth)
+        if status != PV_STATUS_SUCCESS {
+            throw pvStatusToLeopardError(status, "Unable to get Leopard error state")
+        }
+
+        var messageStack: [String] = []
+        for i in 0..<messageStackDepth {
+            messageStack.append(String(cString: messageStackRef!.advanced(by: Int(i)).pointee!))
+        }
+
+        pv_free_error_stack(messageStackRef)
+
+        return messageStack
     }
 }
