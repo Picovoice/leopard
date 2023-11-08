@@ -169,13 +169,20 @@ Once the audio has been processed, the transcript will be available in the [`res
 
 #### Record Audio
 
-Leopard React binding uses [WebVoiceProcessor](https://github.com/Picovoice/web-voice-processor) to record audio. To start recording audio for a transcription, call `startRecording`:
+Leopard React binding uses [WebVoiceProcessor](https://github.com/Picovoice/web-voice-processor) to record audio. To start recording audio, call `startRecording`:
 
 ```typescript
 await startRecording();
 ```
 
 If `WebVoiceProcessor` has started correctly, `isRecording` will be set to true.
+
+**Note**: By default, Leopard will only record for 2 minutes before stopping and processing the recording. This is to prevent buffer overflow. To increase this limit, call `startRecording` with the optional `maxRecordingSec` parameter:
+
+```typescript
+const maxRecordingSec = 60 * 10 
+await startRecording(maxRecordingSec)
+```
 
 Call `stopRecording` to stop recording audio:
 
