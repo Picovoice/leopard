@@ -1,7 +1,9 @@
 /*
     Copyright 2022-2023 Picovoice Inc.
+
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
+
     Unless required by applicable law or agreed to in writing, software distributed under the
     License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
     express or implied. See the License for the specific language governing permissions and
@@ -10,9 +12,6 @@
 
 package ai.picovoice.leopard;
 
-/**
- * Class that contains transcription results returned from Leopard.
- */
 public class LeopardTranscript {
 
     private final String transcriptString;
@@ -47,14 +46,12 @@ public class LeopardTranscript {
         return wordArray;
     }
 
-    /**
-     * Class for storing word metadata from Leopard.
-     */
     public static class Word {
         private final String word;
         private final float confidence;
         private final float startSec;
         private final float endSec;
+        private final int speakerTag;
 
         /**
          * Constructor.
@@ -63,12 +60,14 @@ public class LeopardTranscript {
          * @param confidence Transcription confidence. It is a number within [0, 1].
          * @param startSec   Start of word in seconds.
          * @param endSec     End of word in seconds.
+         * @param speakerTag Speaker tag. It is set to `-1` if speaker diarization is not enabled during initialization.
          */
-        public Word(String word, float confidence, float startSec, float endSec) {
+        public Word(String word, float confidence, float startSec, float endSec, int speakerTag) {
             this.word = word;
             this.confidence = confidence;
             this.startSec = startSec;
             this.endSec = endSec;
+            this.speakerTag = speakerTag;
         }
 
         /**
@@ -105,6 +104,15 @@ public class LeopardTranscript {
          */
         public float getEndSec() {
             return endSec;
+        }
+
+        /**
+         * Getter for the speaker tag.
+         *
+         * @return Speaker tag.
+         */
+        public int getSpeakerTag() {
+            return speakerTag;
         }
     }
 }
