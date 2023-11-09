@@ -105,7 +105,7 @@ const leopardModel = {
 Set `enableAutomaticPunctuation` to true, if you wish to enable punctuation in transcript.
 
 ```typescript
-// Optional, these are default
+// Optional
 const options = {
   enableAutomaticPunctuation: true
 }
@@ -153,10 +153,10 @@ console.log(result.words);
 For processing using worker, you may consider transferring the buffer instead for performance:
 
 ```typescript
-const pcm = new Int16Array();
+let pcm = new Int16Array();
 const result = await handle.process(pcm, {
   transfer: true,
-  transferCallback: (data) => {pcm = data}
+  transferCallback: (data) => { pcm = data }
 });
 console.log(result.transcript);
 console.log(result.words);
