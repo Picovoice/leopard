@@ -63,6 +63,7 @@ typedef struct {
     float start_sec;
     float end_sec;
     float confidence;
+	int32_t speaker_tag;
 } pv_word_t;
 
 typedef int32_t (*pv_leopard_sample_rate_func)();
@@ -81,6 +82,7 @@ typedef int32_t (*pv_leopard_init_func)(
     const char *access_key,
     const char *model_path,
     bool enable_punctuation_detection,
+	bool enable_diarization,
     void **object);
 
 int32_t pv_leopard_init_wrapper(
@@ -88,11 +90,13 @@ int32_t pv_leopard_init_wrapper(
     const char *access_key,
     const char *model_path,
     bool enable_punctuation_detection,
+	bool enable_diarization,
     void **object) {
     return ((pv_leopard_init_func) f)(
         access_key,
         model_path,
         enable_punctuation_detection,
+		enable_diarization,
         object);
 }
 
@@ -161,6 +165,29 @@ void pv_leopard_words_delete_wrapper(void *f, pv_word_t *words) {
 	return ((pv_leopard_words_delete_func) f)(words);
 }
 
+typedef void (*pv_set_sdk_func)(const char *);
+
+void pv_set_sdk_wrapper(void *f, const char *sdk) {
+	return ((pv_set_sdk_func) f)(sdk);
+}
+
+typedef int32_t (*pv_get_error_stack_func)(char ***, int32_t *);
+
+int32_t pv_get_error_stack_wrapper(
+	void *f,
+	char ***message_stack,
+	int32_t *message_stack_depth) {
+	return ((pv_get_error_stack_func) f)(message_stack, message_stack_depth);
+}
+
+typedef void (*pv_free_error_stack_func)(char **);
+
+void pv_free_error_stack_wrapper(
+	void *f,
+	char **message_stack) {
+	return ((pv_free_error_stack_func) f)(message_stack);
+}
+
 */
 import "C"
 
@@ -175,6 +202,7 @@ type nativeLeopardInterface interface {
 	nativeDelete(*Leopard)
 	nativeSampleRate()
 	nativeVersion()
+	nativeGetErrorStack()
 }
 type nativeLeopardType struct {
 	libraryHandle                    unsafe.Pointer
@@ -186,6 +214,9 @@ type nativeLeopardType struct {
 	pv_leopard_words_delete_ptr      unsafe.Pointer
 	pv_leopard_version_ptr           unsafe.Pointer
 	pv_sample_rate_ptr               unsafe.Pointer
+	pv_set_sdk_ptr                   unsafe.Pointer
+	pv_get_error_stack_ptr           unsafe.Pointer
+	pv_free_error_stack_ptr          unsafe.Pointer
 }
 
 func (nl *nativeLeopardType) nativeInit(leopard *Leopard) (status PvStatus) {
@@ -194,6 +225,7 @@ func (nl *nativeLeopardType) nativeInit(leopard *Leopard) (status PvStatus) {
 		modelPathC                  = C.CString(leopard.ModelPath)
 		libraryPathC                = C.CString(leopard.LibraryPath)
 		enableAutomaticPunctuationC = C.bool(leopard.EnableAutomaticPunctuation)
+		enableDiarizationC          = C.bool(leopard.EnableDiarization)
 	)
 	defer C.free(unsafe.Pointer(accessKeyC))
 	defer C.free(unsafe.Pointer(modelPathC))
@@ -208,12 +240,20 @@ func (nl *nativeLeopardType) nativeInit(leopard *Leopard) (status PvStatus) {
 	nl.pv_leopard_words_delete_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_leopard_words_delete"))
 	nl.pv_leopard_version_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_leopard_version"))
 	nl.pv_sample_rate_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_sample_rate"))
+	nl.pv_set_sdk_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_set_sdk"))
+	nl.pv_get_error_stack_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_get_error_stack"))
+	nl.pv_free_error_stack_ptr = C.load_symbol(nl.libraryHandle, C.CString("pv_free_error_stack"))
+
+	C.pv_set_sdk_wrapper(
+		nl.pv_set_sdk_ptr,
+		C.CString("go"))
 
 	var ret = C.pv_leopard_init_wrapper(
 		nl.pv_leopard_init_ptr,
 		accessKeyC,
 		modelPathC,
 		enableAutomaticPunctuationC,
+		enableDiarizationC,
 		&leopard.handle)
 
 	return PvStatus(ret)
@@ -251,6 +291,7 @@ func (nl *nativeLeopardType) nativeProcess(leopard *Leopard, pcm []int16) (statu
 				StartSec:   float32(cWords[i].start_sec),
 				EndSec:     float32(cWords[i].end_sec),
 				Confidence: float32(cWords[i].confidence),
+				SpeakerTag: int32(cWords[i].speaker_tag),
 			}
 			words = append(words, n)
 		}
@@ -290,6 +331,7 @@ func (nl *nativeLeopardType) nativeProcessFile(leopard *Leopard, audioPath strin
 				StartSec:   float32(cWords[i].start_sec),
 				EndSec:     float32(cWords[i].end_sec),
 				Confidence: float32(cWords[i].confidence),
+				SpeakerTag: int32(cWords[i].speaker_tag),
 			}
 			words = append(words, n)
 		}
@@ -307,4 +349,33 @@ func (nl *nativeLeopardType) nativeSampleRate() (sampleRate int) {
 
 func (nl *nativeLeopardType) nativeVersion() (version string) {
 	return C.GoString(C.pv_leopard_version_wrapper(nl.pv_leopard_version_ptr))
+}
+
+func (nl *nativeLeopardType) nativeGetErrorStack() (status PvStatus, messageStack []string) {
+	var messageStackDepthRef C.int32_t
+	var messageStackRef **C.char
+
+	var ret = C.pv_get_error_stack_wrapper(
+		nl.pv_get_error_stack_ptr,
+		&messageStackRef,
+		&messageStackDepthRef)
+
+	if PvStatus(ret) != SUCCESS {
+		return PvStatus(ret), []string{}
+	}
+
+	defer C.pv_free_error_stack_wrapper(
+		nl.pv_free_error_stack_ptr,
+		messageStackRef)
+
+	messageStackDepth := int(messageStackDepthRef)
+	messageStackSlice := (*[1 << 28]*C.char)(unsafe.Pointer(messageStackRef))[:messageStackDepth:messageStackDepth]
+
+	messageStack = make([]string, messageStackDepth)
+
+	for i := 0; i < messageStackDepth; i++ {
+		messageStack[i] = C.GoString(messageStackSlice[i])
+	}
+
+	return PvStatus(ret), messageStack
 }
