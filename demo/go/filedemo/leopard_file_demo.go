@@ -17,7 +17,7 @@ import (
 	"os"
 	"path/filepath"
 
-	leopard "github.com/Picovoice/leopard/binding/go"
+	leopard "github.com/Picovoice/leopard/binding/go/v2"
 )
 
 func main() {

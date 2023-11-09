@@ -19,7 +19,7 @@ import (
 	"os/signal"
 	"path/filepath"
 
-	leopard "github.com/Picovoice/leopard/binding/go"
+	leopard "github.com/Picovoice/leopard/binding/go/v2"
 	pvrecorder "github.com/Picovoice/pvrecorder/binding/go"
 )
 
