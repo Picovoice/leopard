@@ -156,6 +156,7 @@ describe('Leopard binding', () => {
         cy.wrapHook(result.current.stopRecording).then(() => {
           const transcript = result.current.result?.transcript;
           expect(transcript).to.be.eq(testInfo.transcript);
+          expect(result.current.isRecording).to.be.false;
           result.current.result?.words.forEach(
             ({ word, startSec, endSec, confidence }) => {
               const wordRegex = new RegExp(`${word}`, 'i');
@@ -163,7 +164,6 @@ describe('Leopard binding', () => {
               expect(startSec).to.be.gt(0);
               expect(endSec).to.be.gt(0);
               expect(confidence).to.be.gt(0).and.lt(1);
-              expect(result.current.isRecording).to.be.false;
             }
           );
         });
