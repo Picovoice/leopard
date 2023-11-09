@@ -1,5 +1,5 @@
 //
-//  Copyright 2022 Picovoice Inc.
+//  Copyright 2022-2023 Picovoice Inc.
 //  You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 //  file accompanying this source.
 //  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
@@ -59,23 +59,27 @@ extension String {
 }
 
 struct TestData: Decodable {
-    var tests: TestDataTests
+    var language_tests: [LanguageTest]
+    var diarization_tests: [DiarizationTest]
 }
 
-struct TestDataTests: Decodable {
-    var parameters: [ParametersTest]
-}
-
-struct ParametersTest: Decodable {
+struct LanguageTest: Decodable {
     var language: String
     var audio_file: String
     var transcript: String
-    var punctuations: [String]
+    var transcript_with_punctuation: String
     var error_rate: Float
+    var words: [LeopardWord]
+}
+
+struct DiarizationTest: Decodable {
+    var language: String
+    var audio_file: String
+    var words: [LeopardWord]
 }
 
 class LeopardAppTestUITests: XCTestCase {
-    let accessKey: String = "lKSJs5JO3IOSiAs7QM6ygNGwpudqWYZ0nOTnwAzZOvpqna9KoM/m2A=="
+    let accessKey: String = "{TESTING_ACCESS_KEY_HERE}"
 
     override func setUp() {
         super.setUp()
@@ -94,41 +98,40 @@ class LeopardAppTestUITests: XCTestCase {
         return Float(transcript.levenshtein(expectedTranscript)) / Float(expectedTranscript.count)
     }
 
-    func validateMetadata(transcript: String, words: [LeopardWord], audioLength: Float) {
+    func validateMetadata(words: [LeopardWord], expectedWords: [LeopardWord], enableDiarization: Bool) {
         let normTranscript = transcript.uppercased()
-        for word in words {
-            XCTAssert(normTranscript.contains(word.word.uppercased()))
-            XCTAssert(word.startSec > 0.0)
-            XCTAssert(word.startSec <= word.endSec)
-            XCTAssert(word.endSec < audioLength)
-            XCTAssert(word.confidence >= 0.0 && word.confidence <= 1.0)
+        for i in 0...words.count {
+            XCTAssert(words[i].word == expectedWords[i].word)
+            XCTAssert(abs(words[i].startSec - expectedWords[i].startSec) < 0.01)
+            XCTAssert(abs(words[i].endSec - expectedWords[i].endSec) < 0.01)
+            XCTAssert(abs(words[i].confidence - expectedWords[i].confidence) < 0.01)
+            if enableDiarization {
+                XCTAssert(words[i].speakerTag == expectedWords[i].speakerTag)
+            } else {
+                XCTAssert(words[i].speakerTag == -1)
+            }
         }
     }
 
     func runTestProcess(
             modelPath: String,
-            transcript: String,
-            punctuations: [String],
-            testPunctuation: Bool,
-            errorRate: Float,
-            testAudio: String) throws {
+            expectedWords: [LeopardWord],
+            testAudio: String,
+            expectedTranscript: String? = nil,
+            errorRate: Float = -1.0,
+            enableAutomaticPunctuation: Bool = false,
+            enableDiarization: Bool = false) throws {
         let bundle = Bundle(for: type(of: self))
         let audioFileURL: URL = bundle.url(
                 forResource: testAudio,
                 withExtension: "",
                 subdirectory: "test_resources/audio_samples")!
 
-        var normTranscript = transcript
-        if !testPunctuation {
-            for punctuation in punctuations {
-                normTranscript = normTranscript.replacingOccurrences(of: punctuation, with: "")
-            }
-        }
-
         let leopard = try? Leopard(
                 accessKey: accessKey,
                 modelPath: modelPath,
-                enableAutomaticPunctuation: testPunctuation)
+                enableAutomaticPunctuation: enableAutomaticPunctuation,
+                enableDiarization: enableDiarization)
 
         let data = try Data(contentsOf: audioFileURL)
         var pcmBuffer = [Int16](repeating: 0, count: (data.count / MemoryLayout<Int16>.size))
@@ -139,37 +142,34 @@ class LeopardAppTestUITests: XCTestCase {
         let result = try leopard!.process(pcmBuffer)
         leopard!.delete()
 
-        XCTAssert(characterErrorRate(transcript: result.transcript, expectedTranscript: normTranscript) < errorRate)
+        if errorRate != -1.0 && expectedTranscript != nil {
+            XCTAssert(characterErrorRate(transcript: result.transcript, expectedTranscript: expectedTranscript) < errorRate)
+        }
         validateMetadata(
-                transcript: result.transcript,
                 words: result.words,
-                audioLength: Float(pcmBuffer.count) / Float(Leopard.sampleRate))
+                expectedWords: expectedWords,
+                enableDiarization: false)
     }
 
     func runTestProcessFile(
             modelPath: String,
-            transcript: String,
-            punctuations: [String],
-            testPunctuation: Bool,
-            errorRate: Float,
-            testAudio: String) throws {
+            expectedWords: [LeopardWord],
+            testAudio: String,
+            expectedTranscript: String? = nil,
+            errorRate: Float = -1.0,
+            enableAutomaticPunctuation: Bool = false,
+            enableDiarization: Bool = false) throws {
         let bundle = Bundle(for: type(of: self))
         let audioFileURL: URL = bundle.url(
                 forResource: testAudio,
                 withExtension: "",
                 subdirectory: "test_resources/audio_samples")!
 
-        var normTranscript = transcript
-        if !testPunctuation {
-            for punctuation in punctuations {
-                normTranscript = normTranscript.replacingOccurrences(of: punctuation, with: "")
-            }
-        }
-
         let leopard = try? Leopard(
                 accessKey: accessKey,
                 modelPath: modelPath,
-                enableAutomaticPunctuation: testPunctuation)
+                enableAutomaticPunctuation: enableAutomaticPunctuation,
+                enableDiarization: enableDiarization)
 
         let data = try Data(contentsOf: audioFileURL)
         var pcmBuffer = [Int16](repeating: 0, count: (data.count / MemoryLayout<Int16>.size))
@@ -184,37 +184,34 @@ class LeopardAppTestUITests: XCTestCase {
         let result = try leopard!.processFile(audioFilePath)
         leopard!.delete()
 
-        XCTAssert(characterErrorRate(transcript: result.transcript, expectedTranscript: normTranscript) < errorRate)
+        if errorRate != -1.0 && expectedTranscript != nil {
+            XCTAssert(characterErrorRate(transcript: result.transcript, expectedTranscript: expectedTranscript) < errorRate)
+        }
         validateMetadata(
-                transcript: result.transcript,
                 words: result.words,
-                audioLength: Float(pcmBuffer.count) / Float(Leopard.sampleRate))
+                expectedWords: expectedWords,
+                enableDiarization: false)
     }
 
     func runTestProcessURL(
             modelURL: URL,
-            transcript: String,
-            punctuations: [String],
-            testPunctuation: Bool,
-            errorRate: Float,
-            testAudio: String) throws {
+            expectedWords: [LeopardWord],
+            testAudio: String,
+            expectedTranscript: String? = nil,
+            errorRate: Float = -1.0,
+            enableAutomaticPunctuation: Bool = false,
+            enableDiarization: Bool = false) throws {
         let bundle = Bundle(for: type(of: self))
         let audioFileURL: URL = bundle.url(
                 forResource: testAudio,
                 withExtension: "",
                 subdirectory: "test_resources/audio_samples")!
 
-        var normTranscript = transcript
-        if !testPunctuation {
-            for punctuation in punctuations {
-                normTranscript = normTranscript.replacingOccurrences(of: punctuation, with: "")
-            }
-        }
-
         let leopard = try? Leopard(
                 accessKey: accessKey,
                 modelURL: modelURL,
-                enableAutomaticPunctuation: testPunctuation)
+                enableAutomaticPunctuation: enableAutomaticPunctuation,
+                enableDiarization: enableDiarization)
 
         let data = try Data(contentsOf: audioFileURL)
         var pcmBuffer = [Int16](repeating: 0, count: (data.count / MemoryLayout<Int16>.size))
@@ -225,11 +222,13 @@ class LeopardAppTestUITests: XCTestCase {
         let result = try leopard!.processFile(audioFileURL)
         leopard!.delete()
 
-        XCTAssert(characterErrorRate(transcript: result.transcript, expectedTranscript: normTranscript) < errorRate)
+        if errorRate != -1.0 && expectedTranscript != nil {
+            XCTAssert(characterErrorRate(transcript: result.transcript, expectedTranscript: expectedTranscript) < errorRate)
+        }
         validateMetadata(
-                transcript: result.transcript,
                 words: result.words,
-                audioLength: Float(pcmBuffer.count) / Float(Leopard.sampleRate))
+                expectedWords: expectedWords,
+                enableDiarization: false)
     }
 
     func testProcess() throws {
@@ -241,7 +240,7 @@ class LeopardAppTestUITests: XCTestCase {
         let testDataJsonData = try Data(contentsOf: testDataJsonUrl)
         let testData = try JSONDecoder().decode(TestData.self, from: testDataJsonData)
 
-        for testCase in testData.tests.parameters {
+        for testCase in testData.language_tests {
             let suffix = testCase.language == "en" ? "" : "_\(testCase.language)"
             let modelPath: String = bundle.path(
                 forResource: "leopard_params\(suffix)",
@@ -251,11 +250,10 @@ class LeopardAppTestUITests: XCTestCase {
             try XCTContext.runActivity(named: "(\(testCase.language))") { _ in
                 try runTestProcess(
                         modelPath: modelPath,
-                        transcript: testCase.transcript,
-                        punctuations: testCase.punctuations,
-                        testPunctuation: false,
-                        errorRate: testCase.error_rate,
-                        testAudio: testCase.audio_file)
+                        expectedWords: testCase.words,
+                        testAudio: testCase.audio_file,
+                        expectedTranscript: testCase.transcript,
+                        errorRate: testCase.error_rate)
             }
         }
     }
@@ -269,7 +267,7 @@ class LeopardAppTestUITests: XCTestCase {
         let testDataJsonData = try Data(contentsOf: testDataJsonUrl)
         let testData = try JSONDecoder().decode(TestData.self, from: testDataJsonData)
 
-        for testCase in testData.tests.parameters {
+        for testCase in testData.language_tests {
             let suffix = testCase.language == "en" ? "" : "_\(testCase.language)"
             let modelPath: String = bundle.path(
                 forResource: "leopard_params\(suffix)",
@@ -279,11 +277,11 @@ class LeopardAppTestUITests: XCTestCase {
             try XCTContext.runActivity(named: "(\(testCase.language))") { _ in
                 try runTestProcess(
                         modelPath: modelPath,
-                        transcript: testCase.transcript,
-                        punctuations: testCase.punctuations,
-                        testPunctuation: true,
+                        expectedWords: testCase.words,
+                        testAudio: testCase.audio_file,
+                        expectedTranscript: testCase.transcript_with_punctuation,
                         errorRate: testCase.error_rate,
-                        testAudio: testCase.audio_file)
+                        enableAutomaticPunctuation: true)
             }
         }
     }
@@ -297,7 +295,7 @@ class LeopardAppTestUITests: XCTestCase {
         let testDataJsonData = try Data(contentsOf: testDataJsonUrl)
         let testData = try JSONDecoder().decode(TestData.self, from: testDataJsonData)
 
-        for testCase in testData.tests.parameters {
+        for testCase in testData.language_tests {
             let suffix = testCase.language == "en" ? "" : "_\(testCase.language)"
             let modelPath: String = bundle.path(
                 forResource: "leopard_params\(suffix)",
@@ -307,11 +305,10 @@ class LeopardAppTestUITests: XCTestCase {
             try XCTContext.runActivity(named: "(\(testCase.language))") { _ in
                 try runTestProcessFile(
                         modelPath: modelPath,
-                        transcript: testCase.transcript,
-                        punctuations: testCase.punctuations,
-                        testPunctuation: false,
-                        errorRate: testCase.error_rate,
-                        testAudio: testCase.audio_file)
+                        expectedWords: testCase.words,
+                        testAudio: testCase.audio_file,
+                        expectedTranscript: testCase.transcript,
+                        errorRate: testCase.error_rate)
             }
         }
     }
@@ -325,7 +322,7 @@ class LeopardAppTestUITests: XCTestCase {
         let testDataJsonData = try Data(contentsOf: testDataJsonUrl)
         let testData = try JSONDecoder().decode(TestData.self, from: testDataJsonData)
 
-        for testCase in testData.tests.parameters {
+        for testCase in testData.language_tests {
             let suffix = testCase.language == "en" ? "" : "_\(testCase.language)"
             let modelURL: URL = bundle.url(
                 forResource: "leopard_params\(suffix)",
@@ -335,11 +332,62 @@ class LeopardAppTestUITests: XCTestCase {
             try XCTContext.runActivity(named: "(\(testCase.language))") { _ in
                 try runTestProcessURL(
                         modelURL: modelURL,
-                        transcript: testCase.transcript,
-                        punctuations: testCase.punctuations,
-                        testPunctuation: false,
-                        errorRate: testCase.error_rate,
-                        testAudio: testCase.audio_file)
+                        expectedWords: testCase.words,
+                        testAudio: testCase.audio_file,
+                        expectedTranscript: testCase.transcript,
+                        errorRate: testCase.error_rate)
+            }
+        }
+    }
+
+    func testProcessFileWithDiarization() throws {
+        let bundle = Bundle(for: type(of: self))
+        let testDataJsonUrl = bundle.url(
+            forResource: "test_data",
+            withExtension: "json",
+            subdirectory: "test_resources")!
+        let testDataJsonData = try Data(contentsOf: testDataJsonUrl)
+        let testData = try JSONDecoder().decode(TestData.self, from: testDataJsonData)
+
+        for testCase in testData.language_tests {
+            let suffix = testCase.language == "en" ? "" : "_\(testCase.language)"
+            let modelPath: String = bundle.path(
+                forResource: "leopard_params\(suffix)",
+                ofType: "pv",
+                inDirectory: "test_resources/model_files")!
+
+            try XCTContext.runActivity(named: "(\(testCase.language))") { _ in
+                try runTestProcessFile(
+                        modelPath: modelPath,
+                        expectedWords: testCase.words,
+                        testAudio: testCase.audio_file,
+                        enableDiarization: true)
+            }
+        }
+    }
+
+    func testDiarizationMultipleSpeakers() throws {
+        let bundle = Bundle(for: type(of: self))
+        let testDataJsonUrl = bundle.url(
+            forResource: "test_data",
+            withExtension: "json",
+            subdirectory: "test_resources")!
+        let testDataJsonData = try Data(contentsOf: testDataJsonUrl)
+        let testData = try JSONDecoder().decode(TestData.self, from: testDataJsonData)
+
+        for testCase in testData.diarization_tests {
+            let suffix = testCase.language == "en" ? "" : "_\(testCase.language)"
+            let modelPath: String = bundle.path(
+                forResource: "leopard_params\(suffix)",
+                ofType: "pv",
+                inDirectory: "test_resources/model_files")!
+
+            try XCTContext.runActivity(named: "(\(testCase.language))") { _ in
+                try runTestProcessFile(
+                        modelPath: modelPath,
+                        expectedWords: testCase.words,
+                        testAudio: testCase.audio_file,
+                        enableDiarization: true)
             }
         }
     }
