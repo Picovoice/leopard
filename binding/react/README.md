@@ -106,31 +106,22 @@ const options = {
 }
 ```
 
-For processing, you may also consider transferring the buffer for performance:
-
-```typescript
-const processOptions = {
-  transfer: true,
-  transferCallback: (data) => { pcm = data }
-}
-```
-
 ### Initialize Leopard
 
 Use `useLeopard` and `init` to initialize `Leopard`:
 
 ```typescript
 const {
-  init,
+  result,
   isLoaded,
+  error,
+  init,
   processFile,
   startRecording,
   stopRecording,
   isRecording,
   recordingElapsedSec,
-  result,
   release,
-  error,
 } = useLeopard();
 
 const initLeopard = async () => {
@@ -138,16 +129,15 @@ const initLeopard = async () => {
     "${ACCESS_KEY}",
     leopardModel,
     options,
-    processOptions
-  )
+  );
 }
 ```
 
 In case of any errors, use the `error` state variable to check the error message. Use the `isLoaded` state variable to check if `Leopard` has loaded. 
 
-### Process Audio Frames
+### Transcribe Audio
 
-The audio that you want to transcribe can either be uploaded as a File object or recorded.
+The audio that you want to transcribe can either be uploaded as a `File` object or recorded with a microphone.
 
 #### File Object
 
@@ -177,7 +167,7 @@ await startRecording();
 
 If `WebVoiceProcessor` has started correctly, `isRecording` will be set to true.
 
-**Note**: By default, Leopard will only record for 2 minutes before stopping and processing the recording. This is to prevent buffer overflow. To increase this limit, call `startRecording` with the optional `maxRecordingSec` parameter:
+**Note**: By default, Leopard will only record for 2 minutes before stopping and processing the buffered audio. This is to prevent unbounded memory usage. To increase this limit, call `startRecording` with the optional `maxRecordingSec` parameter:
 
 ```typescript
 const maxRecordingSec = 60 * 10 
@@ -216,7 +206,7 @@ While running in a component, you can call `release` to clean up all resources u
 await release();
 ```
 
-This will set `isLoaded` and `isRecording` to false and `error` to null.
+This will set `isLoaded` and `isRecording` to false, `recordingElapsedSec` to 0, and `error` to null.
 
 If any arguments require changes, call `release`, then `init` again to initialize Leopard with the new settings.
 

@@ -1,22 +1,23 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useState, useRef } from "react";
 import { useLeopard } from "@picovoice/leopard-react";
 
 import leopardModel from "./lib/leopardModel";
 
 export default function VoiceWidget() {
   const accessKeyRef = useRef<string>("");
+  const [isBusy, setIsBusy] = useState(false);
 
   const {
-    init,
     result,
     isLoaded,
+    error,
+    init,
     processFile,
     startRecording,
     stopRecording,
     isRecording,
     recordingElapsedSec,
     release,
-    error,
   } = useLeopard();
 
   const initEngine = useCallback(async () => {
@@ -24,24 +25,25 @@ export default function VoiceWidget() {
       return;
     }
 
+    setIsBusy(true);
     await init(
       accessKeyRef.current,
       leopardModel,
       {
         enableAutomaticPunctuation: true,
-      },
-      {
-        transfer: true,
       }
     );
+    setIsBusy(false);
   }, [init]);
 
   const toggleRecord = async () => {
+    setIsBusy(true);
     if (isRecording) {
       await stopRecording();
     } else {
       await startRecording();
     }
+    setIsBusy(false);
   };
 
   return (
@@ -54,6 +56,7 @@ export default function VoiceWidget() {
           <input
             type="text"
             name="accessKey"
+            disabled={isLoaded || isBusy}
             onChange={(e) => {
               accessKeyRef.current = e.target.value;
             }}
@@ -61,14 +64,14 @@ export default function VoiceWidget() {
           <button
             className="init-button"
             onClick={initEngine}
-            disabled={isLoaded}
+            disabled={isLoaded || isBusy}
           >
             Init Leopard
           </button>
           <button
             className="release-button"
             onClick={release}
-            disabled={error !== null || !isLoaded}
+            disabled={!isLoaded || isBusy}
           >
             Release
           </button>
@@ -87,9 +90,12 @@ export default function VoiceWidget() {
         name="audio-file"
         onChange={async (e) => {
           if (!!e.target.files?.length) {
+            setIsBusy(true);
             await processFile(e.target.files[0]);
+            setIsBusy(false);
           }
         }}
+        disabled={!isLoaded || isBusy}
       />
       <p>
         <b>OR</b>
@@ -100,7 +106,7 @@ export default function VoiceWidget() {
       <span>{recordingElapsedSec}s</span>
       <br />
       <br />
-      <button id="record-audio" onClick={toggleRecord}>
+      <button id="record-audio" onClick={toggleRecord} disabled={!isLoaded || isBusy}>
         {isRecording ? "Stop Recording" : "Start Recording"}
       </button>
       <h3>Transcript:</h3>

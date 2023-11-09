@@ -1,14 +1,14 @@
-// /*
-//   Copyright 2023 Picovoice Inc.
-//
-//   You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
-//   file accompanying this source.
-//
-//   Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
-//   an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
-//   specific language governing permissions and limitations under the License.
-// */
-//
+/*
+  Copyright 2023 Picovoice Inc.
+
+  You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
+  file accompanying this source.
+
+  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+  an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+  specific language governing permissions and limitations under the License.
+*/
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { WebVoiceProcessor } from '@picovoice/web-voice-processor';
 import {
@@ -27,11 +27,7 @@ export const useLeopard = (): {
   init: (
     accessKey: string,
     model: LeopardModel,
-    options?: LeopardOptions,
-    processOptions?: {
-      transfer?: boolean;
-      transferCallback?: (data: Int16Array) => void;
-    }
+    options?: LeopardOptions
   ) => Promise<void>;
   processFile: (file: File) => Promise<void>;
   startRecording: (maxRecordingSec?: number) => Promise<void>;
@@ -48,8 +44,7 @@ export const useLeopard = (): {
 
   const leopardRef = useRef<LeopardWorker | null>(null);
   const audioDataRef = useRef<Int16Array[]>([]);
-  const processOptionsRef = useRef({});
-  const timerRef = useRef<null | ReturnType<typeof setTimeout>>(null);
+  const timerRef = useRef<null | ReturnType<typeof setInterval>>(null);
   const recorderEngineRef = useRef({
     onmessage: (event: any) => {
       switch (event.data.command) {
@@ -66,11 +61,7 @@ export const useLeopard = (): {
     async (
       accessKey: string,
       model: LeopardModel,
-      options: LeopardOptions = {},
-      processOptions: {
-        transfer?: boolean;
-        transferCallback?: (data: Int16Array) => void;
-      } = {}
+      options: LeopardOptions = {}
     ): Promise<void> => {
       try {
         if (!leopardRef.current) {
@@ -80,7 +71,6 @@ export const useLeopard = (): {
             options
           );
 
-          processOptionsRef.current = processOptions;
           setIsLoaded(true);
           setError(null);
         }
@@ -100,10 +90,9 @@ export const useLeopard = (): {
         return;
       }
 
-      const processResult = await leopardRef.current.process(
-        pcm,
-        processOptionsRef.current
-      );
+      const processResult = await leopardRef.current.process(pcm, {
+        transfer: true,
+      });
       setResult(processResult);
     } catch (e: any) {
       setError(e);
@@ -160,24 +149,29 @@ export const useLeopard = (): {
 
   const stopRecording = useCallback(async (): Promise<void> => {
     try {
+      if (!isRecording) {
+        return;
+      }
+
       if (timerRef.current) {
         clearInterval(timerRef.current);
-
-        await WebVoiceProcessor.unsubscribe(recorderEngineRef.current);
-        setIsRecording(false);
-
-        const frames = new Int16Array(audioDataRef.current.length * 512);
-        for (let i = 0; i < audioDataRef.current.length; i++) {
-          frames.set(audioDataRef.current[i], i * 512);
-        }
-        await process(frames);
-
-        audioDataRef.current = [];
+        timerRef.current = null;
       }
+
+      await WebVoiceProcessor.unsubscribe(recorderEngineRef.current);
+      setIsRecording(false);
+
+      const frames = new Int16Array(audioDataRef.current.length * 512);
+      for (let i = 0; i < audioDataRef.current.length; i++) {
+        frames.set(audioDataRef.current[i], i * 512);
+      }
+      await process(frames);
+
+      audioDataRef.current = [];
     } catch (e: any) {
       setError(e);
     }
-  }, []);
+  }, [isRecording]);
 
   const startRecording = useCallback(
     async (maxRecordingSec = DEFAULT_MAX_RECORDING_SEC): Promise<void> => {
@@ -188,8 +182,13 @@ export const useLeopard = (): {
         return;
       }
 
+      if (isRecording) {
+        return;
+      }
+
       setError(null);
       audioDataRef.current = [];
+      setRecordingElapsedSec(0);
 
       try {
         await WebVoiceProcessor.subscribe(recorderEngineRef.current);
@@ -210,7 +209,7 @@ export const useLeopard = (): {
         setError(e);
       }
     },
-    []
+    [isRecording]
   );
 
   const release = useCallback(async (): Promise<void> => {
@@ -219,9 +218,14 @@ export const useLeopard = (): {
         await WebVoiceProcessor.unsubscribe(recorderEngineRef.current);
         leopardRef.current?.terminate();
         leopardRef.current = null;
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
         setError(null);
         setIsLoaded(false);
         setIsRecording(false);
+        setRecordingElapsedSec(0);
       }
     } catch (e: any) {
       setError(e);
