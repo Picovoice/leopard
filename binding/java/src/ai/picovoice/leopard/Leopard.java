@@ -24,6 +24,8 @@ public class Leopard {
     public static final String MODEL_PATH;
     public static final String[] VALID_EXTENSIONS;
 
+    private static String sdk = "java";
+
     static {
         LIBRARY_PATH = Utils.getPackagedLibraryPath();
         MODEL_PATH = Utils.getPackagedModelPath();
@@ -39,19 +41,33 @@ public class Leopard {
      * @param modelPath                  Absolute path to the file containing Leopard model parameters.
      * @param libraryPath                Absolute path to the native Leopard library.
      * @param enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
+     * @param enableDiarization          Set to `true` to enable speaker diarization, which allows Leopard to
+     *                                   differentiate speakers as part of the transcription process. Word metadata
+     *                                   will include a `speaker_tag` to identify unique speakers.
      * @throws LeopardException if there is an error while initializing Leopard.
      */
     private Leopard(
             String accessKey,
             String modelPath,
             String libraryPath,
-            boolean enableAutomaticPunctuation) throws LeopardException {
+            boolean enableAutomaticPunctuation,
+            boolean enableDiarization) throws LeopardException {
         try {
             System.load(libraryPath);
         } catch (Exception exception) {
             throw new LeopardException(exception);
         }
-        handle = LeopardNative.init(accessKey, modelPath, enableAutomaticPunctuation);
+
+        LeopardNative.setSdk(Leopard.sdk);
+        handle = LeopardNative.init(
+                accessKey,
+                modelPath,
+                enableAutomaticPunctuation,
+                enableDiarization);
+    }
+
+    public static void setSdk(String sdk) {
+        Leopard.sdk = sdk;
     }
 
     /**
@@ -142,8 +158,8 @@ public class Leopard {
         private String accessKey = null;
         private String libraryPath = null;
         private String modelPath = null;
-
         private boolean enableAutomaticPunctuation = false;
+        private boolean enableDiarization = false;
 
         /**
          * Setter the AccessKey.

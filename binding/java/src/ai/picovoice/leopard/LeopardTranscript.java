@@ -57,6 +57,7 @@ public class LeopardTranscript {
         private final float confidence;
         private final float startSec;
         private final float endSec;
+        private final int speakerTag;
 
         /**
          * Constructor.
@@ -65,12 +66,21 @@ public class LeopardTranscript {
          * @param confidence Transcription confidence. It is a number within [0, 1].
          * @param startSec   Start of word in seconds.
          * @param endSec     End of word in seconds.
+         * @param speakerTag The speaker tag is `-1` if diarization is not enabled during initialization;
+         *                   otherwise, it's a non-negative integer identifying unique speakers, with `0` reserved
+         *                   for unknown speakers
          */
-        public Word(String word, float confidence, float startSec, float endSec) {
+        public Word(
+                String word,
+                float confidence,
+                float startSec,
+                float endSec,
+                int speakerTag) {
             this.word = word;
             this.confidence = confidence;
             this.startSec = startSec;
             this.endSec = endSec;
+            this.speakerTag = speakerTag;
         }
 
         /**
@@ -107,6 +117,15 @@ public class LeopardTranscript {
          */
         public float getEndSec() {
             return endSec;
+        }
+
+        /**
+         * Getter for the speaker tag.
+         *
+         * @return Speaker tag.
+         */
+        public int getSpeakerTag() {
+            return speakerTag;
         }
     }
 }
