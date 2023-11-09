@@ -83,7 +83,7 @@ public class LeopardTest {
 
         final JsonArray testParameters = testDataJson
                 .getAsJsonObject("tests")
-                .getAsJsonArray("parameters");
+                .getAsJsonArray("language_tests");
 
         final ArrayList<Arguments> testArgs = new ArrayList<>();
         for (int i = 0; i < testParameters.size(); i++) {
@@ -91,6 +91,7 @@ public class LeopardTest {
             final String language = testData.get("language").getAsString();
             final String testAudioFile = testData.get("audio_file").getAsString();
             final String transcript = testData.get("transcript").getAsString();
+            final String transcriptWithPunctuation = testData.get("transcriptWithPunctuation").getAsString();
             final float errorRate = testData.get("error_rate").getAsFloat();
 
             testArgs.add(Arguments.of(

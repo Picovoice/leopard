@@ -13,7 +13,7 @@
 package ai.picovoice.leopard;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * Class for the Leopard Speech-to-Text engine.
@@ -22,7 +22,7 @@ public class Leopard {
 
     public static final String LIBRARY_PATH;
     public static final String MODEL_PATH;
-    public static final String[] VALID_EXTENSIONS;
+    public static final List<String> VALID_EXTENSIONS;
 
     private static String sdk = "java";
 
@@ -43,7 +43,7 @@ public class Leopard {
      * @param enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
      * @param enableDiarization          Set to `true` to enable speaker diarization, which allows Leopard to
      *                                   differentiate speakers as part of the transcription process. Word metadata
-     *                                   will include a `speaker_tag` to identify unique speakers.
+     *                                   will include a `speakerTag` to identify unique speakers.
      * @throws LeopardException if there is an error while initializing Leopard.
      */
     private Leopard(
@@ -122,8 +122,8 @@ public class Leopard {
             return LeopardNative.processFile(handle, path);
         } catch (LeopardInvalidArgumentException e) {
             if (path.contains(".")) {
-                String extension = path.substring(path.lastIndexOf(".") + 1);
-                if (!Arrays.asList(VALID_EXTENSIONS).contains(extension)) {
+                String extension = path.substring(path.lastIndexOf(".") + 1).toLowerCase();
+                if (!VALID_EXTENSIONS.contains(extension)) {
                     throw new LeopardInvalidArgumentException(
                             String.format("Specified file with extension '%s' is not supported",
                                     extension));
@@ -202,6 +202,18 @@ public class Leopard {
         }
 
         /**
+         * Setter for enabling speaker diarization.
+         *
+         * @param enableDiarization Set to `true` to enable speaker diarization, which allows Leopard to
+         *                          differentiate speakers as part of the transcription process. Word metadata
+         *                          will include a `speakerTag` to identify unique speakers.
+         */
+        public Builder setEnableDiarization(boolean enableDiarization) {
+            this.enableDiarization = enableDiarization;
+            return this;
+        }
+
+        /**
          * Creates an instance of Leopard Speech-to-Text engine.
          */
         public Leopard build() throws LeopardException {
@@ -244,7 +256,12 @@ public class Leopard {
                 }
             }
 
-            return new Leopard(accessKey, modelPath, libraryPath, enableAutomaticPunctuation);
+            return new Leopard(
+                    accessKey,
+                    modelPath,
+                    libraryPath,
+                    enableAutomaticPunctuation,
+                    enableDiarization);
         }
     }
 }
