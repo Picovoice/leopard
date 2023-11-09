@@ -218,4 +218,4 @@ In order to transcribe non-English audio files and recordings you need to use th
 
 ## Demo
 
-[//]: # (For example usage refer to our [React demo application]&#40;https://github.com/Picovoice/leopard/tree/master/demo/react&#41;.)
+For example usage refer to our [React demo application](https://github.com/Picovoice/leopard/tree/master/demo/react).
