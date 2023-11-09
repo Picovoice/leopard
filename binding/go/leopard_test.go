@@ -36,11 +36,17 @@ type LanguageTestParameters struct {
 	words                     []LeopardWord
 }
 
+type DiarizationTestParameters struct {
+	language      string
+	testAudioFile string
+	words         []LeopardWord
+}
+
 var (
-	testAccessKey string
-	leopard       Leopard
-	languageTests []LanguageTestParameters
-	// diarizationTests []TestParameters
+	testAccessKey    string
+	leopard          Leopard
+	languageTests    []LanguageTestParameters
+	diarizationTests []DiarizationTestParameters
 )
 
 func TestMain(m *testing.M) {
@@ -48,7 +54,7 @@ func TestMain(m *testing.M) {
 	flag.StringVar(&testAccessKey, "access_key", "", "AccessKey for testing")
 	flag.Parse()
 
-	languageTests = loadTestData()
+	languageTests, diarizationTests = loadTestData()
 	os.Exit(m.Run())
 }
 
@@ -64,7 +70,7 @@ func appendLanguage(s string, language string) string {
 	}
 }
 
-func loadTestData() (languageTests []LanguageTestParameters) {
+func loadTestData() (languageTests []LanguageTestParameters, diarizationTests []DiarizationTestParameters) {
 
 	content, err := ioutil.ReadFile("../../resources/.test/test_data.json")
 	if err != nil {
@@ -87,6 +93,14 @@ func loadTestData() (languageTests []LanguageTestParameters) {
 					SpeakerTag int32   `json:"speaker_tag"`
 				} `json:"words"`
 			} `json:"language_tests"`
+			DiarizationTests []struct {
+				Language  string `json:"language"`
+				AudioFile string `json:"audio_file"`
+				Words     []struct {
+					Word       string `json:"word"`
+					SpeakerTag int32  `json:"speaker_tag"`
+				} `json:"words"`
+			} `json:"diarization_tests"`
 		} `json:"tests"`
 	}
 	err = json.Unmarshal(content, &testData)
@@ -117,7 +131,24 @@ func loadTestData() (languageTests []LanguageTestParameters) {
 		languageTests = append(languageTests, languageTestParameters)
 	}
 
-	return languageTests
+	for _, x := range testData.Tests.DiarizationTests {
+		diarizationTestParameters := DiarizationTestParameters{
+			language:      x.Language,
+			testAudioFile: x.AudioFile,
+		}
+
+		for _, y := range x.Words {
+			word := LeopardWord{
+				Word:       y.Word,
+				SpeakerTag: y.SpeakerTag,
+			}
+			diarizationTestParameters.words = append(diarizationTestParameters.words, word)
+		}
+
+		diarizationTests = append(diarizationTests, diarizationTestParameters)
+	}
+
+	return languageTests, diarizationTests
 }
 
 func validateMetadata(t *testing.T, referenceWords []LeopardWord, words []LeopardWord, enableDiarization bool) {
@@ -251,6 +282,42 @@ func runProcessFileTestCase(
 	validateMetadata(t, referenceWords, words, enableDiarization)
 }
 
+func runDiarizationTestCase(
+	t *testing.T,
+	language string,
+	testAudioFile string,
+	referenceWords []LeopardWord) {
+
+	leopard = NewLeopard(testAccessKey)
+	leopard.EnableDiarization = true
+
+	modelPath, _ := filepath.Abs(filepath.Join("../../lib/common", appendLanguage("leopard_params", language)+".pv"))
+	leopard.ModelPath = modelPath
+
+	err := leopard.Init()
+	if err != nil {
+		log.Fatalf("Failed to init leopard with: %v", err)
+	}
+	defer leopard.Delete()
+
+	testAudioPath, _ := filepath.Abs(filepath.Join("../../resources/audio_samples", testAudioFile))
+	_, words, err := leopard.ProcessFile(testAudioPath)
+	if err != nil {
+		t.Fatalf("Failed to process pcm buffer: %v", err)
+	}
+
+	for i := range words {
+		word := strings.ToUpper(words[i].Word)
+		referenceWord := strings.ToUpper(referenceWords[i].Word)
+		if word != referenceWord {
+			t.Fatalf("Word `%s` did not match expected word `%s`", word, referenceWord)
+		}
+		if words[i].SpeakerTag != referenceWords[i].SpeakerTag {
+			t.Fatalf("Word %d had speaker_tag of %d, expected %d", i, words[i].SpeakerTag, referenceWords[i].SpeakerTag)
+		}
+	}
+}
+
 func TestProcess(t *testing.T) {
 	for _, test := range languageTests {
 		t.Logf("Running process data test for `%s`", test.language)
@@ -307,6 +374,17 @@ func TestProcessFileWithDiarization(t *testing.T) {
 			test.errorRate,
 			false,
 			true,
+			test.words)
+	}
+}
+
+func TestDiarization(t *testing.T) {
+	for _, test := range diarizationTests {
+		t.Logf("Running diarization test for `%s`", test.language)
+		runDiarizationTestCase(
+			t,
+			test.language,
+			test.testAudioFile,
 			test.words)
 	}
 }
