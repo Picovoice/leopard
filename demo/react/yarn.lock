@@ -1608,8 +1608,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@picovoice/leopard-react@file:../../binding/react":
+"@picovoice/leopard-react@~1.2.0":
   version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@picovoice/leopard-react/-/leopard-react-1.2.0.tgz#2c6319cf0d3d62453a3ea2cf9207f237a799ffcb"
+  integrity sha512-OPmFGF+XMVoGIl7FAbYWnz8ZJC1KX/0Ly7WFzjBSN5K6XOJ1mh8qf5OUauiyVm52ldsjos2IH9sGr3+59vhZaA==
   dependencies:
     "@picovoice/leopard-web" "=1.2.2"
 
