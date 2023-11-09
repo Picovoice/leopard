@@ -30,8 +30,8 @@
       {
         "language": "es",
         "audio_file": "test_es.wav",
-        "transcript": "Las arenas son blanquecinas de grano medio y tiene muy poca asistencia.",
-        "transcript_with_punctuation": "Las arenas son blanquecinas de grano medio y tiene muy poca asistencia",
+        "transcript": "Las arenas son blanquecinas de grano medio y tiene muy poca asistencia",
+        "transcript_with_punctuation": "Las arenas son blanquecinas de grano medio y tiene muy poca asistencia.",
         "error_rate": 0.025,
         "words": [
           {"word": "las", "start_sec": 0.96, "end_sec": 1.09, "confidence": 0.96, "speaker_tag": 1},
@@ -70,8 +70,8 @@
       {
         "language": "fr",
         "audio_file": "test_fr.wav",
-        "transcript": "Sous le consulat il devient conservateur des eaux et forêts et conseiller général.",
-        "transcript_with_punctuation": "Sous le consulat il devient conservateur des eaux et forêts et conseiller général",
+        "transcript": "Sous le consulat il devient conservateur des eaux et forêts et conseiller général",
+        "transcript_with_punctuation": "Sous le consulat il devient conservateur des eaux et forêts et conseiller général.",
         "error_rate": 0.025,
         "words": [
           {"word": "sous", "start_sec": 1.12, "end_sec": 1.22, "confidence": 0.87, "speaker_tag": 1},
