@@ -13,6 +13,7 @@
 package ai.picovoice.leopard.testapp;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -26,6 +27,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 
+import java.lang.Math;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -104,18 +106,21 @@ public class BaseTest {
         return pcm;
     }
 
-    protected void validateMetadata(LeopardTranscript.Word[] words, String transcript, float audioLength) {
-        String normTranscript = transcript.toUpperCase();
+    protected void validateMetadata(
+        LeopardTranscript.Word[] words,
+        LeopardTranscript.Word[] expectedWords,
+        boolean enableDiarization
+    ) {
         for (int i = 0; i < words.length; i++) {
-            assertTrue(normTranscript.contains(words[i].getWord().toUpperCase()));
-            assertTrue(words[i].getStartSec() > 0);
-            assertTrue(words[i].getStartSec() <= words[i].getEndSec());
-            if (i < words.length - 1) {
-                assertTrue(words[i].getEndSec() <= words[i + 1].getStartSec());
+            assertEquals(words[i].word, expectedWords[i].word);
+            assertTrue(Math.abs(words[i].confidence - expectedWords[i].confidence) <= 0.01);
+            assertTrue(Math.abs(words[i].startSec - expectedWords[i].startSec) <= 0.01);
+            assertTrue(Math.abs(words[i].endSec - expectedWords[i].endSec) <= 0.01);
+            if (enableDiarization) {
+                assertEquals(words[i].speakerTag, expectedWords[i].speakerTag);
             } else {
-                assertTrue(words[i].getEndSec() <= audioLength);
+                assertEquals(words[i].speakerTag, -1);
             }
-            assertTrue(words[i].getConfidence() >= 0.0f && words[i].getConfidence() <= 1.0f);
         }
     }
 
