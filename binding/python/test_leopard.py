@@ -32,6 +32,7 @@ class LeopardTestCase(unittest.TestCase):
             words: Sequence[Leopard.Word],
             expected_words: Sequence[Leopard.Word],
             enable_diarization: bool = False):
+        self.assertEqual(len(words), len(expected_words))
         for i in range(len(words)):
             self.assertEqual(words[i].word, expected_words[i].word)
             self.assertAlmostEqual(words[i].start_sec, expected_words[i].start_sec, delta=0.01)
@@ -208,6 +209,7 @@ class LeopardTestCase(unittest.TestCase):
                 enable_diarization=True)
 
             _, words = o.process_file(os.path.join(self._audio_directory, audio_file))
+            self.assertEqual(len(words), len(expected_words))
             for i in range(len(words)):
                 self.assertEqual(words[i].word, expected_words[i].word)
                 self.assertEqual(words[i].speaker_tag, expected_words[i].speaker_tag)
