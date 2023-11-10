@@ -10,10 +10,10 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 - Accurate [[1]](https://picovoice.ai/docs/benchmark/stt/#results)
 - Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
-  - Linux (x86_64), macOS (x86_64, arm64), and Windows (x86_64)
-  - Android and iOS
-  - Chrome, Safari, Firefox, and Edge
-  - Raspberry Pi (4, 3) and NVIDIA Jetson Nano
+    - Linux (x86_64), macOS (x86_64, arm64), and Windows (x86_64)
+    - Android and iOS
+    - Chrome, Safari, Firefox, and Edge
+    - Raspberry Pi (4, 3) and NVIDIA Jetson Nano
 
 ## Compatibility
 
@@ -23,6 +23,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 ## Installation
 
 Build the demo jars with Gradle:
+
 ```console
 cd leopard/demo/java
 ./gradlew build
@@ -30,7 +31,8 @@ cd leopard/demo/java
 
 ## AccessKey
 
-Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` acts as your credentials when using Leopard SDKs.
+Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` acts as your credentials when using
+Leopard SDKs.
 You can get your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
 Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get your `AccessKey`.
 
@@ -52,13 +54,15 @@ java -jar leopard-file-demo.jar -a ${ACCESS_KEY} -i ${AUDIO_PATH}
 
 ### Microphone Demo
 
-The microphone demo opens an audio stream from a microphone, records audio and performs speech-to-text transcription from the recorded audio:
+The microphone demo opens an audio stream from a microphone, records audio and performs speech-to-text transcription
+from the recorded audio:
 
 ```console
 java -jar leopard-mic-demo.jar -a ${ACCESS_KEY}
 ```
 
-It is possible that the default audio input device is not the one you wish to use. There are a couple of debugging facilities baked into the demo application to solve this. First, type the following into the console:
+It is possible that the default audio input device is not the one you wish to use. There are a couple of debugging
+facilities baked into the demo application to solve this. First, type the following into the console:
 
 ```console
 java -jar leopard-mic-demo.jar -sd
@@ -73,7 +77,8 @@ Available input devices:
     Device 1: Microphone Headset USB
 ```
 
-You can use the device index to specify which microphone to use for the demo. For instance, if you want to use the Headset microphone in the above example, you can invoke the demo application as below:
+You can use the device index to specify which microphone to use for the demo. For instance, if you want to use the
+Headset microphone in the above example, you can invoke the demo application as below:
 
 ```console
 java -jar leopard-mic-demo.jar -a ${ACCESS_KEY} -di 1
