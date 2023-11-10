@@ -35,7 +35,9 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [Java](#java-demo)
         - [.NET](#net-demo)
         - [Rust](#rust-demo)
-        - [Web](#web-demo)
+        - [Web](#web-demos)
+          - [Vanilla JavaScript and HTML](#vanilla-javascript-and-html)
+          - [React](#react-demo)
     - [SDKs](#sdks)
         - [Python](#python)
         - [C](#c)
@@ -49,6 +51,8 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [.NET](#net)
         - [Rust](#rust)
         - [Web](#web)
+          - [Vanilla JavaScript and HTML (ES Modules)](#vanilla-javascript-and-html-es-modules)
+          - [React](#react)
     - [Releases](#releases)
 
 ## AccessKey
@@ -237,7 +241,9 @@ wish to transcribe.
 
 For more information about Rust demos, go to [demo/rust](./demo/rust).
 
-### Web Demo
+### Web Demos
+
+#### Vanilla JavaScript and HTML
 
 From [demo/web](./demo/web) run the following in the terminal:
 
@@ -254,6 +260,24 @@ npm run start
 ```
 
 Open `http://localhost:5000` in your browser to try the demo.
+
+#### React Demo
+
+From [demo/react](demo/react) run the following in the terminal:
+
+```console
+yarn
+yarn start ${LANGUAGE}
+```
+
+(or)
+
+```console
+npm install
+npm run start ${LANGUAGE}
+```
+
+Open `http://localhost:3000` in your browser to try the demo.
 
 ## SDKs
 
@@ -578,6 +602,8 @@ Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://con
 
 ### Web
 
+#### Vanilla JavaScript and HTML (ES Modules)
+
 Install the web SDK using yarn:
 
 ```console
@@ -597,7 +623,7 @@ import { Leopard } from "@picovoice/leopard-web";
 import leopardParams from "${PATH_TO_BASE64_LEOPARD_PARAMS}";
 
 function getAudioData(): Int16Array {
-... // function to get audio data
+  // ... function to get audio data
   return new Int16Array();
 }
 
@@ -612,6 +638,63 @@ console.log(words);
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/). Finally, when done release the resources using `leopard.release()`.
+
+#### React
+
+```console
+yarn add @picovoice/leopard-react @picovoice/web-voice-processor
+```
+
+(or)
+
+```console
+npm install @picovoice/leopard-react @picovoice/web-voice-processor
+```
+
+```typescript
+import { useLeopard } from "@picovoice/leopard-react";
+
+function App(props) {
+  const {
+    result,
+    isLoaded,
+    error,
+    init,
+    processFile,
+    startRecording,
+    stopRecording,
+    isRecording,
+    recordingElapsedSec,
+    release,
+  } = useLeopard();
+
+  const initEngine = async () => {
+    await init(
+      "${ACCESS_KEY}",
+      leopardModel,
+    );
+  };
+
+  const handleFileUpload = async (audioFile: File) => {
+    await processFile(audioFile);
+  }
+
+  const toggleRecord = async () => {
+    if (isRecording) {
+      await stopRecording();
+    } else {
+      await startRecording();
+    }
+  };
+
+  useEffect(() => {
+    if (result !== null) {
+      console.log(result.transcript);
+      console.log(result.words);
+    }
+  }, [result])
+}
+```
 
 ## Releases
 
