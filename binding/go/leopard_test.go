@@ -71,7 +71,6 @@ func appendLanguage(s string, language string) string {
 }
 
 func loadTestData() (languageTests []LanguageTestParameters, diarizationTests []DiarizationTestParameters) {
-
 	content, err := ioutil.ReadFile("../../resources/.test/test_data.json")
 	if err != nil {
 		log.Fatalf("Could not read test data json: %v", err)
@@ -152,6 +151,10 @@ func loadTestData() (languageTests []LanguageTestParameters, diarizationTests []
 }
 
 func validateMetadata(t *testing.T, referenceWords []LeopardWord, words []LeopardWord, enableDiarization bool) {
+	if len(words) != len(referenceWords) {
+		t.Fatalf("Word count `%d` did not match expected word count `%d`", len(words), len(referenceWords))
+	}
+
 	for i := range words {
 		word := strings.ToUpper(words[i].Word)
 		referenceWord := strings.ToUpper(referenceWords[i].Word)
@@ -306,6 +309,9 @@ func runDiarizationTestCase(
 		t.Fatalf("Failed to process pcm buffer: %v", err)
 	}
 
+	if len(words) != len(referenceWords) {
+		t.Fatalf("Word count `%d` did not match expected word count `%d`", len(words), len(referenceWords))
+	}
 	for i := range words {
 		word := strings.ToUpper(words[i].Word)
 		referenceWord := strings.ToUpper(referenceWords[i].Word)
