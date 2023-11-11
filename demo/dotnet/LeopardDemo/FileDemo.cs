@@ -17,7 +17,8 @@ using Pv;
 namespace LeopardDemo
 {
     /// <summary>
-    /// File Demo for Leopard Speech-to-Text engine. The demo takes an input audio file and returns prints the the transcription.
+    /// File Demo for Leopard Speech-to-Text engine.
+    /// The demo takes an input audio file and processes it with Leopard.
     /// </summary>
     public class FileDemo
     {
@@ -26,22 +27,29 @@ namespace LeopardDemo
         /// Reads through input file and prints the transcription returned by Leopard.
         /// </summary>
         /// <param name="inputAudioPath">Required argument. Absolute path to input audio file.</param>
-        /// <param name="accessKey">AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).</param>
-        /// <param name="modelPath">Absolute path to the file containing model parameters. If not set it will be set to the default location.</param>
+        /// <param name="accessKey">
+        /// AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).
+        /// </param>
+        /// <param name="modelPath">
+        /// Absolute path to the file containing model parameters.
+        /// If not set it will be set to the default location.</param>
         /// <param name="enableAutomaticPunctuation">
         /// Set to `true` to enable automatic punctuation insertion.
+        /// </param>
+        /// <param name="enableSpeakerDiarization">
+        /// Set to `true` to enable speaker diarization, which allows Leopard to differentiate speakers as
+        /// part of the transcription process. Word metadata will include a `SpeakerTag` to identify unique speakers.
         /// </param>
         /// <param name="verbose">
         /// Enable verbose logging.
         /// </param>
-        /// 
         public static void RunDemo(
             string accessKey,
             string inputAudioPath,
             string modelPath,
             bool enableAutomaticPunctuation,
-            bool verbose
-            )
+            bool enableSpeakerDiarization,
+            bool verbose)
         {
             // init Leopard speech-to-text engine
             using (Leopard leopard = Leopard.Create(
@@ -56,11 +64,25 @@ namespace LeopardDemo
                     Console.WriteLine(result.TranscriptString);
                     if (verbose)
                     {
-                        Console.WriteLine(String.Format("\n|{0,-15}|{1,-10:0.00}|{2,-10:0.00}|{3,-10:0.00}|\n", "word", "Confidence", "StartSec", "EndSec"));
+                        Console.WriteLine(
+                            string.Format(
+                                "\n|{0,-15}|{1,-10:0.00}|{2,-10:0.00}|{3,-10:0.00}|{4,-10}|\n",
+                                "Word",
+                                "Confidence",
+                                "StartSec",
+                                "EndSec",
+                                "SpeakerTag"));
                         for (int i = 0; i < result.WordArray.Length; i++)
                         {
                             LeopardWord word = result.WordArray[i];
-                            Console.WriteLine(String.Format("|{0,-15}|{1,10:0.00}|{2,10:0.00}|{3,10:0.00}|", word.Word, word.Confidence, word.StartSec, word.EndSec));
+                            Console.WriteLine(
+                                string.Format(
+                                    "|{0,-15}|{1,10:0.00}|{2,10:0.00}|{3,10:0.00}|{4,10}|",
+                                    word.Word,
+                                    word.Confidence,
+                                    word.StartSec,
+                                    word.EndSec,
+                                    word.SpeakerTag));
                         }
                     }
                 }
@@ -85,7 +107,8 @@ namespace LeopardDemo
             string accessKey = null;
             string modelPath = null;
             bool enableAutomaticPunctuation = true;
-            bool verbose = true;
+            bool enableSpeakerDiarization = true;
+            bool verbose = false;
             bool showHelp = false;
 
             // parse command line arguments
@@ -116,6 +139,11 @@ namespace LeopardDemo
                 else if (args[argIndex] == "--disable_automatic_punctuation")
                 {
                     enableAutomaticPunctuation = false;
+                    argIndex++;
+                }
+                else if (args[argIndex] == "--disable_speaker_diarization")
+                {
+                    enableSpeakerDiarization = false;
                     argIndex++;
                 }
                 else if (args[argIndex] == "--verbose")
@@ -149,7 +177,9 @@ namespace LeopardDemo
             }
             if (!File.Exists(inputAudioPath))
             {
-                throw new ArgumentException($"Audio file at path {inputAudioPath} does not exist", "--input_audio_path");
+                throw new ArgumentException(
+                    $"Audio file at path {inputAudioPath} does not exist",
+                    "input_audio_path");
             }
 
             RunDemo(
@@ -157,6 +187,7 @@ namespace LeopardDemo
                 inputAudioPath,
                 modelPath,
                 enableAutomaticPunctuation,
+                enableSpeakerDiarization,
                 verbose);
         }
 
@@ -172,6 +203,7 @@ namespace LeopardDemo
             "\t--access_key (required): AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)\n" +
             "\t--model_path: Absolute path to the file containing model parameters.\n" +
             "\t--disable_automatic_punctuation: Disable automatic punctuation.\n" +
-            "\t--verbose: Enable verbose logging";
+            "\t--disable_speaker_diarization: Disable speaker diarization.\n" +
+            "\t--verbose: Enable verbose output. Prints Leopard word metadata.";
     }
 }
