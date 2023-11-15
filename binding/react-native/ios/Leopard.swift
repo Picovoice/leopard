@@ -15,6 +15,11 @@ import Leopard
 class PvLeopard: NSObject {
     private var leopardPool: [String: Leopard] = [:]
 
+    override init() {
+        super.init()
+        Leopard.setSdk(sdk: "react-native")
+    }
+
     @objc(create:modelPath:enableAutomaticPunctuation:resolver:rejecter:)
     func create(
             accessKey: String,

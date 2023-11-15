@@ -38,6 +38,8 @@ public class LeopardModule extends ReactContextBaseJavaModule {
     public LeopardModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
+
+        Leopard.setSdk("react-native");
     }
 
     @Override
