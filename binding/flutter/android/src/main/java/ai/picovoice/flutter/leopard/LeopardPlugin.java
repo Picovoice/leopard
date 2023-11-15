@@ -44,6 +44,8 @@ public class LeopardPlugin implements FlutterPlugin, MethodCallHandler {
         flutterContext = flutterPluginBinding.getApplicationContext();
         channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "leopard");
         channel.setMethodCallHandler(this);
+
+        Leopard.setSdk("flutter");
     }
 
     @Override
