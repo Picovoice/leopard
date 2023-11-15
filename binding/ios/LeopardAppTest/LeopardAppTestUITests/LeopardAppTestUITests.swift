@@ -399,4 +399,42 @@ class LeopardAppTestUITests: XCTestCase {
     func testSampleRate() throws {
         XCTAssertGreaterThan(Leopard.sampleRate, 0)
     }
+
+    func testMessageStack() throws {
+        let modelPath: String = bundle.path(
+            forResource: "leopard_params",
+            ofType: "pv",
+            inDirectory: "test_resources/model_files")!
+
+        var first_error: String = ""
+        do {
+            let leopard = try Leopard.init(accessKey: "invalid", modelPath: modelPath)
+            XCTAssertNil(leopard)
+        } catch {
+            first_error = "\(error.localizedDescription)"
+            XCTAssert(first_error.count < 1024)
+        }
+
+        do {
+            let p = try Porcupine.init(accessKey: "invalid", modelPath: modelPath)
+            XCTAssertNil(p)
+        } catch {
+            XCTAssert("\(error.localizedDescription)".count == first_error.count)
+        }
+    }
+
+    func testProcessMessageStack() throws {
+        let leopard = try Leopard.init(accessKey: accessKey, modelPath: modelPath)
+        leopard.delete()
+
+        var testPcm: [Int16] = []
+        testPcm.reserveCapacity(512)
+
+        do {
+            let res = try leopard.process(testPcm)
+            XCTAssertNil()
+        } catch {
+            XCTAssert("\(error.localizedDescription)".count > 0)
+        }
+    }
 }
