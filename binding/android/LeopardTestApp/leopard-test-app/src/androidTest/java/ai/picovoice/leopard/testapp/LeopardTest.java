@@ -119,6 +119,33 @@ public class LeopardTest {
 
             leopard.delete();
         }
+
+        @Test
+        public void testErrorStack() {
+            String[] error = {};
+            try {
+                new Leopard.Builder()
+                        .setAccessKey("invalid")
+                        .setModelPath(defaultModelPath)
+                        .build(appContext);
+            } catch (LeopardException e) {
+                error = e.getMessageStack();
+            }
+
+            assertTrue(0 < error.length);
+            assertTrue(error.length <= 8);
+
+            try {
+                new Leopard.Builder()
+                        .setAccessKey("invalid")
+                        .setModelPath(defaultModelPath)
+                        .build(appContext);
+            } catch (LeopardException e) {
+                for (int i = 0; i < error.length; i++) {
+                    assertEquals(e.getMessageStack()[i], error[i]);
+                }
+            }
+        }
     }
 
     @RunWith(Parameterized.class)
