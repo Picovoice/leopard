@@ -316,13 +316,14 @@ fn check_fn_call_status(
             let mut message_stack_ptr_ptr = addr_of_mut!(message_stack_ptr);
 
             let mut message_stack_depth: i32 = 0;
-            let error_status = (vtable.pv_get_error_stack)(
+            let err_status = (vtable.pv_get_error_stack)(
                 addr_of_mut!(message_stack_ptr_ptr),
                 addr_of_mut!(message_stack_depth),
             );
-            if error_status != PvStatus::SUCCESS {
+
+            if err_status != PvStatus::SUCCESS {
                 return Err(LeopardError::new(
-                    LeopardErrorStatus::LibraryError(error_status),
+                    LeopardErrorStatus::LibraryError(err_status),
                     "Unable to get Leopard error state.",
                 ))
             }
