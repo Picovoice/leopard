@@ -5,6 +5,7 @@ import testData from "./test_data.json";
 import leopardParams from "./leopard_params";
 import { PvModel } from '@picovoice/web-utils';
 import { LeopardWord } from '../src';
+import { LeopardError } from "../src/leopard_errors";
 
 const ACCESS_KEY: string = Cypress.env("ACCESS_KEY");
 
@@ -92,37 +93,32 @@ const runInitTest = async (
 const runProcTest = async (
   instance: typeof Leopard | typeof LeopardWorker,
   inputPcm: Int16Array,
-  punctuations: string[],
   expectedTranscript: string,
   expectedErrorRate: number,
   params: {
     accessKey?: string,
     model?: PvModel,
     enablePunctuation?: boolean,
+    enableDiarization?: boolean,
     useCER?: boolean,
   } = {}
 ) => {
   const {
     accessKey = ACCESS_KEY,
     model = { publicPath: '/test/leopard_params.pv', forceWrite: true },
-    enablePunctuation = true,
+    enablePunctuation = false,
+    enableDiarization = false,
     useCER = false
   } = params;
 
-  let normalizedTranscript = expectedTranscript;
-  if (!enablePunctuation) {
-    for (const punctuation of punctuations) {
-      normalizedTranscript = normalizedTranscript.replaceAll(punctuation, '');
-    }
-  }
-
   try {
     const leopard = await instance.create(accessKey, model, {
-      enableAutomaticPunctuation: enablePunctuation
+      enableAutomaticPunctuation: enablePunctuation,
+      enableDiarization: enableDiarization
     });
 
     const { transcript, words } = await leopard.process(inputPcm);
-    const errorRate = wordErrorRate(normalizedTranscript, transcript, useCER);
+    const errorRate = wordErrorRate(expectedTranscript, transcript, useCER);
     expect(errorRate).to.be.lt(expectedErrorRate);
 
     validateMetadata(words, transcript, inputPcm.length / leopard.sampleRate);
@@ -138,8 +134,66 @@ const runProcTest = async (
 };
 
 describe("Leopard Binding", function () {
+  it(`should return process error message stack`, async () => {
+    let error: LeopardError | null = null;
+
+    const leopard = await Leopard.create(
+      ACCESS_KEY,
+      { publicPath: '/test/leopard_params.pv', forceWrite: true },
+    );
+    const testPcm = new Int16Array(512);
+    // @ts-ignore
+    const objectAddress = leopard._objectAddress;
+
+    // @ts-ignore
+    leopard._objectAddress = 0;
+
+    try {
+      await leopard.process(testPcm);
+    } catch (e) {
+      error = e as LeopardError;
+    }
+
+    // @ts-ignore
+    leopard._objectAddress = objectAddress;
+    await leopard.release();
+
+    expect(error).to.not.be.null;
+    if (error) {
+      expect((error as LeopardError).messageStack.length).to.be.gt(0);
+      expect((error as LeopardError).messageStack.length).to.be.lte(8);
+    }
+  });
+
   for (const instance of [Leopard, LeopardWorker]) {
     const instanceString = (instance === LeopardWorker) ? 'worker' : 'main';
+
+    it(`should return correct error message stack (${instanceString})`, async () => {
+      let messageStack = [];
+      try {
+        const leopard = await instance.create(
+          "invalidAccessKey",
+          { publicPath: '/test/leopard_params.pv', forceWrite: true }
+        );
+        expect(leopard).to.be.undefined;
+      } catch (e: any) {
+        messageStack = e.messageStack;
+      }
+
+      expect(messageStack.length).to.be.gt(0);
+      expect(messageStack.length).to.be.lte(8);
+
+      try {
+        const leopard = await instance.create(
+          "invalidAccessKey",
+          { publicPath: '/test/leopard_params.pv', forceWrite: true }
+        );
+        expect(leopard).to.be.undefined;
+      } catch (e: any) {
+        expect(messageStack.length).to.be.eq(e.messageStack.length);
+      }
+    });
+
 
     it(`should be able to init with public path (${instanceString})`, () => {
       cy.wrap(null).then(async () => {
@@ -190,7 +244,7 @@ describe("Leopard Binding", function () {
       });
     });
 
-    for (const testParam of testData.tests.parameters) {
+    for (const testParam of testData.tests.language_tests) {
       it(`should be able to process (${testParam.language}) (${instanceString})`, () => {
         try {
           cy.getFramesFromFile(`audio_samples/${testParam.audio_file}`).then( async pcm => {
@@ -198,12 +252,10 @@ describe("Leopard Binding", function () {
             await runProcTest(
               instance,
               pcm,
-              testParam.punctuations,
               testParam.transcript,
               testParam.error_rate,
               {
                 model: { publicPath: `/test/leopard_params${suffix}.pv`, forceWrite: true },
-                enablePunctuation: false,
                 useCER: (testParam.language === 'ja')
               });
           });
@@ -219,13 +271,69 @@ describe("Leopard Binding", function () {
             await runProcTest(
               instance,
               pcm,
-              testParam.punctuations,
+              testParam.transcript_with_punctuation,
+              testParam.error_rate,
+              {
+                model: { publicPath: `/test/leopard_params${suffix}.pv`, forceWrite: true },
+                enablePunctuation: true,
+                useCER: (testParam.language === 'ja')
+              });
+          });
+        } catch (e) {
+          expect(e).to.be.undefined;
+        }
+      });
+
+
+      it(`should be able to process with diarization (${testParam.language}) (${instanceString})`, () => {
+        try {
+          cy.getFramesFromFile(`audio_samples/${testParam.audio_file}`).then( async pcm => {
+            const suffix = (testParam.language === 'en') ? '' : `_${testParam.language}`;
+            await runProcTest(
+              instance,
+              pcm,
               testParam.transcript,
               testParam.error_rate,
               {
                 model: { publicPath: `/test/leopard_params${suffix}.pv`, forceWrite: true },
+                enableDiarization: true,
                 useCER: (testParam.language === 'ja')
               });
+          });
+        } catch (e) {
+          expect(e).to.be.undefined;
+        }
+      });
+    }
+
+    for (const testParam of testData.tests.diarization_tests) {
+      it(`should be able to process diarization multiple speakers (${testParam.language}) (${instanceString})`, () => {
+        try {
+          cy.getFramesFromFile(`audio_samples/${testParam.audio_file}`).then( async pcm => {
+            const suffix = (testParam.language === 'en') ? '' : `_${testParam.language}`;
+
+            const leopard = await instance.create(
+              ACCESS_KEY,
+              { publicPath: `/test/leopard_params${suffix}.pv`, forceWrite: true },
+              {
+                enableDiarization: true
+              }
+            );
+
+            const { words } = await leopard.process(pcm);
+
+            expect(words.length).to.eq(testParam.words.length);
+
+            for (let i = 0; i < words.length; i++) {
+              expect(words[i].word).to.eq(testParam.words[i].word);
+              expect(words[i].speakerTag).to.eq(testParam.words[i].speaker_tag);
+            }
+
+            if (leopard instanceof Leopard) {
+              await leopard.release();
+            } else {
+              leopard.terminate();
+            }
           });
         } catch (e) {
           expect(e).to.be.undefined;

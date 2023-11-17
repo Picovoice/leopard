@@ -1,5 +1,5 @@
 /*
-  Copyright 2022 Picovoice Inc.
+  Copyright 2022-2023 Picovoice Inc.
 
   You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
   file accompanying this source.
@@ -13,7 +13,8 @@
 /// <reference lib="webworker" />
 
 import { Leopard } from './leopard';
-import { LeopardWorkerRequest } from './types';
+import { LeopardWorkerRequest, PvStatus } from './types';
+import { LeopardError } from "./leopard_errors";
 
 /**
  * Leopard worker handler.
@@ -34,6 +35,7 @@ self.onmessage = async function(
       try {
         Leopard.setWasm(event.data.wasm);
         Leopard.setWasmSimd(event.data.wasmSimd);
+        Leopard.setSdk(event.data.sdk);
         leopard = await Leopard._init(event.data.accessKey, event.data.modelPath, event.data.options);
         self.postMessage({
           command: 'ok',
@@ -41,10 +43,20 @@ self.onmessage = async function(
           sampleRate: leopard.sampleRate,
         });
       } catch (e: any) {
-        self.postMessage({
-          command: 'error',
-          message: e.message,
-        });
+        if (e instanceof LeopardError) {
+          self.postMessage({
+            command: 'error',
+            status: e.status,
+            shortMessage: e.shortMessage,
+            messageStack: e.messageStack
+          });
+        } else {
+          self.postMessage({
+            command: 'error',
+            status: PvStatus.RUNTIME_ERROR,
+            shortMessage: e.message
+          });
+        }
       }
       break;
     case 'process':
@@ -65,11 +77,20 @@ self.onmessage = async function(
           inputFrame: (event.data.transfer) ? event.data.inputFrame : undefined,
         }, transferable);
       } catch (e: any) {
-        self.postMessage({
-          command: 'error',
-          message: e.message,
-          inputFrame: event.data.inputFrame,
-        }, transferable);
+        if (e instanceof LeopardError) {
+          self.postMessage({
+            command: 'error',
+            status: e.status,
+            shortMessage: e.shortMessage,
+            messageStack: e.messageStack
+          }, transferable);
+        } else {
+          self.postMessage({
+            command: 'error',
+            status: PvStatus.RUNTIME_ERROR,
+            shortMessage: e.message
+          }, transferable);
+        }
       }
       break;
     case 'release':
@@ -85,8 +106,9 @@ self.onmessage = async function(
     default:
       self.postMessage({
         command: 'failed',
+        status: PvStatus.RUNTIME_ERROR,
         // @ts-ignore
-        message: `Unrecognized command: ${event.data.command}`,
+        shortMessage: `Unrecognized command: ${event.data.command}`,
       });
   }
 };

@@ -11,6 +11,21 @@
 
 import { PvModel } from '@picovoice/web-utils';
 
+export enum PvStatus {
+  SUCCESS = 10000,
+  OUT_OF_MEMORY,
+  IO_ERROR,
+  INVALID_ARGUMENT,
+  STOP_ITERATION,
+  KEY_ERROR,
+  INVALID_STATE,
+  RUNTIME_ERROR,
+  ACTIVATION_ERROR,
+  ACTIVATION_LIMIT_REACHED,
+  ACTIVATION_THROTTLED,
+  ACTIVATION_REFUSED,
+}
+
 /**
  * LeopardModel types
  */
@@ -19,6 +34,8 @@ export type LeopardModel = PvModel;
 export type LeopardOptions = {
   /** @defaultValue false */
   enableAutomaticPunctuation?: boolean;
+  /** @defaultValue false */
+  enableDiarization?: boolean;
 };
 
 export type LeopardWord = {
@@ -26,6 +43,7 @@ export type LeopardWord = {
   startSec: number;
   endSec: number;
   confidence: number;
+  speakerTag: number;
 }
 
 export type LeopardTranscript = {
@@ -40,6 +58,7 @@ export type LeopardWorkerInitRequest = {
   options: LeopardOptions;
   wasm: string;
   wasmSimd: string;
+  sdk: string;
 };
 
 export type LeopardWorkerProcessRequest = {
@@ -59,8 +78,9 @@ export type LeopardWorkerRequest =
 
 export type LeopardWorkerFailureResponse = {
   command: 'failed' | 'error';
-  message: string;
-  inputFrame?: Int16Array;
+  status: PvStatus;
+  shortMessage: string;
+  messageStack: string[];
 };
 
 export type LeopardWorkerInitResponse = LeopardWorkerFailureResponse | {

@@ -25,13 +25,21 @@ import {
   PvError
 } from '@picovoice/web-utils';
 
-import { LeopardModel, LeopardOptions, LeopardTranscript, LeopardWord } from './types';
+import {
+  LeopardModel,
+  LeopardOptions,
+  LeopardTranscript,
+  LeopardWord,
+  PvStatus
+} from './types';
+import { pvStatusToException } from "./leopard_errors";
+import * as LeopardErrors from "./leopard_errors";
 
 /**
  * WebAssembly function types
  */
 
-type pv_leopard_init_type = (accessKey: number, modelPath: number, enableAutomaticPunctuation: number, object: number) => Promise<number>;
+type pv_leopard_init_type = (accessKey: number, modelPath: number, enableAutomaticPunctuation: number, enableDiarization: number, object: number) => Promise<number>;
 type pv_leopard_process_type = (object: number, pcm: number, numSamples: number, transcript: number, numWords: number, words: number) => Promise<number>;
 type pv_leopard_delete_type = (object: number) => Promise<void>;
 type pv_leopard_transcript_delete_type = (transcript: number) => Promise<void>;
@@ -39,6 +47,9 @@ type pv_leopard_words_delete_type = (words: number) => Promise<void>;
 type pv_status_to_string_type = (status: number) => Promise<number>
 type pv_sample_rate_type = () => Promise<number>;
 type pv_leopard_version_type = () => Promise<number>;
+type pv_set_sdk_type = (sdk: number) => Promise<void>;
+type pv_get_error_stack_type = (messageStack: number, messageStackDepth: number) => Promise<number>;
+type pv_free_error_stack_type = (messageStack: number) => Promise<void>;
 
 /**
  * JavaScript/WebAssembly Binding for Leopard
@@ -48,21 +59,27 @@ type LeopardWasmOutput = {
   aligned_alloc: aligned_alloc_type;
   memory: WebAssembly.Memory;
   pvFree: pv_free_type;
+
   objectAddress: number;
+  transcriptAddressAddress: number;
+  numWordsAddress: number;
+  wordsAddressAddress: number;
+  messageStackAddressAddressAddress: number;
+  messageStackDepthAddress: number;
+
   pvLeopardDelete: pv_leopard_delete_type;
   pvLeopardTranscriptDelete: pv_leopard_transcript_delete_type;
   pvLeopardWordsDelete: pv_leopard_words_delete_type;
   pvLeopardProcess: pv_leopard_process_type;
   pvStatusToString: pv_status_to_string_type;
+  pvGetErrorStack: pv_get_error_stack_type;
+  pvFreeErrorStack: pv_free_error_stack_type;
+
   sampleRate: number;
   version: string;
-  transcriptAddressAddress: number;
-  numWordsAddress: number;
-  wordsAddressAddress: number;
   pvError: PvError;
 };
 
-const PV_STATUS_SUCCESS = 10000;
 const MAX_PCM_LENGTH_SEC = 60 * 15;
 
 export class Leopard {
@@ -70,10 +87,11 @@ export class Leopard {
   private readonly _pvLeopardTranscriptDelete: pv_leopard_transcript_delete_type;
   private readonly _pvLeopardWordsDelete: pv_leopard_words_delete_type;
   private readonly _pvLeopardProcess: pv_leopard_process_type;
-  private readonly _pvStatusToString: pv_status_to_string_type;
+  private readonly _pvGetErrorStack: pv_get_error_stack_type;
+  private readonly _pvFreeErrorStack: pv_free_error_stack_type;
 
   private _wasmMemory?: WebAssembly.Memory;
-  private _pvFree: pv_free_type;
+  private readonly _pvFree: pv_free_type;
   private readonly _processMutex: Mutex;
 
   private readonly _objectAddress: number;
@@ -81,15 +99,16 @@ export class Leopard {
   private readonly _transcriptAddressAddress: number;
   private readonly _numWordsAddress: number;
   private readonly _wordsAddressAddress: number;
+  private readonly _messageStackAddressAddressAddress: number;
+  private readonly _messageStackDepthAddress: number;
 
   private static _sampleRate: number;
   private static _version: string;
   private static _wasm: string;
   private static _wasmSimd: string;
+  private static _sdk: string = "web";
 
   private static _leopardMutex = new Mutex();
-
-  private readonly _pvError;
 
   private constructor(handleWasm: LeopardWasmOutput) {
     Leopard._sampleRate = handleWasm.sampleRate;
@@ -97,9 +116,10 @@ export class Leopard {
 
     this._pvLeopardDelete = handleWasm.pvLeopardDelete;
     this._pvLeopardProcess = handleWasm.pvLeopardProcess;
-    this._pvStatusToString = handleWasm.pvStatusToString;
     this._pvLeopardTranscriptDelete = handleWasm.pvLeopardTranscriptDelete;
     this._pvLeopardWordsDelete = handleWasm.pvLeopardWordsDelete;
+    this._pvGetErrorStack = handleWasm.pvGetErrorStack;
+    this._pvFreeErrorStack = handleWasm.pvFreeErrorStack;
 
     this._wasmMemory = handleWasm.memory;
     this._pvFree = handleWasm.pvFree;
@@ -108,10 +128,10 @@ export class Leopard {
     this._transcriptAddressAddress = handleWasm.transcriptAddressAddress;
     this._numWordsAddress = handleWasm.numWordsAddress;
     this._wordsAddressAddress = handleWasm.wordsAddressAddress;
+    this._messageStackAddressAddressAddress = handleWasm.messageStackAddressAddressAddress;
+    this._messageStackDepthAddress = handleWasm.messageStackDepthAddress;
 
     this._processMutex = new Mutex();
-
-    this._pvError = handleWasm.pvError;
   }
 
   /**
@@ -148,6 +168,10 @@ export class Leopard {
     }
   }
 
+  public static setSdk(sdk: string): void {
+    Leopard._sdk = sdk;
+  }
+
   /**
    * Creates an instance of the Picovoice Leopard Speech-to-Text engine.
    * Behind the scenes, it requires the WebAssembly code to load and initialize before
@@ -179,7 +203,7 @@ export class Leopard {
     options: LeopardOptions = {},
   ): Promise<Leopard> {
     if (!isAccessKeyValid(accessKey)) {
-      throw new Error('Invalid AccessKey');
+      throw new LeopardErrors.LeopardInvalidArgumentError('Invalid AccessKey');
     }
 
     return new Promise<Leopard>((resolve, reject) => {
@@ -207,19 +231,19 @@ export class Leopard {
    */
   public async process(pcm: Int16Array): Promise<LeopardTranscript> {
     if (!(pcm instanceof Int16Array)) {
-      throw new Error('The argument \'pcm\' must be provided as an Int16Array');
+      throw new LeopardErrors.LeopardInvalidArgumentError('The argument \'pcm\' must be provided as an Int16Array');
     }
 
     const maxSize = MAX_PCM_LENGTH_SEC * Leopard._sampleRate;
     if (pcm.length > maxSize) {
-      throw new Error(`'pcm' size must be smaller than ${maxSize}`);
+      throw new LeopardErrors.LeopardInvalidArgumentError(`'pcm' size must be smaller than ${maxSize}`);
     }
 
     const returnPromise = new Promise<LeopardTranscript>((resolve, reject) => {
       this._processMutex
         .runExclusive(async () => {
           if (this._wasmMemory === undefined) {
-            throw new Error('Attempted to call Leopard process after release.');
+            throw new LeopardErrors.LeopardInvalidStateError('Attempted to call Leopard process after release.');
           }
 
           const inputBufferAddress = await this._alignedAlloc(
@@ -227,7 +251,7 @@ export class Leopard {
             pcm.length * Int16Array.BYTES_PER_ELEMENT,
           );
           if (inputBufferAddress === 0) {
-            throw new Error('malloc failed: Cannot allocate memory');
+            throw new LeopardErrors.LeopardOutOfMemoryError('malloc failed: Cannot allocate memory');
           }
 
 
@@ -249,15 +273,17 @@ export class Leopard {
           const memoryBufferUint8 = new Uint8Array(this._wasmMemory.buffer);
           const memoryBufferView = new DataView(this._wasmMemory.buffer);
 
-          if (status !== PV_STATUS_SUCCESS) {
-            const msg = `process failed with status ${arrayBufferToStringAtIndex(
-              memoryBufferUint8,
-              await this._pvStatusToString(status),
-            )}`;
-
-            throw new Error(
-              `${msg}\nDetails: ${this._pvError.getErrorString()}`
+          if (status !== PvStatus.SUCCESS) {
+            const messageStack = await Leopard.getMessageStack(
+              this._pvGetErrorStack,
+              this._pvFreeErrorStack,
+              this._messageStackAddressAddressAddress,
+              this._messageStackDepthAddress,
+              memoryBufferView,
+              memoryBufferUint8
             );
+
+            throw pvStatusToException(status, "Processing failed", messageStack);
           }
 
           const transcriptAddress = memoryBufferView.getInt32(
@@ -285,7 +311,9 @@ export class Leopard {
             ptr += Uint32Array.BYTES_PER_ELEMENT;
             const confidence = memoryBufferView.getFloat32(ptr, true);
             ptr += Uint32Array.BYTES_PER_ELEMENT;
-            words.push({ word, startSec, endSec, confidence });
+            const speakerTag = memoryBufferView.getFloat32(ptr, true);
+            ptr += Float32Array.BYTES_PER_ELEMENT;
+            words.push({ word, startSec, endSec, confidence, speakerTag });
           }
 
           await this._pvLeopardTranscriptDelete(transcriptAddress);
@@ -310,12 +338,19 @@ export class Leopard {
    */
   public async release(): Promise<void> {
     await this._pvLeopardDelete(this._objectAddress);
+    await this._pvFree(this._messageStackAddressAddressAddress);
+    await this._pvFree(this._messageStackDepthAddress);
+    await this._pvFree(this._transcriptAddressAddress);
+    await this._pvFree(this._wordsAddressAddress);
     delete this._wasmMemory;
     this._wasmMemory = undefined;
   }
 
   private static async initWasm(accessKey: string, wasmBase64: string, modelPath: string, options: LeopardOptions): Promise<any> {
-    const { enableAutomaticPunctuation = false } = options;
+    const {
+      enableAutomaticPunctuation = false,
+      enableDiarization = false,
+    } = options;
 
     // A WebAssembly page has a constant size of 64KiB. -> 1MiB ~= 16 pages
     const memory = new WebAssembly.Memory({ initial: 11500 });
@@ -333,15 +368,17 @@ export class Leopard {
     const pv_leopard_transcript_delete = exports.pv_leopard_transcript_delete as pv_leopard_transcript_delete_type;
     const pv_leopard_words_delete = exports.pv_leopard_words_delete as pv_leopard_words_delete_type;
     const pv_leopard_init = exports.pv_leopard_init as pv_leopard_init_type;
-    const pv_status_to_string = exports.pv_status_to_string as pv_status_to_string_type;
     const pv_sample_rate = exports.pv_sample_rate as pv_sample_rate_type;
+    const pv_set_sdk = exports.pv_set_sdk as pv_set_sdk_type;
+    const pv_get_error_stack = exports.pv_get_error_stack as pv_get_error_stack_type;
+    const pv_free_error_stack = exports.pv_free_error_stack as pv_free_error_stack_type;
 
     const transcriptAddressAddress = await aligned_alloc(
       Int32Array.BYTES_PER_ELEMENT,
       Int32Array.BYTES_PER_ELEMENT,
     );
     if (transcriptAddressAddress === 0) {
-      throw new Error('malloc failed: Cannot allocate memory');
+      throw new LeopardErrors.LeopardOutOfMemoryError('malloc failed: Cannot allocate memory');
     }
 
     const numWordsAddress = await aligned_alloc(
@@ -349,7 +386,7 @@ export class Leopard {
       Int32Array.BYTES_PER_ELEMENT,
     );
     if (numWordsAddress === 0) {
-      throw new Error('malloc failed: Cannot allocate memory');
+      throw new LeopardErrors.LeopardOutOfMemoryError('malloc failed: Cannot allocate memory');
     }
 
     const wordsAddressAddress = await aligned_alloc(
@@ -357,7 +394,7 @@ export class Leopard {
       Int32Array.BYTES_PER_ELEMENT,
     );
     if (wordsAddressAddress === 0) {
-      throw new Error('malloc failed: Cannot allocate memory');
+      throw new LeopardErrors.LeopardOutOfMemoryError('malloc failed: Cannot allocate memory');
     }
 
 
@@ -366,7 +403,7 @@ export class Leopard {
       Int32Array.BYTES_PER_ELEMENT,
     );
     if (objectAddressAddress === 0) {
-      throw new Error('malloc failed: Cannot allocate memory');
+      throw new LeopardErrors.LeopardOutOfMemoryError('malloc failed: Cannot allocate memory');
     }
 
     const accessKeyAddress = await aligned_alloc(
@@ -375,7 +412,7 @@ export class Leopard {
     );
 
     if (accessKeyAddress === 0) {
-      throw new Error('malloc failed: Cannot allocate memory');
+      throw new LeopardErrors.LeopardOutOfMemoryError('malloc failed: Cannot allocate memory');
     }
 
     for (let i = 0; i < accessKey.length; i++) {
@@ -390,24 +427,60 @@ export class Leopard {
     );
 
     if (modelPathAddress === 0) {
-      throw new Error('malloc failed: Cannot allocate memory');
+      throw new LeopardErrors.LeopardOutOfMemoryError('malloc failed: Cannot allocate memory');
     }
 
     memoryBufferUint8.set(modelPathEncoded, modelPathAddress);
     memoryBufferUint8[modelPathAddress + modelPathEncoded.length] = 0;
 
-    const status = await pv_leopard_init(accessKeyAddress, modelPathAddress, (enableAutomaticPunctuation) ? 1 : 0, objectAddressAddress);
-    if (status !== PV_STATUS_SUCCESS) {
-      const msg = `'pv_leopard_init' failed with status ${arrayBufferToStringAtIndex(
-        memoryBufferUint8,
-        await pv_status_to_string(status),
-      )}`;
-
-      throw new Error(
-        `${msg}\nDetails: ${pvError.getErrorString()}`
-      );
+    const sdkEncoded = new TextEncoder().encode(this._sdk);
+    const sdkAddress = await aligned_alloc(
+      Uint8Array.BYTES_PER_ELEMENT,
+      (sdkEncoded.length + 1) * Uint8Array.BYTES_PER_ELEMENT
+    );
+    if (!sdkAddress) {
+      throw new LeopardErrors.LeopardOutOfMemoryError('malloc failed: Cannot allocate memory');
     }
+    memoryBufferUint8.set(sdkEncoded, sdkAddress);
+    memoryBufferUint8[sdkAddress + sdkEncoded.length] = 0;
+    await pv_set_sdk(sdkAddress);
+
+    const messageStackDepthAddress = await aligned_alloc(
+      Int32Array.BYTES_PER_ELEMENT,
+      Int32Array.BYTES_PER_ELEMENT
+    );
+    if (!messageStackDepthAddress) {
+      throw new LeopardErrors.LeopardOutOfMemoryError('malloc failed: Cannot allocate memory');
+    }
+
+    const messageStackAddressAddressAddress = await aligned_alloc(
+      Int32Array.BYTES_PER_ELEMENT,
+      Int32Array.BYTES_PER_ELEMENT
+    );
+    if (!messageStackAddressAddressAddress) {
+      throw new LeopardErrors.LeopardOutOfMemoryError('malloc failed: Cannot allocate memory');
+    }
+
     const memoryBufferView = new DataView(memory.buffer);
+
+    const status = await pv_leopard_init(
+      accessKeyAddress,
+      modelPathAddress,
+      (enableAutomaticPunctuation) ? 1 : 0,
+      (enableDiarization) ? 1 : 0,
+      objectAddressAddress);
+    if (status !== PvStatus.SUCCESS) {
+      const messageStack = await Leopard.getMessageStack(
+        pv_get_error_stack,
+        pv_free_error_stack,
+        messageStackAddressAddressAddress,
+        messageStackDepthAddress,
+        memoryBufferView,
+        memoryBufferUint8
+      );
+
+      throw pvStatusToException(status, "Initialization failed", messageStack, pvError);
+    }
     const objectAddress = memoryBufferView.getInt32(objectAddressAddress, true);
 
     const sampleRate = await pv_sample_rate();
@@ -421,18 +494,52 @@ export class Leopard {
       aligned_alloc,
       memory: memory,
       pvFree: pv_free,
+
       objectAddress: objectAddress,
+      transcriptAddressAddress: transcriptAddressAddress,
+      numWordsAddress: numWordsAddress,
+      wordsAddressAddress: wordsAddressAddress,
+      messageStackAddressAddressAddress: messageStackAddressAddressAddress,
+      messageStackDepthAddress: messageStackDepthAddress,
+
       pvLeopardDelete: pv_leopard_delete,
       pvLeopardTranscriptDelete: pv_leopard_transcript_delete,
       pvLeopardWordsDelete: pv_leopard_words_delete,
       pvLeopardProcess: pv_leopard_process,
-      pvStatusToString: pv_status_to_string,
+      pvGetErrorStack: pv_get_error_stack,
+      pvFreeErrorStack: pv_free_error_stack,
+
       sampleRate: sampleRate,
       version: version,
-      transcriptAddressAddress: transcriptAddressAddress,
-      numWordsAddress: numWordsAddress,
-      wordsAddressAddress: wordsAddressAddress,
-      pvError: pvError,
     };
+  }
+
+  private static async getMessageStack(
+    pv_get_error_stack: pv_get_error_stack_type,
+    pv_free_error_stack: pv_free_error_stack_type,
+    messageStackAddressAddressAddress: number,
+    messageStackDepthAddress: number,
+    memoryBufferView: DataView,
+    memoryBufferUint8: Uint8Array,
+  ): Promise<string[]> {
+    const status = await pv_get_error_stack(messageStackAddressAddressAddress, messageStackDepthAddress);
+    if (status !== PvStatus.SUCCESS) {
+      throw pvStatusToException(status, "Unable to get Leopard error state");
+    }
+
+    const messageStackAddressAddress = memoryBufferView.getInt32(messageStackAddressAddressAddress, true);
+
+    const messageStackDepth = memoryBufferView.getInt32(messageStackDepthAddress, true);
+    const messageStack: string[] = [];
+    for (let i = 0; i < messageStackDepth; i++) {
+      const messageStackAddress = memoryBufferView.getInt32(
+        messageStackAddressAddress + (i * Int32Array.BYTES_PER_ELEMENT), true);
+      const message = arrayBufferToStringAtIndex(memoryBufferUint8, messageStackAddress);
+      messageStack.push(message);
+    }
+
+    await pv_free_error_stack(messageStackAddressAddress);
+
+    return messageStack;
   }
 }

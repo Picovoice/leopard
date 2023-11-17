@@ -1,5 +1,5 @@
 /*
-  Copyright 2022 Picovoice Inc.
+  Copyright 2022-2023 Picovoice Inc.
 
   You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
   file accompanying this source.
@@ -20,6 +20,7 @@ import {
   LeopardWorkerReleaseResponse,
 } from './types';
 import { loadModel } from '@picovoice/web-utils';
+import { pvStatusToException } from "./leopard_errors";
 
 export class LeopardWorker {
   private readonly _worker: Worker;
@@ -28,6 +29,7 @@ export class LeopardWorker {
 
   private static _wasm: string;
   private static _wasmSimd: string;
+  private static _sdk: string = "web";
 
   private constructor(worker: Worker, version: string, sampleRate: number) {
     this._worker = worker;
@@ -76,6 +78,10 @@ export class LeopardWorker {
     }
   }
 
+  public static setSdk(sdk: string): void {
+    LeopardWorker._sdk = sdk;
+  }
+
   /**
    * Creates a worker instance of the Picovoice Leopard Speech-to-Text engine.
    * Behind the scenes, it requires the WebAssembly code to load and initialize before
@@ -109,7 +115,8 @@ export class LeopardWorker {
             break;
           case 'failed':
           case 'error':
-            reject(event.data.message);
+            const error = pvStatusToException(event.data.status, event.data.shortMessage, event.data.messageStack);
+            reject(error);
             break;
           default:
             // @ts-ignore
@@ -125,6 +132,7 @@ export class LeopardWorker {
       options: options,
       wasm: this._wasm,
       wasmSimd: this._wasmSimd,
+      sdk: this._sdk
     });
 
     return returnPromise;
@@ -150,16 +158,17 @@ export class LeopardWorker {
 
     const returnPromise: Promise<LeopardTranscript> = new Promise((resolve, reject) => {
       this._worker.onmessage = (event: MessageEvent<LeopardWorkerProcessResponse>): void => {
-        if (transfer && transferCallback && event.data.inputFrame) {
-          transferCallback(new Int16Array(event.data.inputFrame.buffer));
-        }
         switch (event.data.command) {
           case 'ok':
+            if (transfer && transferCallback && event.data.inputFrame) {
+              transferCallback(new Int16Array(event.data.inputFrame.buffer));
+            }
             resolve(event.data.result);
             break;
           case 'failed':
           case 'error':
-            reject(event.data.message);
+            const error = pvStatusToException(event.data.status, event.data.shortMessage, event.data.messageStack);
+            reject(error);
             break;
           default:
             // @ts-ignore
@@ -191,7 +200,8 @@ export class LeopardWorker {
             break;
           case 'failed':
           case 'error':
-            reject(event.data.message);
+            const error = pvStatusToException(event.data.status, event.data.shortMessage, event.data.messageStack);
+            reject(error);
             break;
           default:
             // @ts-ignore
