@@ -129,7 +129,10 @@ def main():
                 transcript, words = leopard.process(recorder.stop())
                 print(transcript)
                 if args.verbose:
-                    print(tabulate(words, headers=['word', 'start_sec', 'end_sec', 'confidence', 'speaker_tag'], floatfmt='.2f'))
+                    print(tabulate(
+                        words,
+                        headers=['word', 'start_sec', 'end_sec', 'confidence', 'speaker_tag'],
+                        floatfmt='.2f'))
             except LeopardActivationLimitError:
                 print('AccessKey has reached its processing limit.')
             print()
