@@ -43,7 +43,7 @@ public class FileDemo {
             if (verbose) {
                 LeopardTranscript.Word[] words = transcript.getWordArray();
                 System.out.format(
-                        "%14s - %5s - %5s - %5s - %5s\n",
+                        "%14s | %5s | %5s | %10s | %11s\n",
                         "word",
                         "start",
                         "end",
@@ -51,7 +51,7 @@ public class FileDemo {
                         "speaker tag");
                 for (int i = 0; i < words.length; i++) {
                     System.out.format(
-                            "%2d: %10s - %5.2f - %5.2f - %5.2f - %5d\n",
+                            "%2d: %10s | %5.2f | %5.2f | %10.2f | %11d\n",
                             i,
                             words[i].getWord(),
                             words[i].getStartSec(),
