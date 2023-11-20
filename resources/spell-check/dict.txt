@@ -17,8 +17,8 @@ calcsize
 camelcase
 Cdecl
 checkstyle
-CHECKSTYLE
 Checkstyle
+CHECKSTYLE
 cleopard
 cmake
 cocoapod
@@ -35,6 +35,8 @@ cstring
 cword
 devient
 dgryski
+diarization
+Diarization
 diesem
 dlfcn
 dlopen
@@ -52,11 +54,11 @@ flac
 floatfmt
 forêts
 fprintf
+général
 genutzt
 gradlew
 grano
 gzipped
-général
 HMODULE
 iife
 instanceof
@@ -153,8 +155,8 @@ wavefile
 webm
 wurde
 xcodeproj
-xcshareddata
 xcscheme
 xcschemes
+xcshareddata
 xcworkspace
 ytdlp
