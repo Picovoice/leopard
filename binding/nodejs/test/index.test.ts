@@ -288,3 +288,25 @@ describe('manual paths', () => {
     leopardEngine.release();
   });
 });
+
+describe('error message stack', () => {
+  test('message stack cleared after read', () => {
+    let error: string[] = [];
+    try {
+      new Leopard('invalid');
+    } catch (e: any) {
+      error = e.messageStack;
+    }
+
+    expect(error.length).toBeGreaterThan(0);
+    expect(error.length).toBeLessThanOrEqual(8);
+
+    try {
+      new Leopard('invalid');
+    } catch (e: any) {
+      for (let i = 0; i < error.length; i++) {
+        expect(error[i]).toEqual(e.messageStack[i]);
+      }
+    }
+  });
+});
