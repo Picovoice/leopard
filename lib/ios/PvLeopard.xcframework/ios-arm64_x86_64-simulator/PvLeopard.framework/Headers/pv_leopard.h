@@ -34,6 +34,8 @@ typedef struct pv_leopard pv_leopard_t;
  * @param access_key AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
  * @param model_path Absolute path to the file containing model parameters.
  * @param enable_automatic_punctuation Set to `true` to enable automatic punctuation insertion.
+ * @param enable_diarization Set to `true` to enable speaker diarization, which allows Leopard to differentiate speakers
+ * as part of the transcription process. Word metadata will include a `speaker_tag` to identify unique speakers.
  * @param[out] object Constructed instance of Leopard.
  * @return Status code. Returns `PV_STATUS_OUT_OF_MEMORY`, `PV_STATUS_IO_ERROR`, `PV_STATUS_INVALID_ARGUMENT`,
  * `PV_STATUS_RUNTIME_ERROR`, `PV_STATUS_ACTIVATION_ERROR`, `PV_STATUS_ACTIVATION_LIMIT_REACHED`,
@@ -43,6 +45,7 @@ PV_API pv_status_t pv_leopard_init(
         const char *access_key,
         const char *model_path,
         bool enable_automatic_punctuation,
+        bool enable_diarization,
         pv_leopard_t **object);
 
 /**
@@ -60,6 +63,10 @@ typedef struct {
     float start_sec; /** Start of word in seconds. */
     float end_sec; /** End of word in seconds. */
     float confidence; /** Transcription confidence. It is a number within [0, 1]. */
+    int32_t speaker_tag; /** The speaker tag is `-1` if diarization is not enabled during initialization;
+                          * otherwise, it's a non-negative integer identifying unique speakers, with `0` reserved for
+                          * unknown speakers.
+                          */
 } pv_word_t;
 
 /**
