@@ -416,3 +416,41 @@ func TestProcessEmptyFile(t *testing.T) {
 		t.Fatalf("Leopard returned %d words on empty file", len(words))
 	}
 }
+
+func TestMessageStack(t *testing.T) {
+	leopard = NewLeopard("invalid access key")
+	err := leopard.Init()
+	err2 := leopard.Init()
+
+	if len(err.Error()) > 1024 {
+		t.Fatalf("length of error is full: '%d'", len(err.Error()))
+	}
+
+	if len(err2.Error()) != len(err.Error()) {
+		t.Fatalf("length of 1st init '%d' does not match 2nd init '%d'", len(err.Error()), len(err2.Error()))
+	}
+}
+
+func TestProcessMessageStack(t *testing.T) {
+	leopard = NewLeopard(testAccessKey)
+	err := leopard.Init()
+	if err != nil {
+		log.Fatalf("Failed to init leopard with: %v", err)
+	}
+
+	address := leopard.handle
+	leopard.handle = nil
+
+	testPcm := make([]int16, 1014)
+
+	_, _, err = leopard.Process(testPcm)
+	leopard.handle = address
+	if err == nil {
+		t.Fatalf("Expected leopard process to fail")
+	}
+
+	delErr := leopard.Delete()
+	if delErr != nil {
+		t.Fatalf("%v", delErr)
+	}
+}
