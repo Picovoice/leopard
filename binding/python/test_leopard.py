@@ -242,7 +242,7 @@ class LeopardTestCase(unittest.TestCase):
             self.assertEqual(len(error), len(e.message_stack))
             self.assertListEqual(list(error), list(e.message_stack))
 
-    def test_index_search_message_stack(self):
+    def test_process_message_stack(self):
         o = Leopard(
             access_key=self._access_key,
             model_path=get_model_path_by_language(language_tests[0][0]),
