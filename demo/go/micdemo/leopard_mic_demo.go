@@ -141,9 +141,9 @@ func main() {
 
 			fmt.Printf("%s\n\n", transcript)
 			if *verboseArg {
-				fmt.Printf("|%10s | %15s | %15s | %10s | %10s|\n", "word", "Start in Sec", "End in Sec", "Confidence", "Speaker Tag")
+				fmt.Printf("|%10s | %10s | %10s | %10s | %10s|\n", "Word", "Start (s)", "End (s)", "Confidence", "Speaker Tag")
 				for _, word := range words {
-					fmt.Printf("|%10s | %15.2f | %15.2f | %10.2f | %10d|\n", word.Word, word.StartSec, word.EndSec, word.Confidence, word.SpeakerTag)
+					fmt.Printf("|%10s | %10.2f | %10.2f | %10.2f | %11d|\n", word.Word, word.StartSec, word.EndSec, word.Confidence, word.SpeakerTag)
 				}
 			}
 		} else {

@@ -74,7 +74,7 @@ jobs:
 
     - name: Test filedemo
       run: ./leopard_file_demo -access_key ${{secrets.PV_VALID_ACCESS_KEY}} -input_audio_path ../../resources/audio_samples/test.wav
-  
+
   build-grpc-demo:
     runs-on: ${{ matrix.os }}
     defaults:

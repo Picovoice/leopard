@@ -10,6 +10,7 @@ require (
 )
 
 require (
+	github.com/Picovoice/leopard/binding/go/v2 v2.0.0-20231121002919-52ce3a2d8268 // indirect
 	github.com/agnivade/levenshtein v1.1.1 // indirect
 	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
