@@ -184,7 +184,7 @@ namespace LeopardTest
         private static void ValidateMetadata(
             LeopardWord[] words,
             LeopardWord[] referenceWords,
-            bool enableDiariztion)
+            bool enableDiarization)
         {
             Assert.AreEqual(words.Length, referenceWords.Length);
             for (int i = 0; i < words.Length; i++)
@@ -193,7 +193,7 @@ namespace LeopardTest
                 Assert.AreEqual(words[i].StartSec, referenceWords[i].StartSec, 0.1);
                 Assert.AreEqual(words[i].EndSec, referenceWords[i].EndSec, 0.1);
                 Assert.AreEqual(words[i].Confidence, referenceWords[i].Confidence, 0.1);
-                if (enableDiariztion)
+                if (enableDiarization)
                 {
                     Assert.AreEqual(words[i].SpeakerTag, referenceWords[i].SpeakerTag);
                 }
