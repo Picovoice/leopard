@@ -304,6 +304,31 @@ mod tests {
     }
 
     #[test]
+    fn test_error_stack() {
+        let mut error_stack = Vec::new();
+
+        let res = LeopardBuilder::new()
+            .access_key("invalid")
+            .init();
+
+        if let Err(err) = res {
+            error_stack = err.message_stack
+        }
+
+        assert!(0 < error_stack.len() && error_stack.len() <= 8);
+
+        let res = LeopardBuilder::new()
+            .access_key("invalid")
+            .init();
+        if let Err(err) = res {
+            assert_eq!(error_stack.len(), err.message_stack.len());
+            for i in 0..error_stack.len() {
+                assert_eq!(error_stack[i], err.message_stack[i])
+            }
+        }
+    }
+
+    #[test]
     fn test_version() {
         let access_key = env::var("PV_ACCESS_KEY")
             .expect("Pass the AccessKey in using the PV_ACCESS_KEY env variable");

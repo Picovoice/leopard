@@ -623,3 +623,39 @@ impl Drop for LeopardInner {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::env;
+
+    use crate::util::{pv_library_path, pv_model_path};
+    use crate::leopard::{LeopardInner};
+
+    #[test]
+    fn test_process_error_stack() {
+        let access_key = env::var("PV_ACCESS_KEY")
+            .expect("Pass the AccessKey in using the PV_ACCESS_KEY env variable");
+
+        let mut inner = LeopardInner::init(
+            &access_key.as_str(),
+            pv_model_path(),
+            pv_library_path(),
+            false,
+            false
+        ).expect("Unable to create Leopard");
+
+        let test_pcm = vec![0; 1024];
+        let address = inner.cleopard;
+        inner.cleopard = std::ptr::null_mut();
+
+        let res = inner.process(&test_pcm);
+
+        inner.cleopard = address;
+        if let Err(err) = res {
+            assert!(err.message_stack.len() > 0);
+            assert!(err.message_stack.len() < 8);
+        } else {
+            assert_eq!(res.unwrap().transcript, "");
+        }
+    }
+}
