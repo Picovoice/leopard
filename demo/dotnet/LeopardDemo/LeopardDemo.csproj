@@ -20,6 +20,6 @@
 
     <ItemGroup>
         <PackageReference Include="PvRecorder" Version="1.2.4" />
-        <PackageReference Include="Leopard" Version="1.2.1" />
+        <PackageReference Include="Leopard" Version="2.0.0" />
     </ItemGroup>
 </Project>

@@ -20,7 +20,7 @@ namespace LeopardDemo
 {
     /// <summary>
     /// Microphone Demo for Leopard Speech-to-Text engine.
-    /// It creates an input audio stream from a microphone and processes it with Leopard. 
+    /// It creates an input audio stream from a microphone and processes it with Leopard.
     /// </summary>
     public class MicDemo
     {
@@ -35,11 +35,11 @@ namespace LeopardDemo
         /// <param name="modelPath">
         /// Absolute path to the file containing model parameters.
         /// If not set it will be set to the default location.
-        /// </param>           
+        /// </param>
         /// <param name="enableAutomaticPunctuation">
         /// Set to `true` to enable automatic punctuation insertion.
         /// </param>
-        /// <param name="enableSpeakerDiarization">
+        /// <param name="enableDiarization">
         /// Set to `true` to enable speaker diarization, which allows Leopard to differentiate speakers as
         /// part of the transcription process. Word metadata will include a `SpeakerTag` to identify unique speakers.
         /// </param>
@@ -47,12 +47,12 @@ namespace LeopardDemo
         /// <param name="audioDeviceIndex">
         /// Optional argument. If provided, audio is recorded from this input device.
         /// Otherwise, the default audio input device is used.
-        /// </param>        
+        /// </param>
         private static void RunDemo(
             string accessKey,
             string modelPath,
             bool enableAutomaticPunctuation,
-            bool enableSpeakerDiarization,
+            bool enableDiarization,
             bool verbose,
             int audioDeviceIndex)
         {
@@ -60,7 +60,7 @@ namespace LeopardDemo
                 accessKey: accessKey,
                 modelPath: modelPath,
                 enableAutomaticPunctuation: enableAutomaticPunctuation,
-                enableSpeakerDiarization: enableSpeakerDiarization))
+                enableDiarization: enableDiarization))
             {
                 using (PvRecorder recorder = PvRecorder.Create(PV_RECORDER_FRAME_LENGTH, audioDeviceIndex))
                 {
@@ -111,7 +111,7 @@ namespace LeopardDemo
                             {
                                 Console.WriteLine(
                                     string.Format(
-                                        "\n|{0,-15}|{1,-10:0.00}|{2,-10:0.00}|{3,-10:0.00}|{4,-10}|\n",
+                                        "\n|{0,-15}|{1,11:0.00}|{2,10:0.00}|{3,10:0.00}|{4,11}|\n",
                                         "Word",
                                         "Confidence",
                                         "StartSec",
@@ -122,7 +122,7 @@ namespace LeopardDemo
                                     LeopardWord word = result.WordArray[i];
                                     Console.WriteLine(
                                         string.Format(
-                                            "|{0,-15}|{1,10:0.00}|{2,10:0.00}|{3,10:0.00}|{4,10}|",
+                                            "|{0,-15}|{1,11:0.00}|{2,10:0.00}|{3,10:0.00}|{4,11}|",
                                             word.Word,
                                             word.Confidence,
                                             word.StartSec,
@@ -166,7 +166,7 @@ namespace LeopardDemo
             string accessKey = null;
             string modelPath = null;
             bool enableAutomaticPunctuation = true;
-            bool enableSpeakerDiarization = true;
+            bool enableDiarization = true;
             bool verbose = false;
             int audioDeviceIndex = -1;
             bool showAudioDevices = false;
@@ -197,7 +197,7 @@ namespace LeopardDemo
                 }
                 else if (args[argIndex] == "--disable_speaker_diarization")
                 {
-                    enableSpeakerDiarization = false;
+                    enableDiarization = false;
                     argIndex++;
                 }
                 else if (args[argIndex] == "--verbose")
@@ -250,7 +250,7 @@ namespace LeopardDemo
                 accessKey,
                 modelPath,
                 enableAutomaticPunctuation,
-                enableSpeakerDiarization,
+                enableDiarization,
                 verbose,
                 audioDeviceIndex);
         }

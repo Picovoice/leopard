@@ -36,7 +36,7 @@ namespace LeopardDemo
         /// <param name="enableAutomaticPunctuation">
         /// Set to `true` to enable automatic punctuation insertion.
         /// </param>
-        /// <param name="enableSpeakerDiarization">
+        /// <param name="enableDiarization">
         /// Set to `true` to enable speaker diarization, which allows Leopard to differentiate speakers as
         /// part of the transcription process. Word metadata will include a `SpeakerTag` to identify unique speakers.
         /// </param>
@@ -48,14 +48,15 @@ namespace LeopardDemo
             string inputAudioPath,
             string modelPath,
             bool enableAutomaticPunctuation,
-            bool enableSpeakerDiarization,
+            bool enableDiarization,
             bool verbose)
         {
             // init Leopard speech-to-text engine
             using (Leopard leopard = Leopard.Create(
                 accessKey: accessKey,
                 modelPath: modelPath,
-                enableAutomaticPunctuation: enableAutomaticPunctuation))
+                enableAutomaticPunctuation: enableAutomaticPunctuation,
+                enableDiarization: enableDiarization))
             {
 
                 try
@@ -66,7 +67,7 @@ namespace LeopardDemo
                     {
                         Console.WriteLine(
                             string.Format(
-                                "\n|{0,-15}|{1,-10:0.00}|{2,-10:0.00}|{3,-10:0.00}|{4,-10}|\n",
+                                "\n|{0,-15}|{1,11:0.00}|{2,10:0.00}|{3,10:0.00}|{4,11}|\n",
                                 "Word",
                                 "Confidence",
                                 "StartSec",
@@ -77,7 +78,7 @@ namespace LeopardDemo
                             LeopardWord word = result.WordArray[i];
                             Console.WriteLine(
                                 string.Format(
-                                    "|{0,-15}|{1,10:0.00}|{2,10:0.00}|{3,10:0.00}|{4,10}|",
+                                    "|{0,-15}|{1,11:0.00}|{2,10:0.00}|{3,10:0.00}|{4,11}|",
                                     word.Word,
                                     word.Confidence,
                                     word.StartSec,
@@ -107,7 +108,7 @@ namespace LeopardDemo
             string accessKey = null;
             string modelPath = null;
             bool enableAutomaticPunctuation = true;
-            bool enableSpeakerDiarization = true;
+            bool enableDiarization = true;
             bool verbose = false;
             bool showHelp = false;
 
@@ -143,7 +144,7 @@ namespace LeopardDemo
                 }
                 else if (args[argIndex] == "--disable_speaker_diarization")
                 {
-                    enableSpeakerDiarization = false;
+                    enableDiarization = false;
                     argIndex++;
                 }
                 else if (args[argIndex] == "--verbose")
@@ -187,7 +188,7 @@ namespace LeopardDemo
                 inputAudioPath,
                 modelPath,
                 enableAutomaticPunctuation,
-                enableSpeakerDiarization,
+                enableDiarization,
                 verbose);
         }
 
