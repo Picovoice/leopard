@@ -12,6 +12,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 using Fastenshtein;
 
@@ -223,6 +225,67 @@ namespace LeopardTest
                     "Leopard did not return a valid sample rate number.");
             }
         }
+
+        [TestMethod]
+        public void TestMessageStack()
+        {
+            Leopard l;
+            string[] messageList = new string[] { };
+
+            try
+            {
+                l = Leopard.Create("invalid");
+                Assert.IsNull(l);
+                l.Dispose();
+            }
+            catch (LeopardException e)
+            {
+                messageList = e.MessageStack;
+            }
+
+            Assert.IsTrue(0 < messageList.Length);
+            Assert.IsTrue(messageList.Length < 8);
+
+            try
+            {
+                l = Leopard.Create("invalid");
+                Assert.IsNull(l);
+                l.Dispose();
+            }
+            catch (LeopardException e)
+            {
+                for (int i = 0; i < messageList.Length; i++)
+                {
+                    Assert.AreEqual(messageList[i], e.MessageStack[i]);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TestProcessMessageStack()
+        {
+            Leopard l = Leopard.Create(_accessKey);
+            short[] testPcm = new short[1024];
+
+            var obj = typeof(Leopard).GetField("_libraryPointer", BindingFlags.NonPublic | BindingFlags.Instance);
+            IntPtr address = (IntPtr)obj.GetValue(l);
+            obj.SetValue(l, IntPtr.Zero);
+
+            try
+            {
+                LeopardTranscript res = l.Process(testPcm);
+                Assert.IsTrue(res == null);
+            }
+            catch (LeopardException e)
+            {
+                Assert.IsTrue(0 < e.MessageStack.Length);
+                Assert.IsTrue(e.MessageStack.Length < 8);
+            }
+
+            obj.SetValue(l, address);
+            l.Dispose();
+        }
+
 
         [TestMethod]
         [DynamicData(nameof(ProcessTestParameters))]
