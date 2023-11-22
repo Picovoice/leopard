@@ -68,7 +68,7 @@ class ViewModel: ObservableObject {
         } catch {
             errorMessage = "\(error.localizedDescription)"
         }
-        
+
         state = UIState.ERROR
     }
 
