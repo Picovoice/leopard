@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright 2022 Picovoice Inc.
+    Copyright 2022-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -8,6 +8,8 @@
     an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
     specific language governing permissions and limitations under the License.
 */
+
+using System;
 
 namespace Pv
 {
@@ -19,18 +21,26 @@ namespace Pv
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="word"> Transcribed word. </param>
-        /// <param name="confidence"> Transcription confidence. It is a number within [0, 1].</param>
-        /// <param name="startSec"> Start of word in seconds. </param>
-        /// <param name="endSec"> End of word in seconds. </param>
-        /// 
-        public LeopardWord(string word, float confidence, float startSec, float endSec)
+        /// <param name="word">Transcribed word.</param>
+        /// <param name="confidence">Transcription confidence. It is a number within [0, 1].</param>
+        /// <param name="startSec">Start of word in seconds.</param>
+        /// <param name="endSec">End of word in seconds.</param>
+        /// <param name="speakerTag">
+        /// The speaker tag is `-1` if diarization is not enabled during initialization; otherwise,
+        /// it's a non-negative integer identifying unique speakers, with `0` reserved for unknown speakers.
+        /// </param>
+        public LeopardWord(
+            string word,
+            float confidence,
+            float startSec,
+            float endSec,
+            Int32 speakerTag)
         {
             Word = word;
             Confidence = confidence;
-
             StartSec = startSec;
             EndSec = endSec;
+            SpeakerTag = speakerTag;
         }
 
         /// <summary>
@@ -52,6 +62,11 @@ namespace Pv
         /// Getter for endSec.
         /// </summary>
         public float EndSec { get; }
+
+        /// <summary>
+        /// Getter for speakerTag.
+        /// </summary>
+        public Int32 SpeakerTag { get; }
     }
 
     /// <summary>
@@ -63,7 +78,7 @@ namespace Pv
         /// Constructor.
         /// </summary>
         /// <param name="transcriptString">
-        ///  transcript String transcript returned from Leopard.
+        /// Transcript returned from Leopard.
         /// </param>
         /// <param name="wordArray">
         /// Transcribed words and their associated metadata.
