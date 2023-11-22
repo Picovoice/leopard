@@ -101,7 +101,7 @@ public class BaseTest {
         short[] pcm = new short[rawData.length / 2];
         ByteBuffer pcmBuff = ByteBuffer.wrap(rawData).order(ByteOrder.LITTLE_ENDIAN);
         pcmBuff.asShortBuffer().get(pcm);
-        pcm = Arrays.copyOfRange(pcm, 44, pcm.length);
+        pcm = Arrays.copyOfRange(pcm, 22, pcm.length);
 
         return pcm;
     }
@@ -112,14 +112,14 @@ public class BaseTest {
         boolean enableDiarization
     ) {
         for (int i = 0; i < words.length; i++) {
-            assertEquals(words[i].word, expectedWords[i].word);
-            assertTrue(Math.abs(words[i].confidence - expectedWords[i].confidence) <= 0.01);
-            assertTrue(Math.abs(words[i].startSec - expectedWords[i].startSec) <= 0.01);
-            assertTrue(Math.abs(words[i].endSec - expectedWords[i].endSec) <= 0.01);
+            assertEquals(words[i].getWord(), expectedWords[i].getWord());
+            assertTrue(Math.abs(words[i].getConfidence() - expectedWords[i].getConfidence()) <= 0.01);
+            assertTrue(Math.abs(words[i].getStartSec() - expectedWords[i].getStartSec()) <= 0.01);
+            assertTrue(Math.abs(words[i].getEndSec() - expectedWords[i].getEndSec()) <= 0.01);
             if (enableDiarization) {
-                assertEquals(words[i].speakerTag, expectedWords[i].speakerTag);
+                assertEquals(words[i].getSpeakerTag(), expectedWords[i].getSpeakerTag());
             } else {
-                assertEquals(words[i].speakerTag, -1);
+                assertEquals(words[i].getSpeakerTag(), -1);
             }
         }
     }

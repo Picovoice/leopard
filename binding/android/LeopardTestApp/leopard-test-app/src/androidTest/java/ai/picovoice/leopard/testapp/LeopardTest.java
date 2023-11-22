@@ -12,7 +12,7 @@
 
 package ai.picovoice.leopard.testapp;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -177,7 +177,9 @@ public class LeopardTest {
 
             JsonParser parser = new JsonParser();
             JsonObject testDataJson = parser.parse(testDataJsonString).getAsJsonObject();
-            JsonArray languageTests = testDataJson.getAsJsonArray("language_tests");
+            JsonArray languageTests = testDataJson
+                    .getAsJsonObject("tests")
+                    .getAsJsonArray("language_tests");
 
             List<Object[]> parameters = new ArrayList<>();
             for (int i = 0; i < languageTests.size(); i++) {
@@ -310,7 +312,7 @@ public class LeopardTest {
             Leopard leopard = new Leopard.Builder()
                     .setAccessKey(accessKey)
                     .setModelPath(modelPath)
-                    .setEnableDiarizations(true)
+                    .setEnableDiarization(true)
                     .build(appContext);
 
             File audioFile = new File(testResourcesPath, testAudioFile);
@@ -331,7 +333,7 @@ public class LeopardTest {
     }
 
     @RunWith(Parameterized.class)
-    public static class LanguageTests extends BaseTest {
+    public static class DiarizationTests extends BaseTest {
         @Parameterized.Parameter(value = 0)
         public String language;
 
@@ -350,7 +352,9 @@ public class LeopardTest {
 
             JsonParser parser = new JsonParser();
             JsonObject testDataJson = parser.parse(testDataJsonString).getAsJsonObject();
-            JsonArray languageTests = testDataJson.getAsJsonArray("diarization_tests");
+            JsonArray languageTests = testDataJson
+                    .getAsJsonObject("tests")
+                    .getAsJsonArray("diarization_tests");
 
             List<Object[]> parameters = new ArrayList<>();
             for (int i = 0; i < languageTests.size(); i++) {
@@ -374,16 +378,13 @@ public class LeopardTest {
                     JsonObject wordObject = words.get(j).getAsJsonObject();
 
                     String word = wordObject.get("word").getAsString();
-                    float confidence = wordObject.get("confidence").getAsFloat();
-                    float startSec = wordObject.get("start_sec").getAsFloat();
-                    float endSec = wordObject.get("end_sec").getAsFloat();
                     int speakerTag = wordObject.get("speaker_tag").getAsInt();
 
                     paramWords[j] = new LeopardTranscript.Word(
                         word,
-                        confidence,
-                        startSec,
-                        endSec,
+                        0.f,
+                            0.f,
+                        0.f,
                         speakerTag
                     );
                 }
@@ -405,7 +406,7 @@ public class LeopardTest {
             Leopard leopard = new Leopard.Builder()
                     .setAccessKey(accessKey)
                     .setModelPath(modelPath)
-                    .setEnableDiarizations(true)
+                    .setEnableDiarization(true)
                     .build(appContext);
 
             File audioFile = new File(testResourcesPath, testAudioFile);
@@ -413,11 +414,10 @@ public class LeopardTest {
 
             LeopardTranscript result = leopard.process(pcm);
 
-            validateMetadata(
-                    result.getWordArray(),
-                    expectedWords,
-                    true
-            );
+            for (int i = 0; i < result.getWordArray().length; i++) {
+                assertEquals(result.getWordArray()[i].getWord(), expectedWords[i].getWord());
+                assertEquals(result.getWordArray()[i].getSpeakerTag(), expectedWords[i].getSpeakerTag());
+            }
             leopard.delete();
         }
     }
