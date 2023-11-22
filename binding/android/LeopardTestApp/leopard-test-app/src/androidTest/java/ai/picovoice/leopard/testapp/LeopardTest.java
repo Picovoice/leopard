@@ -272,7 +272,7 @@ public class LeopardTest {
 
             LeopardTranscript result = leopard.processFile(audioFile.getAbsolutePath());
             assertTrue(getWordErrorRate(
-                result.getTranscriptString(), expectedTranscriptWithPunctuation, useCER) < errorRate);
+                    result.getTranscriptString(), expectedTranscriptWithPunctuation, useCER) < errorRate);
 
             validateMetadata(
                     result.getWordArray(),
