@@ -56,6 +56,7 @@ class ViewModel: ObservableObject {
                     modelPath: modelPath,
                     enableAutomaticPunctuation: true)
             state = UIState.READY
+            return
         } catch is LeopardActivationError {
             errorMessage = "ACCESS_KEY activation error"
         } catch is LeopardActivationRefusedError {
@@ -67,6 +68,8 @@ class ViewModel: ObservableObject {
         } catch {
             errorMessage = "\(error.localizedDescription)"
         }
+        
+        state = UIState.ERROR
     }
 
     public func destroy() {
