@@ -119,6 +119,7 @@
             <th>startSec</th>
             <th>endSec</th>
             <th>confidence</th>
+            <th>speaker tag</th>
           </tr>
         `;
         words.forEach(obj => {
@@ -128,6 +129,7 @@
               <td>${obj.startSec.toFixed(3)}</td>
               <td>${obj.endSec.toFixed(3)}</td>
               <td>${obj.confidence.toFixed(3)}</td>
+              <td>${obj.speakerTag}</td>
             </tr>
           `
         });
@@ -140,7 +142,10 @@
           leopard = await LeopardWeb.LeopardWorker.create(
             accessKey,
             leopardModel,
-            {enableAutomaticPunctuation: true}
+            {
+                enableAutomaticPunctuation: true,
+                enableDiarization: true
+            }
           );
           document.getElementById("control").style.display = "block";
           writeMessage("Leopard worker ready!");

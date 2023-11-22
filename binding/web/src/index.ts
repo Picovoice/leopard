@@ -1,5 +1,6 @@
 import { Leopard } from './leopard';
 import { LeopardWorker } from './leopard_worker';
+import * as LeopardErrors from './leopard_errors';
 
 import {
   LeopardModel,
@@ -27,6 +28,7 @@ LeopardWorker.setWasmSimd(leopardWasmSimd);
 
 export {
   Leopard,
+  LeopardErrors,
   LeopardModel,
   LeopardOptions,
   LeopardWord,
