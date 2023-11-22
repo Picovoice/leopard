@@ -43,6 +43,11 @@ public class Leopard {
     }
 
     private long handle;
+    private static String _sdk = "android";
+
+    public static void setSdk(String sdk) {
+        Leopard._sdk = sdk;
+    }
 
     /**
      * Constructor.
@@ -220,7 +225,9 @@ public class Leopard {
         /**
          * Setter for enabling speaker diarization.
          *
-         * @param enableDiarization Set to `true` to enable speaker diarization.
+         * @param enableDiarization Set to `true` to enable speaker diarization, which allows Leopard to
+         *                          differentiate speakers as part of the transcription process. Word
+         *                          metadata will include a `speaker_tag` to identify unique speakers.
          */
         public Builder setEnableDiarization(boolean enableDiarization) {
             this.enableDiarization = enableDiarization;

@@ -66,9 +66,17 @@ public class LeopardTranscript {
          * @param confidence Transcription confidence. It is a number within [0, 1].
          * @param startSec   Start of word in seconds.
          * @param endSec     End of word in seconds.
-         * @param speakerTag Speaker tag. It is set to `-1` if speaker diarization is not enabled during initialization.
+         * @param speakerTag The speaker tag is `-1` if diarization is not enabled during initialization;
+         *                   otherwise, it's a non-negative integer identifying unique speakers, with `0` reserved for
+         *                   unknown speakers.
          */
-        public Word(String word, float confidence, float startSec, float endSec, int speakerTag) {
+        public Word(
+            String word,
+            float confidence,
+            float startSec,
+            float endSec,
+            int speakerTag
+        ) {
             this.word = word;
             this.confidence = confidence;
             this.startSec = startSec;

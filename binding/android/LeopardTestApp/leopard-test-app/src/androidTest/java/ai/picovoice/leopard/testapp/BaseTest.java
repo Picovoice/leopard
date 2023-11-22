@@ -27,7 +27,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 
-import java.lang.Math;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -111,11 +110,12 @@ public class BaseTest {
             LeopardTranscript.Word[] expectedWords,
             boolean enableDiarization
     ) {
+        assertEquals(words.length, expectedWords.length);
         for (int i = 0; i < words.length; i++) {
             assertEquals(words[i].getWord(), expectedWords[i].getWord());
-            assertTrue(Math.abs(words[i].getConfidence() - expectedWords[i].getConfidence()) <= 0.01);
-            assertTrue(Math.abs(words[i].getStartSec() - expectedWords[i].getStartSec()) <= 0.01);
-            assertTrue(Math.abs(words[i].getEndSec() - expectedWords[i].getEndSec()) <= 0.01);
+            assertEquals(words[i].getConfidence(), expectedWords[i].getConfidence(), 0.01);
+            assertEquals(words[i].getStartSec(), expectedWords[i].getStartSec(), 0.01);
+            assertEquals(words[i].getEndSec(), expectedWords[i].getEndSec(), 0.01);
             if (enableDiarization) {
                 assertEquals(words[i].getSpeakerTag(), expectedWords[i].getSpeakerTag());
             } else {

@@ -384,7 +384,7 @@ public class LeopardTest {
                     paramWords[j] = new LeopardTranscript.Word(
                         word,
                         0.f,
-                            0.f,
+                        0.f,
                         0.f,
                         speakerTag
                     );
@@ -415,6 +415,7 @@ public class LeopardTest {
 
             LeopardTranscript result = leopard.process(pcm);
 
+            assertEquals(result.getWordArray().length, expectedWords.length);
             for (int i = 0; i < result.getWordArray().length; i++) {
                 assertEquals(result.getWordArray()[i].getWord(), expectedWords[i].getWord());
                 assertEquals(result.getWordArray()[i].getSpeakerTag(), expectedWords[i].getSpeakerTag());
