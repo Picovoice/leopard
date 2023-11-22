@@ -71,11 +71,11 @@ public class LeopardTranscript {
          *                   unknown speakers.
          */
         public Word(
-            String word,
-            float confidence,
-            float startSec,
-            float endSec,
-            int speakerTag
+                String word,
+                float confidence,
+                float startSec,
+                float endSec,
+                int speakerTag
         ) {
             this.word = word;
             this.confidence = confidence;
