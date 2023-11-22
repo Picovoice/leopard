@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright 2022 Picovoice Inc.
+    Copyright 2022-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -15,10 +15,35 @@ namespace Pv
 {
     public class LeopardException : Exception
     {
+        private readonly string[] _messageStack;
+
         public LeopardException() { }
 
         public LeopardException(string message) : base(message) { }
 
+        public LeopardException(string message, string[] messageStack) : base(ModifyMessages(message, messageStack))
+        {
+            this._messageStack = messageStack;
+        }
+
+        public string[] MessageStack
+        {
+            get => _messageStack;
+        }
+
+        private static string ModifyMessages(string message, string[] messageStack)
+        {
+            string messageString = message;
+            if (messageStack.Length > 0)
+            {
+                messageString += ":";
+                for (int i = 0; i < messageStack.Length; i++)
+                {
+                    messageString += $"\n  [{i}] {messageStack[i]}";
+                }
+            }
+            return messageString;
+        }
     }
 
     public class LeopardMemoryException : LeopardException
@@ -26,6 +51,8 @@ namespace Pv
         public LeopardMemoryException() { }
 
         public LeopardMemoryException(string message) : base(message) { }
+
+        public LeopardMemoryException(string message, string[] messageStack) : base(message, messageStack) { }
     }
 
     public class LeopardIOException : LeopardException
@@ -33,6 +60,8 @@ namespace Pv
         public LeopardIOException() { }
 
         public LeopardIOException(string message) : base(message) { }
+
+        public LeopardIOException(string message, string[] messageStack) : base(message, messageStack) { }
     }
 
     public class LeopardInvalidArgumentException : LeopardException
@@ -40,6 +69,8 @@ namespace Pv
         public LeopardInvalidArgumentException() { }
 
         public LeopardInvalidArgumentException(string message) : base(message) { }
+
+        public LeopardInvalidArgumentException(string message, string[] messageStack) : base(message, messageStack) { }
     }
 
     public class LeopardStopIterationException : LeopardException
@@ -47,6 +78,8 @@ namespace Pv
         public LeopardStopIterationException() { }
 
         public LeopardStopIterationException(string message) : base(message) { }
+
+        public LeopardStopIterationException(string message, string[] messageStack) : base(message, messageStack) { }
     }
 
     public class LeopardKeyException : LeopardException
@@ -54,6 +87,8 @@ namespace Pv
         public LeopardKeyException() { }
 
         public LeopardKeyException(string message) : base(message) { }
+
+        public LeopardKeyException(string message, string[] messageStack) : base(message, messageStack) { }
     }
 
     public class LeopardInvalidStateException : LeopardException
@@ -61,6 +96,8 @@ namespace Pv
         public LeopardInvalidStateException() { }
 
         public LeopardInvalidStateException(string message) : base(message) { }
+
+        public LeopardInvalidStateException(string message, string[] messageStack) : base(message, messageStack) { }
     }
 
     public class LeopardRuntimeException : LeopardException
@@ -68,6 +105,8 @@ namespace Pv
         public LeopardRuntimeException() { }
 
         public LeopardRuntimeException(string message) : base(message) { }
+
+        public LeopardRuntimeException(string message, string[] messageStack) : base(message, messageStack) { }
     }
 
     public class LeopardActivationException : LeopardException
@@ -75,6 +114,8 @@ namespace Pv
         public LeopardActivationException() { }
 
         public LeopardActivationException(string message) : base(message) { }
+
+        public LeopardActivationException(string message, string[] messageStack) : base(message, messageStack) { }
     }
 
     public class LeopardActivationLimitException : LeopardException
@@ -82,6 +123,8 @@ namespace Pv
         public LeopardActivationLimitException() { }
 
         public LeopardActivationLimitException(string message) : base(message) { }
+
+        public LeopardActivationLimitException(string message, string[] messageStack) : base(message, messageStack) { }
     }
 
     public class LeopardActivationThrottledException : LeopardException
@@ -89,6 +132,8 @@ namespace Pv
         public LeopardActivationThrottledException() { }
 
         public LeopardActivationThrottledException(string message) : base(message) { }
+
+        public LeopardActivationThrottledException(string message, string[] messageStack) : base(message, messageStack) { }
     }
 
     public class LeopardActivationRefusedException : LeopardException
@@ -96,6 +141,8 @@ namespace Pv
         public LeopardActivationRefusedException() { }
 
         public LeopardActivationRefusedException(string message) : base(message) { }
+
+        public LeopardActivationRefusedException(string message, string[] messageStack) : base(message, messageStack) { }
     }
 
 }

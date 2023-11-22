@@ -19,38 +19,49 @@ using Pv;
 namespace LeopardDemo
 {
     /// <summary>
-    /// Microphone Demo for Leopard Speech-to-Text engine. It creates an input audio stream from a microphone. 
+    /// Microphone Demo for Leopard Speech-to-Text engine.
+    /// It creates an input audio stream from a microphone and processes it with Leopard.
     /// </summary>
     public class MicDemo
     {
-
         private static readonly int PV_RECORDER_FRAME_LENGTH = 2048;
 
         /// <summary>
         /// Creates an input audio stream and instantiates an instance of Leopard object.
         /// </summary>
-        /// <param name="accessKey">AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).</param>
-        /// <param name="modelPath">Absolute path to the file containing model parameters. If not set it will be set to the default location.</param>           
+        /// <param name="accessKey">
+        /// AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).
+        /// </param>
+        /// <param name="modelPath">
+        /// Absolute path to the file containing model parameters.
+        /// If not set it will be set to the default location.
+        /// </param>
         /// <param name="enableAutomaticPunctuation">
         /// Set to `true` to enable automatic punctuation insertion.
         /// </param>
-        /// <param name="verbose">
-        /// Enable verbose logging.
+        /// <param name="enableDiarization">
+        /// Set to `true` to enable speaker diarization, which allows Leopard to differentiate speakers as
+        /// part of the transcription process. Word metadata will include a `SpeakerTag` to identify unique speakers.
         /// </param>
-        /// <param name="audioDeviceIndex">Optional argument. If provided, audio is recorded from this input device. Otherwise, the default audio input device is used.</param>        
-        public static void RunDemo(
+        /// <param name="verbose">Enable verbose logging.</param>
+        /// <param name="audioDeviceIndex">
+        /// Optional argument. If provided, audio is recorded from this input device.
+        /// Otherwise, the default audio input device is used.
+        /// </param>
+        private static void RunDemo(
             string accessKey,
             string modelPath,
             bool enableAutomaticPunctuation,
+            bool enableDiarization,
             bool verbose,
             int audioDeviceIndex)
         {
             using (Leopard leopard = Leopard.Create(
                 accessKey: accessKey,
                 modelPath: modelPath,
-                enableAutomaticPunctuation: enableAutomaticPunctuation))
+                enableAutomaticPunctuation: enableAutomaticPunctuation,
+                enableDiarization: enableDiarization))
             {
-
                 using (PvRecorder recorder = PvRecorder.Create(PV_RECORDER_FRAME_LENGTH, audioDeviceIndex))
                 {
                     Console.WriteLine($"Using device: {recorder.SelectedDevice}");
@@ -98,11 +109,25 @@ namespace LeopardDemo
                             Console.WriteLine(result.TranscriptString);
                             if (verbose)
                             {
-                                Console.WriteLine(string.Format("\n|{0,-15}|{1,-10:0.00}|{2,-10:0.00}|{3,-10:0.00}|\n", "word", "Confidence", "StartSec", "EndSec"));
+                                Console.WriteLine(
+                                    string.Format(
+                                        "\n|{0,-15}|{1,11:0.00}|{2,10:0.00}|{3,10:0.00}|{4,11}|\n",
+                                        "Word",
+                                        "Confidence",
+                                        "StartSec",
+                                        "EndSec",
+                                        "SpeakerTag"));
                                 for (int i = 0; i < result.WordArray.Length; i++)
                                 {
                                     LeopardWord word = result.WordArray[i];
-                                    Console.WriteLine(string.Format("|{0,-15}|{1,10:0.00}|{2,10:0.00}|{3,10:0.00}|", word.Word, word.Confidence, word.StartSec, word.EndSec));
+                                    Console.WriteLine(
+                                        string.Format(
+                                            "|{0,-15}|{1,11:0.00}|{2,10:0.00}|{3,10:0.00}|{4,11}|",
+                                            word.Word,
+                                            word.Confidence,
+                                            word.StartSec,
+                                            word.EndSec,
+                                            word.SpeakerTag));
                                 }
                                 Console.WriteLine();
                             }
@@ -119,7 +144,7 @@ namespace LeopardDemo
         /// <summary>
         /// Lists available audio input devices.
         /// </summary>
-        public static void ShowAudioDevices()
+        private static void ShowAudioDevices()
         {
             string[] devices = PvRecorder.GetAvailableDevices();
             for (int i = 0; i < devices.Length; i++)
@@ -141,7 +166,8 @@ namespace LeopardDemo
             string accessKey = null;
             string modelPath = null;
             bool enableAutomaticPunctuation = true;
-            bool verbose = true;
+            bool enableDiarization = true;
+            bool verbose = false;
             int audioDeviceIndex = -1;
             bool showAudioDevices = false;
             bool showHelp = false;
@@ -167,6 +193,11 @@ namespace LeopardDemo
                 else if (args[argIndex] == "--disable_automatic_punctuation")
                 {
                     enableAutomaticPunctuation = false;
+                    argIndex++;
+                }
+                else if (args[argIndex] == "--disable_speaker_diarization")
+                {
+                    enableDiarization = false;
                     argIndex++;
                 }
                 else if (args[argIndex] == "--verbose")
@@ -219,6 +250,7 @@ namespace LeopardDemo
                 accessKey,
                 modelPath,
                 enableAutomaticPunctuation,
+                enableDiarization,
                 verbose,
                 audioDeviceIndex);
         }
@@ -236,6 +268,7 @@ namespace LeopardDemo
             "\t--audio_device_index: Index of input audio device.\n" +
             "\t--show_audio_devices: Print available recording devices.\n" +
             "\t--disable_automatic_punctuation: Disable automatic punctuation.\n" +
-            "\t--verbose: Enable verbose logging";
+            "\t--disable_speaker_diarization: Disable speaker diarization.\n" +
+            "\t--verbose: Enable verbose output. Prints Leopard word metadata.";
     }
 }
