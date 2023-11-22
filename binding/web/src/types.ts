@@ -1,5 +1,5 @@
 /*
-  Copyright 2022 Picovoice Inc.
+  Copyright 2022-2023 Picovoice Inc.
 
   You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
   file accompanying this source.
@@ -39,17 +39,24 @@ export type LeopardOptions = {
 };
 
 export type LeopardWord = {
+  /** Transcribed word. */
   word: string;
+  /** Start of word in seconds. */
   startSec: number;
+  /** End of word in seconds. */
   endSec: number;
+  /** Transcription confidence. It is a number within [0, 1]. */
   confidence: number;
+  /** The speaker tag is `-1` if diarization is not enabled during initialization;
+   * otherwise, it's a non-negative integer identifying unique speakers, with `0` reserved for
+   * unknown speakers. */
   speakerTag: number;
-}
+};
 
 export type LeopardTranscript = {
   transcript: string;
   words: LeopardWord[];
-}
+};
 
 export type LeopardWorkerInitRequest = {
   command: 'init';
@@ -72,9 +79,9 @@ export type LeopardWorkerReleaseRequest = {
 };
 
 export type LeopardWorkerRequest =
-  LeopardWorkerInitRequest |
-  LeopardWorkerProcessRequest |
-  LeopardWorkerReleaseRequest;
+  | LeopardWorkerInitRequest
+  | LeopardWorkerProcessRequest
+  | LeopardWorkerReleaseRequest;
 
 export type LeopardWorkerFailureResponse = {
   command: 'failed' | 'error';
@@ -83,23 +90,29 @@ export type LeopardWorkerFailureResponse = {
   messageStack: string[];
 };
 
-export type LeopardWorkerInitResponse = LeopardWorkerFailureResponse | {
-  command: 'ok';
-  sampleRate: number;
-  version: string;
-};
+export type LeopardWorkerInitResponse =
+  | LeopardWorkerFailureResponse
+  | {
+      command: 'ok';
+      sampleRate: number;
+      version: string;
+    };
 
-export type LeopardWorkerProcessResponse = LeopardWorkerFailureResponse | {
-  command: 'ok';
-  result: LeopardTranscript;
-  inputFrame?: Int16Array;
-};
+export type LeopardWorkerProcessResponse =
+  | LeopardWorkerFailureResponse
+  | {
+      command: 'ok';
+      result: LeopardTranscript;
+      inputFrame?: Int16Array;
+    };
 
-export type LeopardWorkerReleaseResponse = LeopardWorkerFailureResponse | {
-  command: 'ok';
-};
+export type LeopardWorkerReleaseResponse =
+  | LeopardWorkerFailureResponse
+  | {
+      command: 'ok';
+    };
 
 export type LeopardWorkerResponse =
-  LeopardWorkerInitResponse |
-  LeopardWorkerProcessResponse |
-  LeopardWorkerReleaseResponse;
+  | LeopardWorkerInitResponse
+  | LeopardWorkerProcessResponse
+  | LeopardWorkerReleaseResponse;

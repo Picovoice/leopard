@@ -34,7 +34,8 @@ module.exports = {
             ignoreParameters: true,
             ignoreProperties: true
           }
-        ]
+        ],
+        '@typescript-eslint/no-shadow': 2
       }
     },
     {

@@ -9,15 +9,20 @@
 // specific language governing permissions and limitations under the License.
 //
 
-import { PvError } from "@picovoice/web-utils";
-import { PvStatus } from "./types";
+import { PvError } from '@picovoice/web-utils';
+import { PvStatus } from './types';
 
 class LeopardError extends Error {
   private readonly _status: PvStatus;
   private readonly _shortMessage: string;
   private readonly _messageStack: string[];
 
-  constructor(status: PvStatus, message: string, messageStack: string[] = [], pvError: PvError | null = null) {
+  constructor(
+    status: PvStatus,
+    message: string,
+    messageStack: string[] = [],
+    pvError: PvError | null = null
+  ) {
     super(LeopardError.errorToString(message, messageStack, pvError));
     this._status = status;
     this.name = 'LeopardError';
@@ -40,7 +45,7 @@ class LeopardError extends Error {
   private static errorToString(
     initial: string,
     messageStack: string[],
-    pvError: PvError | null = null,
+    pvError: PvError | null = null
   ): string {
     let msg = initial;
 
@@ -52,8 +57,10 @@ class LeopardError extends Error {
     }
 
     if (messageStack.length > 0) {
-      msg += `: ${messageStack.reduce((acc, value, index) =>
-        acc + '\n  [' + index + '] ' + value, '')}`;
+      msg += `: ${messageStack.reduce(
+        (acc, value, index) => acc + '\n  [' + index + '] ' + value,
+        ''
+      )}`;
     }
 
     return msg;
@@ -61,77 +68,121 @@ class LeopardError extends Error {
 }
 
 class LeopardOutOfMemoryError extends LeopardError {
-  constructor(message: string, messageStack?: string[], pvError: PvError | null = null) {
+  constructor(
+    message: string,
+    messageStack?: string[],
+    pvError: PvError | null = null
+  ) {
     super(PvStatus.OUT_OF_MEMORY, message, messageStack, pvError);
     this.name = 'LeopardOutOfMemoryError';
   }
 }
 
 class LeopardIOError extends LeopardError {
-  constructor(message: string, messageStack: string[] = [], pvError: PvError | null = null) {
+  constructor(
+    message: string,
+    messageStack: string[] = [],
+    pvError: PvError | null = null
+  ) {
     super(PvStatus.IO_ERROR, message, messageStack, pvError);
     this.name = 'LeopardIOError';
   }
 }
 
 class LeopardInvalidArgumentError extends LeopardError {
-  constructor(message: string, messageStack: string[] = [], pvError: PvError | null = null) {
+  constructor(
+    message: string,
+    messageStack: string[] = [],
+    pvError: PvError | null = null
+  ) {
     super(PvStatus.INVALID_ARGUMENT, message, messageStack, pvError);
     this.name = 'LeopardInvalidArgumentError';
   }
 }
 
 class LeopardStopIterationError extends LeopardError {
-  constructor(message: string, messageStack: string[] = [], pvError: PvError | null = null) {
+  constructor(
+    message: string,
+    messageStack: string[] = [],
+    pvError: PvError | null = null
+  ) {
     super(PvStatus.STOP_ITERATION, message, messageStack, pvError);
     this.name = 'LeopardStopIterationError';
   }
 }
 
 class LeopardKeyError extends LeopardError {
-  constructor(message: string, messageStack: string[] = [], pvError: PvError | null = null) {
+  constructor(
+    message: string,
+    messageStack: string[] = [],
+    pvError: PvError | null = null
+  ) {
     super(PvStatus.KEY_ERROR, message, messageStack, pvError);
     this.name = 'LeopardKeyError';
   }
 }
 
 class LeopardInvalidStateError extends LeopardError {
-  constructor(message: string, messageStack: string[] = [], pvError: PvError | null = null) {
+  constructor(
+    message: string,
+    messageStack: string[] = [],
+    pvError: PvError | null = null
+  ) {
     super(PvStatus.INVALID_STATE, message, messageStack, pvError);
     this.name = 'LeopardInvalidStateError';
   }
 }
 
 class LeopardRuntimeError extends LeopardError {
-  constructor(message: string, messageStack: string[] = [], pvError: PvError | null = null) {
+  constructor(
+    message: string,
+    messageStack: string[] = [],
+    pvError: PvError | null = null
+  ) {
     super(PvStatus.RUNTIME_ERROR, message, messageStack, pvError);
     this.name = 'LeopardRuntimeError';
   }
 }
 
 class LeopardActivationError extends LeopardError {
-  constructor(message: string, messageStack: string[] = [], pvError: PvError | null = null) {
+  constructor(
+    message: string,
+    messageStack: string[] = [],
+    pvError: PvError | null = null
+  ) {
     super(PvStatus.ACTIVATION_ERROR, message, messageStack, pvError);
     this.name = 'LeopardActivationError';
   }
 }
 
 class LeopardActivationLimitReachedError extends LeopardError {
-  constructor(message: string, messageStack: string[] = [], pvError: PvError | null = null) {
+  constructor(
+    message: string,
+    messageStack: string[] = [],
+    pvError: PvError | null = null
+  ) {
     super(PvStatus.ACTIVATION_LIMIT_REACHED, message, messageStack, pvError);
     this.name = 'LeopardActivationLimitReachedError';
   }
 }
 
 class LeopardActivationThrottledError extends LeopardError {
-  constructor(message: string, messageStack: string[] = [], pvError: PvError | null = null) {
+  constructor(
+    message: string,
+    messageStack: string[] = [],
+    pvError: PvError | null = null
+  ) {
     super(PvStatus.ACTIVATION_THROTTLED, message, messageStack, pvError);
     this.name = 'LeopardActivationThrottledError';
   }
 }
 
 class LeopardActivationRefusedError extends LeopardError {
-  constructor(message: string, messageStack: string[] = [], pvError: PvError | null = null) {
+  constructor(
+    message: string,
+    messageStack: string[] = [],
+    pvError: PvError | null = null
+  ) {
     super(PvStatus.ACTIVATION_REFUSED, message, messageStack, pvError);
     this.name = 'LeopardActivationRefusedError';
   }
@@ -152,8 +203,6 @@ export {
   LeopardActivationRefusedError,
 };
 
-
-
 export function pvStatusToException(
   pvStatus: PvStatus,
   errorMessage: string,
@@ -166,7 +215,11 @@ export function pvStatusToException(
     case PvStatus.IO_ERROR:
       return new LeopardIOError(errorMessage, messageStack, pvError);
     case PvStatus.INVALID_ARGUMENT:
-      return new LeopardInvalidArgumentError(errorMessage, messageStack, pvError);
+      return new LeopardInvalidArgumentError(
+        errorMessage,
+        messageStack,
+        pvError
+      );
     case PvStatus.STOP_ITERATION:
       return new LeopardStopIterationError(errorMessage, messageStack, pvError);
     case PvStatus.KEY_ERROR:
@@ -178,11 +231,23 @@ export function pvStatusToException(
     case PvStatus.ACTIVATION_ERROR:
       return new LeopardActivationError(errorMessage, messageStack, pvError);
     case PvStatus.ACTIVATION_LIMIT_REACHED:
-      return new LeopardActivationLimitReachedError(errorMessage, messageStack, pvError);
+      return new LeopardActivationLimitReachedError(
+        errorMessage,
+        messageStack,
+        pvError
+      );
     case PvStatus.ACTIVATION_THROTTLED:
-      return new LeopardActivationThrottledError(errorMessage, messageStack, pvError);
+      return new LeopardActivationThrottledError(
+        errorMessage,
+        messageStack,
+        pvError
+      );
     case PvStatus.ACTIVATION_REFUSED:
-      return new LeopardActivationRefusedError(errorMessage, messageStack, pvError);
+      return new LeopardActivationRefusedError(
+        errorMessage,
+        messageStack,
+        pvError
+      );
     default:
       // eslint-disable-next-line no-console
       console.warn(`Unmapped error code: ${pvStatus}`);

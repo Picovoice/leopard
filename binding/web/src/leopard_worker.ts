@@ -18,9 +18,10 @@ import {
   LeopardWorkerInitResponse,
   LeopardWorkerProcessResponse,
   LeopardWorkerReleaseResponse,
+  PvStatus,
 } from './types';
 import { loadModel } from '@picovoice/web-utils';
-import { pvStatusToException } from "./leopard_errors";
+import { pvStatusToException } from './leopard_errors';
 
 export class LeopardWorker {
   private readonly _worker: Worker;
@@ -29,7 +30,7 @@ export class LeopardWorker {
 
   private static _wasm: string;
   private static _wasmSimd: string;
-  private static _sdk: string = "web";
+  private static _sdk: string = 'web';
 
   private constructor(worker: Worker, version: string, sampleRate: number) {
     this._worker = worker;
@@ -97,33 +98,61 @@ export class LeopardWorker {
    * @param model.version Version of the model file. Increment to update the model file in storage.
    * @param options Optional arguments.
    * @param options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
+   * @param options.enableDiarization Flag to enable speaker diarization, which allows Leopard to differentiate speakers
+   * as part of the transcription process. Word metadata will include a `speakerTag` to identify unique speakers.
    *
    * @returns An instance of LeopardWorker.
    */
-  public static async create(accessKey: string, model: LeopardModel, options: LeopardOptions = {}): Promise<LeopardWorker> {
-    const customWritePath = (model.customWritePath) ? model.customWritePath : 'leopard_model';
+  public static async create(
+    accessKey: string,
+    model: LeopardModel,
+    options: LeopardOptions = {}
+  ): Promise<LeopardWorker> {
+    const customWritePath = model.customWritePath
+      ? model.customWritePath
+      : 'leopard_model';
     const modelPath = await loadModel({ ...model, customWritePath });
 
     const worker = new PvWorker();
-    const returnPromise: Promise<LeopardWorker> = new Promise((resolve, reject) => {
-      // @ts-ignore - block from GC
-      this.worker = worker;
-      worker.onmessage = (event: MessageEvent<LeopardWorkerInitResponse>): void => {
-        switch (event.data.command) {
-          case 'ok':
-            resolve(new LeopardWorker(worker, event.data.version, event.data.sampleRate));
-            break;
-          case 'failed':
-          case 'error':
-            const error = pvStatusToException(event.data.status, event.data.shortMessage, event.data.messageStack);
-            reject(error);
-            break;
-          default:
-            // @ts-ignore
-            reject(`Unrecognized command: ${event.data.command}`);
-        }
-      };
-    });
+    const returnPromise: Promise<LeopardWorker> = new Promise(
+      (resolve, reject) => {
+        // @ts-ignore - block from GC
+        this.worker = worker;
+        worker.onmessage = (
+          event: MessageEvent<LeopardWorkerInitResponse>
+        ): void => {
+          switch (event.data.command) {
+            case 'ok':
+              resolve(
+                new LeopardWorker(
+                  worker,
+                  event.data.version,
+                  event.data.sampleRate
+                )
+              );
+              break;
+            case 'failed':
+            case 'error':
+              reject(
+                pvStatusToException(
+                  event.data.status,
+                  event.data.shortMessage,
+                  event.data.messageStack
+                )
+              );
+              break;
+            default:
+              reject(
+                pvStatusToException(
+                  PvStatus.RUNTIME_ERROR,
+                  // @ts-ignore
+                  `Unrecognized command: ${event.data.command}`
+                )
+              );
+          }
+        };
+      }
+    );
 
     worker.postMessage({
       command: 'init',
@@ -132,7 +161,7 @@ export class LeopardWorker {
       options: options,
       wasm: this._wasm,
       wasmSimd: this._wasmSimd,
-      sdk: this._sdk
+      sdk: this._sdk,
     });
 
     return returnPromise;
@@ -148,42 +177,63 @@ export class LeopardWorker {
    * input buffer array will be transferred to the worker.
    * @param options.transferCallback Optional callback containing a new Int16Array with contents from 'pcm'. Use this callback
    * to get the input pcm when using transfer.
-   * @return The transcript.
+   *
+   * @return A transcript object.
    */
   public process(
     pcm: Int16Array,
-    options: { transfer?: boolean, transferCallback?: (data: Int16Array) => void } = {},
+    options: {
+      transfer?: boolean;
+      transferCallback?: (data: Int16Array) => void;
+    } = {}
   ): Promise<LeopardTranscript> {
     const { transfer = false, transferCallback } = options;
 
-    const returnPromise: Promise<LeopardTranscript> = new Promise((resolve, reject) => {
-      this._worker.onmessage = (event: MessageEvent<LeopardWorkerProcessResponse>): void => {
-        switch (event.data.command) {
-          case 'ok':
-            if (transfer && transferCallback && event.data.inputFrame) {
-              transferCallback(new Int16Array(event.data.inputFrame.buffer));
-            }
-            resolve(event.data.result);
-            break;
-          case 'failed':
-          case 'error':
-            const error = pvStatusToException(event.data.status, event.data.shortMessage, event.data.messageStack);
-            reject(error);
-            break;
-          default:
-            // @ts-ignore
-            reject(`Unrecognized command: ${event.data.command}`);
-        }
-      };
-    });
+    const returnPromise: Promise<LeopardTranscript> = new Promise(
+      (resolve, reject) => {
+        this._worker.onmessage = (
+          event: MessageEvent<LeopardWorkerProcessResponse>
+        ): void => {
+          switch (event.data.command) {
+            case 'ok':
+              if (transfer && transferCallback && event.data.inputFrame) {
+                transferCallback(new Int16Array(event.data.inputFrame.buffer));
+              }
+              resolve(event.data.result);
+              break;
+            case 'failed':
+            case 'error':
+              reject(
+                pvStatusToException(
+                  event.data.status,
+                  event.data.shortMessage,
+                  event.data.messageStack
+                )
+              );
+              break;
+            default:
+              reject(
+                pvStatusToException(
+                  PvStatus.RUNTIME_ERROR,
+                  // @ts-ignore
+                  `Unrecognized command: ${event.data.command}`
+                )
+              );
+          }
+        };
+      }
+    );
 
-    const transferable = (transfer) ? [pcm.buffer] : [];
+    const transferable = transfer ? [pcm.buffer] : [];
 
-    this._worker.postMessage({
-      command: 'process',
-      inputFrame: pcm,
-      transfer: transfer,
-    }, transferable);
+    this._worker.postMessage(
+      {
+        command: 'process',
+        inputFrame: pcm,
+        transfer: transfer,
+      },
+      transferable
+    );
 
     return returnPromise;
   }
@@ -193,19 +243,31 @@ export class LeopardWorker {
    */
   public release(): Promise<void> {
     const returnPromise: Promise<void> = new Promise((resolve, reject) => {
-      this._worker.onmessage = (event: MessageEvent<LeopardWorkerReleaseResponse>): void => {
+      this._worker.onmessage = (
+        event: MessageEvent<LeopardWorkerReleaseResponse>
+      ): void => {
         switch (event.data.command) {
           case 'ok':
             resolve();
             break;
           case 'failed':
           case 'error':
-            const error = pvStatusToException(event.data.status, event.data.shortMessage, event.data.messageStack);
-            reject(error);
+            reject(
+              pvStatusToException(
+                event.data.status,
+                event.data.shortMessage,
+                event.data.messageStack
+              )
+            );
             break;
           default:
-            // @ts-ignore
-            reject(`Unrecognized command: ${event.data.command}`);
+            reject(
+              pvStatusToException(
+                PvStatus.RUNTIME_ERROR,
+                // @ts-ignore
+                `Unrecognized command: ${event.data.command}`
+              )
+            );
         }
       };
     });
