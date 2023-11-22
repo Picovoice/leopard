@@ -150,7 +150,9 @@ class LeopardAppTestUITests: XCTestCase {
         leopard!.delete()
 
         if errorRate != -1.0 && expectedTranscript != nil {
-            XCTAssert(characterErrorRate(transcript: result.transcript, expectedTranscript: expectedTranscript!) < errorRate)
+            XCTAssert(characterErrorRate(
+                transcript: result.transcript,
+                expectedTranscript: expectedTranscript!) < errorRate)
         }
         validateMetadata(
                 words: result.words,
@@ -182,7 +184,9 @@ class LeopardAppTestUITests: XCTestCase {
         leopard!.delete()
 
         if errorRate != -1.0 && expectedTranscript != nil {
-            XCTAssert(characterErrorRate(transcript: result.transcript, expectedTranscript: expectedTranscript!) < errorRate)
+            XCTAssert(characterErrorRate(
+                transcript: result.transcript,
+                expectedTranscript: expectedTranscript!) < errorRate)
         }
         validateMetadata(
                 words: result.words,
@@ -214,7 +218,9 @@ class LeopardAppTestUITests: XCTestCase {
         leopard!.delete()
 
         if errorRate != -1.0 && expectedTranscript != nil {
-            XCTAssert(characterErrorRate(transcript: result.transcript, expectedTranscript: expectedTranscript!) < errorRate)
+            XCTAssert(characterErrorRate(
+                transcript: result.transcript,
+                expectedTranscript: expectedTranscript!) < errorRate)
         }
         validateMetadata(
                 words: result.words,

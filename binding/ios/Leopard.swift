@@ -71,8 +71,9 @@ public class Leopard {
     ///   - accessKey: The AccessKey obtained from Picovoice Console (https://console.picovoice.ai).
     ///   - modelPath: Absolute path to file containing model parameters.
     ///   - enableAutomaticPunctuation: Set to `true` to enable automatic punctuation insertion.
-    ///   - enableDiarization: Set to `true` to enable speaker diarization, which allows Leopard to differentiate speakers
-    ///     as part of the transcription process. Word metadata will include a `speakerTag` to identify unique speakers.
+    ///   - enableDiarization: Set to `true` to enable speaker diarization, which allows Leopard to
+    ///     differentiate speakers as part of the transcription process. Word metadata will include
+    ///     a `speakerTag` to identify unique speakers.
     /// - Throws: LeopardError
     public init(
         accessKey: String,
@@ -107,8 +108,9 @@ public class Leopard {
     ///   - accessKey: The AccessKey obtained from Picovoice Console (https://console.picovoice.ai).
     ///   - modelURL: URL to the file containing model parameters.
     ///   - enableAutomaticPunctuation: Set to `true` to enable automatic punctuation insertion.
-    ///   - enableDiarization: Set to `true` to enable speaker diarization, which allows Leopard to differentiate speakers
-    ///     as part of the transcription process. Word metadata will include a `speakerTag` to identify unique speakers.
+    ///   - enableDiarization: Set to `true` to enable speaker diarization, which allows Leopard to
+    ///     differentiate speakers as part of the transcription process. Word metadata will include
+    ///     a `speakerTag` to identify unique speakers.
     /// - Throws: LeopardError
     public convenience init(
         accessKey: String,
