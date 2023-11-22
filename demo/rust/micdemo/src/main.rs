@@ -1,5 +1,5 @@
 /*
-    Copyright 2022 Picovoice Inc.
+    Copyright 2022-2023 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -26,6 +26,7 @@ fn leopard_demo(
     access_key: &str,
     model_path: Option<&str>,
     enable_automatic_punctuation: bool,
+    enable_diarization: bool,
     verbose: bool,
 ) {
     let mut leopard_builder = LeopardBuilder::new();
@@ -36,6 +37,7 @@ fn leopard_demo(
 
     let leopard = leopard_builder
         .enable_automatic_punctuation(enable_automatic_punctuation)
+        .enable_diarization(enable_diarization)
         .access_key(access_key)
         .init()
         .expect("Failed to create Leopard");
@@ -89,13 +91,13 @@ fn leopard_demo(
         if verbose {
             println!();
             let mut tw = TabWriter::new(vec![]);
-            writeln!(&mut tw, "Word\tStart Sec\tEnd Sec\tConfidence").unwrap();
-            writeln!(&mut tw, "----\t---------\t-------\t----------").unwrap();
+            writeln!(&mut tw, "Word\tStart Sec\tEnd Sec\tConfidence\tSpeaker Tag").unwrap();
+            writeln!(&mut tw, "----\t---------\t-------\t----------\t-----------").unwrap();
             leopard_transcript.words.iter().for_each(|word| {
                 writeln!(
                     &mut tw,
-                    "{}\t{:.2}\t{:.2}\t{:.2}",
-                    word.word, word.start_sec, word.end_sec, word.confidence
+                    "{}\t{:.2}\t{:.2}\t{:.2}\t{}",
+                    word.word, word.start_sec, word.end_sec, word.confidence, word.speaker_tag
                 )
                 .unwrap();
             });
@@ -145,8 +147,14 @@ fn main() {
         .arg(
             Arg::with_name("disable_automatic_punctuation")
                 .long("disable_automatic_punctuation")
-                .short('d')
+                .short('p')
                 .help("Set to disable automatic punctuation insertion."),
+        )
+        .arg(
+            Arg::with_name("disable_speaker_diarization")
+                .long("disable_speaker_diarization")
+                .short('d')
+                .help("Set to disable speaker diarization."),
         )
         .arg(
             Arg::with_name("verbose")
@@ -187,6 +195,7 @@ fn main() {
     let model_path = matches.value_of("model_path");
 
     let enable_automatic_punctuation = !matches.contains_id("disable_automatic_punctuation");
+    let enable_diarization = !matches.contains_id("disable_speaker_diarization");
 
     let verbose = matches.contains_id("verbose");
 
@@ -195,6 +204,7 @@ fn main() {
         access_key,
         model_path,
         enable_automatic_punctuation,
+        enable_diarization,
         verbose,
     );
 }

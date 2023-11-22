@@ -14,12 +14,49 @@ mod tests {
     use distance::*;
     use itertools::Itertools;
     use rodio::{source::Source, Decoder};
-    use serde_json::Value;
+    use serde::Deserialize;
     use std::env;
     use std::fs::{read_to_string, File};
     use std::io::BufReader;
 
-    use leopard::{LeopardBuilder, LeopardTranscript};
+    use leopard::{LeopardBuilder, LeopardWord};
+
+    #[derive(Debug, Deserialize)]
+    struct WordJson {
+        word: String,
+        start_sec: Option<f32>,
+        end_sec: Option<f32>,
+        confidence: Option<f32>,
+        speaker_tag: i32,
+    }
+
+    #[derive(Debug, Deserialize)]
+    struct LanguageTestJson {
+        language: String,
+        audio_file: String,
+        transcript: String,
+        transcript_with_punctuation: String,
+        error_rate: f32,
+        words: Vec<WordJson>,
+    }
+
+    #[derive(Debug, Deserialize)]
+    struct DiarizationTestJson {
+        language: String,
+        audio_file: String,
+        words: Vec<WordJson>,
+    }
+
+    #[derive(Debug, Deserialize)]
+    struct TestsJson {
+        language_tests: Vec<LanguageTestJson>,
+        diarization_tests: Vec<DiarizationTestJson>,
+    }
+
+    #[derive(Debug, Deserialize)]
+    struct RootJson {
+        tests: TestsJson,
+    }
 
     fn append_lang(path: &str, language: &str) -> String {
         if language == "en" {
@@ -29,7 +66,7 @@ mod tests {
         }
     }
 
-    fn load_test_data() -> Value {
+    fn load_test_data() -> TestsJson {
         let test_json_path = format!(
             "{}{}",
             env!("CARGO_MANIFEST_DIR"),
@@ -37,9 +74,8 @@ mod tests {
         );
         let contents: String =
             read_to_string(test_json_path).expect("Unable to read test_data.json");
-        let test_json: Value =
-            serde_json::from_str(&contents).expect("Unable to parse test_data.json");
-        test_json
+        let root: RootJson = serde_json::from_str(&contents).expect("Failed to parse JSON");
+        root.tests
     }
 
     fn model_path_by_language(language: &str) -> String {
@@ -56,30 +92,30 @@ mod tests {
         return distance as f32 / expected_transcript.len() as f32;
     }
 
-    fn validate_metadata(leopard_transcript: LeopardTranscript, audio_length: f32) {
-        let norm_transcript = leopard_transcript.transcript.to_uppercase();
-        for i in 0..leopard_transcript.words.len() {
-            let leopard_word = leopard_transcript.words.get(i).unwrap().clone();
-
-            assert!(norm_transcript.contains(&leopard_word.word.to_uppercase()));
-            assert!(leopard_word.start_sec > 0.0);
-            assert!(leopard_word.start_sec <= leopard_word.end_sec);
-            if i < (leopard_transcript.words.len() - 1) {
-                let next_leopard_word = leopard_transcript.words.get(i + 1).unwrap().clone();
-                assert!(leopard_word.end_sec <= next_leopard_word.start_sec);
+    fn validate_metadata(words: Vec<LeopardWord>, reference_words: Vec<WordJson>, enable_diarization: bool) {
+        for i in 0..words.len() {
+            let leopard_word = words.get(i).unwrap().clone();
+            let reference_word = reference_words.get(i).unwrap().clone();
+            assert!(&leopard_word.word.to_uppercase() == &reference_word.word.to_uppercase());
+            assert!((leopard_word.start_sec-reference_word.start_sec.unwrap()).abs() <= 0.1);
+            assert!((leopard_word.end_sec-reference_word.end_sec.unwrap()).abs() <= 0.1);
+            assert!((leopard_word.confidence-reference_word.confidence.unwrap()).abs() <= 0.1);
+            if enable_diarization {
+                assert!(leopard_word.speaker_tag == reference_word.speaker_tag);
+            } else {
+                assert!(leopard_word.speaker_tag == -1);
             }
-            assert!(leopard_word.end_sec <= audio_length);
-            assert!(leopard_word.confidence >= 0.0 && leopard_word.confidence <= 1.0);
         }
     }
 
     fn run_test_process(
         language: &str,
         transcript: &str,
-        punctuations: Vec<&str>,
-        test_punctuation: bool,
+        enable_automatic_punctuation: bool,
+        enable_diarization: bool,
         error_rate: f32,
         test_audio: &str,
+        words: Vec<WordJson>
     ) {
         let access_key = env::var("PV_ACCESS_KEY")
             .expect("Pass the AccessKey in using the PV_ACCESS_KEY env variable");
@@ -93,38 +129,32 @@ mod tests {
             test_audio
         );
 
-        let mut norm_transcript = transcript.to_string();
-        if !test_punctuation {
-            punctuations.iter().for_each(|p| {
-                norm_transcript = norm_transcript.replace(p, "");
-            });
-        }
-
         let audio_file = BufReader::new(File::open(&audio_path).expect(&audio_path));
         let source = Decoder::new(audio_file).unwrap();
 
         let leopard = LeopardBuilder::new()
             .access_key(access_key)
             .model_path(model_path)
-            .enable_automatic_punctuation(test_punctuation)
+            .enable_automatic_punctuation(enable_automatic_punctuation)
+            .enable_diarization(enable_diarization)
             .init()
             .expect("Unable to create Leopard");
 
         assert_eq!(leopard.sample_rate(), source.sample_rate());
-        let audio_file_duration = source.total_duration().unwrap().as_secs_f32();
         let result = leopard.process(&source.collect_vec()).unwrap();
 
-        assert!(character_error_rate(&result.transcript, &norm_transcript) < error_rate);
-        validate_metadata(result, audio_file_duration);
+        assert!(character_error_rate(&result.transcript, &transcript) < error_rate);
+        validate_metadata(result.words, words, enable_diarization);
     }
 
     fn run_test_process_file(
         language: &str,
         transcript: &str,
-        punctuations: Vec<&str>,
-        test_punctuation: bool,
+        enable_automatic_punctuation: bool,
+        enable_diarization: bool,
         error_rate: f32,
         test_audio: &str,
+        words: Vec<WordJson>
     ) {
         let access_key = env::var("PV_ACCESS_KEY")
             .expect("Pass the AccessKey in using the PV_ACCESS_KEY env variable");
@@ -138,84 +168,67 @@ mod tests {
             test_audio
         );
 
-        let mut norm_transcript = transcript.to_string();
-        if !test_punctuation {
-            punctuations.iter().for_each(|p| {
-                norm_transcript = norm_transcript.replace(p, "");
-            });
-        }
+        let leopard = LeopardBuilder::new()
+            .access_key(access_key)
+            .model_path(model_path)
+            .enable_automatic_punctuation(enable_automatic_punctuation)
+            .enable_diarization(enable_diarization)
+            .init()
+            .expect("Unable to create Leopard");
 
-        let audio_file = BufReader::new(File::open(&audio_path).expect(&audio_path));
-        let source = Decoder::new(audio_file).unwrap();
+        let result = leopard.process_file(audio_path).unwrap();
+
+        assert!(character_error_rate(&result.transcript, &transcript) < error_rate);
+        validate_metadata(result.words, words, enable_diarization);
+    }
+
+    fn run_test_diarization(
+        language: &str,
+        test_audio: &str,
+        reference_words: Vec<WordJson>
+    ) {
+        let access_key = env::var("PV_ACCESS_KEY")
+            .expect("Pass the AccessKey in using the PV_ACCESS_KEY env variable");
+
+        let model_path = model_path_by_language(language);
+
+        let audio_path = format!(
+            "{}{}{}",
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../resources/audio_samples/",
+            test_audio
+        );
 
         let leopard = LeopardBuilder::new()
             .access_key(access_key)
             .model_path(model_path)
-            .enable_automatic_punctuation(test_punctuation)
+            .enable_diarization(true)
             .init()
             .expect("Unable to create Leopard");
 
-        assert_eq!(leopard.sample_rate(), source.sample_rate());
-        let audio_file_duration = source.total_duration().unwrap().as_secs_f32();
         let result = leopard.process_file(audio_path).unwrap();
 
-        assert!(character_error_rate(&result.transcript, &norm_transcript) < error_rate);
-        validate_metadata(result, audio_file_duration);
+        for i in 0..result.words.len() {
+            let leopard_word = result.words.get(i).unwrap().clone();
+            let reference_word = reference_words.get(i).unwrap().clone();
+            assert!(&leopard_word.word.to_uppercase() == &reference_word.word.to_uppercase());
+            assert!(leopard_word.speaker_tag == reference_word.speaker_tag);
+        }
     }
 
     #[test]
     fn test_process() -> Result<(), String> {
-        let test_json: Value = load_test_data();
+        let test_json: TestsJson = load_test_data();
 
-        for t in test_json["tests"]["parameters"].as_array().unwrap() {
-            let language = t["language"].as_str().unwrap();
-            let transcript = t["transcript"].as_str().unwrap();
-            let punctuations = t["punctuations"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .map(|v| v.as_str().unwrap())
-                .collect_vec();
-            let error_rate = t["error_rate"].as_f64().unwrap() as f32;
-
-            let test_audio = t["audio_file"].as_str().unwrap();
-
+        for t in test_json.language_tests {
             run_test_process(
-                language,
-                transcript,
-                punctuations,
+                &t.language,
+                &t.transcript,
                 false,
-                error_rate,
-                &test_audio,
-            );
-        }
-        Ok(())
-    }
-
-    #[test]
-    fn test_process_punctuation() -> Result<(), String> {
-        let test_json: Value = load_test_data();
-
-        for t in test_json["tests"]["parameters"].as_array().unwrap() {
-            let language = t["language"].as_str().unwrap();
-            let transcript = t["transcript"].as_str().unwrap();
-            let punctuations = t["punctuations"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .map(|v| v.as_str().unwrap())
-                .collect_vec();
-            let error_rate = t["error_rate"].as_f64().unwrap() as f32;
-
-            let test_audio = t["audio_file"].as_str().unwrap();
-
-            run_test_process(
-                language,
-                transcript,
-                punctuations,
-                true,
-                error_rate,
-                &test_audio,
+                false,
+                t.error_rate,
+                &t.audio_file,
+                t.words
             );
         }
         Ok(())
@@ -223,60 +236,96 @@ mod tests {
 
     #[test]
     fn test_process_file() -> Result<(), String> {
-        let test_json: Value = load_test_data();
+        let test_json: TestsJson = load_test_data();
 
-        for t in test_json["tests"]["parameters"].as_array().unwrap() {
-            let language = t["language"].as_str().unwrap();
-            let transcript = t["transcript"].as_str().unwrap();
-            let punctuations = t["punctuations"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .map(|v| v.as_str().unwrap())
-                .collect_vec();
-            let error_rate = t["error_rate"].as_f64().unwrap() as f32;
-
-            let test_audio = t["audio_file"].as_str().unwrap();
-
+        for t in test_json.language_tests {
             run_test_process_file(
-                language,
-                transcript,
-                punctuations,
+                &t.language,
+                &t.transcript,
                 false,
-                error_rate,
-                &test_audio,
+                false,
+                t.error_rate,
+                &t.audio_file,
+                t.words
+            );
+        }
+        Ok(())
+    }
+
+
+    #[test]
+    fn test_process_file_punctuation() -> Result<(), String> {
+        let test_json: TestsJson = load_test_data();
+
+        for t in test_json.language_tests {
+            run_test_process_file(
+                &t.language,
+                &t.transcript_with_punctuation,
+                true,
+                false,
+                t.error_rate,
+                &t.audio_file,
+                t.words
             );
         }
         Ok(())
     }
 
     #[test]
-    fn test_process_file_punctuation() -> Result<(), String> {
-        let test_json: Value = load_test_data();
+    fn test_process_file_diarization() -> Result<(), String> {
+        let test_json: TestsJson = load_test_data();
 
-        for t in test_json["tests"]["parameters"].as_array().unwrap() {
-            let language = t["language"].as_str().unwrap();
-            let transcript = t["transcript"].as_str().unwrap();
-            let punctuations = t["punctuations"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .map(|v| v.as_str().unwrap())
-                .collect_vec();
-            let error_rate = t["error_rate"].as_f64().unwrap() as f32;
-
-            let test_audio = t["audio_file"].as_str().unwrap();
-
+        for t in test_json.language_tests {
             run_test_process_file(
-                language,
-                transcript,
-                punctuations,
+                &t.language,
+                &t.transcript,
+                false,
                 true,
-                error_rate,
-                &test_audio,
+                t.error_rate,
+                &t.audio_file,
+                t.words
             );
         }
         Ok(())
+    }
+
+    #[test]
+    fn test_diarization() -> Result<(), String> {
+        let test_json: TestsJson = load_test_data();
+
+        for t in test_json.diarization_tests {
+            run_test_diarization(
+                &t.language,
+                &t.audio_file,
+                t.words
+            );
+        }
+        Ok(())
+    }
+
+    #[test]
+    fn test_error_stack() {
+        let mut error_stack = Vec::new();
+
+        let res = LeopardBuilder::new()
+            .access_key("invalid")
+            .init();
+
+        if let Err(err) = res {
+            error_stack = err.message_stack
+        }
+
+        assert!(0 < error_stack.len() && error_stack.len() <= 8);
+
+        let res = LeopardBuilder::new()
+            .access_key("invalid")
+            .init();
+        if let Err(err) = res {
+            assert_eq!(error_stack.len(), err.message_stack.len());
+            for i in 0..error_stack.len() {
+                assert_eq!(error_stack[i], err.message_stack[i])
+            }
+        }
     }
 
     #[test]
