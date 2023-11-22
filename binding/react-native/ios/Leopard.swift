@@ -125,6 +125,7 @@ class PvLeopard: NSObject {
             wordMap["confidence"] = wordMeta.confidence
             wordMap["startSec"] = wordMeta.startSec
             wordMap["endSec"] = wordMeta.endSec
+            wordMap["speakerTag"] = wordMeta.speakerTag
             wordMapArray.append(wordMap)
         }
         resultMap["words"] = wordMapArray

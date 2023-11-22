@@ -148,6 +148,7 @@ public class LeopardModule extends ReactContextBaseJavaModule {
             wordMap.putDouble("confidence", word.getConfidence());
             wordMap.putDouble("startSec", word.getStartSec());
             wordMap.putDouble("endSec", word.getEndSec());
+            wordMap.putInt("speakerTag", word.getSpeakerTag());
             words.pushMap(wordMap);
         }
         resultMap.putArray("words", words);
