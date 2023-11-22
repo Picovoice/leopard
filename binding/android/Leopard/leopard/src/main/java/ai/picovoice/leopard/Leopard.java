@@ -50,9 +50,9 @@ public class Leopard {
      * @param accessKey                  AccessKey obtained from Picovoice Console
      * @param modelPath                  Absolute path to the file containing Leopard model parameters.
      * @param enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
-     * @param enableDiarization          Set to `true` to enable speaker diarization, which allows Leopard to differentiate speakers
-     *                                   as part of the transcription process. Word metadata will include a `speaker_tag` to 
-     *                                   identify unique speakers.
+     * @param enableDiarization          Set to `true` to enable speaker diarization, which allows Leopard to
+     *                                   differentiate speakers as part of the transcription process. Word
+     *                                   metadata will include a `speaker_tag` to identify unique speakers.
      * @throws LeopardException if there is an error while initializing Leopard.
      */
     private Leopard(

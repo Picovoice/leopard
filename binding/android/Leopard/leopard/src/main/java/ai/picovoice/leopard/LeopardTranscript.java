@@ -12,6 +12,9 @@
 
 package ai.picovoice.leopard;
 
+/**
+ * LeopardTranscript Class.
+ */
 public class LeopardTranscript {
 
     private final String transcriptString;
@@ -46,6 +49,9 @@ public class LeopardTranscript {
         return wordArray;
     }
 
+    /**
+     * LeopardTranscript.Word class
+     */
     public static class Word {
         private final String word;
         private final float confidence;

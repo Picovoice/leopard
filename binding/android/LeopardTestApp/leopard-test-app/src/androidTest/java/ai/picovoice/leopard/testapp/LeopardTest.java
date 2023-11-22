@@ -271,7 +271,8 @@ public class LeopardTest {
             boolean useCER = language.equals("ja");
 
             LeopardTranscript result = leopard.processFile(audioFile.getAbsolutePath());
-            assertTrue(getWordErrorRate(result.getTranscriptString(), expectedTranscriptWithPunctuation, useCER) < errorRate);
+            assertTrue(getWordErrorRate(
+                result.getTranscriptString(), expectedTranscriptWithPunctuation, useCER) < errorRate);
 
             validateMetadata(
                     result.getWordArray(),

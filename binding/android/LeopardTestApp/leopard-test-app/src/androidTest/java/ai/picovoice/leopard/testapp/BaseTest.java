@@ -107,9 +107,9 @@ public class BaseTest {
     }
 
     protected void validateMetadata(
-        LeopardTranscript.Word[] words,
-        LeopardTranscript.Word[] expectedWords,
-        boolean enableDiarization
+            LeopardTranscript.Word[] words,
+            LeopardTranscript.Word[] expectedWords,
+            boolean enableDiarization
     ) {
         for (int i = 0; i < words.length; i++) {
             assertEquals(words[i].getWord(), expectedWords[i].getWord());
