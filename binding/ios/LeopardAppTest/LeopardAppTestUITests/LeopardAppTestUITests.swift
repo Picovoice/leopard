@@ -59,6 +59,10 @@ extension String {
 }
 
 struct TestData: Decodable {
+    var tests: Tests
+}
+
+struct Tests: Decodable {
     var language_tests: [LanguageTest]
     var diarization_tests: [DiarizationTest]
 }
@@ -69,13 +73,26 @@ struct LanguageTest: Decodable {
     var transcript: String
     var transcript_with_punctuation: String
     var error_rate: Float
-    var words: [LeopardWord]
+    var words: [LanguageTestWord]
 }
 
 struct DiarizationTest: Decodable {
     var language: String
     var audio_file: String
-    var words: [LeopardWord]
+    var words: [DiarizationTestWord]
+}
+
+struct LanguageTestWord: Decodable {
+    var word: String
+    var start_sec: Float
+    var end_sec: Float
+    var confidence: Float
+    var speaker_tag: Int
+}
+
+struct DiarizationTestWord: Decodable {
+    var word: String
+    var speaker_tag: Int
 }
 
 class LeopardAppTestUITests: XCTestCase {
@@ -98,15 +115,14 @@ class LeopardAppTestUITests: XCTestCase {
         return Float(transcript.levenshtein(expectedTranscript)) / Float(expectedTranscript.count)
     }
 
-    func validateMetadata(words: [LeopardWord], expectedWords: [LeopardWord], enableDiarization: Bool) {
-        let normTranscript = transcript.uppercased()
-        for i in 0...words.count {
+    func validateMetadata(words: [LeopardWord], expectedWords: [LanguageTestWord], enableDiarization: Bool) {
+        for i in 0..<words.count {
             XCTAssert(words[i].word == expectedWords[i].word)
-            XCTAssert(abs(words[i].startSec - expectedWords[i].startSec) < 0.01)
-            XCTAssert(abs(words[i].endSec - expectedWords[i].endSec) < 0.01)
+            XCTAssert(abs(words[i].startSec - expectedWords[i].start_sec) < 0.01)
+            XCTAssert(abs(words[i].endSec - expectedWords[i].end_sec) < 0.01)
             XCTAssert(abs(words[i].confidence - expectedWords[i].confidence) < 0.01)
             if enableDiarization {
-                XCTAssert(words[i].speakerTag == expectedWords[i].speakerTag)
+                XCTAssert(words[i].speakerTag == expectedWords[i].speaker_tag)
             } else {
                 XCTAssert(words[i].speakerTag == -1)
             }
@@ -115,7 +131,7 @@ class LeopardAppTestUITests: XCTestCase {
 
     func runTestProcess(
             modelPath: String,
-            expectedWords: [LeopardWord],
+            expectedWords: [LanguageTestWord],
             testAudio: String,
             expectedTranscript: String? = nil,
             errorRate: Float = -1.0,
@@ -134,48 +150,38 @@ class LeopardAppTestUITests: XCTestCase {
                 enableDiarization: enableDiarization)
 
         let data = try Data(contentsOf: audioFileURL)
-        var pcmBuffer = [Int16](repeating: 0, count: (data.count / MemoryLayout<Int16>.size))
+        var pcmBuffer = [Int16](repeating: 0, count: ((data.count - 44) / MemoryLayout<Int16>.size))
         _ = pcmBuffer.withUnsafeMutableBytes {
-            data.copyBytes(to: $0, from: 0..<data.count)
+            data.copyBytes(to: $0, from: 44..<data.count)
         }
 
         let result = try leopard!.process(pcmBuffer)
         leopard!.delete()
 
         if errorRate != -1.0 && expectedTranscript != nil {
-            XCTAssert(characterErrorRate(transcript: result.transcript, expectedTranscript: expectedTranscript) < errorRate)
+            XCTAssert(characterErrorRate(transcript: result.transcript, expectedTranscript: expectedTranscript!) < errorRate)
         }
         validateMetadata(
                 words: result.words,
                 expectedWords: expectedWords,
-                enableDiarization: false)
+                enableDiarization: enableDiarization)
     }
 
     func runTestProcessFile(
             modelPath: String,
-            expectedWords: [LeopardWord],
+            expectedWords: [LanguageTestWord],
             testAudio: String,
             expectedTranscript: String? = nil,
             errorRate: Float = -1.0,
             enableAutomaticPunctuation: Bool = false,
             enableDiarization: Bool = false) throws {
         let bundle = Bundle(for: type(of: self))
-        let audioFileURL: URL = bundle.url(
-                forResource: testAudio,
-                withExtension: "",
-                subdirectory: "test_resources/audio_samples")!
 
         let leopard = try? Leopard(
                 accessKey: accessKey,
                 modelPath: modelPath,
                 enableAutomaticPunctuation: enableAutomaticPunctuation,
                 enableDiarization: enableDiarization)
-
-        let data = try Data(contentsOf: audioFileURL)
-        var pcmBuffer = [Int16](repeating: 0, count: (data.count / MemoryLayout<Int16>.size))
-        _ = pcmBuffer.withUnsafeMutableBytes {
-            data.copyBytes(to: $0, from: 0..<data.count)
-        }
 
         let audioFilePath: String = bundle.path(
                 forResource: testAudio,
@@ -185,17 +191,17 @@ class LeopardAppTestUITests: XCTestCase {
         leopard!.delete()
 
         if errorRate != -1.0 && expectedTranscript != nil {
-            XCTAssert(characterErrorRate(transcript: result.transcript, expectedTranscript: expectedTranscript) < errorRate)
+            XCTAssert(characterErrorRate(transcript: result.transcript, expectedTranscript: expectedTranscript!) < errorRate)
         }
         validateMetadata(
                 words: result.words,
                 expectedWords: expectedWords,
-                enableDiarization: false)
+                enableDiarization: enableDiarization)
     }
 
     func runTestProcessURL(
             modelURL: URL,
-            expectedWords: [LeopardWord],
+            expectedWords: [LanguageTestWord],
             testAudio: String,
             expectedTranscript: String? = nil,
             errorRate: Float = -1.0,
@@ -213,22 +219,16 @@ class LeopardAppTestUITests: XCTestCase {
                 enableAutomaticPunctuation: enableAutomaticPunctuation,
                 enableDiarization: enableDiarization)
 
-        let data = try Data(contentsOf: audioFileURL)
-        var pcmBuffer = [Int16](repeating: 0, count: (data.count / MemoryLayout<Int16>.size))
-        _ = pcmBuffer.withUnsafeMutableBytes {
-            data.copyBytes(to: $0, from: 0..<data.count)
-        }
-
         let result = try leopard!.processFile(audioFileURL)
         leopard!.delete()
 
         if errorRate != -1.0 && expectedTranscript != nil {
-            XCTAssert(characterErrorRate(transcript: result.transcript, expectedTranscript: expectedTranscript) < errorRate)
+            XCTAssert(characterErrorRate(transcript: result.transcript, expectedTranscript: expectedTranscript!) < errorRate)
         }
         validateMetadata(
                 words: result.words,
                 expectedWords: expectedWords,
-                enableDiarization: false)
+                enableDiarization: enableDiarization)
     }
 
     func testProcess() throws {
@@ -240,7 +240,7 @@ class LeopardAppTestUITests: XCTestCase {
         let testDataJsonData = try Data(contentsOf: testDataJsonUrl)
         let testData = try JSONDecoder().decode(TestData.self, from: testDataJsonData)
 
-        for testCase in testData.language_tests {
+        for testCase in testData.tests.language_tests {
             let suffix = testCase.language == "en" ? "" : "_\(testCase.language)"
             let modelPath: String = bundle.path(
                 forResource: "leopard_params\(suffix)",
@@ -267,7 +267,7 @@ class LeopardAppTestUITests: XCTestCase {
         let testDataJsonData = try Data(contentsOf: testDataJsonUrl)
         let testData = try JSONDecoder().decode(TestData.self, from: testDataJsonData)
 
-        for testCase in testData.language_tests {
+        for testCase in testData.tests.language_tests {
             let suffix = testCase.language == "en" ? "" : "_\(testCase.language)"
             let modelPath: String = bundle.path(
                 forResource: "leopard_params\(suffix)",
@@ -295,7 +295,7 @@ class LeopardAppTestUITests: XCTestCase {
         let testDataJsonData = try Data(contentsOf: testDataJsonUrl)
         let testData = try JSONDecoder().decode(TestData.self, from: testDataJsonData)
 
-        for testCase in testData.language_tests {
+        for testCase in testData.tests.language_tests {
             let suffix = testCase.language == "en" ? "" : "_\(testCase.language)"
             let modelPath: String = bundle.path(
                 forResource: "leopard_params\(suffix)",
@@ -322,7 +322,7 @@ class LeopardAppTestUITests: XCTestCase {
         let testDataJsonData = try Data(contentsOf: testDataJsonUrl)
         let testData = try JSONDecoder().decode(TestData.self, from: testDataJsonData)
 
-        for testCase in testData.language_tests {
+        for testCase in testData.tests.language_tests {
             let suffix = testCase.language == "en" ? "" : "_\(testCase.language)"
             let modelURL: URL = bundle.url(
                 forResource: "leopard_params\(suffix)",
@@ -349,7 +349,7 @@ class LeopardAppTestUITests: XCTestCase {
         let testDataJsonData = try Data(contentsOf: testDataJsonUrl)
         let testData = try JSONDecoder().decode(TestData.self, from: testDataJsonData)
 
-        for testCase in testData.language_tests {
+        for testCase in testData.tests.language_tests {
             let suffix = testCase.language == "en" ? "" : "_\(testCase.language)"
             let modelPath: String = bundle.path(
                 forResource: "leopard_params\(suffix)",
@@ -375,7 +375,7 @@ class LeopardAppTestUITests: XCTestCase {
         let testDataJsonData = try Data(contentsOf: testDataJsonUrl)
         let testData = try JSONDecoder().decode(TestData.self, from: testDataJsonData)
 
-        for testCase in testData.diarization_tests {
+        for testCase in testData.tests.diarization_tests {
             let suffix = testCase.language == "en" ? "" : "_\(testCase.language)"
             let modelPath: String = bundle.path(
                 forResource: "leopard_params\(suffix)",
@@ -383,11 +383,23 @@ class LeopardAppTestUITests: XCTestCase {
                 inDirectory: "test_resources/model_files")!
 
             try XCTContext.runActivity(named: "(\(testCase.language))") { _ in
-                try runTestProcessFile(
-                        modelPath: modelPath,
-                        expectedWords: testCase.words,
-                        testAudio: testCase.audio_file,
-                        enableDiarization: true)
+                let leopard = try? Leopard(
+                    accessKey: accessKey,
+                    modelPath: modelPath,
+                    enableDiarization: true)
+
+                let audioFilePath: String = bundle.path(
+                    forResource: testCase.audio_file,
+                    ofType: "",
+                    inDirectory: "test_resources/audio_samples")!
+                let result = try leopard!.processFile(audioFilePath)
+                leopard!.delete()
+
+                XCTAssert(result.words.count == testCase.words.count)
+                for i in 0..<result.words.count {
+                    XCTAssert(result.words[i].word == testCase.words[i].word)
+                    XCTAssert(result.words[i].speakerTag == testCase.words[i].speaker_tag)
+                }
             }
         }
     }
@@ -401,6 +413,7 @@ class LeopardAppTestUITests: XCTestCase {
     }
 
     func testMessageStack() throws {
+        let bundle = Bundle(for: type(of: self))
         let modelPath: String = bundle.path(
             forResource: "leopard_params",
             ofType: "pv",
@@ -416,14 +429,20 @@ class LeopardAppTestUITests: XCTestCase {
         }
 
         do {
-            let p = try Porcupine.init(accessKey: "invalid", modelPath: modelPath)
-            XCTAssertNil(p)
+            let leopard = try Leopard.init(accessKey: "invalid", modelPath: modelPath)
+            XCTAssertNil(leopard)
         } catch {
             XCTAssert("\(error.localizedDescription)".count == first_error.count)
         }
     }
 
     func testProcessMessageStack() throws {
+        let bundle = Bundle(for: type(of: self))
+        let modelPath: String = bundle.path(
+            forResource: "leopard_params",
+            ofType: "pv",
+            inDirectory: "test_resources/model_files")!
+
         let leopard = try Leopard.init(accessKey: accessKey, modelPath: modelPath)
         leopard.delete()
 
@@ -432,7 +451,7 @@ class LeopardAppTestUITests: XCTestCase {
 
         do {
             let res = try leopard.process(testPcm)
-            XCTAssertNil()
+            XCTAssertNil(res)
         } catch {
             XCTAssert("\(error.localizedDescription)".count > 0)
         }
