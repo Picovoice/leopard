@@ -98,15 +98,6 @@ struct DiarizationTestWord: Decodable {
 class LeopardAppTestUITests: XCTestCase {
     let accessKey: String = "{TESTING_ACCESS_KEY_HERE}"
 
-    override func setUp() {
-        super.setUp()
-    }
-
-    override func tearDown() {
-        super.tearDown()
-
-    }
-
     override func setUpWithError() throws {
         continueAfterFailure = true
     }
