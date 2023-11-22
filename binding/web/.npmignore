@@ -3,3 +3,7 @@ node_modules
 .DS_Store
 test
 lib
+cypress
+cypress.config.ts
+scripts
+test

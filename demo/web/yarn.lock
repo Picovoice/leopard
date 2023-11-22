@@ -2,10 +2,8 @@
 # yarn lockfile v1
 
 
-"@picovoice/leopard-web@~1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@picovoice/leopard-web/-/leopard-web-1.2.2.tgz#6759ca4333a28d356b6a9fa4cb7c964bd8928363"
-  integrity sha512-/YzFi5O+j+qx4+3vVXPA8hpjaN/Z3ozUkv50GN2NgmVb7VXaLqrAs3Yr+zgFRzejJSzJ8Uu8edn6f4GHp6+n7g==
+"@picovoice/leopard-web@file:../../binding/web":
+  version "2.0.0"
   dependencies:
     "@picovoice/web-utils" "=1.3.1"
 

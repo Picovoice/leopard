@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const testData = require("../../../resources/.test/test_data.json");
 
-availableLanguages = testData["tests"]["parameters"].map((x) => x["language"]);
+availableLanguages = testData["tests"]["language_tests"].map((x) => x["language"]);
 
 const language = process.argv.slice(2)[0];
 if (!language) {

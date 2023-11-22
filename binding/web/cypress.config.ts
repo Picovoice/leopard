@@ -1,15 +1,15 @@
-import { defineConfig } from "cypress";
+import { defineConfig } from 'cypress';
 
 export default defineConfig({
   env: {
-    "NUM_TEST_ITERATIONS": 15,
-    "INIT_PERFORMANCE_THRESHOLD_SEC": 4.5,
-    "PROC_PERFORMANCE_THRESHOLD_SEC": 0.3
+    NUM_TEST_ITERATIONS: 15,
+    INIT_PERFORMANCE_THRESHOLD_SEC: 4.5,
+    PROC_PERFORMANCE_THRESHOLD_SEC: 0.3,
   },
   e2e: {
     defaultCommandTimeout: 30000,
-    supportFile: "cypress/support/index.ts",
-    specPattern: "test/*.test.{js,jsx,ts,tsx}",
+    supportFile: 'cypress/support/index.ts',
+    specPattern: 'test/*.test.{js,jsx,ts,tsx}',
     video: false,
     screenshotOnRunFailure: false,
   },
