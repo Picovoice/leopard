@@ -90,9 +90,6 @@ class _MyAppState extends State<MyApp> {
             "Press START to start recording some audio to transcribe";
         isButtonDisabled = false;
       });
-    } on LeopardInvalidArgumentException catch (ex) {
-      errorCallback(LeopardInvalidArgumentException(
-          "${ex.message}\nEnsure your accessKey '$accessKey' is a valid access key."));
     } on LeopardActivationException {
       errorCallback(LeopardActivationException("AccessKey activation error."));
     } on LeopardActivationLimitException {
@@ -104,7 +101,7 @@ class _MyAppState extends State<MyApp> {
       errorCallback(
           LeopardActivationThrottledException("AccessKey has been throttled."));
     } on LeopardException catch (ex) {
-      errorCallback(ex);
+      errorCallback(ex.message);
     }
   }
 

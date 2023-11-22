@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.author           = { 'Picovoice' => 'hello@picovoice.ai' }
   s.source           = { :git => "https://github.com/Picovoice/leopard.git" }
   s.source_files = 'Classes/**/*'
-  s.platform = :ios, '11.0'
+  s.platform = :ios, '13.0'
   s.dependency 'Flutter'
   s.dependency 'Leopard-iOS', '~> 2.0.0'
 
