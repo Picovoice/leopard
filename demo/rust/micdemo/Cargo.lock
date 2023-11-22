@@ -199,16 +199,6 @@ checksum = "b4668fb0ea861c1df094127ac5f1da3409a82116a4ba74fca2e58ef927159bb3"
 
 [[package]]
 name = "libloading"
-version = "0.7.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b67380fd3b2fbe7527a606e18729d21c6f3951633d0500574c4dc22d2d638b9f"
-dependencies = [
- "cfg-if",
- "winapi",
-]
-
-[[package]]
-name = "libloading"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d580318f95776505201b28cf98eb1fa5e4be3b689633ba6a3e6cd880ff22d8cb"
@@ -267,17 +257,15 @@ dependencies = [
 
 [[package]]
 name = "pv_leopard"
-version = "1.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d920fcd9bda7cf20f70083cbb85000321a78ef9638ec8418fc6f0a1f0d30b3fc"
+version = "2.0.0"
 dependencies = [
  "libc",
- "libloading 0.7.4",
+ "libloading",
 ]
 
 [[package]]
 name = "pv_leopard_micdemo"
-version = "1.1.1"
+version = "2.0.0"
 dependencies = [
  "chrono",
  "clap",
@@ -296,7 +284,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "40be1d15bef993d0b923720589479d4d2e93e9fb6286328e2551f0fdbf45de31"
 dependencies = [
  "libc",
- "libloading 0.8.0",
+ "libloading",
 ]
 
 [[package]]
