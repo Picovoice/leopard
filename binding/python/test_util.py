@@ -13,7 +13,10 @@ import json
 import os
 import struct
 import wave
+
 from typing import *
+
+from _leopard import *
 
 
 def load_test_data() -> List[Tuple[str, str, str, List[str], float]]:
@@ -22,11 +25,44 @@ def load_test_data() -> List[Tuple[str, str, str, List[str], float]]:
         json_test_data = data_file.read()
     test_data = json.loads(json_test_data)['tests']
 
-    parameters = [
-        (t['language'], t['audio_file'], t['transcript'], t['punctuations'], t['error_rate'])
-        for t in test_data['parameters']]
+    language_tests = [
+        (
+            t['language'],
+            t['audio_file'],
+            t['transcript'],
+            t['transcript_with_punctuation'],
+            t['error_rate'],
+            [
+                Leopard.Word(
+                    word=x['word'],
+                    start_sec=x['start_sec'],
+                    end_sec=x['end_sec'],
+                    confidence=x['confidence'],
+                    speaker_tag=x['speaker_tag'])
+                for x in t['words']
+            ]
+        )
+        for t in test_data['language_tests']
+    ]
 
-    return parameters
+    diarization_tests = [
+        (
+            t['language'],
+            t['audio_file'],
+            [
+                Leopard.Word(
+                    word=x['word'],
+                    start_sec=0,
+                    end_sec=0,
+                    confidence=0,
+                    speaker_tag=x['speaker_tag'])
+                for x in t['words']
+            ]
+        )
+        for t in test_data['diarization_tests']
+    ]
+
+    return language_tests, diarization_tests
 
 
 def read_wav_file(file_name: str, sample_rate: int) -> Tuple:

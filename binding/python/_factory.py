@@ -19,7 +19,8 @@ def create(
         access_key: str,
         model_path: Optional[str] = None,
         library_path: Optional[str] = None,
-        enable_automatic_punctuation: bool = False) -> Leopard:
+        enable_automatic_punctuation: bool = False,
+        enable_diarization: bool = False) -> Leopard:
     """
     Factory method for Leopard speech-to-text engine.
 
@@ -28,6 +29,9 @@ def create(
     :param model_path: Absolute path to the file containing model parameters. If not set it will be set to the default
     location.
     :param enable_automatic_punctuation Set to `True` to enable automatic punctuation insertion.
+    :param enable_diarization Set to `true` to enable speaker diarization, which allows Leopard to differentiate
+    speakers as part of the transcription process. Word metadata will include a `speaker_tag` to
+    identify unique speakers.
     :return: An instance of Leopard speech-to-text engine.
     """
 
@@ -41,7 +45,8 @@ def create(
         access_key=access_key,
         model_path=model_path,
         library_path=library_path,
-        enable_automatic_punctuation=enable_automatic_punctuation)
+        enable_automatic_punctuation=enable_automatic_punctuation,
+        enable_diarization=enable_diarization)
 
 
 __all__ = [
