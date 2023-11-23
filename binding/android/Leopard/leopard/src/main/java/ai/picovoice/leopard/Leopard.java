@@ -43,6 +43,11 @@ public class Leopard {
     }
 
     private long handle;
+    private static String _sdk = "android";
+
+    public static void setSdk(String sdk) {
+        Leopard._sdk = sdk;
+    }
 
     /**
      * Constructor.
@@ -50,16 +55,23 @@ public class Leopard {
      * @param accessKey                  AccessKey obtained from Picovoice Console
      * @param modelPath                  Absolute path to the file containing Leopard model parameters.
      * @param enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
+     * @param enableDiarization          Set to `true` to enable speaker diarization, which allows Leopard to
+     *                                   differentiate speakers as part of the transcription process. Word
+     *                                   metadata will include a `speaker_tag` to identify unique speakers.
      * @throws LeopardException if there is an error while initializing Leopard.
      */
     private Leopard(
             String accessKey,
             String modelPath,
-            boolean enableAutomaticPunctuation) throws LeopardException {
+            boolean enableAutomaticPunctuation,
+            boolean enableDiarization) throws LeopardException {
+        LeopardNative.setSdk(Leopard._sdk);
+
         handle = LeopardNative.init(
                 accessKey,
                 modelPath,
-                enableAutomaticPunctuation);
+                enableAutomaticPunctuation,
+                enableDiarization);
     }
 
     private static String extractResource(
@@ -180,6 +192,7 @@ public class Leopard {
         private String accessKey = null;
         private String modelPath = null;
         private boolean enableAutomaticPunctuation = false;
+        private boolean enableDiarization = false;
 
         /**
          * Setter the AccessKey.
@@ -212,6 +225,18 @@ public class Leopard {
         }
 
         /**
+         * Setter for enabling speaker diarization.
+         *
+         * @param enableDiarization Set to `true` to enable speaker diarization, which allows Leopard to
+         *                          differentiate speakers as part of the transcription process. Word
+         *                          metadata will include a `speaker_tag` to identify unique speakers.
+         */
+        public Builder setEnableDiarization(boolean enableDiarization) {
+            this.enableDiarization = enableDiarization;
+            return this;
+        }
+
+        /**
          * Creates an instance of Leopard Speech-to-Text engine.
          */
         public Leopard build(Context context) throws LeopardException {
@@ -238,7 +263,8 @@ public class Leopard {
             return new Leopard(
                     accessKey,
                     modelPath,
-                    enableAutomaticPunctuation);
+                    enableAutomaticPunctuation,
+                    enableDiarization);
         }
     }
 }

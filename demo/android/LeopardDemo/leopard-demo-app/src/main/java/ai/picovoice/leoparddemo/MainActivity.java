@@ -108,7 +108,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             Leopard.Builder builder = new Leopard.Builder()
                     .setAccessKey(ACCESS_KEY)
-                    .setEnableAutomaticPunctuation(true);
+                    .setEnableAutomaticPunctuation(true)
+                    .setEnableDiarization(true);
 
             String model;
             if (Objects.equals(BuildConfig.FLAVOR, "en")) {
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
             leopard = builder.build(getApplicationContext());
         } catch (LeopardInvalidArgumentException e) {
-            displayError(String.format("%s\nEnsure your AccessKey '%s' is valid", e.getMessage(), ACCESS_KEY));
+            displayError(e.getMessage());
         } catch (LeopardActivationException e) {
             displayError("AccessKey activation error");
         } catch (LeopardActivationLimitException e) {
@@ -321,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
             holder.startSec.setText(String.format("%.2fs", word.getStartSec()));
             holder.endSec.setText(String.format("%.2fs", word.getEndSec()));
             holder.confidence.setText(String.format("%.0f%%", word.getConfidence() * 100));
+            holder.speakerTag.setText(String.format("%d", word.getSpeakerTag()));
         }
 
         @Override
@@ -333,6 +335,7 @@ public class MainActivity extends AppCompatActivity {
             TextView startSec;
             TextView endSec;
             TextView confidence;
+            TextView speakerTag;
 
             ViewHolder(View itemView) {
                 super(itemView);
@@ -340,6 +343,7 @@ public class MainActivity extends AppCompatActivity {
                 startSec = itemView.findViewById(R.id.startSec);
                 endSec = itemView.findViewById(R.id.endSec);
                 confidence = itemView.findViewById(R.id.confidence);
+                speakerTag = itemView.findViewById(R.id.speakerTag);
             }
         }
     }
