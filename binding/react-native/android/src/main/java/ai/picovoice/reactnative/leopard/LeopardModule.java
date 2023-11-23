@@ -52,6 +52,7 @@ public class LeopardModule extends ReactContextBaseJavaModule {
             String accessKey,
             String modelPath,
             boolean enableAutomaticPunctuation,
+            boolean enableDiarization,
             Promise promise) {
         try {
 
@@ -59,6 +60,7 @@ public class LeopardModule extends ReactContextBaseJavaModule {
                     .setAccessKey(accessKey)
                     .setModelPath(modelPath.isEmpty() ? null : modelPath)
                     .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
+                    .setEnableDiarization(enableDiarization)
                     .build(reactContext);
             leopardPool.put(String.valueOf(System.identityHashCode(leopard)), leopard);
 

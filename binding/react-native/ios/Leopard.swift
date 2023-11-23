@@ -1,5 +1,5 @@
 //
-// Copyright 2022 Picovoice Inc.
+// Copyright 2022-2023 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -20,11 +20,12 @@ class PvLeopard: NSObject {
         Leopard.setSdk(sdk: "react-native")
     }
 
-    @objc(create:modelPath:enableAutomaticPunctuation:resolver:rejecter:)
+    @objc(create:modelPath:enableAutomaticPunctuation:enableDiarization:resolver:rejecter:)
     func create(
             accessKey: String,
             modelPath: String,
             enableAutomaticPunctuation: Bool,
+            enableDiarization: Bool,
             resolver resolve: RCTPromiseResolveBlock,
             rejecter reject: RCTPromiseRejectBlock) {
 
@@ -32,7 +33,8 @@ class PvLeopard: NSObject {
             let leopard = try Leopard(
                     accessKey: accessKey,
                     modelPath: modelPath,
-                    enableAutomaticPunctuation: enableAutomaticPunctuation
+                    enableAutomaticPunctuation: enableAutomaticPunctuation,
+                    enableDiarization: enableDiarization
             )
 
             let handle: String = String(describing: leopard)
