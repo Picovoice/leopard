@@ -150,7 +150,7 @@ async function getPcmFromFile(
   }
 
   const pcm: number[] = [];
-  for (let i = headerOffset; i < fileBytes.length; i += 2) {
+  for (let i = (headerOffset / Int16Array.BYTES_PER_ELEMENT); i < fileBytes.length; i += 2) {
     pcm.push(dataView.getInt16(i, true));
   }
 
