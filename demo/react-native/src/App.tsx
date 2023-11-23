@@ -96,7 +96,10 @@ export default class App extends Component<Props, State> {
       this._leopard = await Leopard.create(
         this._accessKey,
         `models/leopard_params${suffix}.pv`,
-        { enableAutomaticPunctuation: true },
+        {
+          enableAutomaticPunctuation: true,
+          enableDiarization: true
+        },
       );
     } catch (err: any) {
       this.handleError(err);
@@ -261,7 +264,7 @@ export default class App extends Component<Props, State> {
                 <Text style={styles.wordCell}>Start</Text>
                 <Text style={styles.wordCell}>End</Text>
                 <Text style={styles.wordCell}>Confidence</Text>
-                <Text style={styles.wordCell}>Speaker Tag</Text>
+                <Text style={styles.wordCell}>Tag</Text>
               </View>
               <ScrollView style={styles.wordBox}>
                 {this.state.words.map((word: LeopardWord, index: number) =>
