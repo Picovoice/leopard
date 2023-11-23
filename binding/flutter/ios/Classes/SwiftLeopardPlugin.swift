@@ -46,11 +46,13 @@ public class SwiftLeopardPlugin: NSObject, FlutterPlugin {
                 if let accessKey = args["accessKey"] as? String,
                    let modelPath = args["modelPath"] as? String {
                     let enableAutomaticPunctuation = args["enableAutomaticPunctuation"] as? Bool
+                    let enableDiarization = args["enableDiarization"] as? Bool
 
                     let leopard = try Leopard(
                             accessKey: accessKey,
                             modelPath: modelPath,
-                            enableAutomaticPunctuation: enableAutomaticPunctuation ?? false
+                            enableAutomaticPunctuation: enableAutomaticPunctuation ?? false,
+                            enableDiarization: enableDiarization ?? false
                     )
 
                     let handle: String = String(describing: leopard)
@@ -139,6 +141,7 @@ public class SwiftLeopardPlugin: NSObject, FlutterPlugin {
             wordMap["confidence"] = wordMeta.confidence
             wordMap["startSec"] = wordMeta.startSec
             wordMap["endSec"] = wordMeta.endSec
+            wordMap["speakerTag"] = wordMeta.speakerTag
             wordMapArray.append(wordMap)
         }
         resultDictionary["words"] = wordMapArray

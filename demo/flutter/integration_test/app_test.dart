@@ -15,7 +15,7 @@ import 'package:leopard_flutter/leopard_error.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  final String accessKey = "Tw4jothrMMLyRYQ793yD/XF3DeithcbeNVsYlNN0Dc1vY26suWNOkg==";
+  final String accessKey = "{TESTING_ACCESS_KEY_HERE}";
 
   String getModelPath(String language) {
     return "assets/test_resources/model_files/leopard_params${language != "en" ? "_$language" : ""}.pv";

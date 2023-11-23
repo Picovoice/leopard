@@ -92,11 +92,13 @@ public class LeopardPlugin implements FlutterPlugin, MethodCallHandler {
             String accessKey = call.argument("accessKey");
             String modelPath = call.argument("modelPath");
             boolean enableAutomaticPunctuation = call.argument("enableAutomaticPunctuation");
+            boolean enableDiarization = call.argument("enableDiarization");
 
             Leopard.Builder leopardBuilder = new Leopard.Builder()
                     .setAccessKey(accessKey)
                     .setModelPath(modelPath)
-                    .setEnableAutomaticPunctuation(enableAutomaticPunctuation);
+                    .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
+                    .setEnableDiarization(enableDiarization);
 
             Leopard leopard = leopardBuilder.build(flutterContext);
             leopardPool.put(String.valueOf(System.identityHashCode(leopard)), leopard);
@@ -219,6 +221,7 @@ public class LeopardPlugin implements FlutterPlugin, MethodCallHandler {
             wordMap.put("confidence", word.getConfidence());
             wordMap.put("startSec", word.getStartSec());
             wordMap.put("endSec", word.getEndSec());
+            wordMap.put("speakerTag", word.getSpeakerTag());
             words.add(wordMap);
         }
         resultMap.put("words", words);
