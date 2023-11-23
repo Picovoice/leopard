@@ -132,9 +132,7 @@ export default class App extends Component<Props, State> {
 
   handleError(err: any) {
     let errorMessage = '';
-    if (err instanceof LeopardErrors.LeopardInvalidArgumentError) {
-      errorMessage = `${err.message}\nPlease make sure accessKey ${this._accessKey} is a valid access key.`;
-    } else if (err instanceof LeopardErrors.LeopardActivationError) {
+    if (err instanceof LeopardErrors.LeopardActivationError) {
       errorMessage = 'AccessKey activation error';
     } else if (err instanceof LeopardErrors.LeopardActivationLimitError) {
       errorMessage = 'AccessKey reached its device limit';
@@ -142,6 +140,8 @@ export default class App extends Component<Props, State> {
       errorMessage = 'AccessKey refused';
     } else if (err instanceof LeopardErrors.LeopardActivationThrottledError) {
       errorMessage = 'AccessKey has been throttled';
+    } else if (err instanceof LeopardErrors.LeopardError) {
+      errorMessage = err.message;
     } else {
       errorMessage = err.toString();
     }
@@ -225,6 +225,7 @@ export default class App extends Component<Props, State> {
         <Text style={styles.wordText}>{`${(word.confidence * 100).toFixed(
           0,
         )}%`}</Text>
+        <Text style={styles.wordText}>{word.speakerTag}</Text>
       </View>
     );
   }
@@ -260,6 +261,7 @@ export default class App extends Component<Props, State> {
                 <Text style={styles.wordCell}>Start</Text>
                 <Text style={styles.wordCell}>End</Text>
                 <Text style={styles.wordCell}>Confidence</Text>
+                <Text style={styles.wordCell}>Speaker Tag</Text>
               </View>
               <ScrollView style={styles.wordBox}>
                 {this.state.words.map((word: LeopardWord, index: number) =>
