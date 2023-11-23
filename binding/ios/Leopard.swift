@@ -108,6 +108,9 @@ public class Leopard {
                 enableAutomaticPunctuation,
                 enableDiarization,
                 &handle)
+
+        pv_set_sdk(Leopard.sdk)
+
         if status != PV_STATUS_SUCCESS {
             let messageStack = try getMessageStack()
             throw pvStatusToLeopardError(status, "Leopard init failed", messageStack)
