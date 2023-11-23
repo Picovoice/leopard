@@ -273,6 +273,10 @@ class _MyAppState extends State<MyApp> {
           Text('${(leopardWord.confidence * 100).toStringAsFixed(0)}%',
               style: TextStyle(color: Colors.white))
         ]),
+        Column(children: [
+          Text('${leopardWord.speakerTag}',
+              style: TextStyle(color: Colors.white))
+        ]),
       ]);
     }).toList();
 
@@ -292,6 +296,7 @@ class _MyAppState extends State<MyApp> {
                     Column(children: [Text("Start")]),
                     Column(children: [Text("End")]),
                     Column(children: [Text("Confidence")]),
+                    Column(children: [Text("Speaker Tag")]),
                   ])
                 ])),
             Flexible(
