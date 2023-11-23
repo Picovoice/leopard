@@ -35,6 +35,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LeopardTest {
@@ -54,12 +55,82 @@ public class LeopardTest {
                 .apply(transcript, expectedTranscript) / (float) expectedTranscript.length();
     }
 
-    private static JsonObject loadTestData() throws IOException {
+    private static ProcessTestData[] loadProcessTestData() throws IOException {
         final Path testDataPath = Paths.get(System.getProperty("user.dir"))
                 .resolve("../../resources/.test")
                 .resolve("test_data.json");
         final String testDataContent = new String(Files.readAllBytes(testDataPath), StandardCharsets.UTF_8);
-        return JsonParser.parseString(testDataContent).getAsJsonObject();
+        final JsonObject testDataJson = JsonParser.parseString(testDataContent).getAsJsonObject();
+
+        final JsonArray testParameters = testDataJson
+                .getAsJsonObject("tests")
+                .getAsJsonArray("language_tests");
+
+        final ProcessTestData[] processTestData = new ProcessTestData[testParameters.size()];
+        for (int i = 0; i < testParameters.size(); i++) {
+            final JsonObject testData = testParameters.get(i).getAsJsonObject();
+            final String language = testData.get("language").getAsString();
+            final String testAudioFile = testData.get("audio_file").getAsString();
+            final String transcript = testData.get("transcript").getAsString();
+            final String transcriptWithPunctuation = testData.get("transcript_with_punctuation").getAsString();
+            final float errorRate = testData.get("error_rate").getAsFloat();
+
+            final JsonArray wordsJson = testData.getAsJsonArray("words");
+            final LeopardTranscript.Word[] words = new LeopardTranscript.Word[wordsJson.size()];
+            for (int j = 0; j < wordsJson.size(); j++) {
+                final JsonObject wordJson = wordsJson.get(j).getAsJsonObject();
+                words[j] = new LeopardTranscript.Word(
+                        wordJson.get("word").getAsString(),
+                        wordJson.get("confidence").getAsFloat(),
+                        wordJson.get("start_sec").getAsFloat(),
+                        wordJson.get("end_sec").getAsFloat(),
+                        wordJson.get("speaker_tag").getAsInt());
+            }
+            processTestData[i] = new ProcessTestData(
+                    language,
+                    testAudioFile,
+                    transcript,
+                    transcriptWithPunctuation,
+                    errorRate,
+                    words);
+        }
+        return processTestData;
+    }
+
+    private static DiarizationTestData[] loadDiarizationTestData() throws IOException {
+        final Path testDataPath = Paths.get(System.getProperty("user.dir"))
+                .resolve("../../resources/.test")
+                .resolve("test_data.json");
+        final String testDataContent = new String(Files.readAllBytes(testDataPath), StandardCharsets.UTF_8);
+        final JsonObject testDataJson = JsonParser.parseString(testDataContent).getAsJsonObject();
+
+        final JsonArray testParameters = testDataJson
+                .getAsJsonObject("tests")
+                .getAsJsonArray("diarization_tests");
+
+        final DiarizationTestData[] diarizationTestData = new DiarizationTestData[testParameters.size()];
+        for (int i = 0; i < testParameters.size(); i++) {
+            final JsonObject testData = testParameters.get(i).getAsJsonObject();
+            final String language = testData.get("language").getAsString();
+            final String testAudioFile = testData.get("audio_file").getAsString();
+
+            final JsonArray wordsJson = testData.getAsJsonArray("words");
+            final LeopardTranscript.Word[] words = new LeopardTranscript.Word[wordsJson.size()];
+            for (int j = 0; j < wordsJson.size(); j++) {
+                final JsonObject wordJson = wordsJson.get(j).getAsJsonObject();
+                words[j] = new LeopardTranscript.Word(
+                        wordJson.get("word").getAsString(),
+                        0,
+                        0,
+                        0,
+                        wordJson.get("speaker_tag").getAsInt());
+            }
+            diarizationTestData[i] = new DiarizationTestData(
+                    language,
+                    testAudioFile,
+                    words);
+        }
+        return diarizationTestData;
     }
 
     private static short[] readAudioFile(String testAudioPath) throws Exception {
@@ -77,44 +148,66 @@ public class LeopardTest {
         return pcm;
     }
 
-    private static Stream<Arguments> transcribeProvider() throws IOException {
-
-        final JsonObject testDataJson = loadTestData();
-
-        final JsonArray testParameters = testDataJson
-                .getAsJsonObject("tests")
-                .getAsJsonArray("parameters");
-
+    private static Stream<Arguments> processTestProvider() throws IOException {
+        final ProcessTestData[] processTestData = loadProcessTestData();
         final ArrayList<Arguments> testArgs = new ArrayList<>();
-        for (int i = 0; i < testParameters.size(); i++) {
-            final JsonObject testData = testParameters.get(i).getAsJsonObject();
-            final String language = testData.get("language").getAsString();
-            final String testAudioFile = testData.get("audio_file").getAsString();
-            final String transcript = testData.get("transcript").getAsString();
-            final float errorRate = testData.get("error_rate").getAsFloat();
-
+        for (ProcessTestData processTestDataItem : processTestData) {
             testArgs.add(Arguments.of(
-                    language,
-                    testAudioFile,
-                    transcript,
-                    true,
-                    errorRate)
-            );
-
-            String transcriptWithoutPunctuation = transcript;
-            final JsonArray punctuations = testData.get("punctuations").getAsJsonArray();
-            for (int j = 0; j < punctuations.size(); j++) {
-                String punctuation = punctuations.get(j).getAsString();
-                transcriptWithoutPunctuation = transcriptWithoutPunctuation.replace(punctuation, "");
-            }
-            testArgs.add(Arguments.of(
-                    language,
-                    testAudioFile,
-                    transcriptWithoutPunctuation,
+                    processTestDataItem.language,
+                    processTestDataItem.audioFile,
+                    processTestDataItem.transcript,
                     false,
-                    errorRate)
-            );
+                    false,
+                    processTestDataItem.errorRate,
+                    processTestDataItem.words));
         }
+
+        return testArgs.stream();
+    }
+
+    private static Stream<Arguments> processFileTestProvider() throws IOException {
+        final ProcessTestData[] processTestData = loadProcessTestData();
+        final ArrayList<Arguments> testArgs = new ArrayList<>();
+        for (ProcessTestData processTestDataItem : processTestData) {
+            testArgs.add(Arguments.of(
+                    processTestDataItem.language,
+                    processTestDataItem.audioFile,
+                    processTestDataItem.transcript,
+                    false,
+                    false,
+                    processTestDataItem.errorRate,
+                    processTestDataItem.words));
+            testArgs.add(Arguments.of(
+                    processTestDataItem.language,
+                    processTestDataItem.audioFile,
+                    processTestDataItem.transcriptWithPunctuation,
+                    true,
+                    false,
+                    processTestDataItem.errorRate,
+                    processTestDataItem.words));
+            testArgs.add(Arguments.of(
+                    processTestDataItem.language,
+                    processTestDataItem.audioFile,
+                    processTestDataItem.transcript,
+                    false,
+                    true,
+                    processTestDataItem.errorRate,
+                    processTestDataItem.words));
+        }
+
+        return testArgs.stream();
+    }
+
+    private static Stream<Arguments> diarizationTestProvider() throws IOException {
+        final DiarizationTestData[] diarizationTestData = loadDiarizationTestData();
+        final ArrayList<Arguments> testArgs = new ArrayList<>();
+        for (DiarizationTestData diarizationTestDataItem : diarizationTestData) {
+            testArgs.add(Arguments.of(
+                    diarizationTestDataItem.language,
+                    diarizationTestDataItem.audioFile,
+                    diarizationTestDataItem.words));
+        }
+
         return testArgs.stream();
     }
 
@@ -123,18 +216,21 @@ public class LeopardTest {
         leopard.delete();
     }
 
-    void validateMetadata(LeopardTranscript.Word[] words, String transcript, float audioLength) {
-        String normTranscript = transcript.toUpperCase();
+    void validateMetadata(
+            LeopardTranscript.Word[] words,
+            LeopardTranscript.Word[] referenceWords,
+            boolean enableDiarization) {
+        assertEquals(words.length, referenceWords.length);
         for (int i = 0; i < words.length; i++) {
-            assertTrue(normTranscript.contains(words[i].getWord().toUpperCase()));
-            assertTrue(words[i].getStartSec() > 0);
-            assertTrue(words[i].getStartSec() <= words[i].getEndSec());
-            if (i < words.length - 1) {
-                assertTrue(words[i].getEndSec() <= words[i + 1].getStartSec());
+            assertEquals(words[i].getWord().toUpperCase(), referenceWords[i].getWord().toUpperCase());
+            assertEquals(words[i].getStartSec(), referenceWords[i].getStartSec(), 0.1);
+            assertEquals(words[i].getEndSec(), referenceWords[i].getEndSec(), 0.1);
+            assertEquals(words[i].getConfidence(), referenceWords[i].getConfidence(), 0.1);
+            if (enableDiarization) {
+                assertEquals(words[i].getSpeakerTag(), referenceWords[i].getSpeakerTag());
             } else {
-                assertTrue(words[i].getEndSec() <= audioLength);
+                assertEquals(words[i].getSpeakerTag(), -1);
             }
-            assertTrue(words[i].getConfidence() >= 0.0f && words[i].getConfidence() <= 1.0f);
         }
     }
 
@@ -155,14 +251,16 @@ public class LeopardTest {
         assertTrue(leopard.getSampleRate() > 0);
     }
 
-    @ParameterizedTest(name = "test process data for ''{0}'' with punctuation ''{3}''")
-    @MethodSource("transcribeProvider")
+    @ParameterizedTest(name = "test process data for ''{0}'' with punctuation ''{3}'' and diarization ''{4}''")
+    @MethodSource("processTestProvider")
     void process(
             String language,
             String testAudioFile,
             String referenceTranscript,
             boolean enableAutomaticPunctuation,
-            float targetErrorRate) throws Exception {
+            boolean enableDiarization,
+            float targetErrorRate,
+            LeopardTranscript.Word[] referenceWords) throws Exception {
         String modelPath = Paths.get(System.getProperty("user.dir"))
                 .resolve(String.format("../../lib/common/%s.pv", appendLanguage("leopard_params", language)))
                 .toString();
@@ -171,6 +269,7 @@ public class LeopardTest {
                 .setAccessKey(accessKey)
                 .setModelPath(modelPath)
                 .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
+                .setEnableDiarization(enableDiarization)
                 .build();
 
         String testAudioPath = Paths.get(System.getProperty("user.dir"))
@@ -182,18 +281,20 @@ public class LeopardTest {
         assertTrue(getErrorRate(result.getTranscriptString(), referenceTranscript) < targetErrorRate);
         validateMetadata(
                 result.getWordArray(),
-                result.getTranscriptString(),
-                (float) pcm.length / LeopardNative.getSampleRate());
+                referenceWords,
+                enableDiarization);
     }
 
-    @ParameterizedTest(name = "test process file for ''{0}'' with punctuation ''{3}''")
-    @MethodSource("transcribeProvider")
+    @ParameterizedTest(name = "test process file for ''{0}'' with punctuation ''{3}'' and diarization ''{4}''")
+    @MethodSource("processFileTestProvider")
     void processFile(
             String language,
             String testAudioFile,
             String referenceTranscript,
             boolean enableAutomaticPunctuation,
-            float targetErrorRate) throws Exception {
+            boolean enableDiarization,
+            float targetErrorRate,
+            LeopardTranscript.Word[] referenceWords) throws Exception {
 
         String modelPath = Paths.get(System.getProperty("user.dir"))
                 .resolve(String.format("../../lib/common/%s.pv", appendLanguage("leopard_params", language)))
@@ -203,6 +304,7 @@ public class LeopardTest {
                 .setAccessKey(accessKey)
                 .setModelPath(modelPath)
                 .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
+                .setEnableDiarization(enableDiarization)
                 .build();
 
         String testAudioPath = Paths.get(System.getProperty("user.dir"))
@@ -213,8 +315,76 @@ public class LeopardTest {
         assertTrue(getErrorRate(result.getTranscriptString(), referenceTranscript) < targetErrorRate);
         validateMetadata(
                 result.getWordArray(),
-                result.getTranscriptString(),
-                (float) readAudioFile(testAudioPath).length / LeopardNative.getSampleRate());
+                referenceWords,
+                enableDiarization);
     }
 
+    @ParameterizedTest(name = "test diarization for ''{0}''")
+    @MethodSource("diarizationTestProvider")
+    void diarization(
+            String language,
+            String testAudioFile,
+            LeopardTranscript.Word[] referenceWords) throws Exception {
+
+        String modelPath = Paths.get(System.getProperty("user.dir"))
+                .resolve(String.format("../../lib/common/%s.pv", appendLanguage("leopard_params", language)))
+                .toString();
+
+        leopard = new Leopard.Builder()
+                .setAccessKey(accessKey)
+                .setModelPath(modelPath)
+                .setEnableDiarization(true)
+                .build();
+
+        String testAudioPath = Paths.get(System.getProperty("user.dir"))
+                .resolve(String.format("../../resources/audio_samples/%s", testAudioFile))
+                .toString();
+
+        LeopardTranscript result = leopard.processFile(testAudioPath);
+        LeopardTranscript.Word[] words = result.getWordArray();
+        assertEquals(result.getWordArray().length, referenceWords.length);
+        for (int i = 0; i < words.length; i++) {
+            assertEquals(words[i].getWord().toUpperCase(), referenceWords[i].getWord().toUpperCase());
+            assertEquals(words[i].getSpeakerTag(), referenceWords[i].getSpeakerTag());
+        }
+    }
+
+    private static class ProcessTestData {
+        public final String language;
+        public final String audioFile;
+        public final String transcript;
+        public final String transcriptWithPunctuation;
+        public final float errorRate;
+        public final LeopardTranscript.Word[] words;
+
+        public ProcessTestData(
+                String language,
+                String audioFile,
+                String transcript,
+                String transcriptWithPunctuation,
+                float errorRate,
+                LeopardTranscript.Word[] words) {
+            this.language = language;
+            this.audioFile = audioFile;
+            this.transcript = transcript;
+            this.transcriptWithPunctuation = transcriptWithPunctuation;
+            this.errorRate = errorRate;
+            this.words = words;
+        }
+    }
+
+    private static class DiarizationTestData {
+        public final String language;
+        public final String audioFile;
+        public final LeopardTranscript.Word[] words;
+
+        public DiarizationTestData(
+                String language,
+                String audioFile,
+                LeopardTranscript.Word[] words) {
+            this.language = language;
+            this.audioFile = audioFile;
+            this.words = words;
+        }
+    }
 }

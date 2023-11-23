@@ -21,7 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -232,8 +234,8 @@ class Utils {
         }
     }
 
-    public static String[] getValidFileExtensions() {
-        return new String[]{
+    public static List<String> getValidFileExtensions() {
+        return Arrays.asList(
                 "3gp",
                 "flac",
                 "m4a",
@@ -243,6 +245,6 @@ class Utils {
                 "opus",
                 "vorbis",
                 "wav",
-                "webm"};
+                "webm");
     }
 }
