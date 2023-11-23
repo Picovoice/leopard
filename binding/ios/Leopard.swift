@@ -35,8 +35,15 @@ public struct LeopardWord {
     ///   - startSec: Start of word in seconds.
     ///   - endSec: End of word in seconds.
     ///   - confidence: Transcription confidence. It is a number within [0, 1].
-    ///   - speakerTag: Integer identifying unique speakers, `0` reserved for unknown speakers.
-    public init(word: String, startSec: Float, endSec: Float, confidence: Float, speakerTag: Int) {
+    ///   - speakerTag: he speaker tag is `-1` if diarization is not enabled during initialization;
+    ///     otherwise, it's a non-negative integer identifying unique speakers, with `0` reserved for
+    ///     unknown speakers.
+    public init(
+        word: String,
+        startSec: Float,
+        endSec: Float,
+        confidence: Float,
+        speakerTag: Int) {
         self.word = word
         self.startSec = startSec
         self.endSec = endSec
@@ -64,6 +71,11 @@ public class Leopard {
 
     public static let sampleRate = UInt32(pv_sample_rate())
     public static let version = String(cString: pv_leopard_version())
+    private static var sdk = "ios"
+
+    public static func setSdk(sdk: String) {
+        self.sdk = sdk
+    }
 
     /// Constructor.
     ///
