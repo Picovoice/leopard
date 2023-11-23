@@ -28,14 +28,19 @@ def append_language(s, language):
     return "%s_%s" % (s, language)
 
 
-def load_test_data():
+def load_languages_test_data():
     data_file_path = os.path.join(os.path.dirname(__file__), "../../../resources/.test/test_data.json")
     with open(data_file_path, encoding="utf8") as data_file:
         json_test_data = data_file.read()
-    test_data = json.loads(json_test_data)['tests']['parameters']
+    test_data = json.loads(json_test_data)['tests']['language_tests']
 
     test_parameters = [
-        (t['language'], t['audio_file'], t['transcript'], t['error_rate'])
+        (
+            t['language'],
+            t['audio_file'],
+            t['transcript_with_punctuation'],
+            t['error_rate']
+        )
         for t in test_data]
 
     return test_parameters
