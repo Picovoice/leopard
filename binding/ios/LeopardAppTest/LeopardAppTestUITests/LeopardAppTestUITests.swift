@@ -107,6 +107,7 @@ class LeopardAppTestUITests: XCTestCase {
     }
 
     func validateMetadata(words: [LeopardWord], expectedWords: [LanguageTestWord], enableDiarization: Bool) {
+        XCTAssert(words.count == expectedWords.count)
         for i in 0..<words.count {
             XCTAssert(words[i].word == expectedWords[i].word)
             XCTAssert(abs(words[i].startSec - expectedWords[i].start_sec) < 0.01)

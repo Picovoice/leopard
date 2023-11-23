@@ -35,7 +35,7 @@ public struct LeopardWord {
     ///   - startSec: Start of word in seconds.
     ///   - endSec: End of word in seconds.
     ///   - confidence: Transcription confidence. It is a number within [0, 1].
-    ///   - speakerTag: he speaker tag is `-1` if diarization is not enabled during initialization;
+    ///   - speakerTag: The speaker tag is `-1` if diarization is not enabled during initialization;
     ///     otherwise, it's a non-negative integer identifying unique speakers, with `0` reserved for
     ///     unknown speakers.
     public init(
@@ -229,7 +229,7 @@ public class Leopard {
                 &cWords)
         if status != PV_STATUS_SUCCESS {
             let messageStack = try getMessageStack()
-            throw pvStatusToLeopardError(status, "Leopard process failed", messageStack)
+            throw pvStatusToLeopardError(status, "Leopard process file failed", messageStack)
         }
 
         let transcript = String(cString: cTranscript!)
