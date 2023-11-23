@@ -20,14 +20,13 @@ import javax.sound.sampled.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 class Recorder extends Thread {
     private TargetDataLine micDataLine = null;
     private boolean stop = false;
     private boolean isRecording = false;
-    private List pcmBuffer = null;
+    private ArrayList<Short> pcmBuffer = null;
 
     public Recorder(int audioDeviceIndex) {
         AudioFormat format = new AudioFormat(16000f, 16, 1, true, false);
@@ -46,7 +45,7 @@ class Recorder extends Thread {
         this.micDataLine = micDataLine;
         this.stop = false;
         this.isRecording = false;
-        this.pcmBuffer = new ArrayList();
+        this.pcmBuffer = new ArrayList<>();
     }
 
     private static TargetDataLine getDefaultCaptureDevice(DataLine.Info dataLineInfo) throws LineUnavailableException {
@@ -93,8 +92,8 @@ class Recorder extends Thread {
         while (!stop) {
             micDataLine.read(captureBuffer.array(), 0, captureBuffer.capacity());
             captureBuffer.asShortBuffer().get(shortBuffer);
-            for (int i = 0; i < shortBuffer.length; ++i) {
-                this.pcmBuffer.add(shortBuffer[i]);
+            for (short value : shortBuffer) {
+                this.pcmBuffer.add(value);
             }
         }
     }
@@ -106,7 +105,7 @@ class Recorder extends Thread {
     public short[] getPCM() {
         short[] pcm = new short[this.pcmBuffer.size()];
         for (int i = 0; i < this.pcmBuffer.size(); ++i) {
-            pcm[i] = (short) this.pcmBuffer.get(i);
+            pcm[i] = this.pcmBuffer.get(i);
         }
         return pcm;
     }
@@ -118,6 +117,7 @@ public class MicDemo {
             String modelPath,
             String libraryPath,
             boolean enableAutomaticPunctuation,
+            boolean enableDiarization,
             boolean verbose,
             int audioDeviceIndex) {
         Leopard leopard = null;
@@ -127,6 +127,7 @@ public class MicDemo {
                     .setModelPath(modelPath)
                     .setLibraryPath(libraryPath)
                     .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
+                    .setEnableDiarization(enableDiarization)
                     .build();
 
             System.out.println("Leopard version : " + leopard.getVersion());
@@ -148,15 +149,22 @@ public class MicDemo {
                     System.out.println(transcript.getTranscriptString() + "\n");
                     if (verbose) {
                         LeopardTranscript.Word[] words = transcript.getWordArray();
-                        System.out.format("%14s - %5s - %5s - %5s\n", "word", "start", "end", "confidence");
+                        System.out.format(
+                                "%14s | %5s | %5s | %10s | %11s\n",
+                                "word",
+                                "start",
+                                "end",
+                                "confidence",
+                                "speaker tag");
                         for (int i = 0; i < words.length; i++) {
                             System.out.format(
-                                    "%2d: %10s - %5.2f - %5.2f - %5.2f\n",
+                                    "%2d: %10s | %5.2f | %5.2f | %10.2f | %11d\n",
                                     i,
                                     words[i].getWord(),
                                     words[i].getStartSec(),
                                     words[i].getEndSec(),
-                                    words[i].getConfidence());
+                                    words[i].getConfidence(),
+                                    words[i].getSpeakerTag());
                         }
                     }
                     recorder = null;
@@ -222,6 +230,7 @@ public class MicDemo {
         String modelPath = cmd.getOptionValue("model_path");
         String libraryPath = cmd.getOptionValue("library_path");
         boolean enableAutomaticPunctuation = !cmd.hasOption("disable_automatic_punctuation");
+        boolean enableDiarization = !cmd.hasOption("disable_speaker_diarization");
         boolean verbose = cmd.hasOption("verbose");
         String audioDeviceIndexStr = cmd.getOptionValue("audio_device_index");
 
@@ -256,6 +265,7 @@ public class MicDemo {
                 modelPath,
                 libraryPath,
                 enableAutomaticPunctuation,
+                enableDiarization,
                 verbose,
                 audioDeviceIndex);
     }
@@ -281,9 +291,14 @@ public class MicDemo {
                 .desc("Absolute path to the Leopard native runtime library.")
                 .build());
 
-        options.addOption(Option.builder("d")
+        options.addOption(Option.builder("dp")
                 .longOpt("disable_automatic_punctuation")
                 .desc("Disable automatic punctuation.")
+                .build());
+
+        options.addOption(Option.builder("dd")
+                .longOpt("disable_speaker_diarization")
+                .desc("Disable speaker diarization.")
                 .build());
 
         options.addOption(Option.builder("di")
