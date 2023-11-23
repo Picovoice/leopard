@@ -81,8 +81,10 @@ class _MyAppState extends State<MyApp> {
     final String modelPath = "assets/models/leopard_params$suffix.pv";
 
     try {
-      _leopard = await Leopard.create(accessKey, modelPath,
-          enableAutomaticPunctuation: true);
+      _leopard = await Leopard.create(accessKey,
+          modelPath,
+          enableAutomaticPunctuation: true,
+          enableDiarization: true);
       _micRecorder = await MicRecorder.create(
           _leopard!.sampleRate, recordedCallback, errorCallback);
       setState(() {
@@ -296,7 +298,7 @@ class _MyAppState extends State<MyApp> {
                     Column(children: [Text("Start")]),
                     Column(children: [Text("End")]),
                     Column(children: [Text("Confidence")]),
-                    Column(children: [Text("Speaker Tag")]),
+                    Column(children: [Text("Tag")]),
                   ])
                 ])),
             Flexible(
