@@ -22,11 +22,11 @@ package leopard
 
 #if defined(_WIN32) || defined(_WIN64)
 
-    #include <windows.h>
+	#include <windows.h>
 
 #else
 
-    #include <dlfcn.h>
+	#include <dlfcn.h>
 
 #endif
 
@@ -34,11 +34,11 @@ static void *open_dl(const char *dl_path) {
 
 #if defined(_WIN32) || defined(_WIN64)
 
-    return LoadLibrary((LPCSTR) dl_path);
+	return LoadLibrary((LPCSTR) dl_path);
 
 #else
 
-    return dlopen(dl_path, RTLD_NOW);
+	return dlopen(dl_path, RTLD_NOW);
 
 #endif
 
@@ -48,109 +48,109 @@ static void *load_symbol(void *handle, const char *symbol) {
 
 #if defined(_WIN32) || defined(_WIN64)
 
-    return GetProcAddress((HMODULE) handle, symbol);
+	return GetProcAddress((HMODULE) handle, symbol);
 
 #else
 
-    return dlsym(handle, symbol);
+	return dlsym(handle, symbol);
 
 #endif
 
 }
 
 typedef struct {
-    const char *word;
-    float start_sec;
-    float end_sec;
-    float confidence;
+	const char *word;
+	float start_sec;
+	float end_sec;
+	float confidence;
 	int32_t speaker_tag;
 } pv_word_t;
 
 typedef int32_t (*pv_leopard_sample_rate_func)();
 
 int32_t pv_leopard_sample_rate_wrapper(void *f) {
-     return ((pv_leopard_sample_rate_func) f)();
+	 return ((pv_leopard_sample_rate_func) f)();
 }
 
 typedef char* (*pv_leopard_version_func)();
 
 char* pv_leopard_version_wrapper(void* f) {
-     return ((pv_leopard_version_func) f)();
+	 return ((pv_leopard_version_func) f)();
 }
 
 typedef int32_t (*pv_leopard_init_func)(
-    const char *access_key,
-    const char *model_path,
-    bool enable_punctuation_detection,
+	const char *access_key,
+	const char *model_path,
+	bool enable_punctuation_detection,
 	bool enable_diarization,
-    void **object);
+	void **object);
 
 int32_t pv_leopard_init_wrapper(
-    void *f,
-    const char *access_key,
-    const char *model_path,
-    bool enable_punctuation_detection,
+	void *f,
+	const char *access_key,
+	const char *model_path,
+	bool enable_punctuation_detection,
 	bool enable_diarization,
-    void **object) {
-    return ((pv_leopard_init_func) f)(
-        access_key,
-        model_path,
-        enable_punctuation_detection,
+	void **object) {
+	return ((pv_leopard_init_func) f)(
+		access_key,
+		model_path,
+		enable_punctuation_detection,
 		enable_diarization,
-        object);
+		object);
 }
 
 typedef int32_t (*pv_leopard_process_func)(
-    void *object,
-    const int16_t *pcm,
-    int32_t num_samples,
-    char **transcript,
-    int32_t *num_words,
-    pv_word_t **words);
+	void *object,
+	const int16_t *pcm,
+	int32_t num_samples,
+	char **transcript,
+	int32_t *num_words,
+	pv_word_t **words);
 
 int32_t pv_leopard_process_wrapper(
-    void *f,
-    void *object,
-    const int16_t *pcm,
-    int32_t num_samples,
-    char **transcript,
-    int32_t *num_words,
-    pv_word_t **words) {
-    return ((pv_leopard_process_func) f)(
-        object,
-        pcm,
-        num_samples,
-        transcript,
-        num_words,
-        words);
+	void *f,
+	void *object,
+	const int16_t *pcm,
+	int32_t num_samples,
+	char **transcript,
+	int32_t *num_words,
+	pv_word_t **words) {
+	return ((pv_leopard_process_func) f)(
+		object,
+		pcm,
+		num_samples,
+		transcript,
+		num_words,
+		words);
 }
 
 typedef int32_t (*pv_leopard_process_file_func)(
-    void *object,
-    const char *audio_path,
-    char **transcript,
-    int32_t *num_words,
-    pv_word_t **words);
+	void *object,
+	const char *audio_path,
+	char **transcript,
+	int32_t *num_words,
+	pv_word_t **words);
 
 int32_t pv_leopard_process_file_wrapper(
-    void *f,
-    void *object,
-    const char *audio_path,
-    char **transcript,
-    int32_t *num_words,
-    pv_word_t **words) {
-    return ((pv_leopard_process_file_func) f)(
-        object,
-        audio_path,
-        transcript,
-        num_words,
-        words);
+	void *f,
+	void *object,
+	const char *audio_path,
+	char **transcript,
+	int32_t *num_words,
+	pv_word_t **words) {
+	return ((pv_leopard_process_file_func) f)(
+		object,
+		audio_path,
+		transcript,
+		num_words,
+		words);
 }
 
 typedef void (*pv_leopard_delete_func)(void *);
 
 void pv_leopard_delete_wrapper(void *f, void *object) {
-    return ((pv_leopard_delete_func) f)(object);
+	return ((pv_leopard_delete_func) f)(object);
 }
 
 typedef void (*pv_leopard_transcript_delete_func)(char *);
