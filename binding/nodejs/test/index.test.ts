@@ -20,10 +20,12 @@ import { getSystemLibraryPath } from '../src/platforms';
 import {
   getModelPathByLanguage,
   getAudioFile,
-  getTestParameters,
+  getLanguageTestParameters,
+  getDiarizationTestParameters,
 } from './test_utils';
 
-const TEST_PARAMETERS = getTestParameters();
+const LANGUAGE_TEST_PARAMETERS = getLanguageTestParameters();
+const DIARIZATION_TEST_PARAMETERS = getDiarizationTestParameters();
 
 const ACCESS_KEY = process.argv
   .filter(x => x.startsWith('--access_key='))[0]
@@ -66,21 +68,20 @@ const characterErrorRate = (
 
 const validateMetadata = (
   words: LeopardWord[],
-  transcript: string,
-  audioLength: number
+  referenceWords: LeopardWord[],
+  enableDiarization: boolean
 ) => {
-  const normTranscript = transcript.toUpperCase();
+  expect(words.length).toEqual(referenceWords.length);
   for (let i = 0; i < words.length; i += 1) {
-    const word = words[i];
-    expect(normTranscript.includes(word.word.toUpperCase())).toBeTruthy();
-    expect(word.startSec).toBeGreaterThan(0);
-    expect(word.startSec).toBeLessThanOrEqual(word.endSec);
-    if (i < (words.length - 1)) {
-      const nextWord = words[i + 1];
-      expect(word.endSec).toBeLessThanOrEqual(nextWord.startSec);
+    expect(words[i].word).toEqual(referenceWords[i].word);
+    expect(words[i].startSec).toBeCloseTo(referenceWords[i].startSec, 1);
+    expect(words[i].endSec).toBeCloseTo(referenceWords[i].endSec, 1);
+    expect(words[i].confidence).toBeCloseTo(referenceWords[i].confidence, 1);
+    if (enableDiarization) {
+      expect(words[i].speakerTag).toEqual(referenceWords[i].speakerTag);
+    } else {
+      expect(words[i].speakerTag).toEqual(-1);
     }
-    expect(word.startSec).toBeLessThan(audioLength);
-    expect(word.confidence >= 0 && word.confidence <= 1).toBeTruthy();
   }
 };
 
@@ -89,43 +90,33 @@ const loadPcm = (audioFile: string): any => {
   const waveBuffer = fs.readFileSync(waveFilePath);
   const waveAudioFile = new WaveFile(waveBuffer);
 
-  const pcm: any = waveAudioFile.getSamples(false, Int16Array);
-  return pcm;
+  return waveAudioFile.getSamples(false, Int16Array);
 };
 
 const testLeopardProcess = (
   language: string,
   transcript: string,
-  punctuations: string[],
-  testPunctuation: boolean,
+  enableAutomaticPunctuation: boolean,
+  enableDiarization: boolean,
   errorRate: number,
-  audioFile: string
+  audioFile: string,
+  words: LeopardWord[]
 ) => {
   const modelPath = getModelPathByLanguage(language);
   const pcm = loadPcm(audioFile);
 
-  let normTranscript = transcript;
-  if (!testPunctuation) {
-    for (const punctuation of punctuations) {
-      normTranscript = normTranscript.replace(new RegExp(`[${punctuation}]`, "g"), '');
-    }
-  }
-
   let leopardEngine = new Leopard(ACCESS_KEY, {
     modelPath,
-    enableAutomaticPunctuation: testPunctuation,
+    enableAutomaticPunctuation,
+    enableDiarization,
   });
 
   let res = leopardEngine.process(pcm);
 
   expect(
-    characterErrorRate(res.transcript, normTranscript) < errorRate
+    characterErrorRate(res.transcript, transcript) < errorRate
   ).toBeTruthy();
-  validateMetadata(
-    res.words,
-    res.transcript,
-    pcm.length / leopardEngine.sampleRate
-  );
+  validateMetadata(res.words, words, enableDiarization);
 
   leopardEngine.release();
 };
@@ -133,119 +124,141 @@ const testLeopardProcess = (
 const testLeopardProcessFile = (
   language: string,
   transcript: string,
-  punctuations: string[],
-  testPunctuation: boolean,
+  enableAutomaticPunctuation: boolean,
+  enableDiarization: boolean,
   errorRate: number,
-  audioFile: string
+  audioFile: string,
+  words: LeopardWord[]
 ) => {
   const modelPath = getModelPathByLanguage(language);
-  const pcm = loadPcm(audioFile);
-
-  let normTranscript = transcript;
-  if (!testPunctuation) {
-    for (const punctuation of punctuations) {
-      normTranscript = normTranscript.replace(new RegExp(`[${punctuation}]`, "g"), '');
-    }
-  }
 
   let leopardEngine = new Leopard(ACCESS_KEY, {
     modelPath,
-    enableAutomaticPunctuation: testPunctuation,
+    enableAutomaticPunctuation,
+    enableDiarization,
   });
 
   const waveFilePath = getAudioFile(audioFile);
   let res = leopardEngine.processFile(waveFilePath);
 
   expect(
-    characterErrorRate(res.transcript, normTranscript) < errorRate
+    characterErrorRate(res.transcript, transcript) < errorRate
   ).toBeTruthy();
-  validateMetadata(
-    res.words,
-    res.transcript,
-    pcm.length / leopardEngine.sampleRate
-  );
+  validateMetadata(res.words, words, enableDiarization);
 
   leopardEngine.release();
 };
 
 describe('successful processes', () => {
-  it.each(TEST_PARAMETERS)(
+  it.each(LANGUAGE_TEST_PARAMETERS)(
     'testing process `%p`',
     (
       language: string,
       transcript: string,
-      punctuations: string[],
+      _: string,
       errorRate: number,
-      audioFile: string
+      audioFile: string,
+      words: LeopardWord[]
     ) => {
       testLeopardProcess(
         language,
         transcript,
-        punctuations,
+        false,
         false,
         errorRate,
-        audioFile
+        audioFile,
+        words
       );
     }
   );
 
-  it.each(TEST_PARAMETERS)(
-    'testing process `%p` with punctuation',
-    (
-      language: string,
-      transcript: string,
-      punctuations: string[],
-      errorRate: number,
-      audioFile: string
-    ) => {
-      testLeopardProcess(
-        language,
-        transcript,
-        punctuations,
-        true,
-        errorRate,
-        audioFile
-      );
-    }
-  );
-
-  it.each(TEST_PARAMETERS)(
+  it.each(LANGUAGE_TEST_PARAMETERS)(
     'testing process file `%p`',
     (
       language: string,
       transcript: string,
-      punctuations: string[],
+      _: string,
       errorRate: number,
-      audioFile: string
+      audioFile: string,
+      words: LeopardWord[]
     ) => {
       testLeopardProcessFile(
         language,
         transcript,
-        punctuations,
+        false,
         false,
         errorRate,
-        audioFile
+        audioFile,
+        words
       );
     }
   );
 
-  it.each(TEST_PARAMETERS)(
+  it.each(LANGUAGE_TEST_PARAMETERS)(
     'testing process file `%p` with punctuation',
     (
       language: string,
+      _: string,
       transcript: string,
-      punctuations: string[],
       errorRate: number,
-      audioFile: string
+      audioFile: string,
+      words: LeopardWord[]
     ) => {
       testLeopardProcessFile(
         language,
         transcript,
-        punctuations,
+        true,
+        false,
+        errorRate,
+        audioFile,
+        words
+      );
+    }
+  );
+  it.each(LANGUAGE_TEST_PARAMETERS)(
+    'testing process file `%p` with diarization',
+    (
+      language: string,
+      transcript: string,
+      _: string,
+      errorRate: number,
+      audioFile: string,
+      words: LeopardWord[]
+    ) => {
+      testLeopardProcessFile(
+        language,
+        transcript,
+        false,
         true,
         errorRate,
-        audioFile
+        audioFile,
+        words
       );
+    }
+  );
+});
+
+describe('successful diarization', () => {
+  it.each(DIARIZATION_TEST_PARAMETERS)(
+    'testing diarization `%p`',
+    (language: string, audioFile: string, referenceWords: LeopardWord[]) => {
+      const modelPath = getModelPathByLanguage(language);
+
+      let leopardEngine = new Leopard(ACCESS_KEY, {
+        modelPath,
+        enableDiarization: true,
+      });
+
+      const waveFilePath = getAudioFile(audioFile);
+      let words = leopardEngine.processFile(waveFilePath).words;
+
+      expect(words.length).toEqual(referenceWords.length);
+      for (let i = 0; i < words.length; i += 1) {
+        expect(words[i].word).toEqual(referenceWords[i].word);
+        expect(words[i].speakerTag).toEqual(referenceWords[i].speakerTag);
+      }
+
+      leopardEngine.release();
     }
   );
 });
@@ -273,5 +286,27 @@ describe('manual paths', () => {
     expect(res.transcript.length).toBeGreaterThan(0);
 
     leopardEngine.release();
+  });
+});
+
+describe('error message stack', () => {
+  test('message stack cleared after read', () => {
+    let error: string[] = [];
+    try {
+      new Leopard('invalid');
+    } catch (e: any) {
+      error = e.messageStack;
+    }
+
+    expect(error.length).toBeGreaterThan(0);
+    expect(error.length).toBeLessThanOrEqual(8);
+
+    try {
+      new Leopard('invalid');
+    } catch (e: any) {
+      for (let i = 0; i < error.length; i++) {
+        expect(error[i]).toEqual(e.messageStack[i]);
+      }
+    }
   });
 });
