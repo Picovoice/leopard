@@ -65,6 +65,8 @@ public class Leopard {
             String modelPath,
             boolean enableAutomaticPunctuation,
             boolean enableDiarization) throws LeopardException {
+        LeopardNative.setSdk(Leopard._sdk);
+
         handle = LeopardNative.init(
                 accessKey,
                 modelPath,
