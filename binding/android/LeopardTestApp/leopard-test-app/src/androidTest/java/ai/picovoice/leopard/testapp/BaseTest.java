@@ -13,6 +13,7 @@
 package ai.picovoice.leopard.testapp;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -99,23 +100,27 @@ public class BaseTest {
         short[] pcm = new short[rawData.length / 2];
         ByteBuffer pcmBuff = ByteBuffer.wrap(rawData).order(ByteOrder.LITTLE_ENDIAN);
         pcmBuff.asShortBuffer().get(pcm);
-        pcm = Arrays.copyOfRange(pcm, 44, pcm.length);
+        pcm = Arrays.copyOfRange(pcm, 22, pcm.length);
 
         return pcm;
     }
 
-    protected void validateMetadata(LeopardTranscript.Word[] words, String transcript, float audioLength) {
-        String normTranscript = transcript.toUpperCase();
+    protected void validateMetadata(
+            LeopardTranscript.Word[] words,
+            LeopardTranscript.Word[] expectedWords,
+            boolean enableDiarization
+    ) {
+        assertEquals(words.length, expectedWords.length);
         for (int i = 0; i < words.length; i++) {
-            assertTrue(normTranscript.contains(words[i].getWord().toUpperCase()));
-            assertTrue(words[i].getStartSec() > 0);
-            assertTrue(words[i].getStartSec() <= words[i].getEndSec());
-            if (i < words.length - 1) {
-                assertTrue(words[i].getEndSec() <= words[i + 1].getStartSec());
+            assertEquals(words[i].getWord(), expectedWords[i].getWord());
+            assertEquals(words[i].getConfidence(), expectedWords[i].getConfidence(), 0.01);
+            assertEquals(words[i].getStartSec(), expectedWords[i].getStartSec(), 0.01);
+            assertEquals(words[i].getEndSec(), expectedWords[i].getEndSec(), 0.01);
+            if (enableDiarization) {
+                assertEquals(words[i].getSpeakerTag(), expectedWords[i].getSpeakerTag());
             } else {
-                assertTrue(words[i].getEndSec() <= audioLength);
+                assertEquals(words[i].getSpeakerTag(), -1);
             }
-            assertTrue(words[i].getConfidence() >= 0.0f && words[i].getConfidence() <= 1.0f);
         }
     }
 
