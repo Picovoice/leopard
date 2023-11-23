@@ -15,7 +15,7 @@ import 'package:leopard_flutter/leopard_error.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  final String accessKey = "{TESTING_ACCESS_KEY_HERE}";
+  final String accessKey = "Tw4jothrMMLyRYQ793yD/XF3DeithcbeNVsYlNN0Dc1vY26suWNOkg==";
 
   String getModelPath(String language) {
     return "assets/test_resources/model_files/leopard_params${language != "en" ? "_$language" : ""}.pv";
@@ -95,21 +95,20 @@ void main() {
   }
 
   Future<void> validateMetadata(
-      List<LeopardWord> words, String transcript, double audioLength) async {
-    String normTranscript = transcript.toUpperCase();
+      List<LeopardWord> words,
+      List<dynamic> expectedWords,
+      bool enableDiarization) async {
+    expect(words.length, expectedWords.length);
     for (var i = 0; i < words.length; i++) {
-      LeopardWord word = words[i];
-      expect(normTranscript, contains(word.word.toUpperCase()));
-      expect(word.startSec, greaterThan(0));
-      expect(word.startSec, lessThanOrEqualTo(word.endSec));
-      if (i < (words.length - 1)) {
-        LeopardWord nextWord = words[i + 1];
-        expect(word.endSec, lessThanOrEqualTo(nextWord.startSec));
+      expect(words[i].word, expectedWords[i]["word"]);
+      expect(words[i].startSec, closeTo(expectedWords[i]["start_sec"], 0.01));
+      expect(words[i].endSec, closeTo(expectedWords[i]["end_sec"], 0.01));
+      expect(words[i].confidence, closeTo(expectedWords[i]["confidence"], 0.01));
+      if (enableDiarization) {
+        expect(words[i].speakerTag, expectedWords[i]["speaker_tag"]);
+      } else {
+        expect(words[i].speakerTag, -1);
       }
-      expect(word.endSec, lessThanOrEqualTo(audioLength));
-
-      expect(word.confidence, greaterThanOrEqualTo(0));
-      expect(word.confidence, lessThanOrEqualTo(1));
     }
   }
 
@@ -124,143 +123,142 @@ void main() {
 
     Future<void> runLeopardProcess(
         String language,
-        String transcript,
-        List<String> punctuations,
-        bool testPunctuations,
+        String expectedTranscript,
+        List<dynamic> expectedWords,
         double errorRate,
-        String audioFile) async {
+        String audioFile,
+        {
+          bool asFile = false,
+          bool enableAutomaticPunctuation = false,
+          bool enableDiarization = false
+        }) async {
       String modelPath = getModelPath(language);
-
-      String normTranscript = transcript;
-      if (!testPunctuations) {
-        for (var p in punctuations) {
-          normTranscript = normTranscript.replaceAll(p, "");
-        }
-      }
 
       Leopard leopard;
       try {
-        leopard = await Leopard.create(accessKey, modelPath,
-            enableAutomaticPunctuation: testPunctuations);
+        leopard = await Leopard.create(accessKey,
+            modelPath,
+            enableAutomaticPunctuation: enableAutomaticPunctuation,
+            enableDiarization: enableDiarization
+          );
       } on LeopardException catch (ex) {
         expect(ex, equals(null),
-            reason: "Failed to initialize Leopard for $language: $ex");
+            reason: "Failed to initialize Leopard for $language: ${ex.message}");
         return;
       }
 
-      List<int> pcm = await loadAudioFile(audioFile);
-      LeopardTranscript res = await leopard.process(pcm);
+      LeopardTranscript res;
+      if (asFile) {
+        String audioPath = await extractAudioFile(audioFile);
+        res = await leopard.processFile(audioPath);
+      } else {
+        List<int> pcm = await loadAudioFile(audioFile);
+        res = await leopard.process(pcm);
+      }
 
       leopard.delete();
 
-      expect(characterErrorRate(res.transcript, normTranscript),
+      expect(characterErrorRate(res.transcript, expectedTranscript),
           lessThanOrEqualTo(errorRate),
           reason: "Character error rate for $language was incorrect");
-      await validateMetadata(
-          res.words, res.transcript, pcm.length / leopard.sampleRate);
-    }
-
-    Future<void> runLeopardProcessFile(
-        String language,
-        String transcript,
-        List<String> punctuations,
-        bool testPunctuations,
-        double errorRate,
-        String audioFile) async {
-      String modelPath = getModelPath(language);
-
-      String normTranscript = transcript;
-      if (!testPunctuations) {
-        for (var p in punctuations) {
-          normTranscript = normTranscript.replaceAll(p, "");
-        }
-      }
-
-      Leopard leopard;
-      try {
-        leopard = await Leopard.create(accessKey, modelPath,
-            enableAutomaticPunctuation: testPunctuations);
-      } on LeopardException catch (ex) {
-        expect(ex, equals(null),
-            reason: "Failed to initialize Leopard for $language: $ex");
-        return;
-      }
-
-      String audioPath = await extractAudioFile(audioFile);
-      LeopardTranscript res = await leopard.processFile(audioPath);
-
-      leopard.delete();
-
-      List<int> pcm = await loadAudioFile(audioFile);
-      expect(characterErrorRate(res.transcript, normTranscript),
-          lessThanOrEqualTo(errorRate),
-          reason: "Character error rate for $language was incorrect");
-      await validateMetadata(
-          res.words, res.transcript, pcm.length / leopard.sampleRate);
+      await validateMetadata(res.words, expectedWords, enableDiarization);
     }
 
     testWidgets('Test process all languages', (tester) async {
-      for (int t = 0; t < testData['tests']['parameters'].length; t++) {
-        String language = testData['tests']['parameters'][t]['language'];
-        String transcript = testData['tests']['parameters'][t]['transcript'];
-        List<dynamic> punctuationsRaw =
-            testData['tests']['parameters'][t]['punctuations'];
-        List<String> punctuations =
-            punctuationsRaw.map((p) => p.toString()).toList();
-        double errorRate = testData['tests']['parameters'][t]['error_rate'];
-        String audioFile = testData['tests']['parameters'][t]['audio_file'];
+      for (int t = 0; t < testData['tests']['language_tests'].length; t++) {
+        String language = testData['tests']['language_tests'][t]['language'];
+        String transcript = testData['tests']['language_tests'][t]['transcript'];
+        List<dynamic> expectedWords = testData['tests']['language_tests'][t]['words'];
+        double errorRate = testData['tests']['language_tests'][t]['error_rate'];
+        String audioFile = testData['tests']['language_tests'][t]['audio_file'];
 
         await runLeopardProcess(
-            language, transcript, punctuations, false, errorRate, audioFile);
+            language, transcript, expectedWords, errorRate, audioFile);
       }
     });
 
     testWidgets('Test process all languages with punctuation', (tester) async {
-      for (int t = 0; t < testData['tests']['parameters'].length; t++) {
-        String language = testData['tests']['parameters'][t]['language'];
-        String transcript = testData['tests']['parameters'][t]['transcript'];
-        List<dynamic> punctuationsRaw =
-            testData['tests']['parameters'][t]['punctuations'];
-        List<String> punctuations =
-            punctuationsRaw.map((p) => p.toString()).toList();
-        double errorRate = testData['tests']['parameters'][t]['error_rate'];
-        String audioFile = testData['tests']['parameters'][t]['audio_file'];
+      for (int t = 0; t < testData['tests']['language_tests'].length; t++) {
+        String language = testData['tests']['language_tests'][t]['language'];
+        String transcriptWithPunctuation = testData['tests']['language_tests'][t]['transcript_with_punctuation'];
+        List<dynamic> expectedWords = testData['tests']['language_tests'][t]['words'];
+        double errorRate = testData['tests']['language_tests'][t]['error_rate'];
+        String audioFile = testData['tests']['language_tests'][t]['audio_file'];
 
         await runLeopardProcess(
-            language, transcript, punctuations, true, errorRate, audioFile);
+            language,
+            transcriptWithPunctuation,
+            expectedWords,
+            errorRate,
+            audioFile,
+            enableAutomaticPunctuation: true);
       }
     });
 
     testWidgets('Test process file all languages', (tester) async {
-      for (int t = 0; t < testData['tests']['parameters'].length; t++) {
-        String language = testData['tests']['parameters'][t]['language'];
-        String transcript = testData['tests']['parameters'][t]['transcript'];
-        List<dynamic> punctuationsRaw =
-            testData['tests']['parameters'][t]['punctuations'];
-        List<String> punctuations =
-            punctuationsRaw.map((p) => p.toString()).toList();
-        double errorRate = testData['tests']['parameters'][t]['error_rate'];
-        String audioFile = testData['tests']['parameters'][t]['audio_file'];
+      for (int t = 0; t < testData['tests']['language_tests'].length; t++) {
+        String language = testData['tests']['language_tests'][t]['language'];
+        String transcript = testData['tests']['language_tests'][t]['transcript'];
+        List<dynamic> expectedWords = testData['tests']['language_tests'][t]['words'];
+        double errorRate = testData['tests']['language_tests'][t]['error_rate'];
+        String audioFile = testData['tests']['language_tests'][t]['audio_file'];
 
-        await runLeopardProcessFile(
-            language, transcript, punctuations, false, errorRate, audioFile);
+        await runLeopardProcess(
+            language,
+            transcript,
+            expectedWords,
+            errorRate,
+            audioFile,
+            asFile: true);
       }
     });
 
-    testWidgets('Test process file all languages with punctuation',
-        (tester) async {
-      for (int t = 0; t < testData['tests']['parameters'].length; t++) {
-        String language = testData['tests']['parameters'][t]['language'];
-        String transcript = testData['tests']['parameters'][t]['transcript'];
-        List<dynamic> punctuationsRaw =
-            testData['tests']['parameters'][t]['punctuations'];
-        List<String> punctuations =
-            punctuationsRaw.map((p) => p.toString()).toList();
-        double errorRate = testData['tests']['parameters'][t]['error_rate'];
-        String audioFile = testData['tests']['parameters'][t]['audio_file'];
+    testWidgets('Test process file all languages with diarization', (tester) async {
+      for (int t = 0; t < testData['tests']['language_tests'].length; t++) {
+        String language = testData['tests']['language_tests'][t]['language'];
+        String transcript = testData['tests']['language_tests'][t]['transcript'];
+        List<dynamic> expectedWords = testData['tests']['language_tests'][t]['words'];
+        double errorRate = testData['tests']['language_tests'][t]['error_rate'];
+        String audioFile = testData['tests']['language_tests'][t]['audio_file'];
 
-        await runLeopardProcessFile(
-            language, transcript, punctuations, true, errorRate, audioFile);
+        await runLeopardProcess(
+            language,
+            transcript,
+            expectedWords,
+            errorRate,
+            audioFile,
+            enableDiarization: true);
+      }
+    });
+
+    testWidgets('Test diarization with multiple speakers', (tester) async {
+      for (int t = 0; t < testData['tests']['diarization_tests'].length; t++) {
+        String language = testData['tests']['diarization_tests'][t]['language'];
+        List<dynamic> expectedWords = testData['tests']['diarization_tests'][t]['words'];
+        String audioFile = testData['tests']['diarization_tests'][t]['audio_file'];
+
+        String modelPath = getModelPath(language);
+        Leopard leopard;
+        try {
+          leopard = await Leopard.create(accessKey,
+              modelPath,
+              enableDiarization: true
+            );
+        } on LeopardException catch (ex) {
+          expect(ex, equals(null),
+              reason: "Failed to initialize Leopard for $language: ${ex.message}");
+          return;
+        }
+
+        String audioPath = await extractAudioFile(audioFile);
+        LeopardTranscript res = await leopard.processFile(audioPath);
+        leopard.delete();
+
+        expect(res.words.length, expectedWords.length);
+        for (var i = 0; i < res.words.length; i++) {
+          expect(res.words[i].word, expectedWords[i]["word"]);
+          expect(res.words[i].speakerTag, expectedWords[i]["speaker_tag"]);
+        }
       }
     });
   });

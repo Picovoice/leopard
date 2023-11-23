@@ -101,7 +101,7 @@ class _MyAppState extends State<MyApp> {
       errorCallback(
           LeopardActivationThrottledException("AccessKey has been throttled."));
     } on LeopardException catch (ex) {
-      errorCallback(ex.message);
+      errorCallback(ex);
     }
   }
 

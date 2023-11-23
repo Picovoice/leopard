@@ -1,5 +1,5 @@
 //
-// Copyright 2022 Picovoice Inc.
+// Copyright 2022-2023 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -38,11 +38,18 @@ class Leopard {
   ///
   /// [enableAutomaticPunctuation] (Optional) Set to `true` to enable automatic punctuation insertion.
   ///
+  /// [enableDiarization] (Optional) Set to `true` to enable speaker diarization, which allows Leopard to
+  ///                     differentiate speakers as part of the transcription process. Word
+  ///                     metadata will include a `speaker_tag` to identify unique speakers.
+  /// 
   /// Throws a `LeopardException` if not initialized correctly
   ///
   /// returns an instance of the Leopard Speech-to-Text engine
   static Future<Leopard> create(String accessKey, String modelPath,
-      {enableAutomaticPunctuation = false}) async {
+      {
+        enableAutomaticPunctuation = false,
+        enableDiarization = false
+      }) async {
     modelPath = await _tryExtractFlutterAsset(modelPath);
 
     try {
@@ -50,7 +57,8 @@ class Leopard {
           Map<String, dynamic>.from(await _channel.invokeMethod('create', {
         'accessKey': accessKey,
         'modelPath': modelPath,
-        'enableAutomaticPunctuation': enableAutomaticPunctuation
+        'enableAutomaticPunctuation': enableAutomaticPunctuation,
+        'enableDiarization': enableDiarization
       }));
 
       return Leopard._(
@@ -129,7 +137,11 @@ class Leopard {
     List<LeopardWord> words = [];
     for (dynamic word in result['words']) {
       words.add(LeopardWord(
-          word['word'], word['startSec'], word['endSec'], word['confidence']));
+          word['word'],
+          word['startSec'],
+          word['endSec'],
+          word['confidence'],
+          word['speakerTag']));
     }
     return LeopardTranscript(transcript, words);
   }
