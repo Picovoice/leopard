@@ -9,6 +9,7 @@
 // specific language governing permissions and limitations under the License.
 //
 import * as path from 'path';
+import { LeopardWord } from '../src';
 
 const ROOT_DIR = path.join(__dirname, '../../..');
 const TEST_DATA_JSON = require(path.join(
@@ -34,19 +35,46 @@ export function getAudioFile(audioFile: string): string {
   return path.join(ROOT_DIR, 'resources/audio_samples', audioFile);
 }
 
-export function getTestParameters(): [
+export function getLanguageTestParameters(): [
   string,
   string,
-  string[],
+  string,
   number,
-  string
+  string,
+  LeopardWord[]
 ][] {
-  let parametersJson = TEST_DATA_JSON.tests.parameters;
+  let parametersJson = TEST_DATA_JSON.tests.language_tests;
   return parametersJson.map((x: any) => [
     x.language,
     x.transcript,
-    x.punctuations,
+    x.transcript_with_punctuation,
     x.error_rate,
     x.audio_file,
+    x.words.map((w: any) => ({
+      word: w.word,
+      startSec: w.start_sec,
+      endSec: w.end_sec,
+      confidence: w.confidence,
+      speakerTag: w.speaker_tag,
+    })),
+  ]);
+}
+
+export function getDiarizationTestParameters(): [
+  string,
+  string,
+  LeopardWord[]
+][] {
+  let parametersJson = TEST_DATA_JSON.tests.diarization_tests;
+  return parametersJson.map((x: any) => [
+    x.language,
+    x.audio_file,
+    x.words.map((w: any) => ({
+      word: w.word,
+      startSec: w.start_sec,
+      endSec: w.end_sec,
+      confidence: w.confidence,
+      speakerTag: w.speaker_tag,
+    })),
   ]);
 }

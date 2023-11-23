@@ -15,7 +15,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 
 ## Compatibility
 
-- Node.js 12+
+- Node.js 16+
 - Runs on Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64), Raspberry Pi (4, 3), and NVIDIA Jetson Nano.
 
 ## Installation
@@ -37,7 +37,7 @@ Create an instance of the engine and transcribe an audio file:
 ```javascript
 const {Leopard} = require("@picovoice/leopard-node");
 
-const accessKey = "${ACCESS_KEY}" // Obtained from the Picovoice Console (https://console.picovoice.ai/)
+const accessKey = "${ACCESS_KEY}"; // Obtained from the Picovoice Console (https://console.picovoice.ai/)
 const handle = new Leopard(accessKey);
 
 const result = handle.processFile('${AUDIO_PATH}');

@@ -16,6 +16,10 @@ export type LeopardWord = {
   endSec: number;
   /** Transcription confidence. It is a number within [0, 1]. */
   confidence: number;
+  /** The speaker tag is `-1` if diarization is not enabled during initialization
+   * otherwise, it's a non-negative integer identifying unique speakers, with `0` reserved
+   * for unknown speakers */
+  speakerTag: number;
 };
 
 export type LeopardTranscript = {
@@ -27,6 +31,7 @@ export type LeopardTranscript = {
 
 export type LeopardInitOptions = {
   enableAutomaticPunctuation?: boolean;
+  enableDiarization?: boolean;
 };
 
 export type LeopardInputOptions = {
