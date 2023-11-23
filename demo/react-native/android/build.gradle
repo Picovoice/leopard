@@ -11,7 +11,7 @@ buildscript {
         google()
         jcenter()
         maven {
-            url 'https://s01.oss.sonatype.org/content/repositories/aipicovoice-1299'
+            url 'https://s01.oss.sonatype.org/content/repositories/aipicovoice-1303'
         }
     }
     dependencies {
@@ -37,7 +37,7 @@ allprojects {
         jcenter()
         maven { url 'https://www.jitpack.io' }
         maven {
-            url 'https://s01.oss.sonatype.org/content/repositories/aipicovoice-1299'
+            url 'https://s01.oss.sonatype.org/content/repositories/aipicovoice-1303'
         }
     }
 }
