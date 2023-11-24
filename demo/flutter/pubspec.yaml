@@ -15,8 +15,7 @@ dependencies:
 
   path_provider: ^2.0.9
   flutter_voice_processor: ^1.1.0
-  leopard_flutter: 
-    path: ../../binding/flutter
+  leopard_flutter: ^2.0.0
 
 dev_dependencies:
   integration_test:
