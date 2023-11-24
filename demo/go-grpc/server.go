@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	leopard "github.com/Picovoice/leopard/binding/go"
+	leopard "github.com/Picovoice/leopard/binding/go/v2"
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"io"
