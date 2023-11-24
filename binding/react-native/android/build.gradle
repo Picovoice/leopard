@@ -3,6 +3,9 @@ buildscript {
   repositories {
     google()
     mavenCentral()
+    maven {
+      url 'https://s01.oss.sonatype.org/content/repositories/aipicovoice-1305'
+    }
   }
 
   dependencies {
@@ -118,5 +121,5 @@ repositories {
 dependencies {
   // noinspection GradleDynamicVersion
   api 'com.facebook.react:react-native:+'
-  implementation 'ai.picovoice:leopard-android:1.2.1'
+  implementation 'ai.picovoice:leopard-android:2.0.0'
 }

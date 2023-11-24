@@ -1,5 +1,5 @@
 //
-// Copyright 2022 Picovoice Inc.
+// Copyright 2022-2023 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -15,11 +15,17 @@ import Leopard
 class PvLeopard: NSObject {
     private var leopardPool: [String: Leopard] = [:]
 
-    @objc(create:modelPath:enableAutomaticPunctuation:resolver:rejecter:)
+    override init() {
+        super.init()
+        Leopard.setSdk(sdk: "react-native")
+    }
+
+    @objc(create:modelPath:enableAutomaticPunctuation:enableDiarization:resolver:rejecter:)
     func create(
             accessKey: String,
             modelPath: String,
             enableAutomaticPunctuation: Bool,
+            enableDiarization: Bool,
             resolver resolve: RCTPromiseResolveBlock,
             rejecter reject: RCTPromiseRejectBlock) {
 
@@ -27,7 +33,8 @@ class PvLeopard: NSObject {
             let leopard = try Leopard(
                     accessKey: accessKey,
                     modelPath: modelPath,
-                    enableAutomaticPunctuation: enableAutomaticPunctuation
+                    enableAutomaticPunctuation: enableAutomaticPunctuation,
+                    enableDiarization: enableDiarization
             )
 
             let handle: String = String(describing: leopard)
@@ -120,6 +127,7 @@ class PvLeopard: NSObject {
             wordMap["confidence"] = wordMeta.confidence
             wordMap["startSec"] = wordMeta.startSec
             wordMap["endSec"] = wordMeta.endSec
+            wordMap["speakerTag"] = wordMeta.speakerTag
             wordMapArray.append(wordMap)
         }
         resultMap["words"] = wordMapArray

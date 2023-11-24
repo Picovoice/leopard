@@ -38,6 +38,8 @@ public class LeopardModule extends ReactContextBaseJavaModule {
     public LeopardModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
+
+        Leopard.setSdk("react-native");
     }
 
     @Override
@@ -50,6 +52,7 @@ public class LeopardModule extends ReactContextBaseJavaModule {
             String accessKey,
             String modelPath,
             boolean enableAutomaticPunctuation,
+            boolean enableDiarization,
             Promise promise) {
         try {
 
@@ -57,6 +60,7 @@ public class LeopardModule extends ReactContextBaseJavaModule {
                     .setAccessKey(accessKey)
                     .setModelPath(modelPath.isEmpty() ? null : modelPath)
                     .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
+                    .setEnableDiarization(enableDiarization)
                     .build(reactContext);
             leopardPool.put(String.valueOf(System.identityHashCode(leopard)), leopard);
 
@@ -146,6 +150,7 @@ public class LeopardModule extends ReactContextBaseJavaModule {
             wordMap.putDouble("confidence", word.getConfidence());
             wordMap.putDouble("startSec", word.getStartSec());
             wordMap.putDouble("endSec", word.getEndSec());
+            wordMap.putInt("speakerTag", word.getSpeakerTag());
             words.pushMap(wordMap);
         }
         resultMap.putArray("words", words);
