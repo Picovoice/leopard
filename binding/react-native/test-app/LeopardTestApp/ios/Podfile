@@ -14,7 +14,7 @@ end
 
 target 'LeopardTestApp' do
   config = use_native_modules!
-  pod 'Leopard-iOS', :podspec => 'https://raw.githubusercontent.com/Picovoice/leopard/v2.0/binding/ios/Leopard-iOS.podspec'
+  pod 'Leopard-iOS', '~> 2.0.0'
 
   # Flags change depending on the env values.
   flags = get_default_flags()
