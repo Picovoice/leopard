@@ -19,7 +19,7 @@ from parameterized import parameterized
 
 from test_util import *
 
-test_parameters = load_test_data()
+language_tests = load_languages_test_data()
 
 
 class PorcupineCTestCase(unittest.TestCase):
@@ -44,8 +44,13 @@ class PorcupineCTestCase(unittest.TestCase):
         model_path_subdir = append_language('lib/common/leopard_params', language)
         return os.path.join(self._root_dir, '%s.pv' % model_path_subdir)
 
-    @parameterized.expand(test_parameters)
-    def test_leopard(self, language, audio_file_name, ground_truth, error_rate):
+    @parameterized.expand(language_tests)
+    def test_leopard(
+            self,
+            language,
+            audio_file_name,
+            ground_truth,
+            error_rate):
         args = [
             os.path.join(os.path.dirname(__file__), "../build/leopard_demo"),
             "-a", self._access_key,
