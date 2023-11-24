@@ -1,4 +1,4 @@
-// Copyright 2022 Picovoice Inc.
+// Copyright 2022-2023 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is
 // located in the "LICENSE" file accompanying this source.
@@ -52,8 +52,9 @@ const (
 )
 
 type LeopardError struct {
-	StatusCode PvStatus
-	Message    string
+	StatusCode   PvStatus
+	Message      string
+	MessageStack []string
 }
 
 type leopardExts struct {
@@ -61,7 +62,17 @@ type leopardExts struct {
 }
 
 func (e *LeopardError) Error() string {
-	return fmt.Sprintf("%s: %s", pvStatusToString(e.StatusCode), e.Message)
+	var message strings.Builder
+	message.WriteString(fmt.Sprintf("%s: %s", pvStatusToString(e.StatusCode), e.Message))
+
+	if len(e.MessageStack) > 0 {
+		message.WriteString(":")
+	}
+
+	for i, value := range e.MessageStack {
+		message.WriteString(fmt.Sprintf("\n  [%d] %s", i, value))
+	}
+	return message.String()
 }
 
 // Leopard struct
@@ -80,10 +91,14 @@ type Leopard struct {
 
 	// Flag to enable automatic punctuation insertion.
 	EnableAutomaticPunctuation bool
+
+	// Flag to enable speaker diarization, which allows Leopard to differentiate speakers as part of the transcription process.
+	// Word metadata will include a `SpeakerTag` to identify unique speakers.
+	EnableDiarization bool
 }
 
 type LeopardWord struct {
-	// Transcribed word
+	// Transcribed word.
 	Word string
 
 	// Start of word in seconds.
@@ -94,6 +109,10 @@ type LeopardWord struct {
 
 	// Transcription confidence. It is a number within [0, 1].
 	Confidence float32
+
+	// Unique speaker identifier. It is `-1` if diarization is not enabled during initialization; otherwise,
+	// it's a non-negative integer identifying unique speakers, with `0` reserved for unknown speakers.
+	SpeakerTag int32
 }
 
 // private vars
@@ -123,6 +142,7 @@ func NewLeopard(accessKey string) Leopard {
 		ModelPath:                  defaultModelFile,
 		LibraryPath:                defaultLibPath,
 		EnableAutomaticPunctuation: false,
+		EnableDiarization:          false,
 	}
 }
 
@@ -130,8 +150,8 @@ func NewLeopard(accessKey string) Leopard {
 func (leopard *Leopard) Init() error {
 	if leopard.AccessKey == "" {
 		return &LeopardError{
-			INVALID_ARGUMENT,
-			"No AccessKey provided to Leopard"}
+			StatusCode: INVALID_ARGUMENT,
+			Message:    "No AccessKey provided to Leopard"}
 	}
 
 	if leopard.ModelPath == "" {
@@ -144,21 +164,31 @@ func (leopard *Leopard) Init() error {
 
 	if _, err := os.Stat(leopard.LibraryPath); os.IsNotExist(err) {
 		return &LeopardError{
-			INVALID_ARGUMENT,
-			fmt.Sprintf("Specified library file could not be found at %s", leopard.LibraryPath)}
+			StatusCode: INVALID_ARGUMENT,
+			Message:    fmt.Sprintf("Specified library file could not be found at %s", leopard.LibraryPath)}
 	}
 
 	if _, err := os.Stat(leopard.ModelPath); os.IsNotExist(err) {
 		return &LeopardError{
-			INVALID_ARGUMENT,
-			fmt.Sprintf("Specified model file could not be found at %s", leopard.ModelPath)}
+			StatusCode: INVALID_ARGUMENT,
+			Message:    fmt.Sprintf("Specified model file could not be found at %s", leopard.ModelPath)}
 	}
 
 	ret := nativeLeopard.nativeInit(leopard)
-	if PvStatus(ret) != SUCCESS {
+	if ret != SUCCESS {
+		errorStatus, messageStack := nativeLeopard.nativeGetErrorStack()
+		if errorStatus != SUCCESS {
+			return &LeopardError{
+				StatusCode: errorStatus,
+				Message:    "Unable to get Leopard error state",
+			}
+		}
+
 		return &LeopardError{
-			PvStatus(ret),
-			"Leopard init failed."}
+			StatusCode:   ret,
+			Message:      "Leopard init failed",
+			MessageStack: messageStack,
+		}
 	}
 
 	SampleRate = nativeLeopard.nativeSampleRate()
@@ -171,8 +201,8 @@ func (leopard *Leopard) Init() error {
 func (leopard *Leopard) Delete() error {
 	if leopard.handle == nil {
 		return &LeopardError{
-			INVALID_STATE,
-			"Leopard has not been initialized or has already been deleted"}
+			StatusCode: INVALID_STATE,
+			Message:    "Leopard has not been initialized or has already been deleted"}
 	}
 
 	nativeLeopard.nativeDelete(leopard)
@@ -187,21 +217,31 @@ func (leopard *Leopard) Delete() error {
 func (leopard *Leopard) Process(pcm []int16) (string, []LeopardWord, error) {
 	if leopard.handle == nil {
 		return "", nil, &LeopardError{
-			INVALID_STATE,
-			"Leopard has not been initialized or has already been deleted"}
+			StatusCode: INVALID_STATE,
+			Message:    "Leopard has not been initialized or has already been deleted"}
 	}
 
 	if len(pcm) == 0 {
 		return "", nil, &LeopardError{
-			INVALID_ARGUMENT,
-			"Audio data must not be empty"}
+			StatusCode: INVALID_ARGUMENT,
+			Message:    "Audio data must not be empty"}
 	}
 
 	ret, transcript, words := nativeLeopard.nativeProcess(leopard, pcm)
-	if PvStatus(ret) != SUCCESS {
+	if ret != SUCCESS {
+		errorStatus, messageStack := nativeLeopard.nativeGetErrorStack()
+		if errorStatus != SUCCESS {
+			return "", nil, &LeopardError{
+				StatusCode: errorStatus,
+				Message:    "Unable to get Leopard error state",
+			}
+		}
+
 		return "", nil, &LeopardError{
-			PvStatus(ret),
-			"Leopard process failed."}
+			StatusCode:   ret,
+			Message:      "Leopard process failed",
+			MessageStack: messageStack,
+		}
 	}
 
 	return transcript, words, nil
@@ -213,29 +253,31 @@ func (leopard *Leopard) Process(pcm []int16) (string, []LeopardWord, error) {
 func (leopard *Leopard) ProcessFile(audioPath string) (string, []LeopardWord, error) {
 	if leopard.handle == nil {
 		return "", nil, &LeopardError{
-			INVALID_STATE,
-			"Leopard has not been initialized or has already been deleted"}
+			StatusCode: INVALID_STATE,
+			Message:    "Leopard has not been initialized or has already been deleted"}
 	}
 
 	if _, err := os.Stat(audioPath); os.IsNotExist(err) {
 		return "", nil, &LeopardError{
-			INVALID_ARGUMENT,
-			fmt.Sprintf("Specified file could not be found at '%s'", audioPath)}
+			StatusCode: INVALID_ARGUMENT,
+			Message:    fmt.Sprintf("Specified file could not be found at '%s'", audioPath)}
 	}
 
 	ret, transcript, words := nativeLeopard.nativeProcessFile(leopard, audioPath)
 	if ret != SUCCESS {
-		if ret == INVALID_ARGUMENT {
-			fileExtension := filepath.Ext(audioPath)
-			if !validExtensions.includes(fileExtension) {
-				return "", nil, &LeopardError{
-					INVALID_ARGUMENT,
-					fmt.Sprintf("Specified file with extension '%s' is not supported", fileExtension)}
+		errorStatus, messageStack := nativeLeopard.nativeGetErrorStack()
+		if errorStatus != SUCCESS {
+			return "", nil, &LeopardError{
+				StatusCode: errorStatus,
+				Message:    "Unable to get Leopard error state",
 			}
 		}
+
 		return "", nil, &LeopardError{
-			PvStatus(ret),
-			"Leopard process failed."}
+			StatusCode:   ret,
+			Message:      "Leopard process failed",
+			MessageStack: messageStack,
+		}
 	}
 
 	return transcript, words, nil

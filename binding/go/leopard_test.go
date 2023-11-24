@@ -9,8 +9,6 @@
 // limitations under the License.
 //
 
-// Go binding for Leopard Speech-to-Text engine.
-
 package leopard
 
 import (
@@ -19,6 +17,7 @@ import (
 	"flag"
 	"io/ioutil"
 	"log"
+	"math"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -28,18 +27,26 @@ import (
 	"github.com/agnivade/levenshtein"
 )
 
-type TestParameters struct {
-	language                   string
-	testAudioFile              string
-	transcript                 string
-	errorRate                  float32
-	enableAutomaticPunctuation bool
+type LanguageTestParameters struct {
+	language                  string
+	testAudioFile             string
+	transcript                string
+	transcriptWithPunctuation string
+	errorRate                 float32
+	words                     []LeopardWord
+}
+
+type DiarizationTestParameters struct {
+	language      string
+	testAudioFile string
+	words         []LeopardWord
 }
 
 var (
-	testAccessKey         string
-	leopard               Leopard
-	processTestParameters []TestParameters
+	testAccessKey    string
+	leopard          Leopard
+	languageTests    []LanguageTestParameters
+	diarizationTests []DiarizationTestParameters
 )
 
 func TestMain(m *testing.M) {
@@ -47,8 +54,12 @@ func TestMain(m *testing.M) {
 	flag.StringVar(&testAccessKey, "access_key", "", "AccessKey for testing")
 	flag.Parse()
 
-	processTestParameters = loadTestData()
+	languageTests, diarizationTests = loadTestData()
 	os.Exit(m.Run())
+}
+
+func isClose(value, expected, tolerance float32) bool {
+	return math.Abs(float64(value-expected)) <= float64(tolerance)
 }
 
 func appendLanguage(s string, language string) string {
@@ -58,8 +69,8 @@ func appendLanguage(s string, language string) string {
 		return s + "_" + language
 	}
 }
-func loadTestData() []TestParameters {
 
+func loadTestData() (languageTests []LanguageTestParameters, diarizationTests []DiarizationTestParameters) {
 	content, err := ioutil.ReadFile("../../resources/.test/test_data.json")
 	if err != nil {
 		log.Fatalf("Could not read test data json: %v", err)
@@ -67,13 +78,28 @@ func loadTestData() []TestParameters {
 
 	var testData struct {
 		Tests struct {
-			Parameters []struct {
-				Language     string   `json:"language"`
-				AudioFile    string   `json:"audio_file"`
-				Transcript   string   `json:"transcript"`
-				Punctuations []string `json:"punctuations"`
-				ErrorRate    float32  `json:"error_rate"`
-			} `json:"parameters"`
+			LanguageTests []struct {
+				Language                  string  `json:"language"`
+				AudioFile                 string  `json:"audio_file"`
+				Transcript                string  `json:"transcript"`
+				TranscriptWithPunctuation string  `json:"transcript_with_punctuation"`
+				ErrorRate                 float32 `json:"error_rate"`
+				Words                     []struct {
+					Word       string  `json:"word"`
+					StartSec   float32 `json:"start_sec"`
+					EndSec     float32 `json:"end_sec"`
+					Confidence float32 `json:"confidence"`
+					SpeakerTag int32   `json:"speaker_tag"`
+				} `json:"words"`
+			} `json:"language_tests"`
+			DiarizationTests []struct {
+				Language  string `json:"language"`
+				AudioFile string `json:"audio_file"`
+				Words     []struct {
+					Word       string `json:"word"`
+					SpeakerTag int32  `json:"speaker_tag"`
+				} `json:"words"`
+			} `json:"diarization_tests"`
 		} `json:"tests"`
 	}
 	err = json.Unmarshal(content, &testData)
@@ -81,58 +107,77 @@ func loadTestData() []TestParameters {
 		log.Fatalf("Could not decode test data json: %v", err)
 	}
 
-	for _, x := range testData.Tests.Parameters {
-		testCaseWithPunctuation := TestParameters{
-			language:                   x.Language,
-			testAudioFile:              x.AudioFile,
-			transcript:                 x.Transcript,
-			enableAutomaticPunctuation: true,
-			errorRate:                  x.ErrorRate,
+	for _, x := range testData.Tests.LanguageTests {
+		languageTestParameters := LanguageTestParameters{
+			language:                  x.Language,
+			testAudioFile:             x.AudioFile,
+			transcript:                x.Transcript,
+			transcriptWithPunctuation: x.TranscriptWithPunctuation,
+			errorRate:                 x.ErrorRate,
 		}
-		processTestParameters = append(processTestParameters, testCaseWithPunctuation)
 
-		transcriptWithoutPunctuation := x.Transcript
-		for _, p := range x.Punctuations {
-			transcriptWithoutPunctuation = strings.ReplaceAll(transcriptWithoutPunctuation, p, "")
+		for _, y := range x.Words {
+			word := LeopardWord{
+				Word:       y.Word,
+				StartSec:   y.StartSec,
+				EndSec:     y.EndSec,
+				Confidence: y.Confidence,
+				SpeakerTag: y.SpeakerTag,
+			}
+			languageTestParameters.words = append(languageTestParameters.words, word)
 		}
-		testCaseWithoutPunctuation := TestParameters{
-			language:                   x.Language,
-			testAudioFile:              x.AudioFile,
-			transcript:                 transcriptWithoutPunctuation,
-			enableAutomaticPunctuation: false,
-			errorRate:                  x.ErrorRate,
-		}
-		processTestParameters = append(processTestParameters, testCaseWithoutPunctuation)
+
+		languageTests = append(languageTests, languageTestParameters)
 	}
 
-	return processTestParameters
+	for _, x := range testData.Tests.DiarizationTests {
+		diarizationTestParameters := DiarizationTestParameters{
+			language:      x.Language,
+			testAudioFile: x.AudioFile,
+		}
+
+		for _, y := range x.Words {
+			word := LeopardWord{
+				Word:       y.Word,
+				SpeakerTag: y.SpeakerTag,
+			}
+			diarizationTestParameters.words = append(diarizationTestParameters.words, word)
+		}
+
+		diarizationTests = append(diarizationTests, diarizationTestParameters)
+	}
+
+	return languageTests, diarizationTests
 }
 
-func validateMetadata(t *testing.T, transcript string, words []LeopardWord, audioLength float32) {
-	transcriptUpperCase := strings.ToUpper(transcript)
+func validateMetadata(t *testing.T, referenceWords []LeopardWord, words []LeopardWord, enableDiarization bool) {
+	if len(words) != len(referenceWords) {
+		t.Fatalf("Word count `%d` did not match expected word count `%d`", len(words), len(referenceWords))
+	}
+
 	for i := range words {
-		wordUpperCase := strings.ToUpper(words[i].Word)
-		if !strings.Contains(transcriptUpperCase, wordUpperCase) {
-			t.Fatalf("Word `%s` was not in transcript `%s`", wordUpperCase, transcriptUpperCase)
+		word := strings.ToUpper(words[i].Word)
+		referenceWord := strings.ToUpper(referenceWords[i].Word)
+		if word != referenceWord {
+			t.Fatalf("Word `%s` did not match expected word `%s`", word, referenceWord)
 		}
-		if words[i].StartSec <= 0 {
-			t.Fatalf("Word %d started at %f", i, words[i].StartSec)
+		if !isClose(words[i].StartSec, referenceWords[i].StartSec, 0.1) {
+			t.Fatalf("Word %d started at %f, expected %f", i, words[i].StartSec, referenceWords[i].StartSec)
 		}
-		if words[i].StartSec > words[i].EndSec {
-			t.Fatalf("Word %d had a start time of %f, but and end time of %f", i, words[i].StartSec, words[i].EndSec)
+		if !isClose(words[i].EndSec, referenceWords[i].EndSec, 0.1) {
+			t.Fatalf("Word %d ended at %f, expected %f", i, words[i].EndSec, referenceWords[i].EndSec)
 		}
-		if i < len(words)-1 {
-			if words[i].EndSec > words[i+1].StartSec {
-				t.Fatalf("Word %d had an end time of %f, next word had a start time of %f", i, words[i].EndSec, words[i+1].StartSec)
+		if !isClose(words[i].Confidence, referenceWords[i].Confidence, 0.1) {
+			t.Fatalf("Word %d had a confidence of %f, expected %f", i, words[i].Confidence, referenceWords[i].Confidence)
+		}
+		if enableDiarization {
+			if words[i].SpeakerTag != referenceWords[i].SpeakerTag {
+				t.Fatalf("Word %d had speaker_tag of %d, expected %d", i, words[i].SpeakerTag, referenceWords[i].SpeakerTag)
 			}
 		} else {
-			if words[i].EndSec > audioLength {
-				t.Fatalf("Word %d had an end time of %f, audio length is %f", i, words[i].EndSec, audioLength)
+			if words[i].SpeakerTag != -1 {
+				t.Fatalf("Word %d had speaker_tag of %d, expected -1", i, words[i].SpeakerTag)
 			}
-		}
-
-		if words[i].Confidence < 0 || words[i].Confidence > 1 {
-			t.Fatalf("Word %d had an invalid confidence value of %f", i, words[i].Confidence)
 		}
 	}
 }
@@ -160,10 +205,13 @@ func runProcessTestCase(
 	testAudioFile string,
 	referenceTranscript string,
 	targetErrorRate float32,
-	enableAutomaticPunctuation bool) {
+	enableAutomaticPunctuation bool,
+	enableDiarization bool,
+	referenceWords []LeopardWord) {
 
 	leopard = NewLeopard(testAccessKey)
 	leopard.EnableAutomaticPunctuation = enableAutomaticPunctuation
+	leopard.EnableDiarization = enableDiarization
 
 	modelPath, _ := filepath.Abs(filepath.Join("../../lib/common", appendLanguage("leopard_params", language)+".pv"))
 	leopard.ModelPath = modelPath
@@ -193,15 +241,12 @@ func runProcessTestCase(
 		t.Fatalf("Failed to process pcm buffer: %v", err)
 	}
 
-	t.Logf("%s", transcript)
-	t.Logf("%s", referenceTranscript)
-
 	errorRate := float32(levenshtein.ComputeDistance(transcript, referenceTranscript)) / float32(len(referenceTranscript))
 	if errorRate >= targetErrorRate {
 		t.Fatalf("Expected '%f' got '%f'", targetErrorRate, errorRate)
 	}
 
-	validateMetadata(t, transcript, words, float32(len(pcm))/float32(SampleRate))
+	validateMetadata(t, referenceWords, words, enableDiarization)
 }
 
 func runProcessFileTestCase(
@@ -210,10 +255,13 @@ func runProcessFileTestCase(
 	testAudioFile string,
 	referenceTranscript string,
 	targetErrorRate float32,
-	enableAutomaticPunctuation bool) {
+	enableAutomaticPunctuation bool,
+	enableDiarization bool,
+	referenceWords []LeopardWord) {
 
 	leopard = NewLeopard(testAccessKey)
 	leopard.EnableAutomaticPunctuation = enableAutomaticPunctuation
+	leopard.EnableDiarization = enableDiarization
 
 	modelPath, _ := filepath.Abs(filepath.Join("../../lib/common", appendLanguage("leopard_params", language)+".pv"))
 	leopard.ModelPath = modelPath
@@ -234,26 +282,116 @@ func runProcessFileTestCase(
 		t.Fatalf("Expected '%f' got '%f'", targetErrorRate, errorRate)
 	}
 
-	data, err := ioutil.ReadFile(testAudioPath)
-	if err != nil {
-		t.Fatalf("Could not read test file: %v", err)
-	}
-	data = data[44:] // skip header
+	validateMetadata(t, referenceWords, words, enableDiarization)
+}
 
-	validateMetadata(t, transcript, words, (float32(len(data))/float32(2))/float32(SampleRate))
+func runDiarizationTestCase(
+	t *testing.T,
+	language string,
+	testAudioFile string,
+	referenceWords []LeopardWord) {
+
+	leopard = NewLeopard(testAccessKey)
+	leopard.EnableDiarization = true
+
+	modelPath, _ := filepath.Abs(filepath.Join("../../lib/common", appendLanguage("leopard_params", language)+".pv"))
+	leopard.ModelPath = modelPath
+
+	err := leopard.Init()
+	if err != nil {
+		log.Fatalf("Failed to init leopard with: %v", err)
+	}
+	defer leopard.Delete()
+
+	testAudioPath, _ := filepath.Abs(filepath.Join("../../resources/audio_samples", testAudioFile))
+	_, words, err := leopard.ProcessFile(testAudioPath)
+	if err != nil {
+		t.Fatalf("Failed to process pcm buffer: %v", err)
+	}
+
+	if len(words) != len(referenceWords) {
+		t.Fatalf("Word count `%d` did not match expected word count `%d`", len(words), len(referenceWords))
+	}
+	for i := range words {
+		word := strings.ToUpper(words[i].Word)
+		referenceWord := strings.ToUpper(referenceWords[i].Word)
+		if word != referenceWord {
+			t.Fatalf("Word `%s` did not match expected word `%s`", word, referenceWord)
+		}
+		if words[i].SpeakerTag != referenceWords[i].SpeakerTag {
+			t.Fatalf("Word %d had speaker_tag of %d, expected %d", i, words[i].SpeakerTag, referenceWords[i].SpeakerTag)
+		}
+	}
 }
 
 func TestProcess(t *testing.T) {
-	for _, test := range processTestParameters {
+	for _, test := range languageTests {
 		t.Logf("Running process data test for `%s`", test.language)
-		runProcessTestCase(t, test.language, test.testAudioFile, test.transcript, test.errorRate, test.enableAutomaticPunctuation)
+		runProcessTestCase(
+			t,
+			test.language,
+			test.testAudioFile,
+			test.transcript,
+			test.errorRate,
+			false,
+			false,
+			test.words)
 	}
 }
 
 func TestProcessFile(t *testing.T) {
-	for _, test := range processTestParameters {
+	for _, test := range languageTests {
 		t.Logf("Running process file test for `%s`", test.language)
-		runProcessTestCase(t, test.language, test.testAudioFile, test.transcript, test.errorRate, test.enableAutomaticPunctuation)
+		runProcessFileTestCase(
+			t,
+			test.language,
+			test.testAudioFile,
+			test.transcript,
+			test.errorRate,
+			false,
+			false,
+			test.words)
+	}
+}
+
+func TestProcessFileWithPunctuation(t *testing.T) {
+	for _, test := range languageTests {
+		t.Logf("Running process file with punctuation test for `%s`", test.language)
+		runProcessFileTestCase(
+			t,
+			test.language,
+			test.testAudioFile,
+			test.transcriptWithPunctuation,
+			test.errorRate,
+			true,
+			false,
+			test.words)
+	}
+}
+
+func TestProcessFileWithDiarization(t *testing.T) {
+	for _, test := range languageTests {
+		t.Logf("Running process file with diarization test for `%s`", test.language)
+		runProcessFileTestCase(
+			t,
+			test.language,
+			test.testAudioFile,
+			test.transcript,
+			test.errorRate,
+			false,
+			true,
+			test.words)
+	}
+}
+
+func TestDiarization(t *testing.T) {
+	for _, test := range diarizationTests {
+		t.Logf("Running diarization test for `%s`", test.language)
+		runDiarizationTestCase(
+			t,
+			test.language,
+			test.testAudioFile,
+			test.words)
 	}
 }
 
@@ -276,5 +414,43 @@ func TestProcessEmptyFile(t *testing.T) {
 
 	if len(words) > 0 {
 		t.Fatalf("Leopard returned %d words on empty file", len(words))
+	}
+}
+
+func TestMessageStack(t *testing.T) {
+	leopard = NewLeopard("invalid access key")
+	err := leopard.Init()
+	err2 := leopard.Init()
+
+	if len(err.Error()) > 1024 {
+		t.Fatalf("length of error is full: '%d'", len(err.Error()))
+	}
+
+	if len(err2.Error()) != len(err.Error()) {
+		t.Fatalf("length of 1st init '%d' does not match 2nd init '%d'", len(err.Error()), len(err2.Error()))
+	}
+}
+
+func TestProcessMessageStack(t *testing.T) {
+	leopard = NewLeopard(testAccessKey)
+	err := leopard.Init()
+	if err != nil {
+		log.Fatalf("Failed to init leopard with: %v", err)
+	}
+
+	address := leopard.handle
+	leopard.handle = nil
+
+	testPcm := make([]int16, 1014)
+
+	_, _, err = leopard.Process(testPcm)
+	leopard.handle = address
+	if err == nil {
+		t.Fatalf("Expected leopard process to fail")
+	}
+
+	delErr := leopard.Delete()
+	if delErr != nil {
+		t.Fatalf("%v", delErr)
 	}
 }
