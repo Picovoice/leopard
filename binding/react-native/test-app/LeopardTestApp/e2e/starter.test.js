@@ -16,7 +16,7 @@ describe('Leopard', () => {
       .not.toExist()
       .withTimeout(12 * 60 * 1000);
 
-    const numTestCases = testData.tests.parameters.length;
+    const numTestCases = testData.tests.language_tests.length + testData.tests.diarization_tests.length;
     for (let i = 0; i < numTestCases; i += 1) {
       await waitFor(element(by.id('testResult')).atIndex(i))
         .toExist()
