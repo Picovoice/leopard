@@ -2,8 +2,10 @@
 # yarn lockfile v1
 
 
-"@picovoice/leopard-node@file:../../binding/nodejs":
+"@picovoice/leopard-node@=2.0.0":
   version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@picovoice/leopard-node/-/leopard-node-2.0.0.tgz#ac29fcfb60ec8a626f1e23145f0a487f7aa45298"
+  integrity sha512-JQwSrY49EJW0hy4NYh/DXp1hEMJ2MV0BGMCK6uhwzt7rlXODzMxWLYwNGrrkzzzoOy8nd2fgjCXpaye2VbcOCQ==
 
 "@picovoice/pvrecorder-node@=1.2.1":
   version "1.2.1"
