@@ -26,8 +26,9 @@ class LeopardWord {
   final double startSec;
   final double endSec;
   final double confidence;
+  final int speakerTag;
 
-  LeopardWord(this._word, this.startSec, this.endSec, this.confidence);
+  LeopardWord(this._word, this.startSec, this.endSec, this.confidence, this.speakerTag);
 
   String get word => _word ?? "";
 }

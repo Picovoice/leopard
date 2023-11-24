@@ -81,8 +81,10 @@ class _MyAppState extends State<MyApp> {
     final String modelPath = "assets/models/leopard_params$suffix.pv";
 
     try {
-      _leopard = await Leopard.create(accessKey, modelPath,
-          enableAutomaticPunctuation: true);
+      _leopard = await Leopard.create(accessKey,
+          modelPath,
+          enableAutomaticPunctuation: true,
+          enableDiarization: true);
       _micRecorder = await MicRecorder.create(
           _leopard!.sampleRate, recordedCallback, errorCallback);
       setState(() {
@@ -90,9 +92,6 @@ class _MyAppState extends State<MyApp> {
             "Press START to start recording some audio to transcribe";
         isButtonDisabled = false;
       });
-    } on LeopardInvalidArgumentException catch (ex) {
-      errorCallback(LeopardInvalidArgumentException(
-          "${ex.message}\nEnsure your accessKey '$accessKey' is a valid access key."));
     } on LeopardActivationException {
       errorCallback(LeopardActivationException("AccessKey activation error."));
     } on LeopardActivationLimitException {
@@ -276,6 +275,10 @@ class _MyAppState extends State<MyApp> {
           Text('${(leopardWord.confidence * 100).toStringAsFixed(0)}%',
               style: TextStyle(color: Colors.white))
         ]),
+        Column(children: [
+          Text('${leopardWord.speakerTag}',
+              style: TextStyle(color: Colors.white))
+        ]),
       ]);
     }).toList();
 
@@ -295,6 +298,7 @@ class _MyAppState extends State<MyApp> {
                     Column(children: [Text("Start")]),
                     Column(children: [Text("End")]),
                     Column(children: [Text("Confidence")]),
+                    Column(children: [Text("Tag")]),
                   ])
                 ])),
             Flexible(
