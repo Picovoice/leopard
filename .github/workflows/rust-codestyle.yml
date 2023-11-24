@@ -44,10 +44,6 @@ jobs:
         toolchain: stable
         override: true
 
-    - name: Rust build binding
-      run: bash copy.sh && cargo build --verbose
-      working-directory: binding/rust
-
     - name: Run clippy
       run: cargo clippy -- -D warnings
       working-directory: binding/rust
@@ -69,10 +65,6 @@ jobs:
         toolchain: stable
         override: true
 
-    - name: Rust build binding
-      run: bash copy.sh && cargo build --verbose
-      working-directory: binding/rust
-
     - name: Run clippy
       run: cargo clippy -- -D warnings
       working-directory: demo/rust/filedemo
@@ -93,10 +85,6 @@ jobs:
         profile: minimal
         toolchain: stable
         override: true
-
-    - name: Rust build binding
-      run: bash copy.sh && cargo build --verbose
-      working-directory: binding/rust
 
     - name: Run clippy
       run: cargo clippy -- -D warnings
