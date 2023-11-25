@@ -26,13 +26,10 @@ export default function VoiceWidget() {
     }
 
     setIsBusy(true);
-    await init(
-      accessKeyRef.current,
-      leopardModel,
-      {
-        enableAutomaticPunctuation: true,
-      }
-    );
+    await init(accessKeyRef.current, leopardModel, {
+      enableAutomaticPunctuation: true,
+      enableDiarization: true,
+    });
     setIsBusy(false);
   }, [init]);
 
@@ -106,7 +103,11 @@ export default function VoiceWidget() {
       <span>{recordingElapsedSec}s</span>
       <br />
       <br />
-      <button id="record-audio" onClick={toggleRecord} disabled={!isLoaded || isBusy}>
+      <button
+        id="record-audio"
+        onClick={toggleRecord}
+        disabled={!isLoaded || isBusy}
+      >
         {isRecording ? "Stop Recording" : "Start Recording"}
       </button>
       <h3>Transcript:</h3>
@@ -119,6 +120,7 @@ export default function VoiceWidget() {
               <th>startSec</th>
               <th>endSec</th>
               <th>confidence</th>
+              <th>speakerTag</th>
             </tr>
           </thead>
           <tbody>
@@ -128,6 +130,7 @@ export default function VoiceWidget() {
                 <td>{obj.startSec.toFixed(3)}</td>
                 <td>{obj.endSec.toFixed(3)}</td>
                 <td>{obj.confidence.toFixed(3)}</td>
+                <td>{obj.speakerTag}</td>
               </tr>
             ))}
           </tbody>
