@@ -1,5 +1,7 @@
 # Leopard Binding for Node.js
 
+## Leopard Speech-to-Text Engine
+
 Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
 Leopard is an on-device speech-to-text engine. Leopard is:

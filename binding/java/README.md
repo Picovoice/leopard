@@ -1,8 +1,8 @@
-# Leopard Speech-to-Text Engine
+# Leopard Binding for Java
+
+## Leopard Speech-to-Text Engine
 
 Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
-
-## Leopard
 
 Leopard is an on-device speech-to-text engine. Leopard is:
 
@@ -74,8 +74,8 @@ Finally, when done be sure to explicitly release the resources using `leopard.de
 
 ## Language Model
 
-The Leopard Java SDK comes preloaded with a default English language model (`.pv` file). 
-Default models for other supported languages can be found in [lib/common](../../lib/common). 
+The Leopard Java SDK comes preloaded with a default English language model (`.pv` file).
+Default models for other supported languages can be found in [lib/common](../../lib/common).
 
 Create custom language models using the [Picovoice Console](https://console.picovoice.ai/). Here you can train
 language models with custom vocabulary and boost words in the existing vocabulary.
