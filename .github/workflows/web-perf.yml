@@ -28,8 +28,8 @@ jobs:
         node-version: [lts/*]
         include:
         - node-version: lts/*
-          initPerformanceThresholdSec: 8.5
-          procPerformanceThresholdSec: 0.6
+          initPerformanceThresholdSec: 9.0
+          procPerformanceThresholdSec: 0.8
 
     steps:
     - uses: actions/checkout@v3

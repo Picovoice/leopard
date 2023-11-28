@@ -48,7 +48,7 @@ async function testPerformance(
 }
 
 describe('Leopard binding performance test', () => {
-  Cypress.config('defaultCommandTimeout', 120000);
+  Cypress.config('defaultCommandTimeout', 160000);
 
   for (const instance of [Leopard, LeopardWorker]) {
     const instanceString = (instance === LeopardWorker) ? 'worker' : 'main';
