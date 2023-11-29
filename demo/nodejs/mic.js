@@ -35,7 +35,8 @@ program
     -1
   )
   .option("-s, --show_audio_devices", "show the list of available devices")
-  .option("-d, --disable_automatic_punctuation", "disable automatic punctuation")
+  .option("-p, --disable_automatic_punctuation", "disable automatic punctuation")
+  .option("-d, --disable_speaker_diarization", "disable speaker diarization")
   .option("-v, --verbose", "verbose mode, prints metadata");
 
 if (process.argv.length < 1) {
@@ -52,6 +53,7 @@ async function micDemo() {
   let audioDeviceIndex = program["audio_device_index"];
   let showAudioDevices = program["show_audio_devices"];
   let disableAutomaticPunctuation = program["disable_automatic_punctuation"];
+  let disableSpeakerDiarization = program["disable_speaker_diarization"];
   let verbose = program["verbose"];
 
   let showAudioDevicesDefined = showAudioDevices !== undefined;
@@ -74,7 +76,8 @@ async function micDemo() {
       {
         'modelPath': modelFilePath,
         'libraryPath': libraryFilePath,
-        'enableAutomaticPunctuation': !disableAutomaticPunctuation
+        'enableAutomaticPunctuation': !disableAutomaticPunctuation,
+        'enableDiarization': !disableSpeakerDiarization
       });
 
   const recorder = new PvRecorder(PV_RECORDER_FRAME_LENGTH, audioDeviceIndex);
@@ -112,7 +115,17 @@ async function micDemo() {
       const res = engineInstance.process(audioFrameInt16)
       console.log(res.transcript);
       if (verbose) {
-        console.table(res.words);
+        console.table(
+            res.words.map(word => {
+              return {
+                "Word": word.word,
+                "Start time (s)": word.startSec.toFixed(2),
+                "End time (s)": word.endSec.toFixed(2),
+                "Confidence": word.confidence.toFixed(2),
+                "Speaker Tag": word.speakerTag
+              };
+            })
+        );
       }
     } catch (err) {
       if (err instanceof LeopardActivationLimitReached) {

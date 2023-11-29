@@ -1,61 +1,211 @@
 {
   "tests": {
-    "parameters": [
+    "language_tests": [
       {
         "language": "en",
         "audio_file": "test.wav",
-        "transcript": "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel.",
-        "punctuations": ["."],
-        "error_rate": 0.025
+        "transcript": "Mr quilter is the apostle of the middle classes and we are glad to welcome his gospel",
+        "transcript_with_punctuation": "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel.",
+        "error_rate": 0.025,
+        "words": [
+          {"word": "Mr", "start_sec": 0.54, "end_sec": 0.8, "confidence": 0.86, "speaker_tag": 1},
+          {"word": "quilter", "start_sec": 0.86, "end_sec": 1.18, "confidence": 0.8, "speaker_tag": 1},
+          {"word": "is", "start_sec": 1.31, "end_sec": 1.38, "confidence": 0.96, "speaker_tag": 1},
+          {"word": "the", "start_sec": 1.44, "end_sec": 1.5, "confidence": 0.97, "speaker_tag": 1},
+          {"word": "apostle", "start_sec": 1.57, "end_sec": 2.05, "confidence": 0.9, "speaker_tag": 1},
+          {"word": "of", "start_sec": 2.18, "end_sec": 2.24, "confidence": 0.98, "speaker_tag": 1},
+          {"word": "the", "start_sec": 2.3, "end_sec": 2.34, "confidence": 0.98, "speaker_tag": 1},
+          {"word": "middle", "start_sec": 2.4, "end_sec": 2.59, "confidence": 0.97, "speaker_tag": 1},
+          {"word": "classes", "start_sec": 2.69, "end_sec": 3.17, "confidence": 0.98, "speaker_tag": 1},
+          {"word": "and", "start_sec": 3.33, "end_sec": 3.42, "confidence": 0.98, "speaker_tag": 1},
+          {"word": "we", "start_sec": 3.52, "end_sec": 3.55, "confidence": 0.95, "speaker_tag": 1},
+          {"word": "are", "start_sec": 3.65, "end_sec": 3.65, "confidence": 0.94, "speaker_tag": 1},
+          {"word": "glad", "start_sec": 3.71, "end_sec": 4.03, "confidence": 0.83, "speaker_tag": 1},
+          {"word": "to", "start_sec": 4.1, "end_sec": 4.16, "confidence": 0.95, "speaker_tag": 1},
+          {"word": "welcome", "start_sec": 4.26, "end_sec": 4.54, "confidence": 0.93, "speaker_tag": 1},
+          {"word": "his", "start_sec": 4.67, "end_sec": 4.8, "confidence": 0.97, "speaker_tag": 1},
+          {"word": "gospel", "start_sec": 4.93, "end_sec": 5.34, "confidence": 0.84, "speaker_tag": 1}
+        ]
       },
       {
         "language": "es",
         "audio_file": "test_es.wav",
-        "transcript": "Las arenas son blanquecinas de grano medio y tiene muy poca asistencia.",
-        "punctuations": ["."],
-        "error_rate": 0.025
+        "transcript": "Las arenas son blanquecinas de grano medio y tiene muy poca asistencia",
+        "transcript_with_punctuation": "Las arenas son blanquecinas de grano medio y tiene muy poca asistencia.",
+        "error_rate": 0.025,
+        "words": [
+          {"word": "las", "start_sec": 0.96, "end_sec": 1.09, "confidence": 0.96, "speaker_tag": 1},
+          {"word": "arenas", "start_sec": 1.15, "end_sec": 1.57, "confidence": 0.89, "speaker_tag": 1},
+          {"word": "son", "start_sec": 1.66, "end_sec": 1.86, "confidence": 0.93, "speaker_tag": 1},
+          {"word": "blanquecinas", "start_sec": 1.92, "end_sec": 2.91, "confidence": 0.72, "speaker_tag": 1},
+          {"word": "de", "start_sec": 3.62, "end_sec": 3.71, "confidence": 0.97, "speaker_tag": 1},
+          {"word": "grano", "start_sec": 3.78, "end_sec": 4.1, "confidence": 0.75, "speaker_tag": 1},
+          {"word": "medio", "start_sec": 4.22, "end_sec": 4.61, "confidence": 0.93, "speaker_tag": 1},
+          {"word": "y", "start_sec": 5.63, "end_sec": 5.63, "confidence": 0.96, "speaker_tag": 1},
+          {"word": "tiene", "start_sec": 5.73, "end_sec": 5.98, "confidence": 0.96, "speaker_tag": 1},
+          {"word": "muy", "start_sec": 6.14, "end_sec": 6.34, "confidence": 0.89, "speaker_tag": 1},
+          {"word": "poca", "start_sec": 6.46, "end_sec": 6.69, "confidence": 0.97, "speaker_tag": 1},
+          {"word": "asistencia", "start_sec": 6.72, "end_sec": 7.62, "confidence": 0.94, "speaker_tag": 1}
+        ]
       },
       {
         "language": "de",
         "audio_file": "test_de.wav",
-        "transcript": "Der hinter diesem Portal liegenden Raum wurde als Leichenhalle genutzt.",
-        "punctuations": ["."],
-        "error_rate": 0.025
+        "transcript": "Der hinter diesem Portal liegenden Raum wurde als Leichenhalle genutzt",
+        "transcript_with_punctuation": "Der hinter diesem Portal liegenden Raum wurde als Leichenhalle genutzt.",
+        "error_rate": 0.025,
+        "words": [
+          {"word": "der", "start_sec": 0.77, "end_sec": 0.9, "confidence": 0.68, "speaker_tag": 1},
+          {"word": "hinter", "start_sec": 0.99, "end_sec": 1.22, "confidence": 0.68, "speaker_tag": 1},
+          {"word": "diesem", "start_sec": 1.28, "end_sec": 1.44, "confidence": 0.82, "speaker_tag": 1},
+          {"word": "Portal", "start_sec": 1.54, "end_sec": 1.92, "confidence": 0.57, "speaker_tag": 1},
+          {"word": "liegenden", "start_sec": 1.98, "end_sec": 2.27, "confidence": 0.19, "speaker_tag": 1},
+          {"word": "Raum", "start_sec": 2.34, "end_sec": 2.56, "confidence": 0.78, "speaker_tag": 1},
+          {"word": "wurde", "start_sec": 2.91, "end_sec": 3.1, "confidence": 0.83, "speaker_tag": 1},
+          {"word": "als", "start_sec": 3.2, "end_sec": 3.33, "confidence": 0.79, "speaker_tag": 1},
+          {"word": "Leichenhalle", "start_sec": 3.46, "end_sec": 4.03, "confidence": 0.15, "speaker_tag": 1},
+          {"word": "genutzt", "start_sec": 4.13, "end_sec": 4.54, "confidence": 0.58, "speaker_tag": 1}
+        ]
       },
       {
         "language": "fr",
         "audio_file": "test_fr.wav",
-        "transcript": "Sous le consulat il devient conservateur des eaux et forêts et conseiller général.",
-        "punctuations": ["."],
-        "error_rate": 0.025
+        "transcript": "Sous le consulat il devient conservateur des eaux et forêts et conseiller général",
+        "transcript_with_punctuation": "Sous le consulat il devient conservateur des eaux et forêts et conseiller général.",
+        "error_rate": 0.025,
+        "words": [
+          {"word": "sous", "start_sec": 1.12, "end_sec": 1.22, "confidence": 0.87, "speaker_tag": 1},
+          {"word": "le", "start_sec": 1.28, "end_sec": 1.31, "confidence": 0.98, "speaker_tag": 1},
+          {"word": "consulat", "start_sec": 1.38, "end_sec": 1.79, "confidence": 0.83, "speaker_tag": 1},
+          {"word": "il", "start_sec": 1.98, "end_sec": 2.05, "confidence": 0.92, "speaker_tag": 1},
+          {"word": "devient", "start_sec": 2.11, "end_sec": 2.34, "confidence": 0.95, "speaker_tag": 1},
+          {"word": "conservateur", "start_sec": 2.4, "end_sec": 3.1, "confidence": 0.95, "speaker_tag": 1},
+          {"word": "des", "start_sec": 3.2, "end_sec": 3.3, "confidence": 0.97, "speaker_tag": 1},
+          {"word": "eaux", "start_sec": 3.55, "end_sec": 3.55, "confidence": 0.8, "speaker_tag": 1},
+          {"word": "et", "start_sec": 3.74, "end_sec": 3.74, "confidence": 0.96, "speaker_tag": 1},
+          {"word": "forêts", "start_sec": 3.87, "end_sec": 4.16, "confidence": 0.99, "speaker_tag": 1},
+          {"word": "et", "start_sec": 4.38, "end_sec": 4.38, "confidence": 0.97, "speaker_tag": 1},
+          {"word": "conseiller", "start_sec": 4.54, "end_sec": 4.99, "confidence": 0.93, "speaker_tag": 1},
+          {"word": "général", "start_sec": 5.12, "end_sec": 5.57, "confidence": 0.99, "speaker_tag": 1}
+        ]
       },
       {
         "language": "it",
         "audio_file": "test_it.wav",
-        "transcript": "Sempre alla radio nacquero anche alcune sue canzoni o meglio ritmi.",
-        "punctuations": ["."],
-        "error_rate": 0.025
+        "transcript": "Sempre alla radio nacquero anche alcune sue canzoni o meglio ritmi",
+        "transcript_with_punctuation": "Sempre alla radio nacquero anche alcune sue canzoni o meglio ritmi.",
+        "error_rate": 0.025,
+        "words": [
+          {"word": "sempre", "start_sec": 0.77, "end_sec": 1.12, "confidence": 0.73, "speaker_tag": 1},
+          {"word": "alla", "start_sec": 1.15, "end_sec": 1.31, "confidence": 0.23, "speaker_tag": 1},
+          {"word": "radio", "start_sec": 1.38, "end_sec": 1.73, "confidence": 0.54, "speaker_tag": 1},
+          {"word": "nacquero", "start_sec": 1.92, "end_sec": 2.37, "confidence": 0.35, "speaker_tag": 1},
+          {"word": "anche", "start_sec": 2.43, "end_sec": 2.59, "confidence": 0.68, "speaker_tag": 1},
+          {"word": "alcune", "start_sec": 2.66, "end_sec": 2.98, "confidence": 0.66, "speaker_tag": 1},
+          {"word": "sue", "start_sec": 3.07, "end_sec": 3.17, "confidence": 0.66, "speaker_tag": 1},
+          {"word": "canzoni", "start_sec": 3.26, "end_sec": 3.78, "confidence": 0.83, "speaker_tag": 1},
+          {"word": "o", "start_sec": 4.03, "end_sec": 4.03, "confidence": 0.52, "speaker_tag": 1},
+          {"word": "meglio", "start_sec": 4.19, "end_sec": 4.51, "confidence": 0.69, "speaker_tag": 1},
+          {"word": "ritmi", "start_sec": 4.64, "end_sec": 5.06, "confidence": 0.41, "speaker_tag": 1}
+        ]
       },
       {
         "language": "ja",
         "audio_file": "test_ja.wav",
-        "transcript": "客観的実在の判断的知識が成立するのである。",
-        "punctuations": ["。"],
-        "error_rate": 0.025
+        "transcript": "客観的実在の判断的知識が成立するのである",
+        "transcript_with_punctuation": "客観的実在の判断的知識が成立するのである。",
+        "error_rate": 0.025,
+        "words": [
+          {"word": "客観", "start_sec": 0.8, "end_sec": 1.22, "confidence": 0.92, "speaker_tag": 1},
+          {"word": "的", "start_sec": 1.31, "end_sec": 1.5, "confidence": 0.99, "speaker_tag": 1},
+          {"word": "実在", "start_sec": 1.6, "end_sec": 2.05, "confidence": 0.77, "speaker_tag": 1},
+          {"word": "の", "start_sec": 2.14, "end_sec": 2.18, "confidence": 0.98, "speaker_tag": 1},
+          {"word": "判断", "start_sec": 2.34, "end_sec": 2.72, "confidence": 0.95, "speaker_tag": 1},
+          {"word": "的", "start_sec": 2.82, "end_sec": 2.98, "confidence": 0.89, "speaker_tag": 1},
+          {"word": "知識", "start_sec": 3.07, "end_sec": 3.36, "confidence": 0.97, "speaker_tag": 1},
+          {"word": "が", "start_sec": 3.46, "end_sec": 3.49, "confidence": 0.98, "speaker_tag": 1},
+          {"word": "成立", "start_sec": 3.62, "end_sec": 4.0, "confidence": 0.89, "speaker_tag": 1},
+          {"word": "する", "start_sec": 4.03, "end_sec": 4.16, "confidence": 0.98, "speaker_tag": 1},
+          {"word": "の", "start_sec": 4.26, "end_sec": 4.29, "confidence": 0.98, "speaker_tag": 1},
+          {"word": "で", "start_sec": 4.38, "end_sec": 4.42, "confidence": 0.98, "speaker_tag": 1},
+          {"word": "ある", "start_sec": 4.51, "end_sec": 4.67, "confidence": 0.97, "speaker_tag": 1}
+        ]
       },
       {
         "language": "ko",
         "audio_file": "test_ko.wav",
-        "transcript": "그는 이리저리 피하면서 길 한 옆으로 걸어갔다.",
-        "punctuations": ["."],
-        "error_rate": 0.025
+        "transcript": "그는 이리저리 피하면서 길 한 옆으로 걸어갔다",
+        "transcript_with_punctuation": "그는 이리저리 피하면서 길 한 옆으로 걸어갔다.",
+        "error_rate": 0.025,
+        "words": [
+          {"word": "그는", "start_sec": 0.67, "end_sec": 0.9, "confidence": 0.96, "speaker_tag": 1},
+          {"word": "이리저리", "start_sec": 1.06, "end_sec": 1.34, "confidence": 0.93, "speaker_tag": 1},
+          {"word": "피하면서", "start_sec": 1.44, "end_sec": 1.86, "confidence": 0.91, "speaker_tag": 1},
+          {"word": "길", "start_sec": 2.11, "end_sec": 2.24, "confidence": 0.86, "speaker_tag": 1},
+          {"word": "한", "start_sec": 2.34, "end_sec": 2.4, "confidence": 0.95, "speaker_tag": 1},
+          {"word": "옆으로", "start_sec": 2.5, "end_sec": 2.75, "confidence": 0.86, "speaker_tag": 1},
+          {"word": "걸어갔다", "start_sec": 2.85, "end_sec": 3.23, "confidence": 0.92, "speaker_tag": 1}
+        ]
       },
       {
         "language": "pt",
         "audio_file": "test_pt.wav",
-        "transcript": "Uma raposa velha não consegue aprender nenhum ofício.",
-        "punctuations": ["."],
-        "error_rate": 0.025
+        "transcript": "Uma raposa velha não consegue aprender nenhum ofício",
+        "transcript_with_punctuation": "Uma raposa velha não consegue aprender nenhum ofício.",
+        "error_rate": 0.025,
+        "words": [
+          {"word": "uma", "start_sec": 0.48, "end_sec": 0.64, "confidence": 0.18, "speaker_tag": 1},
+          {"word": "raposa", "start_sec": 0.7, "end_sec": 1.12, "confidence": 0.34, "speaker_tag": 1},
+          {"word": "velha", "start_sec": 1.18, "end_sec": 1.47, "confidence": 0.44, "speaker_tag": 1},
+          {"word": "não", "start_sec": 1.63, "end_sec": 1.76, "confidence": 0.56, "speaker_tag": 1},
+          {"word": "consegue", "start_sec": 1.82, "end_sec": 2.21, "confidence": 0.84, "speaker_tag": 1},
+          {"word": "aprender", "start_sec": 2.34, "end_sec": 2.72, "confidence": 0.85, "speaker_tag": 1},
+          {"word": "nenhum", "start_sec": 2.82, "end_sec": 3.04, "confidence": 0.38, "speaker_tag": 1},
+          {"word": "ofício", "start_sec": 3.17, "end_sec": 3.62, "confidence": 0.36, "speaker_tag": 1}
+        ]
+      }
+    ],
+    "diarization_tests": [
+      {
+        "language": "en",
+        "audio_file": "diarization_test.wav",
+        "words": [
+          {"word": "and", "speaker_tag": 1},
+          {"word": "so", "speaker_tag": 1},
+          {"word": "it", "speaker_tag": 1},
+          {"word": "begins", "speaker_tag": 1},
+          {"word": "this", "speaker_tag": 2},
+          {"word": "is", "speaker_tag": 2},
+          {"word": "what", "speaker_tag": 2},
+          {"word": "a", "speaker_tag": 2},
+          {"word": "crocodile", "speaker_tag": 2},
+          {"word": "sounds", "speaker_tag": 2},
+          {"word": "like", "speaker_tag": 2},
+          {"word": "it's", "speaker_tag": 2},
+          {"word": "like", "speaker_tag": 2},
+          {"word": "meditating", "speaker_tag": 2},
+          {"word": "in", "speaker_tag": 2},
+          {"word": "the", "speaker_tag": 2},
+          {"word": "water", "speaker_tag": 2},
+          {"word": "and", "speaker_tag": 2},
+          {"word": "it's", "speaker_tag": 2},
+          {"word": "like", "speaker_tag": 2},
+          {"word": "ladies", "speaker_tag": 3},
+          {"word": "and", "speaker_tag": 3},
+          {"word": "gentlemen", "speaker_tag": 3},
+          {"word": "please", "speaker_tag": 3},
+          {"word": "fasten", "speaker_tag": 3},
+          {"word": "your", "speaker_tag": 3},
+          {"word": "seat", "speaker_tag": 3},
+          {"word": "belts", "speaker_tag": 3},
+          {"word": "we", "speaker_tag": 3},
+          {"word": "are", "speaker_tag": 3},
+          {"word": "expecting", "speaker_tag": 3},
+          {"word": "some", "speaker_tag": 3},
+          {"word": "turbulence", "speaker_tag": 3},
+          {"word": "thank", "speaker_tag": 3},
+          {"word": "you", "speaker_tag": 3}
+        ]
       }
     ]
   }

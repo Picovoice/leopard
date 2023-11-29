@@ -698,14 +698,24 @@ function App(props) {
 
 ## Releases
 
-### v1.2.0 — March 27th, 2023
+### v2.0.0 - November 27th, 2023
+
+- Improvements to error reporting
+- Upgrades to authorization and authentication system
+- Improved engine accuracy
+- Various bug fixes and improvements
+- Node min support bumped to Node 16
+- Bumped iOS support to iOS 13+
+- Patches to .NET support
+
+### v1.2.0 - March 27th, 2023
 
 * Added language support for French, German, Italian, Japanese, Korean, Portuguese and Spanish
 * Added support for .NET 7.0 and fixed support for .NET Standard 2.0
 * iOS minimum support moved to 11.0
 * Improved stability and performance
 
-### v1.1.0 — August 11th, 2022
+### v1.1.0 - August 11th, 2022
 
 * Added true-casing by default for transcription results
 * Added option to enable automatic punctuation insertion
@@ -713,6 +723,6 @@ function App(props) {
 * Support for 3gp (AMR) and MP4/m4a (AAC) audio files
 * Leopard Web SDK release
 
-### v1.0.0 — January 10th, 2022
+### v1.0.0 - January 10th, 2022
 
 * Initial release

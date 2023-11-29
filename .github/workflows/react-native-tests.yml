@@ -6,8 +6,6 @@ on:
     paths:
       - 'binding/react-native/**'
       - 'lib/common/**'
-      - 'lib/android/**'
-      - 'lib/ios/**'
       - '.github/workflows/react-native-tests.yml'
       - 'resources/audio_samples/**'
       - 'resources/.test/**'
@@ -16,8 +14,6 @@ on:
     paths:
       - 'binding/react-native/**'
       - 'lib/common/**'
-      - 'lib/android/**'
-      - 'lib/ios/**'
       - '.github/workflows/react-native-tests.yml'
       - 'resources/audio_samples/**'
       - 'resources/.test/**'
@@ -63,9 +59,10 @@ jobs:
       run: |
         yarn install
         ./copy_test_resources.sh
+
     - name: Cocoapods install
       working-directory: binding/react-native/test-app/LeopardTestApp/ios
-      run: pod install
+      run: pod install --repo-update
 
     - name: Inject AppID
       run: sed -i '.bak' 's:{TESTING_ACCESS_KEY_HERE}:${{secrets.PV_VALID_ACCESS_KEY}}:' Tests.ts

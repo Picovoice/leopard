@@ -25,6 +25,7 @@ public class FileDemo {
             String modelPath,
             String libraryPath,
             boolean enableAutomaticPunctuation,
+            boolean enableDiarization,
             boolean verbose,
             File inputAudioFile) {
         Leopard leopard = null;
@@ -34,21 +35,29 @@ public class FileDemo {
                     .setLibraryPath(libraryPath)
                     .setModelPath(modelPath)
                     .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
+                    .setEnableDiarization(enableDiarization)
                     .build();
 
             LeopardTranscript transcript = leopard.processFile(inputAudioFile.getPath());
             System.out.println(transcript.getTranscriptString());
             if (verbose) {
                 LeopardTranscript.Word[] words = transcript.getWordArray();
-                System.out.format("%14s - %5s - %5s - %5s\n", "word", "start", "end", "confidence");
+                System.out.format(
+                        "%14s | %5s | %5s | %10s | %11s\n",
+                        "word",
+                        "start",
+                        "end",
+                        "confidence",
+                        "speaker tag");
                 for (int i = 0; i < words.length; i++) {
                     System.out.format(
-                            "%2d: %10s - %5.2f - %5.2f - %5.2f\n",
+                            "%2d: %10s | %5.2f | %5.2f | %10.2f | %11d\n",
                             i,
                             words[i].getWord(),
                             words[i].getStartSec(),
                             words[i].getEndSec(),
-                            words[i].getConfidence());
+                            words[i].getConfidence(),
+                            words[i].getSpeakerTag());
                 }
             }
 
@@ -85,6 +94,7 @@ public class FileDemo {
         String modelPath = cmd.getOptionValue("model_path");
         String libraryPath = cmd.getOptionValue("library_path");
         boolean enableAutomaticPunctuation = !cmd.hasOption("disable_automatic_punctuation");
+        boolean enableDiarization = !cmd.hasOption("disable_speaker_diarization");
         boolean verbose = cmd.hasOption("verbose");
         String inputAudioPath = cmd.getOptionValue("input_audio_path");
 
@@ -113,6 +123,7 @@ public class FileDemo {
                 modelPath,
                 libraryPath,
                 enableAutomaticPunctuation,
+                enableDiarization,
                 verbose,
                 inputAudioFile);
     }
@@ -138,9 +149,14 @@ public class FileDemo {
                 .desc("Absolute path to the Leopard native runtime library.")
                 .build());
 
-        options.addOption(Option.builder("d")
+        options.addOption(Option.builder("dp")
                 .longOpt("disable_automatic_punctuation")
                 .desc("Disable automatic punctuation.")
+                .build());
+
+        options.addOption(Option.builder("dd")
+                .longOpt("disable_speaker_diarization")
+                .desc("Disable speaker diarization.")
                 .build());
 
         options.addOption(Option.builder("i")

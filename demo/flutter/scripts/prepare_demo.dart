@@ -21,7 +21,7 @@ Future<Map> readJsonFile(String filePath) async {
 void main(List<String> arguments) async {
   var testData = await readJsonFile(testDataPath);
   List<String> availableLanguages = List<String>.from(
-      testData["tests"]["parameters"].map((x) => x["language"]).toList());
+      testData["tests"]["language_tests"].map((x) => x["language"]).toList());
 
   if (arguments.isEmpty) {
     print(

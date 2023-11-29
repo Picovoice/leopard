@@ -26,7 +26,11 @@ use libloading::{Library, Symbol};
 use crate::util::{pathbuf_to_cstring, pv_library_path, pv_model_path};
 
 #[repr(C)]
-struct CLeopard {}
+struct CLeopard {
+    // Fields suggested by the Rustonomicon: https://doc.rust-lang.org/nomicon/ffi.html#representing-opaque-structs
+    _data: [u8; 0],
+    _marker: core::marker::PhantomData<(*mut u8, core::marker::PhantomPinned)>,
+}
 
 #[repr(C)]
 struct CLeopardWord {
@@ -34,6 +38,7 @@ struct CLeopardWord {
     start_sec: f32,
     end_sec: f32,
     confidence: f32,
+    speaker_tag: i32,
 }
 
 #[repr(C)]
@@ -58,6 +63,7 @@ type PvLeopardInitFn = unsafe extern "C" fn(
     access_key: *const c_char,
     model_path: *const c_char,
     enable_automatic_punctuation: bool,
+    enable_diarization: bool,
     object: *mut *mut CLeopard,
 ) -> PvStatus;
 type PvSampleRateFn = unsafe extern "C" fn() -> i32;
@@ -80,6 +86,12 @@ type PvLeopardProcessFileFn = unsafe extern "C" fn(
 type PvLeopardDeleteFn = unsafe extern "C" fn(object: *mut CLeopard);
 type PvLeopardTranscriptDeleteFn = unsafe extern "C" fn(transcript: *mut c_char);
 type PvLeopardWordsDeleteFn = unsafe extern "C" fn(words: *mut CLeopardWord);
+type PvGetErrorStackFn = unsafe extern "C" fn(
+    message_stack: *mut *mut *mut c_char,
+    message_stack_depth: *mut i32
+) -> PvStatus;
+type PvFreeErrorStackFn = unsafe extern "C" fn(message_stack: *mut *mut c_char);
+type PvSetSdkFn = unsafe extern "C" fn(sdk: *const c_char);
 
 #[derive(Clone, Debug)]
 pub enum LeopardErrorStatus {
@@ -91,8 +103,9 @@ pub enum LeopardErrorStatus {
 
 #[derive(Clone, Debug)]
 pub struct LeopardError {
-    status: LeopardErrorStatus,
-    message: String,
+    pub status: LeopardErrorStatus,
+    pub message: String,
+    pub message_stack: Vec<String>,
 }
 
 impl LeopardError {
@@ -100,13 +113,35 @@ impl LeopardError {
         Self {
             status,
             message: message.into(),
+            message_stack: Vec::new()
+        }
+    }
+
+    pub fn new_with_stack(
+        status: LeopardErrorStatus,
+        message: impl Into<String>,
+        message_stack: impl Into<Vec<String>>
+    ) -> Self {
+        Self {
+            status,
+            message: message.into(),
+            message_stack: message_stack.into(),
         }
     }
 }
 
 impl std::fmt::Display for LeopardError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}: {:?}", self.message, self.status)
+        let mut message_string = String::new();
+        message_string.push_str(&format!("{} with status '{:?}'", self.message, self.status));
+
+        if !self.message_stack.is_empty() {
+            message_string.push(':');
+            for x in 0..self.message_stack.len() {
+                message_string.push_str(&format!("  [{}] {}\n", x, self.message_stack[x]))
+            };
+        }
+        write!(f, "{}", message_string)
     }
 }
 
@@ -117,6 +152,7 @@ pub struct LeopardBuilder {
     model_path: PathBuf,
     library_path: PathBuf,
     enable_automatic_punctuation: bool,
+    enable_diarization: bool,
 }
 
 impl Default for LeopardBuilder {
@@ -127,6 +163,7 @@ impl Default for LeopardBuilder {
 
 impl LeopardBuilder {
     const DEFAULT_ENABLE_AUTOMATIC_PUNCTUATION: bool = false;
+    const DEFAULT_ENABLE_DIARIZATION: bool = false;
 
     pub fn new() -> Self {
         Self {
@@ -134,6 +171,7 @@ impl LeopardBuilder {
             model_path: pv_model_path(),
             library_path: pv_library_path(),
             enable_automatic_punctuation: Self::DEFAULT_ENABLE_AUTOMATIC_PUNCTUATION,
+            enable_diarization: Self::DEFAULT_ENABLE_DIARIZATION,
         }
     }
 
@@ -160,12 +198,22 @@ impl LeopardBuilder {
         self
     }
 
+    pub fn enable_diarization(
+        &mut self,
+        enable_diarization: bool,
+    ) -> &mut Self {
+        self.enable_diarization = enable_diarization;
+        self
+    }
+
+
     pub fn init(&self) -> Result<Leopard, LeopardError> {
         let inner = LeopardInner::init(
             &self.access_key,
             &self.model_path,
             &self.library_path,
             self.enable_automatic_punctuation,
+            self.enable_diarization,
         );
         match inner {
             Ok(inner) => Ok(Leopard {
@@ -182,6 +230,7 @@ pub struct LeopardWord {
     pub start_sec: f32,
     pub end_sec: f32,
     pub confidence: f32,
+    pub speaker_tag: i32,
 }
 
 impl From<&CLeopardWord> for Result<LeopardWord, LeopardError> {
@@ -200,6 +249,7 @@ impl From<&CLeopardWord> for Result<LeopardWord, LeopardError> {
             start_sec: c_leopard_word.start_sec,
             end_sec: c_leopard_word.end_sec,
             confidence: c_leopard_word.confidence,
+            speaker_tag: c_leopard_word.speaker_tag,
         })
     }
 }
@@ -254,23 +304,60 @@ unsafe fn load_library_fn<T>(
         })
 }
 
-fn check_fn_call_status(status: PvStatus, function_name: &str) -> Result<(), LeopardError> {
+fn check_fn_call_status(
+    vtable: &LeopardInnerVTable,
+    status: PvStatus,
+    function_name: &str
+) -> Result<(), LeopardError> {
     match status {
         PvStatus::SUCCESS => Ok(()),
-        _ => Err(LeopardError::new(
-            LeopardErrorStatus::LibraryError(status),
-            format!("Function '{}' in the leopard library failed", function_name),
-        )),
+        _ => unsafe {
+            let mut message_stack_ptr: *mut c_char = std::ptr::null_mut();
+            let mut message_stack_ptr_ptr = addr_of_mut!(message_stack_ptr);
+
+            let mut message_stack_depth: i32 = 0;
+            let err_status = (vtable.pv_get_error_stack)(
+                addr_of_mut!(message_stack_ptr_ptr),
+                addr_of_mut!(message_stack_depth),
+            );
+
+            if err_status != PvStatus::SUCCESS {
+                return Err(LeopardError::new(
+                    LeopardErrorStatus::LibraryError(err_status),
+                    "Unable to get Leopard error state.",
+                ))
+            }
+
+            let mut message_stack = Vec::new();
+            for i in 0..message_stack_depth as usize {
+                let message = CStr::from_ptr(*message_stack_ptr_ptr.add(i));
+                let message = message.to_string_lossy().into_owned();
+                message_stack.push(message);
+            }
+
+            (vtable.pv_free_error_stack)(message_stack_ptr_ptr);
+
+            Err(LeopardError::new_with_stack(
+                LeopardErrorStatus::LibraryError(status),
+                format!("'{function_name}' failed"),
+                message_stack,
+            ))
+        },
     }
 }
 
 struct LeopardInnerVTable {
+    pv_leopard_init: RawSymbol<PvLeopardInitFn>,
     pv_leopard_process: RawSymbol<PvLeopardProcessFn>,
     pv_leopard_process_file: RawSymbol<PvLeopardProcessFileFn>,
     pv_leopard_delete: RawSymbol<PvLeopardDeleteFn>,
     pv_leopard_transcript_delete: RawSymbol<PvLeopardTranscriptDeleteFn>,
     pv_leopard_words_delete: RawSymbol<PvLeopardWordsDeleteFn>,
-
+    pv_leopard_version: RawSymbol<PvLeopardVersionFn>,
+    pv_sample_rate: RawSymbol<PvSampleRateFn>,
+    pv_get_error_stack: RawSymbol<PvGetErrorStackFn>,
+    pv_free_error_stack: RawSymbol<PvFreeErrorStackFn>,
+    pv_set_sdk: RawSymbol<PvSetSdkFn>,
     _lib_guard: Library,
 }
 
@@ -279,6 +366,7 @@ impl LeopardInnerVTable {
         // SAFETY: the library will be hold by this struct and therefore the symbols can't outlive the library
         unsafe {
             Ok(Self {
+                pv_leopard_init: load_library_fn(&lib, b"pv_leopard_init")?,
                 pv_leopard_process: load_library_fn(&lib, b"pv_leopard_process")?,
                 pv_leopard_process_file: load_library_fn(&lib, b"pv_leopard_process_file")?,
                 pv_leopard_delete: load_library_fn(&lib, b"pv_leopard_delete")?,
@@ -287,6 +375,12 @@ impl LeopardInnerVTable {
                     b"pv_leopard_transcript_delete",
                 )?,
                 pv_leopard_words_delete: load_library_fn(&lib, b"pv_leopard_words_delete")?,
+                pv_leopard_version: load_library_fn(&lib, b"pv_leopard_version")?,
+                pv_sample_rate: load_library_fn(&lib, b"pv_sample_rate")?,
+
+                pv_get_error_stack: load_library_fn(&lib, b"pv_get_error_stack")?,
+                pv_free_error_stack: load_library_fn(&lib, b"pv_free_error_stack")?,
+                pv_set_sdk: load_library_fn(&lib, b"pv_set_sdk")?,
 
                 _lib_guard: lib,
             })
@@ -311,6 +405,7 @@ impl LeopardInner {
         model_path: P,
         library_path: P,
         enable_automatic_punctuation: bool,
+        enable_diarization: bool,
     ) -> Result<Self, LeopardError> {
         if access_key.is_empty() {
             return Err(LeopardError::new(
@@ -346,6 +441,18 @@ impl LeopardInner {
             )
         })?;
 
+        let vtable = LeopardInnerVTable::new(lib)?;
+
+        let sdk_string = match CString::new("rust") {
+            Ok(sdk_string) => sdk_string,
+            Err(err) => {
+                return Err(LeopardError::new(
+                    LeopardErrorStatus::ArgumentError,
+                    format!("sdk_string is not a valid C string {err}"),
+                ))
+            }
+        };
+
         let access_key = match CString::new(access_key) {
             Ok(access_key) => access_key,
             Err(err) => {
@@ -362,37 +469,32 @@ impl LeopardInner {
         // safe, because we don't use the raw symbols after this function
         // anymore.
         let (sample_rate, version) = unsafe {
-            let pv_leopard_init = load_library_fn::<PvLeopardInitFn>(&lib, b"pv_leopard_init")?;
-            let pv_sample_rate = load_library_fn::<PvSampleRateFn>(&lib, b"pv_sample_rate")?;
-            let pv_leopard_version =
-                load_library_fn::<PvLeopardVersionFn>(&lib, b"pv_leopard_version")?;
+            (vtable.pv_set_sdk)(sdk_string.as_ptr());
 
-            let status = pv_leopard_init(
+            let status = (vtable.pv_leopard_init)(
                 access_key.as_ptr(),
                 pv_model_path.as_ptr(),
                 enable_automatic_punctuation,
+                enable_diarization,
                 addr_of_mut!(cleopard),
             );
-            check_fn_call_status(status, "pv_leopard_init")?;
+            check_fn_call_status(&vtable, status, "pv_leopard_init")?;
 
-            let version = match CStr::from_ptr(pv_leopard_version()).to_str() {
-                Ok(string) => string.to_string(),
-                Err(err) => {
-                    return Err(LeopardError::new(
-                        LeopardErrorStatus::LibraryLoadError,
-                        format!("Failed to get version info from Leopard Library: {}", err),
-                    ))
-                }
-            };
+            let version = CStr::from_ptr((vtable.pv_leopard_version)())
+                .to_string_lossy()
+                .into_owned();
 
-            (pv_sample_rate(), version)
+            (
+                (vtable.pv_sample_rate)(),
+                version
+            )
         };
 
         Ok(Self {
             cleopard,
             sample_rate,
             version,
-            vtable: LeopardInnerVTable::new(lib)?,
+            vtable,
         })
     }
 
@@ -418,7 +520,7 @@ impl LeopardInner {
                 addr_of_mut!(words_ptr),
             );
 
-            check_fn_call_status(status, "pv_leopard_process")?;
+            check_fn_call_status(&self.vtable, status, "pv_leopard_process")?;
 
             let transcript =
                 String::from(CStr::from_ptr(transcript_ptr).to_str().map_err(|_| {
@@ -486,7 +588,7 @@ impl LeopardInner {
                     ));
                 }
 
-                check_fn_call_status(status, "pv_leopard_process_file")?;
+                check_fn_call_status(&self.vtable, status, "pv_leopard_process_file")?;
             }
 
             let transcript =
@@ -518,6 +620,42 @@ impl Drop for LeopardInner {
     fn drop(&mut self) {
         unsafe {
             (self.vtable.pv_leopard_delete)(self.cleopard);
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::env;
+
+    use crate::util::{pv_library_path, pv_model_path};
+    use crate::leopard::{LeopardInner};
+
+    #[test]
+    fn test_process_error_stack() {
+        let access_key = env::var("PV_ACCESS_KEY")
+            .expect("Pass the AccessKey in using the PV_ACCESS_KEY env variable");
+
+        let mut inner = LeopardInner::init(
+            &access_key.as_str(),
+            pv_model_path(),
+            pv_library_path(),
+            false,
+            false
+        ).expect("Unable to create Leopard");
+
+        let test_pcm = vec![0; 1024];
+        let address = inner.cleopard;
+        inner.cleopard = std::ptr::null_mut();
+
+        let res = inner.process(&test_pcm);
+
+        inner.cleopard = address;
+        if let Err(err) = res {
+            assert!(err.message_stack.len() > 0);
+            assert!(err.message_stack.len() < 8);
+        } else {
+            assert_eq!(res.unwrap().transcript, "");
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
-  Copyright 2022 Picovoice Inc.
+  Copyright 2022-2023 Picovoice Inc.
 
   You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
   file accompanying this source.
@@ -13,80 +13,125 @@
 /// <reference lib="webworker" />
 
 import { Leopard } from './leopard';
-import { LeopardWorkerRequest } from './types';
+import {
+  LeopardWorkerInitRequest,
+  LeopardWorkerProcessRequest,
+  LeopardWorkerRequest,
+  PvStatus,
+} from './types';
+import { LeopardError } from './leopard_errors';
+
+let leopard: Leopard | null = null;
+
+const initRequest = async (request: LeopardWorkerInitRequest): Promise<any> => {
+  if (leopard !== null) {
+    return {
+      command: 'error',
+      status: PvStatus.INVALID_STATE,
+      shortMessage: 'Leopard already initialized',
+    };
+  }
+  try {
+    Leopard.setWasm(request.wasm);
+    Leopard.setWasmSimd(request.wasmSimd);
+    Leopard.setSdk(request.sdk);
+    leopard = await Leopard._init(
+      request.accessKey,
+      request.modelPath,
+      request.options
+    );
+    return {
+      command: 'ok',
+      version: leopard.version,
+      sampleRate: leopard.sampleRate,
+    };
+  } catch (e: any) {
+    if (e instanceof LeopardError) {
+      return {
+        command: 'error',
+        status: e.status,
+        shortMessage: e.shortMessage,
+        messageStack: e.messageStack,
+      };
+    }
+    return {
+      command: 'error',
+      status: PvStatus.RUNTIME_ERROR,
+      shortMessage: e.message,
+    };
+  }
+};
+
+const processRequest = async (
+  request: LeopardWorkerProcessRequest
+): Promise<any> => {
+  if (leopard === null) {
+    return {
+      command: 'error',
+      status: PvStatus.INVALID_STATE,
+      shortMessage: 'Leopard not initialized',
+      inputFrame: request.inputFrame,
+    };
+  }
+  try {
+    return {
+      command: 'ok',
+      result: await leopard.process(request.inputFrame),
+      inputFrame: request.transfer ? request.inputFrame : undefined,
+    };
+  } catch (e: any) {
+    if (e instanceof LeopardError) {
+      return {
+        command: 'error',
+        status: e.status,
+        shortMessage: e.shortMessage,
+        messageStack: e.messageStack,
+      };
+    }
+    return {
+      command: 'error',
+      status: PvStatus.RUNTIME_ERROR,
+      shortMessage: e.message,
+    };
+  }
+};
+
+const releaseRequest = async (): Promise<any> => {
+  if (leopard !== null) {
+    await leopard.release();
+    leopard = null;
+    close();
+  }
+  return {
+    command: 'ok',
+  };
+};
 
 /**
  * Leopard worker handler.
  */
-let leopard: Leopard | null = null;
-self.onmessage = async function(
-  event: MessageEvent<LeopardWorkerRequest>,
+self.onmessage = async function (
+  event: MessageEvent<LeopardWorkerRequest>
 ): Promise<void> {
   switch (event.data.command) {
     case 'init':
-      if (leopard !== null) {
-        self.postMessage({
-          command: 'error',
-          message: 'Leopard already initialized',
-        });
-        return;
-      }
-      try {
-        Leopard.setWasm(event.data.wasm);
-        Leopard.setWasmSimd(event.data.wasmSimd);
-        leopard = await Leopard._init(event.data.accessKey, event.data.modelPath, event.data.options);
-        self.postMessage({
-          command: 'ok',
-          version: leopard.version,
-          sampleRate: leopard.sampleRate,
-        });
-      } catch (e: any) {
-        self.postMessage({
-          command: 'error',
-          message: e.message,
-        });
-      }
+      self.postMessage(await initRequest(event.data));
       break;
     case 'process':
-      // eslint-disable-next-line no-case-declarations
-      const transferable = (event.data.transfer) ? [event.data.inputFrame.buffer] : [];
-      if (leopard === null) {
-        self.postMessage({
-          command: 'error',
-          message: 'Leopard not initialized',
-          inputFrame: event.data.inputFrame,
-        }, transferable);
-        return;
-      }
-      try {
-        self.postMessage({
-          command: 'ok',
-          result: await leopard.process(event.data.inputFrame),
-          inputFrame: (event.data.transfer) ? event.data.inputFrame : undefined,
-        }, transferable);
-      } catch (e: any) {
-        self.postMessage({
-          command: 'error',
-          message: e.message,
-          inputFrame: event.data.inputFrame,
-        }, transferable);
-      }
+      self.postMessage(
+        await processRequest(event.data),
+        event.data.transfer ? [event.data.inputFrame.buffer] : []
+      );
       break;
     case 'release':
-      if (leopard !== null) {
-        await leopard.release();
-        leopard = null;
-        close();
-      }
-      self.postMessage({
-        command: 'ok',
-      });
+      self.postMessage(await releaseRequest());
       break;
     default:
       self.postMessage({
         command: 'failed',
+        status: PvStatus.RUNTIME_ERROR,
         // @ts-ignore
-        message: `Unrecognized command: ${event.data.command}`,
+        shortMessage: `Unrecognized command: ${event.data.command}`,
       });
   }
 };

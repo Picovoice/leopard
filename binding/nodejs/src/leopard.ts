@@ -66,6 +66,9 @@ export class Leopard {
    * @param {string} options.modelPath The path to save and use the model from (.pv extension)
    * @param {string} options.libraryPath the path to the Leopard dynamic library (.node extension)
    * @param {boolean} options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
+   * @param {boolean} options.enableDiarization Flag to enable speaker diarization, which allows Leopard to
+   * differentiate speakers as part of the transcription process. Word metadata will include a `speakerTag`
+   * to identify unique speakers.
    */
   constructor(accessKey: string, options: LeopardOptions = {}) {
     if (
@@ -80,6 +83,7 @@ export class Leopard {
       modelPath = path.resolve(__dirname, DEFAULT_MODEL_PATH),
       libraryPath = getSystemLibraryPath(),
       enableAutomaticPunctuation = false,
+      enableDiarization = false,
     } = options;
 
     if (!fs.existsSync(libraryPath)) {
@@ -95,13 +99,17 @@ export class Leopard {
     }
 
     const pvLeopard = require(libraryPath); // eslint-disable-line
+    this._pvLeopard = pvLeopard;
 
     let leopardHandleAndStatus: LeopardHandleAndStatus | null = null;
     try {
+      pvLeopard.set_sdk('nodejs');
+
       leopardHandleAndStatus = pvLeopard.init(
         accessKey,
         modelPath,
-        enableAutomaticPunctuation
+        enableAutomaticPunctuation,
+        enableDiarization
       );
     } catch (err: any) {
       pvStatusToException(<PvStatus>err.code, err);
@@ -109,11 +117,10 @@ export class Leopard {
 
     const status = leopardHandleAndStatus!.status;
     if (status !== PvStatus.SUCCESS) {
-      pvStatusToException(status, 'Leopard failed to initialize');
+      this.handlePvStatus(status, 'Leopard failed to initialize');
     }
 
     this._handle = leopardHandleAndStatus!.handle;
-    this._pvLeopard = pvLeopard;
     this._sampleRate = pvLeopard.sample_rate();
     this._version = pvLeopard.version();
   }
@@ -169,7 +176,7 @@ export class Leopard {
 
     const status = leopardResult!.status;
     if (status !== PvStatus.SUCCESS) {
-      pvStatusToException(status, 'Leopard failed to process the audio frame');
+      this.handlePvStatus(status, 'Leopard failed to process the audio data');
     }
 
     return {
@@ -221,7 +228,7 @@ export class Leopard {
           )}' is not supported`
         );
       }
-      pvStatusToException(status, 'Leopard failed to process the audio file');
+      this.handlePvStatus(status, 'Leopard failed to process the audio file');
     }
     return {
       transcript: leopardResult!.transcript,
@@ -246,6 +253,15 @@ export class Leopard {
     } else {
       // eslint-disable-next-line no-console
       console.warn('Leopard is not initialized');
+    }
+  }
+
+  private handlePvStatus(status: PvStatus, message: string): void {
+    const errorObject = this._pvLeopard.get_error_stack();
+    if (errorObject.status === PvStatus.SUCCESS) {
+      pvStatusToException(status, message, errorObject.message_stack);
+    } else {
+      pvStatusToException(status, 'Unable to get Leopard error state');
     }
   }
 }

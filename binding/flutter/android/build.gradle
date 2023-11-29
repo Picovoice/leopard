@@ -1,5 +1,5 @@
 group 'ai.picovoice.flutter.leopard'
-version '1.2.1'
+version '2.0.0'
 
 buildscript {
     repositories {
@@ -33,5 +33,5 @@ android {
 }
 
 dependencies {
-    implementation 'ai.picovoice:leopard-android:1.2.1'
+    implementation 'ai.picovoice:leopard-android:2.0.0'
 }

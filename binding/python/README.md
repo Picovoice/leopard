@@ -1,10 +1,12 @@
-# Leopard Speech-to-Text Engine
+# Leopard Binding for Python
+
+## Leopard Speech-to-Text Engine
 
 Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
 Leopard is an on-device speech-to-text engine. Leopard is:
 
-- Private; All voice processing runs locally. 
+- Private; All voice processing runs locally.
 - [Accurate](https://picovoice.ai/docs/benchmark/stt/)
 - [Compact and Computationally-Efficient](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
@@ -37,9 +39,9 @@ Create an instance of the engine and transcribe an audio file:
 ```python
 import pvleopard
 
-handle = pvleopard.create(access_key='${ACCESS_KEY}')
+leopard = pvleopard.create(access_key='${ACCESS_KEY}')
 
-transcript, words = handle.process_file('${AUDIO_PATH}')
+transcript, words = leopard.process_file('${AUDIO_PATH}')
 print(transcript)
 for word in words:
     print(
@@ -48,20 +50,24 @@ for word in words:
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and
-`${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using
-`handle.delete()`.
+`${AUDIO_PATH}` to the path an audio file.
+
+Finally, when done be sure to explicitly release the resources:
+```python
+leopard.delete()
+```
 
 ## Language Model
 
-The Leopard Python SDK comes preloaded with a default English language model (`.pv` file). 
-Default models for other supported languages can be found in [lib/common](../../lib/common). 
+The Leopard Python SDK comes preloaded with a default English language model (`.pv` file).
+Default models for other supported languages can be found in [lib/common](../../lib/common).
 
 Create custom language models using the [Picovoice Console](https://console.picovoice.ai/). Here you can train
 language models with custom vocabulary and boost words in the existing vocabulary.
 
 Pass in the `.pv` file via the `model_path` argument:
 ```python
-handle = pvleopard.create(
+leopard = pvleopard.create(
     access_key='${ACCESS_KEY}',
     model_path='${MODEL_PATH}')
 ```

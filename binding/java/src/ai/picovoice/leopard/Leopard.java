@@ -13,7 +13,7 @@
 package ai.picovoice.leopard;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * Class for the Leopard Speech-to-Text engine.
@@ -22,7 +22,9 @@ public class Leopard {
 
     public static final String LIBRARY_PATH;
     public static final String MODEL_PATH;
-    public static final String[] VALID_EXTENSIONS;
+    public static final List<String> VALID_EXTENSIONS;
+
+    private static String sdk = "java";
 
     static {
         LIBRARY_PATH = Utils.getPackagedLibraryPath();
@@ -39,19 +41,33 @@ public class Leopard {
      * @param modelPath                  Absolute path to the file containing Leopard model parameters.
      * @param libraryPath                Absolute path to the native Leopard library.
      * @param enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
+     * @param enableDiarization          Set to `true` to enable speaker diarization, which allows Leopard to
+     *                                   differentiate speakers as part of the transcription process. Word metadata
+     *                                   will include a `speakerTag` to identify unique speakers.
      * @throws LeopardException if there is an error while initializing Leopard.
      */
     private Leopard(
             String accessKey,
             String modelPath,
             String libraryPath,
-            boolean enableAutomaticPunctuation) throws LeopardException {
+            boolean enableAutomaticPunctuation,
+            boolean enableDiarization) throws LeopardException {
         try {
             System.load(libraryPath);
         } catch (Exception exception) {
             throw new LeopardException(exception);
         }
-        handle = LeopardNative.init(accessKey, modelPath, enableAutomaticPunctuation);
+
+        LeopardNative.setSdk(Leopard.sdk);
+        handle = LeopardNative.init(
+                accessKey,
+                modelPath,
+                enableAutomaticPunctuation,
+                enableDiarization);
+    }
+
+    public static void setSdk(String sdk) {
+        Leopard.sdk = sdk;
     }
 
     /**
@@ -106,8 +122,8 @@ public class Leopard {
             return LeopardNative.processFile(handle, path);
         } catch (LeopardInvalidArgumentException e) {
             if (path.contains(".")) {
-                String extension = path.substring(path.lastIndexOf(".") + 1);
-                if (!Arrays.asList(VALID_EXTENSIONS).contains(extension)) {
+                String extension = path.substring(path.lastIndexOf(".") + 1).toLowerCase();
+                if (!VALID_EXTENSIONS.contains(extension)) {
                     throw new LeopardInvalidArgumentException(
                             String.format("Specified file with extension '%s' is not supported",
                                     extension));
@@ -142,8 +158,8 @@ public class Leopard {
         private String accessKey = null;
         private String libraryPath = null;
         private String modelPath = null;
-
         private boolean enableAutomaticPunctuation = false;
+        private boolean enableDiarization = false;
 
         /**
          * Setter the AccessKey.
@@ -182,6 +198,18 @@ public class Leopard {
          */
         public Builder setEnableAutomaticPunctuation(boolean enableAutomaticPunctuation) {
             this.enableAutomaticPunctuation = enableAutomaticPunctuation;
+            return this;
+        }
+
+        /**
+         * Setter for enabling speaker diarization.
+         *
+         * @param enableDiarization Set to `true` to enable speaker diarization, which allows Leopard to
+         *                          differentiate speakers as part of the transcription process. Word metadata
+         *                          will include a `speakerTag` to identify unique speakers.
+         */
+        public Builder setEnableDiarization(boolean enableDiarization) {
+            this.enableDiarization = enableDiarization;
             return this;
         }
 
@@ -228,7 +256,12 @@ public class Leopard {
                 }
             }
 
-            return new Leopard(accessKey, modelPath, libraryPath, enableAutomaticPunctuation);
+            return new Leopard(
+                    accessKey,
+                    modelPath,
+                    libraryPath,
+                    enableAutomaticPunctuation,
+                    enableDiarization);
         }
     }
 }

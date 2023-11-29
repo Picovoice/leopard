@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const testData = require('../../../resources/.test/test_data.json');
 
-const availableLanguages = testData.tests.parameters.map((x) => x.language);
+const availableLanguages = testData.tests.language_tests.map((x) => x.language);
 
 const commands = process.argv.slice(2, -1);
 const language = process.argv.slice(-1)[0];

@@ -1,5 +1,5 @@
 //
-// Copyright 2022 Picovoice Inc.
+// Copyright 2022-2023 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -28,6 +28,8 @@ public class SwiftLeopardPlugin: NSObject, FlutterPlugin {
 
         let methodChannel = FlutterMethodChannel(name: "leopard", binaryMessenger: registrar.messenger())
         registrar.addMethodCallDelegate(instance, channel: methodChannel)
+
+        Leopard.setSdk(sdk: "flutter")
     }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -44,11 +46,13 @@ public class SwiftLeopardPlugin: NSObject, FlutterPlugin {
                 if let accessKey = args["accessKey"] as? String,
                    let modelPath = args["modelPath"] as? String {
                     let enableAutomaticPunctuation = args["enableAutomaticPunctuation"] as? Bool
+                    let enableDiarization = args["enableDiarization"] as? Bool
 
                     let leopard = try Leopard(
                             accessKey: accessKey,
                             modelPath: modelPath,
-                            enableAutomaticPunctuation: enableAutomaticPunctuation ?? false
+                            enableAutomaticPunctuation: enableAutomaticPunctuation ?? false,
+                            enableDiarization: enableDiarization ?? false
                     )
 
                     let handle: String = String(describing: leopard)
@@ -137,6 +141,7 @@ public class SwiftLeopardPlugin: NSObject, FlutterPlugin {
             wordMap["confidence"] = wordMeta.confidence
             wordMap["startSec"] = wordMeta.startSec
             wordMap["endSec"] = wordMeta.endSec
+            wordMap["speakerTag"] = wordMeta.speakerTag
             wordMapArray.append(wordMap)
         }
         resultDictionary["words"] = wordMapArray

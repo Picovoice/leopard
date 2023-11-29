@@ -60,7 +60,7 @@ jobs:
 
     - name: Test
       run: python3 leopard_demo_file.py --access_key ${{secrets.PV_VALID_ACCESS_KEY}} --wav_paths ../../resources/audio_samples/test.wav
-  
+
   build-subtitle-demo:
     runs-on: ${{ matrix.os }}
     defaults:
@@ -118,7 +118,7 @@ jobs:
       run: pip install -r requirements.txt
 
     - name: Test
-      run: python main.py 
+      run: python main.py
         --access_key ${{secrets.PV_VALID_ACCESS_KEY}}
         --url https://www.youtube.com/watch?v=b7wzFEDU0U8
         --transcript_path test.txt

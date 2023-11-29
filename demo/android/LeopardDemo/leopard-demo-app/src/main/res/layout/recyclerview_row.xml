@@ -5,7 +5,7 @@
 
     <TextView
         android:id="@+id/word"
-        android:layout_weight="2"
+        android:layout_weight="2.75"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="@android:color/white"
@@ -14,7 +14,7 @@
 
     <TextView
         android:id="@+id/confidence"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="@android:color/white"
@@ -23,7 +23,7 @@
 
     <TextView
         android:id="@+id/startSec"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="@android:color/white"
@@ -32,6 +32,15 @@
 
     <TextView
         android:id="@+id/endSec"
+        android:layout_weight="2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:textSize="12dp"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/speakerTag"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

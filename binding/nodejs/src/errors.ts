@@ -12,47 +12,81 @@
 
 import PvStatus from './pv_status_t';
 
-export class LeopardError extends Error {}
+export class LeopardError extends Error {
+  private readonly _message: string;
+  private readonly _messageStack: string[];
+
+  constructor(message: string, messageStack: string[] = []) {
+    super(LeopardError.errorToString(message, messageStack));
+    this._message = message;
+    this._messageStack = messageStack;
+  }
+
+  get message(): string {
+    return this._message;
+  }
+
+  get messageStack(): string[] {
+    return this._messageStack;
+  }
+
+  private static errorToString(
+    initial: string,
+    messageStack: string[]
+  ): string {
+    let msg = initial;
+
+    if (messageStack.length > 0) {
+      msg += `: ${messageStack.reduce(
+        (acc, value, index) => acc + '\n  [' + index + '] ' + value,
+        ''
+      )}`;
+    }
+
+    return msg;
+  }
+}
 
 export class LeopardOutOfMemoryError extends LeopardError {}
-export class LeopardIoError extends LeopardError {}
+export class LeopardIOError extends LeopardError {}
 export class LeopardInvalidArgumentError extends LeopardError {}
 export class LeopardStopIterationError extends LeopardError {}
 export class LeopardKeyError extends LeopardError {}
 export class LeopardInvalidStateError extends LeopardError {}
 export class LeopardRuntimeError extends LeopardError {}
 export class LeopardActivationError extends LeopardError {}
-export class LeopardActivationLimitReached extends LeopardError {}
-export class LeopardActivationThrottled extends LeopardError {}
-export class LeopardActivationRefused extends LeopardError {}
+export class LeopardActivationLimitReachedError extends LeopardError {}
+export class LeopardActivationThrottledError extends LeopardError {}
+export class LeopardActivationRefusedError extends LeopardError {}
 
 export function pvStatusToException(
   pvStatus: PvStatus,
-  errorMessage: string
+  errorMessage: string,
+  messageStack: string[] = []
 ): void {
   switch (pvStatus) {
     case PvStatus.OUT_OF_MEMORY:
-      throw new LeopardOutOfMemoryError(errorMessage);
+      throw new LeopardOutOfMemoryError(errorMessage, messageStack);
     case PvStatus.IO_ERROR:
-      throw new LeopardIoError(errorMessage);
+      throw new LeopardIOError(errorMessage, messageStack);
     case PvStatus.INVALID_ARGUMENT:
-      throw new LeopardInvalidArgumentError(errorMessage);
+      throw new LeopardInvalidArgumentError(errorMessage, messageStack);
     case PvStatus.STOP_ITERATION:
-      throw new LeopardStopIterationError(errorMessage);
+      throw new LeopardStopIterationError(errorMessage, messageStack);
     case PvStatus.KEY_ERROR:
-      throw new LeopardKeyError(errorMessage);
+      throw new LeopardKeyError(errorMessage, messageStack);
     case PvStatus.INVALID_STATE:
-      throw new LeopardInvalidStateError(errorMessage);
+      throw new LeopardInvalidStateError(errorMessage, messageStack);
     case PvStatus.RUNTIME_ERROR:
-      throw new LeopardRuntimeError(errorMessage);
+      throw new LeopardRuntimeError(errorMessage, messageStack);
     case PvStatus.ACTIVATION_ERROR:
-      throw new LeopardActivationError(errorMessage);
+      throw new LeopardActivationError(errorMessage, messageStack);
     case PvStatus.ACTIVATION_LIMIT_REACHED:
-      throw new LeopardActivationLimitReached(errorMessage);
+      throw new LeopardActivationLimitReachedError(errorMessage, messageStack);
     case PvStatus.ACTIVATION_THROTTLED:
-      throw new LeopardActivationThrottled(errorMessage);
+      throw new LeopardActivationThrottledError(errorMessage, messageStack);
     case PvStatus.ACTIVATION_REFUSED:
-      throw new LeopardActivationRefused(errorMessage);
+      throw new LeopardActivationRefusedError(errorMessage, messageStack);
     default:
       // eslint-disable-next-line no-console
       console.warn(`Unmapped error code: ${pvStatus}`);

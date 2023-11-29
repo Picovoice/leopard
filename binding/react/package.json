@@ -1,6 +1,6 @@
 {
   "name": "@picovoice/leopard-react",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "React hook for Leopard Web SDK",
   "entry": "src/index.ts",
   "module": "dist/esm/index.js",
@@ -35,7 +35,7 @@
     "test": "cypress run --component"
   },
   "dependencies": {
-    "@picovoice/leopard-web": "=1.2.2"
+    "@picovoice/leopard-web": "=2.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.21.3",

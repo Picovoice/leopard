@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@picovoice/leopard-node@=1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@picovoice/leopard-node/-/leopard-node-1.2.0.tgz#2e210926ede28f61ba1322a1e5ab2a0e794d53e4"
-  integrity sha512-h86O/mrnv3WvgR1zwF4hoEdLXqpysm1PBnoNm6w0Q5u42AXdJ9KHN8bfClZA+fp8J6Yt/RE+nqNOVqeEIY1kjQ==
+"@picovoice/leopard-node@=2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@picovoice/leopard-node/-/leopard-node-2.0.0.tgz#ac29fcfb60ec8a626f1e23145f0a487f7aa45298"
+  integrity sha512-JQwSrY49EJW0hy4NYh/DXp1hEMJ2MV0BGMCK6uhwzt7rlXODzMxWLYwNGrrkzzzoOy8nd2fgjCXpaye2VbcOCQ==
 
 "@picovoice/pvrecorder-node@=1.2.1":
   version "1.2.1"
@@ -16,6 +16,11 @@ commander@^6.1.0:
   version "6.2.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-6.2.1.tgz#0792eb682dfbc325999bb2b84fddddba110ac73c"
   integrity sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==
+
+prettier@^2.6.2:
+  version "2.8.8"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.8.tgz#e8c5d7e98a4305ffe3de2e1fc4aca1a71c28b1da"
+  integrity sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==
 
 readline@^1.3.0:
   version "1.3.0"

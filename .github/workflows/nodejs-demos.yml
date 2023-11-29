@@ -33,7 +33,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [14.x, 16.x, 18.x, 20.x]
+        node-version: [16.x, 18.x, 20.x]
 
     steps:
     - uses: actions/checkout@v3
@@ -42,9 +42,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-
-    - name: Pre-build dependencies
-      run: npm install yarn
 
     - name: Install dependencies
       run: yarn install
@@ -62,9 +59,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Pre-build dependencies
-      run: npm install --global yarn
-
     - name: Install dependencies
       run: yarn install
 
@@ -77,18 +71,14 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [lts/*]
 
     steps:
     - uses: actions/checkout@v3
 
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js LTS
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
-
-    - name: Pre-build dependencies
-      run: npm install yarn
+        node-version: lts/*
 
     - name: Install dependencies
       run: yarn install

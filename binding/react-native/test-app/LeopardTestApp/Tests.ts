@@ -15,6 +15,14 @@ export type Result = {
   errorString?: string;
 };
 
+type TestWord = {
+  word: string;
+  start_sec: number;
+  end_sec: number;
+  confidence: number;
+  speaker_tag: number;
+};
+
 const levenshteinDistance = (words1: string[], words2: string[]) => {
   const res = Array.from(
     Array(words1.length + 1),
@@ -54,33 +62,33 @@ const wordErrorRate = (
 
 const validateMetadata = (
   words: LeopardWord[],
-  transcript: string,
-  audioLength: number,
+  expectedWords: TestWord[],
+  enableDiarization: boolean,
 ): string | null => {
-  const normTranscript = transcript.toUpperCase();
+  if (words.length !== expectedWords.length) {
+    return `Length ${words.length} does not match ${expectedWords.length}`;
+  }
   for (let i = 0; i < words.length; i++) {
-    if (!normTranscript.includes(words[i].word.toUpperCase())) {
-      return `${words[i].word} is not in transcript.`;
+    if (words[i].word !== expectedWords[i].word) {
+      return `Word ${words[i].word} is not equal to ${expectedWords[i].word}`;
     }
-    if (words[i].startSec <= 0) {
-      return `${words[i].word} has invalid startSec: '${words[i].startSec}'`;
+    if (Math.abs(words[i].startSec - expectedWords[i].start_sec) > 0.01) {
+      return `Start sec ${words[i].startSec} is not equal to ${expectedWords[i].start_sec}`;
     }
-    if (words[i].startSec > words[i].endSec) {
-      return `${words[i].word} invalid meta: startSec '${words[i].startSec}' > endSec '${words[i].endSec}`;
+    if (Math.abs(words[i].endSec - expectedWords[i].end_sec) > 0.01) {
+      return `End sec ${words[i].endSec} is not equal to ${expectedWords[i].end_sec}`;
     }
-    if (i < words.length - 1) {
-      if (words[i].endSec > words[i + 1].startSec) {
-        return `${words[i].word} invalid meta: endSec '${words[i].endSec}'
-        is greater than next word startSec
-        '${words[i + 1].word} - ${words[i + 1].startSec}'`;
+    if (Math.abs(words[i].confidence - expectedWords[i].confidence) > 0.01) {
+      return `Confidence ${words[i].confidence} is not equal to ${expectedWords[i].confidence}`;
+    }
+    if (enableDiarization) {
+      if (words[i].speakerTag !== expectedWords[i].speaker_tag) {
+        return `Speaker ${words[i].speakerTag} is not equal to ${expectedWords[i].speaker_tag}`;
       }
     } else {
-      if (words[i].endSec > audioLength) {
-        return `${words[i].word} invalid meta: endSec '${words[i].endSec}' is greater than audio length '${audioLength}'`;
+      if (words[i].speakerTag !== -1) {
+        return `Invalid speaker tag ${words[i].speakerTag}`;
       }
-    }
-    if (!(words[i].confidence >= 0 || words[i].confidence <= 1)) {
-      return `${words[i].word} invalid meta: invalid confidence value '${words[i].confidence}'`;
     }
   }
   return null;
@@ -208,14 +216,19 @@ async function runProcTestCase(
   language: string,
   audioFile: string,
   expectedTranscript: string,
-  punctuations: string[],
+  expectedWords: TestWord[],
   errorRate: number,
   params: {
     asFile?: boolean;
     enablePunctuation?: boolean;
+    enableDiarization?: boolean;
   } = {},
 ): Promise<Result> {
-  const {asFile = false, enablePunctuation = false} = params;
+  const {
+    asFile = false,
+    enablePunctuation = false,
+    enableDiarization = false,
+  } = params;
 
   const result: Result = {testName: '', success: false};
 
@@ -228,6 +241,7 @@ async function runProcTestCase(
 
     const leopard = await Leopard.create(TEST_ACCESS_KEY, modelPath, {
       enableAutomaticPunctuation: enablePunctuation,
+      enableDiarization: enableDiarization
     });
 
     const pcm = await getPcmFromFile(audioPath, leopard.sampleRate);
@@ -238,16 +252,9 @@ async function runProcTestCase(
 
     await leopard.delete();
 
-    let normalizedTranscript = expectedTranscript;
-    if (!enablePunctuation) {
-      for (const punctuation of punctuations) {
-        normalizedTranscript = normalizedTranscript.replace(punctuation, '');
-      }
-    }
-
     const wer = wordErrorRate(
       transcript,
-      normalizedTranscript,
+      expectedTranscript,
       language === 'ja',
     );
     if (wer > errorRate) {
@@ -255,7 +262,7 @@ async function runProcTestCase(
       return result;
     }
 
-    const errorMessage = validateMetadata(words, transcript, pcm.length);
+    const errorMessage = validateMetadata(words, expectedWords, enableDiarization);
     if (errorMessage) {
       result.errorString = errorMessage;
       return result;
@@ -291,15 +298,15 @@ async function initTests(): Promise<Result[]> {
   return results;
 }
 
-async function paramTests(): Promise<Result[]> {
+async function languageTests(): Promise<Result[]> {
   const results: Result[] = [];
 
-  for (const testParam of testData.tests.parameters) {
+  for (const testParam of testData.tests.language_tests) {
     const result = await runProcTestCase(
       testParam.language,
       testParam.audio_file,
       testParam.transcript,
-      testParam.punctuations,
+      testParam.words,
       testParam.error_rate,
     );
     result.testName = `Process test for '${testParam.language}'`;
@@ -307,12 +314,12 @@ async function paramTests(): Promise<Result[]> {
     results.push(result);
   }
 
-  for (const testParam of testData.tests.parameters) {
+  for (const testParam of testData.tests.language_tests) {
     const result = await runProcTestCase(
       testParam.language,
       testParam.audio_file,
-      testParam.transcript,
-      testParam.punctuations,
+      testParam.transcript_with_punctuation,
+      testParam.words,
       testParam.error_rate,
       {
         enablePunctuation: true,
@@ -323,12 +330,12 @@ async function paramTests(): Promise<Result[]> {
     results.push(result);
   }
 
-  for (const testParam of testData.tests.parameters) {
+  for (const testParam of testData.tests.language_tests) {
     const result = await runProcTestCase(
       testParam.language,
       testParam.audio_file,
       testParam.transcript,
-      testParam.punctuations,
+      testParam.words,
       testParam.error_rate,
       {
         asFile: true,
@@ -339,11 +346,81 @@ async function paramTests(): Promise<Result[]> {
     results.push(result);
   }
 
+  for (const testParam of testData.tests.language_tests) {
+    const result = await runProcTestCase(
+      testParam.language,
+      testParam.audio_file,
+      testParam.transcript,
+      testParam.words,
+      testParam.error_rate,
+      {
+        enableDiarization: true,
+      },
+    );
+    result.testName = `Process test with diarization for '${testParam.language}'`;
+    logResult(result);
+    results.push(result);
+  }
+
+  return results;
+}
+
+async function diarizationTests(): Promise<Result[]> {
+  const results: Result[] = [];
+
+  for (const testParam of testData.tests.diarization_tests) {
+    const result: Result = {testName: '', success: false};
+
+    const { language, audio_file, words: expectedWords } = testParam;
+
+    try {
+      const modelPath =
+        language === 'en'
+          ? getPath('model_files/leopard_params.pv')
+          : getPath(`model_files/leopard_params_${language}.pv`);
+
+      const leopard = await Leopard.create(TEST_ACCESS_KEY, modelPath, {
+        enableDiarization: true
+      });
+      
+      const { words } = await leopard.processFile(await absolutePath('audio_samples', audio_file));
+      await leopard.delete();
+
+      let errorMessage: string | null = null;
+      if (words.length !== expectedWords.length) {
+        errorMessage = `Length ${words.length} does not match ${expectedWords.length}`;
+      }
+      for (let i = 0; i < words.length; i++) {
+        if (words[i].word !== expectedWords[i].word) {
+          errorMessage = `Word ${words[i].word} is not equal to ${expectedWords[i].word}`;
+          break;
+        }
+        if (words[i].speakerTag !== expectedWords[i].speaker_tag) {
+          errorMessage = `Speaker ${words[i].speakerTag} is not equal to ${expectedWords[i].speaker_tag}`;
+          break;
+        }
+      }
+
+      if (errorMessage) {
+        result.errorString = errorMessage;
+      } else {
+        result.success = true;
+      }
+    } catch (e) {
+      result.errorString = `Failed to process leopard with: ${e}`;
+    }
+
+    result.testName = `Diarization multiple speaker test for '${testParam.language}'`;
+    logResult(result);
+    results.push(result);
+  }
+
   return results;
 }
 
 export async function runLeopardTests(): Promise<Result[]> {
   const initResults = await initTests();
-  const paramResults = await paramTests();
-  return [...initResults, ...paramResults];
+  const languageResults = await languageTests();
+  const diarizationResults = await diarizationTests();
+  return [...initResults, ...languageResults, ...diarizationResults];
 }

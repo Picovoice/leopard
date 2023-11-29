@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 //
-// Copyright 2020 Picovoice Inc.
+// Copyright 2022-2023 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -31,7 +31,8 @@ program
     "absolute path to leopard dynamic library"
   )
   .option("-m, --model_file_path <string>", "absolute path to leopard model")
-  .option("-d, --disable_automatic_punctuation", "disable automatic punctuation")
+  .option("-p, --disable_automatic_punctuation", "disable automatic punctuation")
+  .option("-d, --disable_speaker_diarization", "disable speaker diarization")
   .option("-v, --verbose", "verbose mode, prints metadata");
 
 
@@ -46,6 +47,7 @@ function fileDemo() {
   let libraryFilePath = program["library_file_path"];
   let modelFilePath = program["model_file_path"];
   let disableAutomaticPunctuation = program["disable_automatic_punctuation"];
+  let disableSpeakerDiarization = program["disable_speaker_diarization"];
   let verbose = program["verbose"];
 
   let engineInstance = new Leopard(
@@ -53,7 +55,8 @@ function fileDemo() {
       {
         'modelPath': modelFilePath,
         'libraryPath': libraryFilePath,
-        'enableAutomaticPunctuation': !disableAutomaticPunctuation
+        'enableAutomaticPunctuation': !disableAutomaticPunctuation,
+        'enableDiarization': !disableSpeakerDiarization
       }
   );
 
@@ -69,10 +72,11 @@ function fileDemo() {
       console.table(
         res.words.map(word => {
           return {
-            "word": word.word,
-            "Start time in Sec": word.startSec.toFixed(2),
-            "End time in Sec": word.endSec.toFixed(2),
-            "Confidence": word.confidence.toFixed(2)
+            "Word": word.word,
+            "Start time (s)": word.startSec.toFixed(2),
+            "End time (s)": word.endSec.toFixed(2),
+            "Confidence": word.confidence.toFixed(2),
+            "Speaker Tag": word.speakerTag
           };
         })
       );
