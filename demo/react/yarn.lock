@@ -1608,17 +1608,17 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@picovoice/leopard-react@~2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@picovoice/leopard-react/-/leopard-react-2.0.0.tgz#695be0692da3033fbc2e11f219b93db121ef731e"
-  integrity sha512-7JIASezZUWT9spKllsFMdWwWxkMg5s2R5Q4wFtqW4+xVavHboIbNsIorDjo1E5+YWXefFelLktFpFg5MojAoHg==
+"@picovoice/leopard-react@=2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@picovoice/leopard-react/-/leopard-react-2.0.1.tgz#5b9c3bc49ec708e0993bc9fbd65926de8ed98eda"
+  integrity sha512-pj0Q3xfuBdHfH9WsF1pu5Zo/pN+Yr8IkHE0RxveitTC/7MGMGXB+xWtU4wPiUYuezePNhwc4FOB12xxWGetQcQ==
   dependencies:
-    "@picovoice/leopard-web" "=2.0.0"
+    "@picovoice/leopard-web" "=2.0.1"
 
-"@picovoice/leopard-web@=2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@picovoice/leopard-web/-/leopard-web-2.0.0.tgz#6452d1e49f983542db73a3c8cdf24208c30af234"
-  integrity sha512-kfJtUCopyvmN028wiaH6hdEHEhOx7QTruiaL5ykVZcpMq1lV/O02hwr29i3U7FqoH6VQQYZl7pRIvlPjDaj+eg==
+"@picovoice/leopard-web@=2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@picovoice/leopard-web/-/leopard-web-2.0.1.tgz#0e230ebb683b8bd9bd7424b2625ff69be43a9580"
+  integrity sha512-U4Xqy22wxFL1VjBzXRK333Gu31ujpN/NcUKJsH4Pq40HddgvXVB23ZbHDAiFnEQp+ZLOUlg3hPLJXM9pj9kEHg==
   dependencies:
     "@picovoice/web-utils" "=1.3.1"
 
