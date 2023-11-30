@@ -116,7 +116,7 @@ Along with the transcript, Leopard returns metadata for each transcribed word. A
 - **Start Time:** Indicates when the word started in the transcribed audio. Value is in seconds.
 - **End Time:** Indicates when the word ended in the transcribed audio. Value is in seconds.
 - **Confidence:** Leopard's confidence that the transcribed word is accurate. It is a number within `[0, 1]`.
-- **Speaker Tag:** If speaker diarization is enabled on initialization, the speaker tag is a non-negative integer identifying unique speakers, with `0` reservered for unknown speakers. If speaker diarization is not enabled, the value will always be `-1`.
+- **Speaker Tag:** If speaker diarization is enabled on initialization, the speaker tag is a non-negative integer identifying unique speakers, with `0` reserved for unknown speakers. If speaker diarization is not enabled, the value will always be `-1`.
 
 ## Demo App
 
