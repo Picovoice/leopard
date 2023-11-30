@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
   DESC
   s.homepage = 'https://github.com/Picovoice/leopard/tree/master/binding/ios'
   s.author = { 'Picovoice' => 'hello@picovoice.ai' }
-  s.source = { :git => "https://github.com/Picovoice/leopard.git", :tag => "Leopard-iOS-v2.0.0" }
+  s.source = { :git => "https://github.com/Picovoice/leopard.git", :tag => "Leopard-iOS-v2.0.1" }
   s.ios.deployment_target = '13.0'
   s.swift_version = '5.0'
   s.vendored_frameworks = 'lib/ios/PvLeopard.xcframework'
