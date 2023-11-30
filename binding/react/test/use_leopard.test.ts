@@ -191,6 +191,35 @@ describe('Leopard binding', () => {
     });
   });
 
+  it('should be able to stop audio recording if limit reached', () => {
+    const { result } = renderHook(() => useLeopard());
+    const MAX_RECORDING_SEC = 1;
+
+    cy.wrapHook(() =>
+      result.current.init(ACCESS_KEY, {
+        publicPath: '/test/leopard_params.pv',
+        forceWrite: true,
+      })
+    ).then(() => {
+      expect(
+        result.current.isLoaded,
+        `Failed to load 'leopard_params.pv' with ${result.current.error}`
+      ).to.be.true;
+    });
+
+    cy.wrapHook(() => result.current.startRecording(MAX_RECORDING_SEC))
+      .then(() => {
+        expect(result.current.isRecording).to.be.true;
+      })
+      .wait(MAX_RECORDING_SEC * 1000)
+      .then(() => {
+        expect(result.current.isRecording).to.be.false;
+        expect(result.current.error?.toString()).to.contain(
+          'Maximum recording time reached'
+        );
+      });
+  });
+
   for (const testParam of testData.tests.language_tests) {
     const suffix = testParam.language === 'en' ? '' : `_${testParam.language}`;
 

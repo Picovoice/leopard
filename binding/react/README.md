@@ -47,7 +47,7 @@ npm install --save @picovoice/leopard-react @picovoice/web-voice-processor
 
 ## Usage
 
-Leopard requires a model file (`.pv`) at initialization. Use one of the default language models found in [lib/common](../../lib/common), or create a custom Leopard model in the [Picovoice Console](https://console.picovoice.ai/) for the target platform `Web (WASM)`.
+Leopard requires a model file (`.pv`) at initialization. Use one of the default language models found in [lib/common](https://github.com/Picovoice/leopard/tree/master/lib/common), or create a custom Leopard model in the [Picovoice Console](https://console.picovoice.ai/) for the target platform `Web (WASM)`.
 
 There are two methods to initialize Leopard.
 
