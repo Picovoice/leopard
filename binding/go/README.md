@@ -25,7 +25,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 ## Installation
 
 ```console
-go get github.com/Picovoice/leopard/binding/go
+go get github.com/Picovoice/leopard/binding/go/v2
 ```
 
 ## AccessKey

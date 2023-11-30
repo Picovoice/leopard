@@ -479,13 +479,13 @@ Replace `${ACCESS_KEY}` with your `AccessKey` obtained from [Picovoice Console](
 Install the Go binding:
 
 ```console
-go get github.com/Picovoice/leopard/binding/go
+go get github.com/Picovoice/leopard/binding/go/v2
 ```
 
 Create an instance of the engine and transcribe an audio file:
 
 ```go
-import . "github.com/Picovoice/leopard/binding/go"
+import . "github.com/Picovoice/leopard/binding/go/v2"
 
 leopard = Leopard{AccessKey: "${ACCESS_KEY}"}
 err := leopard.Init()
