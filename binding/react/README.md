@@ -97,12 +97,13 @@ const leopardModel = {
 }
 ```
 
-Additional engine options are provided via the `options` parameter. Set `enableAutomaticPunctuation` to true if you wish to enable punctuation in the transcript.
+Additional engine options are provided via the `options` parameter. Set `enableAutomaticPunctuation` to true if you wish to enable punctuation in the transcript or `enableDiarization` to true if you wish to enable speaker diarization.
 
 ```typescript
 // Optional
 const options = {
-  enableAutomaticPunctuation: true
+  enableAutomaticPunctuation: true,
+  enableDiarization: true
 }
 ```
 
@@ -133,7 +134,7 @@ const initLeopard = async () => {
 }
 ```
 
-In case of any errors, use the `error` state variable to check the error message. Use the `isLoaded` state variable to check if `Leopard` has loaded. 
+In case of any errors, use the `error` state variable to check the error message. Use the `isLoaded` state variable to check if `Leopard` has loaded.
 
 ### Transcribe Audio
 
@@ -170,7 +171,7 @@ If `WebVoiceProcessor` has started correctly, `isRecording` will be set to true.
 **Note**: By default, Leopard will only record for 2 minutes before stopping and processing the buffered audio. This is to prevent unbounded memory usage. To increase this limit, call `startRecording` with the optional `maxRecordingSec` parameter:
 
 ```typescript
-const maxRecordingSec = 60 * 10 
+const maxRecordingSec = 60 * 10
 await startRecording(maxRecordingSec)
 ```
 
@@ -195,8 +196,12 @@ useEffect(() => {
 }, [result])
 ```
 
-- `transcript`: A string containing the transcribed data.
-- `words`: A list of objects containing a `word`, `startSec`, `endSec`, and `confidence`. Each object indicates the start, end time and confidence (between 0 and 1) of the word.
+Along with the transcript, Leopard returns metadata for each transcribed word. Available metadata items are:
+
+- **Start Time:** Indicates when the word started in the transcribed audio. Value is in seconds.
+- **End Time:** Indicates when the word ended in the transcribed audio. Value is in seconds.
+- **Confidence:** Leopard's confidence that the transcribed word is accurate. It is a number within `[0, 1]`.
+- **Speaker Tag:** If speaker diarization is enabled on initialization, the speaker tag is a non-negative integer identifying unique speakers, with `0` reservered for unknown speakers. If speaker diarization is not enabled, the value will always be `-1`.
 
 ### Release
 

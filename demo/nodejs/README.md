@@ -39,10 +39,10 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 Run the following in the terminal:
 
 ```console
-leopard-file-demo --access_key ${ACCESS_KEY} --input_audio_file_path ${AUDIO_PATH}
+leopard-file-demo --access_key ${ACCESS_KEY} --input_audio_file_path ${AUDIO_FILE_PATH}
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_FILE_PATH}` with a path to an audio file you
 wish to transcribe.
 
 ### Microphone Demo

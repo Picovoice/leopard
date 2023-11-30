@@ -62,12 +62,12 @@ Leopard/demo/dotnet/LeopardDemo
 Run the following in the terminal:
 
 ```console
-dotnet run -c FileDemo.Release -- \ 
---input_audio_path ${AUDIO_PATH} \
+dotnet run -c FileDemo.Release -- \
+--input_audio_path ${AUDIO_FILE_PATH} \
 --access_key ${ACCESS_KEY} \
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_FILE_PATH}` with a path to an audio file you
 wish to transcribe.
 
 ### Microphone Demo
@@ -91,9 +91,9 @@ It provides information about various audio input devices on the box. This is an
 ```
 index: 0, device name: USB Audio Device
 index: 1, device name: MacBook Air Microphone
-``` 
+```
 
-You can use the device index to specify which microphone to use for the demo. For instance, if you want to use the USB Audio Device 
+You can use the device index to specify which microphone to use for the demo. For instance, if you want to use the USB Audio Device
 in the above example, you can invoke the demo application as below:
 
 ```console

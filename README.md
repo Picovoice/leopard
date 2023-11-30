@@ -79,10 +79,10 @@ pip3 install pvleoparddemo
 Run the following in the terminal:
 
 ```bash
-leopard_demo_file --access_key ${ACCESS_KEY} --audio_paths ${AUDIO_PATH}
+leopard_demo_file --access_key ${ACCESS_KEY} --audio_paths ${AUDIO_FILE_PATH}
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_FILE_PATH}` with a path to an audio file you
 wish to transcribe.
 
 ### C Demo
@@ -96,12 +96,12 @@ cmake -S demo/c/ -B demo/c/build && cmake --build demo/c/build
 Run the demo:
 
 ```console
-./demo/c/build/leopard_demo -a ${ACCESS_KEY} -l ${LIBRARY_PATH} -m ${MODEL_PATH} ${AUDIO_PATH}
+./demo/c/build/leopard_demo -a ${ACCESS_KEY} -l ${LIBRARY_PATH} -m ${MODEL_FILE_PATH} ${AUDIO_FILE_PATH}
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${LIBRARY_PATH}` with the path to appropriate
-library under [lib](/lib), `${MODEL_PATH}` to path to [default model file](./lib/common/leopard_params.pv)
-(or your custom one), and `${AUDIO_PATH}` with a path to an audio file you wish to transcribe.
+library under [lib](/lib), `${MODEL_FILE_PATH}` to path to [default model file](./lib/common/leopard_params.pv)
+(or your custom one), and `${AUDIO_FILE_PATH}` with a path to an audio file you wish to transcribe.
 
 ### iOS Demo
 
@@ -132,10 +132,10 @@ yarn global add @picovoice/leopard-node-demo
 Run the following in the terminal:
 
 ```console
-leopard-file-demo --access_key ${ACCESS_KEY} --input_audio_file_path ${AUDIO_PATH}
+leopard-file-demo --access_key ${ACCESS_KEY} --input_audio_file_path ${AUDIO_FILE_PATH}
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_FILE_PATH}` with a path to an audio file you
 wish to transcribe.
 
 For more information about Node.js demos go to [demo/nodejs](./demo/nodejs).
@@ -165,10 +165,10 @@ The demo requires `cgo`, which on Windows may mean that you need to install a gc
 From [demo/go](./demo/go) run the following command from the terminal to build and run the file demo:
 
 ```console
-go run filedemo/leopard_file_demo.go -access_key "${ACCESS_KEY}" -input_audio_path "${AUDIO_PATH}"
+go run filedemo/leopard_file_demo.go -access_key "${ACCESS_KEY}" -input_audio_path "${AUDIO_FILE_PATH}"
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you wish to transcribe.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_FILE_PATH}` with a path to an audio file you wish to transcribe.
 
 For more information about Go demos go to [demo/go](./demo/go).
 
@@ -202,10 +202,10 @@ From [demo/java](./demo/java) run the following commands from the terminal to bu
 cd demo/java
 ./gradlew build
 cd build/libs
-java -jar leopard-file-demo.jar -a ${ACCESS_KEY} -i ${AUDIO_PATH}
+java -jar leopard-file-demo.jar -a ${ACCESS_KEY} -i ${AUDIO_FILE_PATH}
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you wish to transcribe.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_FILE_PATH}` with a path to an audio file you wish to transcribe.
 
 For more information about Java demos go to [demo/java](./demo/java).
 
@@ -217,10 +217,10 @@ file or on real-time microphone input.
 From [demo/dotnet/LeopardDemo](./demo/dotnet/LeopardDemo) run the following in the terminal:
 
 ```console
-dotnet run -c FileDemo.Release -- --access_key ${ACCESS_KEY} --input_audio_path ${AUDIO_PATH}
+dotnet run -c FileDemo.Release -- --access_key ${ACCESS_KEY} --input_audio_path ${AUDIO_FILE_PATH}
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_FILE_PATH}` with a path to an audio file you
 wish to transcribe.
 
 For more information about .NET demos, go to [demo/dotnet](./demo/dotnet).
@@ -233,10 +233,10 @@ file or on real-time microphone input.
 From [demo/rust/filedemo](./demo/rust/filedemo) run the following in the terminal:
 
 ```console
-cargo run --release -- --access_key ${ACCESS_KEY} --input_audio_path ${AUDIO_PATH}
+cargo run --release -- --access_key ${ACCESS_KEY} --input_audio_path ${AUDIO_FILE_PATH}
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_FILE_PATH}` with a path to an audio file you
 wish to transcribe.
 
 For more information about Rust demos, go to [demo/rust](./demo/rust).
@@ -294,14 +294,14 @@ Create an instance of the engine and transcribe an audio file:
 ```python
 import pvleopard
 
-handle = pvleopard.create(access_key='${ACCESS_KEY}')
+leopard = pvleopard.create(access_key='${ACCESS_KEY}')
 
-print(handle.process_file('${AUDIO_PATH}'))
+print(leopard.process_file('${AUDIO_FILE_PATH}'))
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and
-`${AUDIO_PATH}` to path an audio file. Finally, when done be sure to explicitly release the resources using
-`handle.delete()`.
+`${AUDIO_FILE_PATH}` to path an audio file. Finally, when done be sure to explicitly release the resources using
+`leopard.delete()`.
 
 ### C
 
@@ -314,9 +314,16 @@ Create an instance of the engine and transcribe an audio file:
 
 #include "pv_leopard.h"
 
-pv_leopard_t *handle = NULL;
-bool automatic_punctuation = false;
-pv_status_t status = pv_leopard_init("${ACCESS_KEY}", "${MODEL_PATH}", automatic_punctuation, &handle);
+pv_leopard_t *leopard = NULL;
+bool enable_automatic_punctuation = false;
+bool enable_speaker_diarization = false;
+
+pv_status_t status = pv_leopard_init(
+  "${ACCESS_KEY}",
+  "${MODEL_FILE_PATH}",
+  enable_automatic_punctuation,
+  enable_speaker_diarization,
+  &leopard);
 if (status != PV_STATUS_SUCCESS) {
     // error handling logic
 }
@@ -324,7 +331,12 @@ if (status != PV_STATUS_SUCCESS) {
 char *transcript = NULL;
 int32_t num_words = 0;
 pv_word_t *words = NULL;
-status = pv_leopard_process_file(handle, "${AUDIO_PATH}", &transcript, &num_words, &words);
+status = pv_leopard_process_file(
+    leopard,
+    "${AUDIO_FILE_PATH}",
+    &transcript,
+    &num_words,
+    &words);
 if (status != PV_STATUS_SUCCESS) {
     // error handling logic
 }
@@ -333,20 +345,21 @@ fprintf(stdout, "%s\n", transcript);
 for (int32_t i = 0; i < num_words; i++) {
     fprintf(
             stdout,
-            "[%s]\t.start_sec = %.1f .end_sec = %.1f .confidence = %.2f\n",
+            "[%s]\t.start_sec = %.1f .end_sec = %.1f .confidence = %.2f .speaker_tag = %d\n",
             words[i].word,
             words[i].start_sec,
             words[i].end_sec,
-            words[i].confidence);
+            words[i].confidence,
+            words[i].speaker_tag);
 }
 
 pv_leopard_transcript_delete(transcript);
 pv_leopard_words_delete(words);
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_PATH}` to path to
-[default model file](./lib/common/leopard_params.pv) (or your custom one), and `${AUDIO_PATH}` to path an audio file.
-Finally, when done be sure to release resources acquired using `pv_leopard_delete(handle)`.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE_PATH}` to path to
+[default model file](./lib/common/leopard_params.pv) (or your custom one), and `${AUDIO_FILE_PATH}` to path an audio file.
+Finally, when done be sure to release resources acquired using `pv_leopard_delete(leopard)`.
 
 ### iOS
 
@@ -395,13 +408,13 @@ import ai.picovoice.leopard.*;
 final String accessKey = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
 final String modelPath = "${MODEL_FILE}";
 try {
-    Leopard handle = new Leopard.Builder()
+    Leopard leopard = new Leopard.Builder()
         .setAccessKey(accessKey)
         .setModelPath(modelPath)
         .build(appContext);
 
     File audioFile = new File("${AUDIO_FILE_PATH}");
-    LeopardTranscript transcript = handle.processFile(audioFile.getAbsolutePath());
+    LeopardTranscript transcript = leopard.processFile(audioFile.getAbsolutePath());
 
 } catch (LeopardException ex) { }
 ```
@@ -421,19 +434,19 @@ Create instances of the Leopard class:
 ```javascript
 const Leopard = require("@picovoice/leopard-node");
 const accessKey = "${ACCESS_KEY}" // Obtained from the Picovoice Console (https://console.picovoice.ai/)
-let handle = new Leopard(accessKey);
+let leopard = new Leopard(accessKey);
 
-const result = engineInstance.processFile('${AUDIO_PATH}');
+const result = engineInstance.processFile('${AUDIO_FILE_PATH}');
 console.log(result.transcript);
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and
-`${AUDIO_PATH}` to path an audio file.
+`${AUDIO_FILE_PATH}` to path an audio file.
 
 When done, be sure to release resources using `release()`:
 
 ```javascript
-handle.release();
+leopard.release();
 ```
 
 ### Flutter
@@ -481,7 +494,7 @@ if err != nil {
 }
 defer leopard.Delete()
 
-transcript, words, err := leopard.ProcessFile("${AUDIO_PATH}")
+transcript, words, err := leopard.ProcessFile("${AUDIO_FILE_PATH}")
 if err != nil {
     // handle process error
 }
@@ -490,7 +503,7 @@ log.Println(transcript)
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and
-`${AUDIO_PATH}` to path an audio file. Finally, when done be sure to explicitly release the resources using
+`${AUDIO_FILE_PATH}` to path an audio file. Finally, when done be sure to explicitly release the resources using
 `leopard.Delete()`.
 
 ### React Native
@@ -541,14 +554,14 @@ final String accessKey = "${ACCESS_KEY}";
 
 try {
     Leopard leopard = new Leopard.Builder().setAccessKey(accessKey).build();
-    LeopardTranscript result = leopard.processFile("${AUDIO_PATH}");
+    LeopardTranscript result = leopard.processFile("${AUDIO_FILE_PATH}");
     leopard.delete();
 } catch (LeopardException ex) { }
 
 System.out.println(transcript);
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and `${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and `${AUDIO_FILE_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
 
 ### .NET
 
@@ -566,12 +579,12 @@ using Pv;
 const string accessKey = "${ACCESS_KEY}";
 const string audioPath = "/absolute/path/to/audio_file";
 
-Leopard handle = Leopard.Create(accessKey);
+Leopard leopard = Leopard.Create(accessKey);
 
-Console.Write(handle.ProcessFile(audioPath));
+Console.Write(leopard.ProcessFile(audioPath));
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/). Finally, when done release the resources using `handle.Dispose()`.
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/). Finally, when done release the resources using `leopard.Dispose()`.
 
 ### Rust
 
@@ -698,8 +711,10 @@ function App(props) {
 
 ## Releases
 
-### v2.0.0 - November 27th, 2023
+### v2.0.0 - November 30th, 2023
 
+- Added speaker diarization feature
+- Added React SDK
 - Improvements to error reporting
 - Upgrades to authorization and authentication system
 - Improved engine accuracy

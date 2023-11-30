@@ -40,19 +40,19 @@ or using `npm`:
 npm install --save @picovoice/leopard-web
 ```
 
-### AccessKey
+## AccessKey
 
 Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` acts as your credentials when using Leopard SDKs.
 You can get your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
 Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get your `AccessKey`.
 
-### Usage
+## Usage
 
 Create a model in [Picovoice Console](https://console.picovoice.ai/) or use one of the default language models found in [lib/common](../../lib/common).
 
 For the web packages, there are two methods to initialize Leopard.
 
-#### Public Directory
+### Public Directory
 
 **NOTE**: Due to modern browser limitations of using a file URL, this method does __not__ work if used without hosting a server.
 
@@ -62,7 +62,7 @@ This method fetches the model file from the public directory and feeds it to Leo
 cp ${LEOPARD_MODEL_FILE} ${PATH_TO_PUBLIC_DIRECTORY}
 ```
 
-#### Base64
+### Base64
 
 **NOTE**: This method works without hosting a server, but increases the size of the model file roughly by 33%.
 
@@ -80,7 +80,7 @@ run:
 npx pvbase64 -h
 ```
 
-#### Leopard Model
+### Language Model
 
 Leopard saves and caches your model file in IndexedDB to be used by WebAssembly. Use a different `customWritePath` variable
 to hold multiple models and set the `forceWrite` value to true to force re-save a model file.
@@ -100,44 +100,42 @@ const leopardModel = {
 }
 ```
 
-#### Init options
-
-Set `enableAutomaticPunctuation` to true, if you wish to enable punctuation in transcript.
-
-```typescript
-// Optional
-const options = {
-  enableAutomaticPunctuation: true
-}
-```
-
-#### Initialize Leopard
+### Initialize Leopard
 
 Create an instance of `Leopard` in the main thread:
 
 ```typescript
-const handle = await Leopard.create(
+const leopard = await Leopard.create(
   ${ACCESS_KEY},
   leopardModel,
-  options // optional options
+  options
 );
 ```
 
 Or create an instance of `Leopard` in a worker thread:
 
 ```typescript
-const handle = await LeopardWorker.create(
+const leopard = await LeopardWorker.create(
   ${ACCESS_KEY},
   leopardModel,
-  options // optional options
+  options
 );
 ```
 
-#### Process Audio Frames
+Additional configuration options can be passed to `create`. Set `enableAutomaticPunctuation` to true if you wish to enable punctuation in transcript or `enableDiarization` if you wish to enable speaker diarization.
+
+```typescript
+const options = {
+  enableAutomaticPunctuation: true,
+  enableDiarization: true
+}
+```
+
+### Process Audio Frames
 
 The process result is an object with:
 - `transcript`: A string containing the transcribed data.
-- `words`: A list of objects containing a `word`, `startSec`, `endSec`, and `confidence`. Each object indicates the start, end time and confidence (between 0 and 1) of the word.
+- `words`: A list of objects containing a `word`, `startSec`, `endSec`, `confidence` and `speakerTag`.
 
 ```typescript
 function getAudioData(): Int16Array {
@@ -145,7 +143,7 @@ function getAudioData(): Int16Array {
   return new Int16Array();
 }
 
-const result = await handle.process(getAudioData());
+const result = await leopard.process(getAudioData());
 console.log(result.transcript);
 console.log(result.words);
 ```
@@ -154,7 +152,7 @@ For processing using worker, you may consider transferring the buffer instead fo
 
 ```typescript
 let pcm = new Int16Array();
-const result = await handle.process(pcm, {
+const result = await leopard.process(pcm, {
   transfer: true,
   transferCallback: (data) => { pcm = data }
 });
@@ -162,21 +160,28 @@ console.log(result.transcript);
 console.log(result.words);
 ```
 
-#### Clean Up
+### Clean Up
 
 Clean up used resources by `Leopard` or `LeopardWorker`:
 
 ```typescript
-await handle.release();
+await leopard.release();
 ```
-
-#### Terminate
 
 Terminate `LeopardWorker` instance:
 
 ```typescript
-await handle.terminate();
+await leopard.terminate();
 ```
+
+### Word Metadata
+
+Along with the transcript, Leopard returns metadata for each transcribed word. Available metadata items are:
+
+- **Start Time:** Indicates when the word started in the transcribed audio. Value is in seconds.
+- **End Time:** Indicates when the word ended in the transcribed audio. Value is in seconds.
+- **Confidence:** Leopard's confidence that the transcribed word is accurate. It is a number within `[0, 1]`.
+- **Speaker Tag:** If speaker diarization is enabled on initialization, the speaker tag is a non-negative integer identifying unique speakers, with `0` reservered for unknown speakers. If speaker diarization is not enabled, the value will always be `-1`.
 
 ## Demo
 

@@ -83,10 +83,19 @@ language models with custom vocabulary and boost words in the existing vocabular
 
 Pass in the `.pv` file via the `modelURL` or `modelPath` constructor argument:
 ```swift
-let leopard = Leopard(accessKey: accessKey, modelPath: modelPath)
+let leopard = Leopard(accessKey: accessKey, modelPath: "${MODEL_FILE_PATH")
 // or
-let leopard = Leopard(accessKey: accessKey, modelURL: modelURL)
+let leopard = Leopard(accessKey: accessKey, modelURL: "${MODEL_FILE_URL}")
 ```
+
+### Word Metadata
+
+Along with the transcript, Leopard returns metadata for each transcribed word. Available metadata items are:
+
+- **Start Time:** Indicates when the word started in the transcribed audio. Value is in seconds.
+- **End Time:** Indicates when the word ended in the transcribed audio. Value is in seconds.
+- **Confidence:** Leopard's confidence that the transcribed word is accurate. It is a number within `[0, 1]`.
+- **Speaker Tag:** If speaker diarization is enabled on initialization, the speaker tag is a non-negative integer identifying unique speakers, with `0` reservered for unknown speakers. If speaker diarization is not enabled, the value will always be `-1`.
 
 ## Running Unit Tests
 

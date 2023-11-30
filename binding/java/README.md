@@ -55,20 +55,21 @@ Create an instance of the engine with the Leopard Builder class and transcribe a
 import ai.picovoice.leopard.*;
 
 final String accessKey = "${ACCESS_KEY}";
+final String audioPath = "${AUDIO_FILE_PATH}";
 
 try {
     Leopard leopard = new Leopard.Builder()
         .setAccessKey(accessKey)
         .build();
-    LeopardTranscript result = leopard.processFile("${AUDIO_PATH}");
+    LeopardTranscript result = leopard.processFile(audioPath);
     leopard.delete();
 } catch (LeopardException ex) { }
 
-System.out.println(transcript);
+System.out.println(result.getTranscriptString());
 ```
 
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and `${AUDIO_PATH}`
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and `${AUDIO_FILE_PATH}`
 to the path an audio file.
 Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
 
@@ -82,11 +83,22 @@ language models with custom vocabulary and boost words in the existing vocabular
 
 Pass in the `.pv` file via the `.setModelPath()` Builder argument:
 ```java
+final String modelPath = "${MODEL_FILE_PATH}";
+
 Leopard leopard = new Leopard.Builder()
-        .setAccessKey("${ACCESS_KEY}")
-        .setModelPath("${MODEL_PATH")
+        .setAccessKey(accessKey)
+        .setModelPath(modelPath)
         .build();
 ```
+
+### Word Metadata
+
+Along with the transcript, Leopard returns metadata for each transcribed word. Available metadata items are:
+
+- **Start Time:** Indicates when the word started in the transcribed audio. Value is in seconds.
+- **End Time:** Indicates when the word ended in the transcribed audio. Value is in seconds.
+- **Confidence:** Leopard's confidence that the transcribed word is accurate. It is a number within `[0, 1]`.
+- **Speaker Tag:** If speaker diarization is enabled on initialization, the speaker tag is a non-negative integer identifying unique speakers, with `0` reservered for unknown speakers. If speaker diarization is not enabled, the value will always be `-1`.
 
 ## Demo App
 

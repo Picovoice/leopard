@@ -32,7 +32,7 @@ or any audio file:
 ```console
 python3 demo/python-subtitle/main.py \
 --access-key ${ACCESS_KEY} \
---audio-path ${AUDIO_PATH} \
+--audio-path ${AUDIO_FILE_PATH} \
 --subtitle-path ${SUBTITLE_PATH}
 ```
 
