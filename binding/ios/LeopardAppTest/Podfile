@@ -2,13 +2,13 @@ source 'https://cdn.cocoapods.org/'
 platform :ios, '13.0'
 
 target 'LeopardAppTest' do
-  pod 'Leopard-iOS', '~> 2.0.0'
+  pod 'Leopard-iOS', '~> 2.0.1'
 end
 
 target 'LeopardAppTestUITests' do
-  pod 'Leopard-iOS', '~> 2.0.0'
+  pod 'Leopard-iOS', '~> 2.0.1'
 end
 
 target 'PerformanceTest' do
-  pod 'Leopard-iOS', '~> 2.0.0'
+  pod 'Leopard-iOS', '~> 2.0.1'
 end
