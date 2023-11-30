@@ -1,11 +1,11 @@
 # RSS Transcribe (Express.js + Picovoice Leopard)
 
-A web application that demonstrates how Picovoice Leopard can be used on a server with Express.js to transcribe the 
+A web application that demonstrates how Picovoice Leopard can be used on a server with Express.js to transcribe the
 latest episode of a given podcast.
 
 ## Compatibility
 
-- Node.js 14+
+- Node.js 16+
 
 ## Picovoice AccessKey
 
