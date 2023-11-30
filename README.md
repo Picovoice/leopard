@@ -406,7 +406,7 @@ Create an instance of the engine and transcribe an audio file:
 import ai.picovoice.leopard.*;
 
 final String accessKey = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
-final String modelPath = "${MODEL_FILE}";
+final String modelPath = "${MODEL_FILE_PATH}";
 try {
     Leopard leopard = new Leopard.Builder()
         .setAccessKey(accessKey)
@@ -419,7 +419,7 @@ try {
 } catch (LeopardException ex) { }
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE}` with a custom trained model from [console](https://console.picovoice.ai/) or the [default model](./lib/common/leopard_params.pv), and `${AUDIO_FILE_PATH}` with the path to the audio file.
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FILE_PATH}` with a custom trained model from [console](https://console.picovoice.ai/) or the [default model](./lib/common/leopard_params.pv), and `${AUDIO_FILE_PATH}` with the path to the audio file.
 
 ### Node.js
 
@@ -463,16 +463,16 @@ Create an instance of the engine and transcribe an audio file:
 ```dart
 import 'package:leopard/leopard.dart';
 
-const accessKey = "{ACCESS_KEY}"  // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
+final String accessKey = '{ACCESS_KEY}'  // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
 
 try {
-    Leopard _leopard = await Leopard.create(accessKey, '{LEOPARD_MODEL_PATH}');
+    Leopard _leopard = await Leopard.create(accessKey, '{MODEL_FILE_PATH}');
     LeopardTranscript result = await _leopard.processFile("${AUDIO_FILE_PATH}");
     print(result.transcript);
 } on LeopardException catch (err) { }
 ```
 
-Replace `${ACCESS_KEY}` with your `AccessKey` obtained from [Picovoice Console](https://console.picovoice.ai/), `${MODEL_FILE}` with a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](./lib/common/leopard_params.pv), and `${AUDIO_FILE_PATH}` with the path to the audio file.
+Replace `${ACCESS_KEY}` with your `AccessKey` obtained from [Picovoice Console](https://console.picovoice.ai/), `${MODEL_FILE_PATH}` with a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](./lib/common/leopard_params.pv), and `${AUDIO_FILE_PATH}` with the path to the audio file.
 
 ### Go
 
@@ -524,7 +524,7 @@ const getAudioFrame = () => {
 }
 
 try {
-  const leopard = await Leopard.create("${ACCESS_KEY}", "${MODEL_FILE}")
+  const leopard = await Leopard.create("${ACCESS_KEY}", "${MODEL_FILE_PATH}")
   const { transcript, words } = await leopard.processFile("${AUDIO_FILE_PATH}")
   console.log(transcript)
 } catch (err: any) {
@@ -534,7 +534,7 @@ try {
 }
 ```
 
-Replace `${ACCESS_KEY}` with your `AccessKey` obtained from Picovoice Console, `${MODEL_FILE}` with a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](./lib/common/leopard_params.pv) and `${AUDIO_FILE_PATH}` with the absolute path of the audio file.
+Replace `${ACCESS_KEY}` with your `AccessKey` obtained from Picovoice Console, `${MODEL_FILE_PATH}` with a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](./lib/common/leopard_params.pv) and `${AUDIO_FILE_PATH}` with the absolute path of the audio file.
 When done be sure to explicitly release the resources using `leopard.delete()`.
 
 ### Java
@@ -558,7 +558,7 @@ try {
     leopard.delete();
 } catch (LeopardException ex) { }
 
-System.out.println(transcript);
+System.out.println(result.getTranscriptString());
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and `${AUDIO_FILE_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
@@ -577,7 +577,7 @@ Create an instance of the engine and transcribe an audio file:
 using Pv;
 
 const string accessKey = "${ACCESS_KEY}";
-const string audioPath = "/absolute/path/to/audio_file";
+const string audioPath = "${AUDIO_FILE_PATH}";
 
 Leopard leopard = Leopard.Create(accessKey);
 
