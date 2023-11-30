@@ -22,3 +22,6 @@
 ## [2.0.0] - 2023-11-15
 * Engine improvements
 * Improved error reporting
+
+## [2.0.1] - 2023-11-30
+* Update native packages
