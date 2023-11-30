@@ -149,14 +149,12 @@ export const useLeopard = (): {
 
   const stopRecording = useCallback(async (): Promise<void> => {
     try {
-      if (!isRecording) {
+      if (!timerRef.current) {
         return;
       }
 
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
+      clearInterval(timerRef.current);
+      timerRef.current = null;
 
       await WebVoiceProcessor.unsubscribe(recorderEngineRef.current);
       setIsRecording(false);
@@ -171,7 +169,7 @@ export const useLeopard = (): {
     } catch (e: any) {
       setError(e);
     }
-  }, [isRecording]);
+  }, []);
 
   const startRecording = useCallback(
     async (maxRecordingSec = DEFAULT_MAX_RECORDING_SEC): Promise<void> => {
@@ -182,7 +180,7 @@ export const useLeopard = (): {
         return;
       }
 
-      if (isRecording) {
+      if (timerRef.current) {
         return;
       }
 
@@ -209,7 +207,7 @@ export const useLeopard = (): {
         setError(e);
       }
     },
-    [isRecording]
+    []
   );
 
   const release = useCallback(async (): Promise<void> => {
