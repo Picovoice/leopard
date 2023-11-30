@@ -49,7 +49,7 @@ cd leopard/demo/java/build/libs
 The file demo uses Leopard to get speech-to-text results from an audio file.
 
 ```console
-java -jar leopard-file-demo.jar -a ${ACCESS_KEY} -i ${AUDIO_PATH}
+java -jar leopard-file-demo.jar -a ${ACCESS_KEY} -i ${AUDIO_FILE_PATH}
 ```
 
 ### Microphone Demo

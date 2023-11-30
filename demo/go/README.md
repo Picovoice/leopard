@@ -6,7 +6,7 @@ Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
 Leopard is an on-device speech-to-text engine. Leopard is:
 
-- Private; All voice processing runs locally. 
+- Private; All voice processing runs locally.
 - Accurate [[1]](https://github.com/Picovoice/speech-to-text-benchmark#results)
 - Compact and Computationally-Efficient [[2]](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
@@ -40,11 +40,11 @@ Run the following in the terminal:
 
 ```console
 go run filedemo/leopard_file_demo.go \
--input_audio_path "${AUDIO_PATH}" \
+-input_audio_path "${AUDIO_FILE_PATH}" \
 -access_key "${ACCESS_KEY}"
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_FILE_PATH}` with a path to an audio file you
 wish to transcribe.
 
 ### Microphone Demo
@@ -75,7 +75,7 @@ It provides information about various audio input devices on the box. Here is an
 ```console
 index: 0, device name: USB Audio Device
 index: 1, device name: MacBook Air Microphone
-``` 
+```
 
 You can use the device index to specify which microphone to use for the demo. For instance, if you want to use the USB Audio Device
 in the above example, you can invoke the demo application as below:

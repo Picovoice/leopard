@@ -25,7 +25,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 ## Installation
 
 ```console
-go get github.com/Picovoice/leopard/binding/go
+go get github.com/Picovoice/leopard/binding/go/v2
 ```
 
 ## AccessKey
@@ -39,7 +39,7 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 Create an instance of the engine and transcribe an audio file:
 
 ```go
-import . "github.com/Picovoice/leopard/binding/go"
+import . "github.com/Picovoice/leopard/binding/go/v2"
 
 leopard := NewLeopard("${ACCESS_KEY}")
 err := leopard.Init()
@@ -48,7 +48,7 @@ if err != nil {
 }
 defer leopard.Delete()
 
-transcript, words, err := leopard.ProcessFile("${AUDIO_PATH}")
+transcript, words, err := leopard.ProcessFile("${AUDIO_FILE_PATH}")
 if err != nil {
     // handle process error
 }
@@ -57,7 +57,7 @@ print(transcript)
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and
-`${AUDIO_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using
+`${AUDIO_FILE_PATH}` to the path an audio file. Finally, when done be sure to explicitly release the resources using
 `leopard.Delete()`.
 
 ## Language Model
@@ -71,9 +71,19 @@ language models with custom vocabulary and boost words in the existing vocabular
 Pass in the `.pv` file by setting `.ModelPath` on an instance of Leopard before initializing:
 ```go
 leopard := NewLeopard("${ACCESS_KEY}")
-leopard.ModelPath = "${MODEL_PATH}"
+leopard.ModelPath = "${MODEL_FILE_PATH}"
 err := leopard.Init()
+
 ```
+
+### Word Metadata
+
+Along with the transcript, Leopard returns metadata for each transcribed word. Available metadata items are:
+
+- **Start Time:** Indicates when the word started in the transcribed audio. Value is in seconds.
+- **End Time:** Indicates when the word ended in the transcribed audio. Value is in seconds.
+- **Confidence:** Leopard's confidence that the transcribed word is accurate. It is a number within `[0, 1]`.
+- **Speaker Tag:** If speaker diarization is enabled on initialization, the speaker tag is a non-negative integer identifying unique speakers, with `0` reserved for unknown speakers. If speaker diarization is not enabled, the value will always be `-1`.
 
 ## Demos
 

@@ -64,16 +64,16 @@ Create an instance of the engine and transcribe an audio file:
 using Pv;
 
 const string accessKey = "${ACCESS_KEY}";
-const string audioPath = "/absolute/path/to/audio_file";
+const string audioPath = "${AUDIO_FILE_PATH}";
 
 Leopard leopard = Leopard.Create(accessKey);
 
 LeopardTranscript result = leopard.ProcessFile(audioPath);
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/). Finally, when done release the resources using `handle.Dispose()`.
+Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/). Finally, when done release the resources using `leopard.Dispose()`.
 
-## Language Model
+### Language Model
 
 The Leopard .NET SDK comes preloaded with a default English language model (`.pv` file).
 Default models for other supported languages can be found in [lib/common](../../lib/common).
@@ -83,8 +83,19 @@ language models with custom vocabulary and boost words in the existing vocabular
 
 Pass in the `.pv` file via the `modelPath` argument in the `Create()` constructor:
 ```csharp
-Leopard handle = Leopard.Create(accessKey, modelPath);
+const string modelPath = "${MODEL_FILE_PATH}";
+
+Leopard leopard = Leopard.Create(accessKey, modelPath);
 ```
+
+### Word Metadata
+
+Along with the transcript, Leopard returns metadata for each transcribed word. Available metadata items are:
+
+- **Start Time:** Indicates when the word started in the transcribed audio. Value is in seconds.
+- **End Time:** Indicates when the word ended in the transcribed audio. Value is in seconds.
+- **Confidence:** Leopard's confidence that the transcribed word is accurate. It is a number within `[0, 1]`.
+- **Speaker Tag:** If speaker diarization is enabled on initialization, the speaker tag is a non-negative integer identifying unique speakers, with `0` reserved for unknown speakers. If speaker diarization is not enabled, the value will always be `-1`.
 
 ## Demos
 

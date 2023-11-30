@@ -57,10 +57,10 @@ leopard/demo/rust/micdemo   # Microphone Demo
 Run the following in the terminal:
 
 ```console
-cargo run --release -- --access_key ${ACCESS_KEY} --input_audio_path ${AUDIO_PATH}
+cargo run --release -- --access_key ${ACCESS_KEY} --input_audio_path ${AUDIO_FILE_PATH}
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_FILE_PATH}` with a path to an audio file you
 wish to transcribe.
 
 ### Microphone Demo

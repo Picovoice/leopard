@@ -6,7 +6,7 @@ Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
 Leopard is an on-device speech-to-text engine. Leopard is:
 
-- Private; All voice processing runs locally. 
+- Private; All voice processing runs locally.
 - [Accurate](https://picovoice.ai/docs/benchmark/stt/)
 - [Compact and Computationally-Efficient](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
@@ -39,10 +39,10 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 Run the following in the terminal:
 
 ```console
-leopard_demo_file --access_key ${ACCESS_KEY} --audio_paths ${AUDIO_PATH}
+leopard_demo_file --access_key ${ACCESS_KEY} --audio_paths ${AUDIO_FILE_PATH}
 ```
 
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_PATH}` with a path to an audio file you
+Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_FILE_PATH}` with a path to an audio file you
 wish to transcribe.
 
 ### Microphone Demo
@@ -56,7 +56,7 @@ leopard_demo_mic --access_key ${ACCESS_KEY}
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console. Once running, the demo prints:
 
 ```console
->>> Press `ENTER` to start: 
+>>> Press `ENTER` to start:
 ```
 
 Press `ENTER` key and wait for the following message in the terminal:

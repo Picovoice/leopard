@@ -54,7 +54,43 @@ On Android, open your AndroidManifest.xml and add the following line:
 <uses-permission android:name="android.permission.INTERNET" />
 ```
 
-## Leopard Model File Integration
+## Usage
+
+An instance of [`Leopard`](https://picovoice.ai/docs/api/leopard-flutter/#leopard) is created by passing a model file path into its static constructor `create`:
+
+```dart
+import 'package:leopard_flutter/leopard.dart';
+
+String accessKey = '{ACCESS_KEY}' // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
+String modelPath = '{MODEL_FILE_PATH}' // path relative to the assets folder or absolute path to file on device
+
+void createLeopard() async {
+    try {
+        _leopard = await Leopard.create(accessKey, modelPath);
+    } on LeopardException catch (err) {
+        // handle Leopard init error
+    }
+}
+```
+
+Transcribe an audio file by passing in the path:
+
+```dart
+String audioPath = '{AUDIO_FILE_PATH}'
+
+try {
+    LeopardTranscript result = await _leopard.processFile(audioPath);
+    print(result.transcript);
+} on LeopardException catch (err) { }
+```
+
+When done, resources must be released explicitly:
+
+```dart
+await _leopard.delete();
+```
+
+### Language Model
 
 Add the Leopard model file to your Flutter application:
 
@@ -73,39 +109,14 @@ String modelPath = "assets/leopard_model.pv";
 
 Alternatively, if the model file is deployed to the device with a different method, the absolute path to the file on device can be used.
 
-## Usage
+### Word Metadata
 
-An instance of [`Leopard`](https://picovoice.ai/docs/api/leopard-flutter/#leopard) is created by passing a model file path into its static constructor `create`:
+Along with the transcript, Leopard returns metadata for each transcribed word. Available metadata items are:
 
-```dart
-import 'package:leopard_flutter/leopard.dart';
-
-String accessKey = '{ACCESS_KEY}' // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
-String modelPath = '{LEOPARD_MODEL_PATH}' // path relative to the assets folder or absolute path to file on device
-
-void createLeopard() async {
-    try {
-        _leopard = await Leopard.create(accessKey, modelPath);
-    } on LeopardException catch (err) {
-        // handle Leopard init error
-    }
-}
-```
-
-Transcribe an audio file by passing in the path:
-
-```dart
-try {
-    LeopardTranscript result = await _leopard.processFile("${AUDIO_FILE_PATH}");
-    print(result.transcript);
-} on LeopardException catch (err) { }
-```
-
-When done, resources have to be released explicitly:
-
-```dart
-leopard.delete();
-```
+- **Start Time:** Indicates when the word started in the transcribed audio. Value is in seconds.
+- **End Time:** Indicates when the word ended in the transcribed audio. Value is in seconds.
+- **Confidence:** Leopard's confidence that the transcribed word is accurate. It is a number within `[0, 1]`.
+- **Speaker Tag:** If speaker diarization is enabled on initialization, the speaker tag is a non-negative integer identifying unique speakers, with `0` reserved for unknown speakers. If speaker diarization is not enabled, the value will always be `-1`.
 
 ## Demo App
 

@@ -31,7 +31,7 @@ While the server is up, make a transcription request:
 
 ```console
 go run client.go \
---input_audio "${AUDIO_PATH}"
+--input_audio "${AUDIO_FILE_PATH}"
 ``````
 
-Replace `${AUDIO_PATH}` with a path to an audio file you wish to transcribe.
+Replace `${AUDIO_FILE_PATH}` with a path to an audio file you wish to transcribe.

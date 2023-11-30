@@ -5,9 +5,9 @@ on:
   push:
     branches: [ master ]
     paths:
-      - '!demo/c/README.md'
       - '.github/workflows/c-demos.yml'
       - 'demo/c/**'
+      - '!demo/c/README.md'
       - 'include/**'
       - 'lib/common/**'
       - 'lib/jetson/**'
@@ -20,9 +20,9 @@ on:
   pull_request:
     branches: [ master, 'v[0-9]+.[0-9]+' ]
     paths:
-      - '!demo/c/README.md'
       - '.github/workflows/c-demos.yml'
       - 'demo/c/**'
+      - '!demo/c/README.md'
       - 'include/**'
       - 'lib/common/**'
       - 'lib/jetson/**'

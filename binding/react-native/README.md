@@ -50,18 +50,6 @@ Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` ac
 You can get your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
 Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get your `AccessKey`.
 
-## Adding Leopard Models
-
-Create a custom model using the [Picovoice Console](https://console.picovoice.ai/) or use one of the default language models found in [lib/common](../../lib/common).
-
-### Android
-
-To add a Leopard model file to your Android application, add the file as a bundled resource by placing it under the `assets` directory of your Android application.
-
-### iOS
-
-To add a Leopard model file to your iOS application, add the file as a bundled resource by selecting Build Phases in `Xcode` and adding it to the `Copy Bundle Resources` step.
-
 ## Usage
 
 Create an instance of `Leopard`:
@@ -94,6 +82,27 @@ try {
 ```
 
 Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
+
+### Language Model
+
+Create a custom model using the [Picovoice Console](https://console.picovoice.ai/) or use one of the default language models found in [lib/common](../../lib/common).
+
+#### Adding to Android
+
+To add a Leopard model file to your Android application, add the file as a bundled resource by placing it under the `assets` directory of your Android application.
+
+#### Adding to iOS
+
+To add a Leopard model file to your iOS application, add the file as a bundled resource by selecting Build Phases in `Xcode` and adding it to the `Copy Bundle Resources` step.
+
+### Word Metadata
+
+Along with the transcript, Leopard returns metadata for each transcribed word. Available metadata items are:
+
+- **Start Time:** Indicates when the word started in the transcribed audio. Value is in seconds.
+- **End Time:** Indicates when the word ended in the transcribed audio. Value is in seconds.
+- **Confidence:** Leopard's confidence that the transcribed word is accurate. It is a number within `[0, 1]`.
+- **Speaker Tag:** If speaker diarization is enabled on initialization, the speaker tag is a non-negative integer identifying unique speakers, with `0` reserved for unknown speakers. If speaker diarization is not enabled, the value will always be `-1`.
 
 ## Demo App
 

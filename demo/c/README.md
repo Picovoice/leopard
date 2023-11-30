@@ -44,7 +44,7 @@ usage: -a ACCESS_KEY -l LIBRARY_PATH -m MODEL_PATH [-d] [-v] audio_path0 audio_p
 ```
 
 Run the command corresponding to your platform from the root of the repository. Replace `${ACCESS_KEY}` with yours
-obtained from [Picovoice Console](https://console.picovoice.ai/) and `${AUDIO_PATH}` with the path to an audio file you
+obtained from [Picovoice Console](https://console.picovoice.ai/) and `${AUDIO_FILE_PATH}` with the path to an audio file you
 want to transcribe.
 
 Use the `-d` flag to disable automatic punctuation.
@@ -59,7 +59,7 @@ Use the `-v` flag to enable the printing of word metadata.
 -a ${ACCESS_KEY} \
 -m lib/common/leopard_params.pv \
 -l lib/linux/x86_64/libpv_leopard.so \
-${AUDIO_PATH}
+${AUDIO_FILE_PATH}
 ```
 
 #### macOS (x86_64)
@@ -69,7 +69,7 @@ ${AUDIO_PATH}
 -a ${ACCESS_KEY} \
 -m lib/common/leopard_params.pv \
 -l lib/mac/x86_64/libpv_leopard.dylib \
-${AUDIO_PATH}
+${AUDIO_FILE_PATH}
 ```
 
 #### macOS (arm64)
@@ -79,7 +79,7 @@ ${AUDIO_PATH}
 -a ${ACCESS_KEY} \
 -m lib/common/leopard_params.pv \
 -l lib/mac/arm64/libpv_leopard.dylib \
-${AUDIO_PATH}
+${AUDIO_FILE_PATH}
 ```
 
 #### Windows
@@ -91,7 +91,7 @@ demo\\c\\build\\leopard_demo.exe ^
 -a ${ACCESS_KEY} ^
 -m lib\\common\\leopard_params.pv ^
 -l lib\\windows\\amd64\\libpv_leopard.dll ^
-${AUDIO_PATH}
+${AUDIO_FILE_PATH}
 ```
 
 #### Raspberry Pi 4
@@ -101,7 +101,7 @@ ${AUDIO_PATH}
 -a ${ACCESS_KEY} \
 -m lib/common/leopard_params.pv \
 -l lib/raspberry-pi/cortex-a72/libpv_leopard.so \
-${AUDIO_PATH}
+${AUDIO_FILE_PATH}
 ```
 
 #### Raspberry Pi 4 (64-bit)
@@ -111,7 +111,7 @@ ${AUDIO_PATH}
 -a ${ACCESS_KEY} \
 -m lib/common/leopard_params.pv \
 -l lib/raspberry-pi/cortex-a72-aarch64/libpv_leopard.so \
-${AUDIO_PATH}
+${AUDIO_FILE_PATH}
 ```
 
 #### Raspberry Pi 3
@@ -121,7 +121,7 @@ ${AUDIO_PATH}
 -a ${ACCESS_KEY} \
 -m lib/common/leopard_params.pv \
 -l lib/raspberry-pi/cortex-a53/libpv_leopard.so \
-${AUDIO_PATH}
+${AUDIO_FILE_PATH}
 ```
 
 #### Raspberry Pi 3 (64-bit)
@@ -131,7 +131,7 @@ ${AUDIO_PATH}
 -a ${ACCESS_KEY} \
 -m lib/common/leopard_params.pv \
 -l lib/raspberry-pi/cortex-a53-aarch64/libpv_leopard.so \
-${AUDIO_PATH}
+${AUDIO_FILE_PATH}
 ```
 
 #### NVIDIA Jetson Nano
@@ -141,5 +141,5 @@ ${AUDIO_PATH}
 -a ${ACCESS_KEY} \
 -m lib/common/leopard_params.pv \
 -l lib/jetson/cortex-a57-aarch64/libpv_leopard.so \
-${AUDIO_PATH}
+${AUDIO_FILE_PATH}
 ```
