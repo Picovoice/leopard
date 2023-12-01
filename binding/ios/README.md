@@ -74,7 +74,7 @@ with the name of the Leopard model file name, `${AUDIO_FILE_NAME}` with the name
 `${AUDIO_FILE_EXTENSION}` with the extension of the audio file. Finally, when done be sure to explicitly release
 the resources using `leopard.delete()`.
 
-## Language Model
+### Language Model
 
 Default models for supported languages can be found in [lib/common](../../lib/common).
 

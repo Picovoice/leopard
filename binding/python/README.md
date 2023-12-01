@@ -32,7 +32,7 @@ Leopard requires a valid Picovoice `AccessKey` at initialization. `AccessKey` ac
 You can get your `AccessKey` for free. Make sure to keep your `AccessKey` secret.
 Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get your `AccessKey`.
 
-### Usage
+## Usage
 
 Create an instance of the engine and transcribe an audio file:
 
@@ -57,7 +57,7 @@ Finally, when done be sure to explicitly release the resources:
 leopard.delete()
 ```
 
-## Language Model
+### Language Model
 
 The Leopard Python SDK comes preloaded with a default English language model (`.pv` file).
 Default models for other supported languages can be found in [lib/common](../../lib/common).

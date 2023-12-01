@@ -68,7 +68,7 @@ Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://con
 
 The model file contains the parameters for the Leopard engine. You may create bespoke language models using [Picovoice Console](https://console.picovoice.ai/) and then pass in the relevant file.
 
-## Language Model
+### Language Model
 
 The Leopard Rust SDK comes preloaded with a default English language model (`.pv` file).
 Default models for other supported languages can be found in [lib/common](../../lib/common).

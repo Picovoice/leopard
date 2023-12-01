@@ -73,7 +73,7 @@ Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://con
 to the path an audio file.
 Finally, when done be sure to explicitly release the resources using `leopard.delete()`.
 
-## Language Model
+### Language Model
 
 The Leopard Java SDK comes preloaded with a default English language model (`.pv` file).
 Default models for other supported languages can be found in [lib/common](../../lib/common).
