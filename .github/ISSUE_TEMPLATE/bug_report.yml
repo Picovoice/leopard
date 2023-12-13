@@ -65,7 +65,6 @@ body:
         - Raspberry Pi
         - NVIDIA Jetson
         - BeagleBone
-        - ARM Cortex-M
       default: 0
     validations:
       required: true
