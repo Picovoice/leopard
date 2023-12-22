@@ -362,9 +362,9 @@ Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console, `${MODEL_FIL
 Finally, when done be sure to release resources acquired using `pv_leopard_delete(leopard)`.
 
 ### iOS
-
+<!-- markdown-link-check-disable -->
 The Leopard iOS binding is available via [CocoaPods](https://cocoapods.org/pods/Leopard-iOS). To import it into your iOS project, add the following line to your Podfile and run `pod install`:
-
+<!-- markdown-link-check-enable -->
 ```ruby
 pod 'Leopard-iOS'
 ```
