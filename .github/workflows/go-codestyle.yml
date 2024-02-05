@@ -23,7 +23,7 @@ jobs:
     - name: Setup go
       uses: actions/setup-go@v1
       with:
-        go-version: 1.18
+        go-version: 1.21
 
     - name: golangci-lint
       uses: golangci/golangci-lint-action@v3
@@ -41,7 +41,7 @@ jobs:
     - name: Setup go
       uses: actions/setup-go@v1
       with:
-        go-version: 1.18
+        go-version: 1.21
 
     - name: golangci-lint
       uses: golangci/golangci-lint-action@v3
@@ -57,7 +57,7 @@ jobs:
     - name: Setup go
       uses: actions/setup-go@v1
       with:
-        go-version: 1.18
+        go-version: 1.21
 
     - name: golangci-lint
       uses: golangci/golangci-lint-action@v3
