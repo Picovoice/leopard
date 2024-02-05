@@ -1,6 +1,6 @@
 [package]
 name = "pv_leopard_filedemo"
-version = "2.0.1"
+version = "2.0.2"
 edition = "2018"
 
 [dependencies]
@@ -8,5 +8,5 @@ chrono = "0.4.20"
 clap = "3.2.16"
 hound = "3.4.0"
 itertools = "0.10.3"
-pv_leopard = "=2.0.1"
+pv_leopard = "=2.0.2"
 tabwriter = "1.2.1"
