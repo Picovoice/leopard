@@ -35,7 +35,7 @@
   "bugs": {
     "url": "https://github.com/Picovoice/leopard/issues"
   },
-  "homepage": "https://picovoice.ai/products/leopard/",
+  "homepage": "https://picovoice.ai/platform/leopard/",
   "devDependencies": {
     "@types/jest": "^27.4.1",
     "@types/node": "^18.11.9",
