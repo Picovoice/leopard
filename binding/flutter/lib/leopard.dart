@@ -1,5 +1,5 @@
 //
-// Copyright 2022-2023 Picovoice Inc.
+// Copyright 2022-2024 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -16,6 +16,17 @@ import 'package:flutter/services.dart';
 import 'package:leopard_flutter/leopard_transcript.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:leopard_flutter/leopard_error.dart';
+
+enum _NativeFunctions {
+  // ignore:constant_identifier_names
+  CREATE,
+  // ignore:constant_identifier_names
+  PROCESS,
+  // ignore:constant_identifier_names
+  PROCESSFILE,
+  // ignore:constant_identifier_names
+  DELETE
+}
 
 class Leopard {
   static final MethodChannel _channel = MethodChannel("leopard");
@@ -41,20 +52,17 @@ class Leopard {
   /// [enableDiarization] (Optional) Set to `true` to enable speaker diarization, which allows Leopard to
   ///                     differentiate speakers as part of the transcription process. Word
   ///                     metadata will include a `speaker_tag` to identify unique speakers.
-  /// 
+  ///
   /// Throws a `LeopardException` if not initialized correctly
   ///
   /// returns an instance of the Leopard Speech-to-Text engine
   static Future<Leopard> create(String accessKey, String modelPath,
-      {
-        enableAutomaticPunctuation = false,
-        enableDiarization = false
-      }) async {
+      {enableAutomaticPunctuation = false, enableDiarization = false}) async {
     modelPath = await _tryExtractFlutterAsset(modelPath);
 
     try {
-      Map<String, dynamic> result =
-          Map<String, dynamic>.from(await _channel.invokeMethod('create', {
+      Map<String, dynamic> result = Map<String, dynamic>.from(
+          await _channel.invokeMethod(_NativeFunctions.CREATE.name, {
         'accessKey': accessKey,
         'modelPath': modelPath,
         'enableAutomaticPunctuation': enableAutomaticPunctuation,
@@ -81,7 +89,8 @@ class Leopard {
   Future<LeopardTranscript> process(List<int>? frame) async {
     try {
       Map<String, dynamic> result = Map<String, dynamic>.from(await _channel
-          .invokeMethod('process', {'handle': _handle, 'frame': frame}));
+          .invokeMethod(_NativeFunctions.PROCESS.name,
+              {'handle': _handle, 'frame': frame}));
 
       return _pluginResultToLeopardTranscript(result);
     } on PlatformException catch (error) {
@@ -100,7 +109,8 @@ class Leopard {
   Future<LeopardTranscript> processFile(String path) async {
     try {
       Map<String, dynamic> result = Map<String, dynamic>.from(await _channel
-          .invokeMethod('processfile', {'handle': _handle, 'path': path}));
+          .invokeMethod(_NativeFunctions.PROCESSFILE.name,
+              {'handle': _handle, 'path': path}));
 
       return _pluginResultToLeopardTranscript(result);
     } on PlatformException catch (error) {
@@ -113,7 +123,8 @@ class Leopard {
   /// Frees memory that was allocated for Leopard
   Future<void> delete() async {
     if (_handle != null) {
-      await _channel.invokeMethod('delete', {'handle': _handle});
+      await _channel
+          .invokeMethod(_NativeFunctions.DELETE.name, {'handle': _handle});
       _handle = null;
     }
   }
@@ -136,12 +147,8 @@ class Leopard {
 
     List<LeopardWord> words = [];
     for (dynamic word in result['words']) {
-      words.add(LeopardWord(
-          word['word'],
-          word['startSec'],
-          word['endSec'],
-          word['confidence'],
-          word['speakerTag']));
+      words.add(LeopardWord(word['word'], word['startSec'], word['endSec'],
+          word['confidence'], word['speakerTag']));
     }
     return LeopardTranscript(transcript, words);
   }
