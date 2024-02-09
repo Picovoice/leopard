@@ -19,7 +19,7 @@
             - Private; All voice processing runs locally.
             - Accurate
             - Compact and Computationally-Efficient
-            - Cross-Platform: Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64), Raspberry Pi (4, 3), NVIDIA Jetson Nano
+            - Cross-Platform: Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64), Raspberry Pi (3, 4, 5), NVIDIA Jetson Nano
         </Description>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageIcon>pv_circle_512.png</PackageIcon>

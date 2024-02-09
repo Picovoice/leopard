@@ -4,10 +4,10 @@ Pod::Spec.new do |s|
   s.version = '2.0.1'
   s.license = {:type => 'Apache 2.0'}
   s.summary = 'iOS SDK for Picovoice\'s Leopard speech-to-text engine.'
-  s.description = 
+  s.description =
   <<-DESC
   Leopard is an on-device speech-to-text engine.
-  
+
   Leopard is:
     - private, all voice processing runs locally.
     - Accurate
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
       - Windows (x86_64)
       - Android
       - iOS
-      - Raspberry Pi (4, 3)
+      - Raspberry Pi (3, 4, 5)
       - NVIDIA Jetson Nano
   DESC
   s.homepage = 'https://github.com/Picovoice/leopard/tree/master/binding/ios'
