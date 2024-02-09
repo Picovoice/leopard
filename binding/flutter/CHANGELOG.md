@@ -25,3 +25,6 @@
 
 ## [2.0.1] - 2023-11-30
 * Update native packages
+
+## [2.0.2] - 2024-02-08
+* Additional gradle plugin build support
