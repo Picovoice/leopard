@@ -5,7 +5,7 @@ A demo application that demonstrates how to implement a lightweight transcriptio
 ## Compatibility
 
 - go 1.16+
-- Runs on Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64), Raspberry Pi (4, 3), and NVIDIA Jetson Nano.
+- Runs on Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64), Raspberry Pi (3, 4, 5), and NVIDIA Jetson Nano.
 
 ## AccessKey
 

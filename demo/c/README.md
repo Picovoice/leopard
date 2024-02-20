@@ -94,6 +94,26 @@ demo\\c\\build\\leopard_demo.exe ^
 ${AUDIO_FILE_PATH}
 ```
 
+#### Raspberry Pi 5
+
+```console
+./demo/c/build/leopard_demo \
+-a ${ACCESS_KEY} \
+-m lib/common/leopard_params.pv \
+-l lib/raspberry-pi/cortex-a76/libpv_leopard.so \
+${AUDIO_FILE_PATH}
+```
+
+#### Raspberry Pi 5 (64-bit)
+
+```console
+./demo/c/build/leopard_demo \
+-a ${ACCESS_KEY} \
+-m lib/common/leopard_params.pv \
+-l lib/raspberry-pi/cortex-a76-aarch64/libpv_leopard.so \
+${AUDIO_FILE_PATH}
+```
+
 #### Raspberry Pi 4
 
 ```console
