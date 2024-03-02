@@ -23,6 +23,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 - [Leopard](#leopard)
     - [Table of Contents](#table-of-contents)
     - [AccessKey](#accesskey)
+    - [Language Support](#language-support)
     - [Demos](#demos)
         - [Python](#python-demos)
         - [C](#c-demo)
@@ -65,6 +66,11 @@ offline.
 AccessKey also verifies that your usage is within the limits of your account. Everyone who signs up for
 [Picovoice Console](https://console.picovoice.ai/) receives the `Free Tier` usage rights described
 [here](https://picovoice.ai/pricing/). If you wish to increase your limits, you can purchase a subscription plan.
+
+## Language Support
+
+- English, French, German, Italian, Japanese, Korean, Portuguese, and Spanish
+- Support for additional languages is available for commercial customers on a case-by-case basis.
 
 ## Demos
 
