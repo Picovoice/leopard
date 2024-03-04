@@ -70,7 +70,7 @@ AccessKey also verifies that your usage is within the limits of your account. Ev
 ## Language Support
 
 - English, French, German, Italian, Japanese, Korean, Portuguese, and Spanish.
-- Support for additional languages is available for commercial customers on a case-by-case basis.
+- Support for [additional languages is available for commercial customers](https://picovoice.ai/consulting/) on a case-by-case basis.
 
 ## Demos
 
