@@ -1,5 +1,3 @@
-github.com/Picovoice/leopard/binding/go/v2 v2.0.1 h1:XUjSAKS+MSCI5BT54Mkq6sxEIsIwe32Ou7LHWBxfksQ=
-github.com/Picovoice/leopard/binding/go/v2 v2.0.1/go.mod h1:/rYUeRDH4xBgtwBe9D8BwHIauPJ+M7czqLfyeJQJu7c=
 github.com/Picovoice/leopard/binding/go/v2 v2.0.2 h1:Knk/UV51oRuHTHd7MGtlZXwsFF5jxu6AqttB0jGMHxs=
 github.com/Picovoice/leopard/binding/go/v2 v2.0.2/go.mod h1:/rYUeRDH4xBgtwBe9D8BwHIauPJ+M7czqLfyeJQJu7c=
 github.com/agnivade/levenshtein v1.1.1 h1:QY8M92nrzkmr798gCo3kmMyqXFzdQVpxLlGPRBij0P8=
@@ -26,5 +24,5 @@ google.golang.org/grpc v1.53.0 h1:LAv2ds7cmFV/XTS3XG1NneeENYrXGmorPxsBbptIjNc=
 google.golang.org/grpc v1.53.0/go.mod h1:OnIrk0ipVdj4N5d9IUoFUx72/VlD7+jUsHwZgwSMQpw=
 google.golang.org/protobuf v1.26.0-rc.1/go.mod h1:jlhhOSvTdKEhbULTjvd4ARK9grFBp09yW+WbY/TyQbw=
 google.golang.org/protobuf v1.26.0/go.mod h1:9q0QmTI4eRPtz6boOQmLYwt+qCgq0jsYwAQnmE0givc=
-google.golang.org/protobuf v1.28.1 h1:d0NfwRgPtno5B1Wa6L2DAG+KivqkdutMf1UhdNx175w=
-google.golang.org/protobuf v1.28.1/go.mod h1:HV8QOd/L58Z+nl8r43ehVNZIU/HEI6OcFqwMG9pJV4I=
+google.golang.org/protobuf v1.33.0 h1:uNO2rsAINq/JlFpSdYEKIZ0uKD/R9cpdv0T+yoGwGmI=
+google.golang.org/protobuf v1.33.0/go.mod h1:c6P6GXX6sHbq/GpV6MGZEdwhWPcYBgnhAHhKbcUYpos=
