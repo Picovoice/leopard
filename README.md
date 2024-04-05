@@ -1,10 +1,25 @@
 # Leopard
 
+[![GitHub release](https://img.shields.io/github/release/Picovoice/Leopard.svg)](https://github.com/Picovoice/Leopard/releases)
+[![GitHub](https://img.shields.io/github/license/Picovoice/leopard)](https://github.com/Picovoice/leopard/)
+[![GitHub language count](https://img.shields.io/github/languages/count/Picovoice/leopard)](https://github.com/Picovoice/leopard/)
+
+[![Crates.io](https://img.shields.io/crates/v/pv_leopard)](https://crates.io/crates/pv_leopard)<!-- markdown-link-check-disable-line -->
+[![Maven Central](https://img.shields.io/maven-central/v/ai.picovoice/leopard-android?label=maven-central%20%5Bandroid%5D)](https://repo1.maven.org/maven2/ai/picovoice/leopard-android/)
+[![Maven Central](https://img.shields.io/maven-central/v/ai.picovoice/leopard-java?label=maven%20central%20%5Bjava%5D)](https://repo1.maven.org/maven2/ai/picovoice/leopard-java/)
+[![npm](https://img.shields.io/npm/v/@picovoice/leopard-node?label=npm%20%5Bnode%5D)](https://www.npmjs.com/package/@picovoice/picovoice-node)
+[![npm](https://img.shields.io/npm/v/@picovoice/leopard-react?label=npm%20%5Breact%5D)](https://www.npmjs.com/package/@picovoice/leopard-react)
+[![npm](https://img.shields.io/npm/v/@picovoice/leopard-react-native?label=npm%20%5Breact-native%5D)](https://www.npmjs.com/package/@picovoice/leopard-react-native)
+[![npm](https://img.shields.io/npm/v/@picovoice/leopard-web?label=npm%20%5Bweb%5D)](https://www.npmjs.com/package/@picovoice/leopard-web)
+[![Nuget](https://img.shields.io/nuget/v/leopard)](https://www.nuget.org/packages/Leopard/)
+[![npm](https://img.shields.io/cocoapods/v/Leopard-iOS)](https://cocoapods.org/pods/Leopard-iOS)
+[![Pub Version](https://img.shields.io/pub/v/leopard_flutter)](https://pub.dev/packages/leopard_flutter)
+[![PyPI](https://img.shields.io/pypi/v/pvleopard)](https://pypi.org/project/pvleopard/)
+[![Go Reference](https://pkg.go.dev/badge/github.com/Picovoice/leopard/binding/go.svg)](https://pkg.go.dev/github.com/Picovoice/leopard/binding/go)
+
 Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
-<!-- markdown-link-check-disable -->
-[![Twitter URL](https://img.shields.io/twitter/url?label=%40AiPicovoice&style=social&url=https%3A%2F%2Ftwitter.com%2FAiPicovoice)](https://twitter.com/AiPicovoice)
-<!-- markdown-link-check-enable -->
+[![Twitter URL](https://img.shields.io/twitter/url?label=%40AiPicovoice&style=social&url=https%3A%2F%2Ftwitter.com%2FAiPicovoice)](https://twitter.com/AiPicovoice)<!-- markdown-link-check-disable-line -->
 [![YouTube Channel Views](https://img.shields.io/youtube/channel/views/UCAdi9sTCXLosG1XeqDwLx7w?label=YouTube&style=social)](https://www.youtube.com/channel/UCAdi9sTCXLosG1XeqDwLx7w)
 
 Leopard is an on-device speech-to-text engine. Leopard is:
