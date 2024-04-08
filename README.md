@@ -11,7 +11,7 @@
 [![npm](https://img.shields.io/npm/v/@picovoice/leopard-react-native?label=npm%20%5Breact-native%5D)](https://www.npmjs.com/package/@picovoice/leopard-react-native)
 [![npm](https://img.shields.io/npm/v/@picovoice/leopard-web?label=npm%20%5Bweb%5D)](https://www.npmjs.com/package/@picovoice/leopard-web)
 [![Nuget](https://img.shields.io/nuget/v/leopard)](https://www.nuget.org/packages/Leopard/)
-[![CocoaPods](https://img.shields.io/cocoapods/v/Leopard-iOS)](https://cocoapods.org/pods/Leopard-iOS)
+[![CocoaPods](https://img.shields.io/cocoapods/v/Leopard-iOS)](https://cocoapods.org/pods/Leopard-iOS)<!-- markdown-link-check-disable-line -->
 [![Pub Version](https://img.shields.io/pub/v/leopard_flutter)](https://pub.dev/packages/leopard_flutter)
 [![PyPI](https://img.shields.io/pypi/v/pvleopard)](https://pypi.org/project/pvleopard/)
 [![Go Reference](https://pkg.go.dev/badge/github.com/Picovoice/leopard/binding/go.svg)](https://pkg.go.dev/github.com/Picovoice/leopard/binding/go)
