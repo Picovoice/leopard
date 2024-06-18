@@ -52,6 +52,6 @@ setuptools.setup(
             'leopard_demo_mic=pvleoparddemo.leopard_demo_mic:main',
         ],
     ),
-    python_requires='>=3.7',
+    python_requires='>=3.8',
     keywords="Speech-to-Text, ASR, Speech Recognition, Voice Recognition, Automatic Speech Recognition",
 )
