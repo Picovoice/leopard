@@ -98,7 +98,7 @@ export default class App extends Component<Props, State> {
         `models/leopard_params${suffix}.pv`,
         {
           enableAutomaticPunctuation: true,
-          enableDiarization: true
+          enableDiarization: true,
         },
       );
     } catch (err: any) {
