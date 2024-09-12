@@ -8,7 +8,7 @@
   "dependencies": {
     "@picovoice/leopard-node": "^2.0.0",
     "axios": "^1.7.4",
-    "express": "^4.19.2",
+    "express": "^4.20.0",
     "rss-parser": "^3.12.0"
   }
 }
