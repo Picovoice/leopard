@@ -9,7 +9,6 @@ on:
       - 'binding/rust/**'
       - '!binding/rust/README.md'
       - 'lib/common/**'
-      - 'lib/jetson/**'
       - 'lib/linux/**'
       - 'lib/mac/**'
       - 'lib/raspberry-pi/**'
@@ -23,7 +22,6 @@ on:
       - 'binding/rust/**'
       - '!binding/rust/README.md'
       - 'lib/common/**'
-      - 'lib/jetson/**'
       - 'lib/linux/**'
       - 'lib/mac/**'
       - 'lib/raspberry-pi/**'
@@ -76,7 +74,7 @@ jobs:
 
     strategy:
       matrix:
-        machine: [rpi3-32, rpi3-64, rpi4-32, rpi4-64, rpi5-64, jetson]
+        machine: [rpi3-32, rpi3-64, rpi4-32, rpi4-64, rpi5-64]
 
     steps:
     - uses: actions/checkout@v3

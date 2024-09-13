@@ -47,6 +47,11 @@ jobs:
       with:
         go-version: ${{ matrix.go }}
 
+      # ************** REMOVE AFTER RELEASE ********************
+    - name: Get Go SDK from branch
+      run: go get github.com/Picovoice/leopard/binding/go/v3/@841cb80c9f2b3bf655ebfc12911d73250f522106
+      # ********************************************************
+
     - name: Build micdemo
       run: go build micdemo/leopard_mic_demo.go
 
@@ -61,10 +66,15 @@ jobs:
 
     strategy:
       matrix:
-        machine: [rpi3-32, rpi3-64, rpi4-32, rpi4-64, rpi5-64, jetson]
+        machine: [rpi3-32, rpi3-64, rpi4-32, rpi4-64, rpi5-64]
 
     steps:
     - uses: actions/checkout@v3
+
+      # ************** REMOVE AFTER RELEASE ********************
+    - name: Get Go SDK from branch
+      run: go get github.com/Picovoice/leopard/binding/go/v3/@841cb80c9f2b3bf655ebfc12911d73250f522106
+      # ********************************************************
 
     - name: Build micdemo
       run: go build micdemo/leopard_mic_demo.go
@@ -99,6 +109,11 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: ${{ matrix.go }}
+
+      # ************** REMOVE AFTER RELEASE ********************
+    - name: Get Go SDK from branch
+      run: go get github.com/Picovoice/leopard/binding/go/v3/@841cb80c9f2b3bf655ebfc12911d73250f522106
+      # ********************************************************
 
     - name: Build server
       run: go build server.go
