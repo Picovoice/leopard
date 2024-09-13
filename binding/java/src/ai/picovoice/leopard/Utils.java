@@ -1,5 +1,5 @@
 /*
-    Copyright 2022-2023 Picovoice Inc.
+    Copyright 2022-2024 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
@@ -137,8 +137,6 @@ class Utils {
                     case "0xd08":
                     case "0xd0b":
                         return "raspberry-pi";
-                    case "0xd07":
-                        return "jetson";
                     default:
                         throw new RuntimeException(String.format("Execution environment not supported. " +
                                 "Leopard Java does not support CPU Part (%s).", cpuPart));
@@ -170,15 +168,13 @@ class Utils {
             if (isX86_64) {
                 return "x86_64";
             }
-        } else if (isArm) {  // RPI, Jetson, etc..
+        } else if (isArm) {  // RPI
             String cpuPart = getCpuPart();
             String archInfo = (arch.equals("aarch64")) ? "-aarch64" : "";
 
             switch (cpuPart) {
                 case "0xd03":
                     return "cortex-a53" + archInfo;
-                case "0xd07":
-                    return "cortex-a57" + archInfo;
                 case "0xd08":
                     return "cortex-a72" + archInfo;
                 case "0xd0b":
@@ -225,7 +221,6 @@ class Utils {
                 return RESOURCE_DIRECTORY.resolve("lib/java/mac")
                         .resolve(ARCHITECTURE)
                         .resolve("libpv_leopard_jni.dylib").toString();
-            case "jetson":
             case "raspberry-pi":
             case "linux":
                 return RESOURCE_DIRECTORY.resolve("lib/java")

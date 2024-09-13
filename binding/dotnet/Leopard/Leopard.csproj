@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net6.0;netcoreapp3.0;netstandard2.0</TargetFrameworks>
-        <Version>2.0.2</Version>
+        <TargetFrameworks>net8.0;net6.0;netcoreapp3.0;netstandard2.0</TargetFrameworks>
+        <Version>2.0.3</Version>
         <Authors>Picovoice</Authors>
         <Company/>
         <Product>Leopard Speech-to-Text Engine</Product>
@@ -19,7 +19,7 @@
             - Private; All voice processing runs locally.
             - Accurate
             - Compact and Computationally-Efficient
-            - Cross-Platform: Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64), Raspberry Pi (3, 4, 5), NVIDIA Jetson Nano
+            - Cross-Platform: Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64), and Raspberry Pi (3, 4, 5)
         </Description>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageIcon>pv_circle_512.png</PackageIcon>
@@ -37,6 +37,7 @@
             <PackagePath>
                 build/netcoreapp3.0/Leopard.targets;
                 build/net6.0/Leopard.targets;
+                build/net8.0/Leopard.targets;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
@@ -49,6 +50,7 @@
                 build/netstandard2.0/libpv_leopard.dll;
                 build/netcoreapp3.0/lib/windows/amd64/libpv_leopard.dll;
                 build/net6.0/lib/windows/amd64/libpv_leopard.dll;
+                build/net8.0/lib/windows/amd64/libpv_leopard.dll;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\windows\amd64\libpv_leopard.dll</Link>
@@ -59,6 +61,7 @@
                 build/netstandard2.0/libpv_leopard.so;
                 build/netcoreapp3.0/lib/linux/x86_64/libpv_leopard.so;
                 build/net6.0/lib/linux/x86_64/libpv_leopard.so;
+                build/net8.0/lib/linux/x86_64/libpv_leopard.so;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\linux\x86_64\libpv_leopard.so</Link>
@@ -69,6 +72,7 @@
                 build/netstandard2.0/libpv_leopard.dylib;
                 build/netcoreapp3.0/lib/mac/x86_64/libpv_leopard.dylib;
                 build/net6.0/lib/mac/x86_64/libpv_leopard.dylib;
+                build/net8.0/lib/mac/x86_64/libpv_leopard.dylib;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\mac\x86_64\libpv_leopard.dylib</Link>
@@ -82,18 +86,10 @@
             <PackagePath>
                 build/netcoreapp3.0/lib/raspberry-pi;
                 build/net6.0/lib/raspberry-pi;
+                build/net8.0/lib/raspberry-pi;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\raspberry-pi\%(RecursiveDir)%(Filename)%(Extension)</Link>
-            <Visible>false</Visible>
-        </Content>
-        <Content Include="..\..\..\lib\jetson\cortex-a57-aarch64\libpv_leopard.so">
-            <PackagePath>
-                build/netcoreapp3.0/lib/jetson/cortex-a57-aarch64/libpv_leopard.so;
-                build/net6.0/lib/jetson/cortex-a57-aarch64/libpv_leopard.so;
-            </PackagePath>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <Link>lib\jetson\cortex-a57-aarch64\libpv_leopard.so</Link>
             <Visible>false</Visible>
         </Content>
     </ItemGroup>
@@ -103,6 +99,7 @@
         <Content Include="..\..\..\lib\mac\arm64\libpv_leopard.dylib">
             <PackagePath>
                 build/net6.0/lib/mac/arm64/libpv_leopard.dylib;
+                build/net8.0/lib/mac/arm64/libpv_leopard.dylib;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\mac\arm64\libpv_leopard.dylib</Link>
@@ -117,6 +114,7 @@
                 build/netstandard2.0/lib/common/leopard_params.pv;
                 build/netcoreapp3.0/lib/common/leopard_params.pv;
                 build/net6.0/lib/common/leopard_params.pv;
+                build/net8.0/lib/common/leopard_params.pv;
             </PackagePath>
             <Link>lib\common\leopard_params.pv</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
