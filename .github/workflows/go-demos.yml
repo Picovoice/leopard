@@ -49,7 +49,7 @@ jobs:
 
       # ************** REMOVE AFTER RELEASE ********************
     - name: Get Go SDK from branch
-      run: go get github.com/Picovoice/leopard/binding/go/v2/@841cb80c9f2b3bf655ebfc12911d73250f522106
+      run: go get github.com/Picovoice/leopard/binding/go/v2/@84615ddb72bef85e0fa90c3b7be3698e5aa330e9
       # ********************************************************
 
     - name: Build micdemo
@@ -73,7 +73,7 @@ jobs:
 
       # ************** REMOVE AFTER RELEASE ********************
     - name: Get Go SDK from branch
-      run: go get github.com/Picovoice/leopard/binding/go/v2/@841cb80c9f2b3bf655ebfc12911d73250f522106
+      run: go get github.com/Picovoice/leopard/binding/go/v2/@84615ddb72bef85e0fa90c3b7be3698e5aa330e9
       # ********************************************************
 
     - name: Build micdemo
@@ -112,7 +112,7 @@ jobs:
 
       # ************** REMOVE AFTER RELEASE ********************
     - name: Get Go SDK from branch
-      run: go get github.com/Picovoice/leopard/binding/go/v2/@841cb80c9f2b3bf655ebfc12911d73250f522106
+      run: go get github.com/Picovoice/leopard/binding/go/v2/@84615ddb72bef85e0fa90c3b7be3698e5aa330e9
       # ********************************************************
 
     - name: Build server
