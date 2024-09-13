@@ -16,11 +16,10 @@ Leopard is an on-device speech-to-text engine. Leopard is:
     - Android
     - iOS
     - Raspberry Pi (3, 4, 5)
-    - NVIDIA Jetson Nano
 
 ## Requirements
 
-- .NET 6.0
+- .NET 8.0
 
 ## Compatibility
 
@@ -31,7 +30,6 @@ Leopard is an on-device speech-to-text engine. Leopard is:
   - 3 (32 and 64 bit)
   - 4 (32 and 64 bit)
   - 5 (32 and 64 bit)
-- NVIDIA Jetson Nano
 
 ## Installation
 
