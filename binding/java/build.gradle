@@ -7,7 +7,7 @@ plugins {
 
 ext {
     PUBLISH_GROUP_ID = 'ai.picovoice'
-    PUBLISH_VERSION = '2.0.2'
+    PUBLISH_VERSION = '2.0.3'
     PUBLISH_ARTIFACT_ID = 'leopard-java'
 }
 
@@ -62,20 +62,13 @@ task copyRPiLib(type: Copy) {
             'cortex-a76-aarch64/libpv_leopard_jni.so')
     into("${outputDir}/leopard/lib/java/raspberry-pi/")
 }
-task copyJetsonLib(type: Copy) {
-    from('../../lib/java/jetson/cortex-a57-aarch64/libpv_leopard_jni.so') into "${outputDir}/leopard/lib/java/jetson/cortex-a57-aarch64/"
-}
-task copyBeagleboneLib(type: Copy) {
-    from('../../lib/java/beaglebone/libpv_leopard_jni.so') into "${outputDir}/leopard/lib/java/beaglebone/"
-}
 
 task copyTasks(type: GradleBuild) {
     tasks = ['copyDefaultModel',
              'copyLinuxLib',
              'copyMacLib',
              'copyWindowsLib',
-             'copyRPiLib',
-             'copyJetsonLib']
+             'copyRPiLib']
 }
 
 jar {

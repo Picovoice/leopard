@@ -1,6 +1,6 @@
 [package]
 name = "pv_leopard_micdemo"
-version = "2.0.2"
+version = "2.0.3"
 edition = "2018"
 
 [dependencies]
@@ -9,6 +9,6 @@ clap = "3.2.16"
 ctrlc = "3.2.2"
 hound = "3.4.0"
 itertools = "0.10.3"
-pv_leopard = "=2.0.2"
-pv_recorder = "=1.2.2"
+pv_leopard = "=2.0.3"
+pv_recorder = "=1.2.3"
 tabwriter = "1.2.1"

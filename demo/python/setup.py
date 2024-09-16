@@ -28,7 +28,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
 
 setuptools.setup(
     name="pvleoparddemo",
-    version="2.0.2",
+    version="2.0.3",
     author="Picovoice",
     author_email="hello@picovoice.ai",
     description="Leopard speech-to-text engine demos",
@@ -36,7 +36,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Picovoice/leopard",
     packages=["pvleoparddemo"],
-    install_requires=["pvleopard==2.0.2", "pvrecorder==1.2.2", "tabulate==0.8.10"],
+    install_requires=["pvleopard==2.0.3", "pvrecorder==1.2.3", "tabulate==0.8.10"],
     include_package_data=True,
     classifiers=[
         "Development Status :: 5 - Production/Stable",

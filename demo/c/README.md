@@ -153,13 +153,3 @@ ${AUDIO_FILE_PATH}
 -l lib/raspberry-pi/cortex-a53-aarch64/libpv_leopard.so \
 ${AUDIO_FILE_PATH}
 ```
-
-#### NVIDIA Jetson Nano
-
-```console
-./demo/c/build/leopard_demo \
--a ${ACCESS_KEY} \
--m lib/common/leopard_params.pv \
--l lib/jetson/cortex-a57-aarch64/libpv_leopard.so \
-${AUDIO_FILE_PATH}
-```

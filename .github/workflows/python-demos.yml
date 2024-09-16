@@ -50,7 +50,7 @@ jobs:
 
     strategy:
       matrix:
-        machine: [rpi3-32, rpi3-64, rpi4-32, rpi4-64, rpi5-64, jetson]
+        machine: [rpi3-32, rpi3-64, rpi4-32, rpi4-64, rpi5-64]
 
     steps:
     - uses: actions/checkout@v3
@@ -62,6 +62,7 @@ jobs:
       run: python3 leopard_demo_file.py --access_key ${{secrets.PV_VALID_ACCESS_KEY}} --wav_paths ../../resources/audio_samples/test.wav
 
   build-subtitle-demo:
+    if: false # YouTube: "Sign in to confirm you’re not a bot."
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -93,6 +94,7 @@ jobs:
         --subtitle_path test.txt
 
   build-youtube-demo:
+    if: false # YouTube: "Sign in to confirm you’re not a bot."
     runs-on: ${{ matrix.os }}
     defaults:
       run:

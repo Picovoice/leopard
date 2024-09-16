@@ -2,15 +2,15 @@
 # yarn lockfile v1
 
 
-"@picovoice/leopard-node@=2.0.2":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@picovoice/leopard-node/-/leopard-node-2.0.2.tgz#537f6a8dbeefc2234e9c4c588c2dafa623ada9cf"
-  integrity sha512-7MFeDdKKLR+H1gyUQXX8djfKgOIQLTsRlGkxwNoXjbXyfx6lkOfYdU27+Wlyi+6dOKFW3c4DNTbCbzIzCZSyMw==
+"@picovoice/leopard-node@=2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@picovoice/leopard-node/-/leopard-node-2.0.4.tgz#dd2adf964d23092c076879be1f1d1aa0c5a9d851"
+  integrity sha512-xBg/8MfbZLHg/XQ/ycTiVy4wabN7+TR00ZuqpmRlKqzw+a0YwcXv6CyuTIzz6k27rdzWNyDTuE59XbxsShJtHQ==
 
-"@picovoice/pvrecorder-node@=1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@picovoice/pvrecorder-node/-/pvrecorder-node-1.2.2.tgz#41c39719b408e29c581b3094a9ff4c59f282b026"
-  integrity sha512-GuzZhWslbR4TLE3VxTiqjax8Mc8f1nB69bY5jag4ETlCxo7q/KpeUbWRvojhtNVPvpFLbospZAb6vfgxkEqgJQ==
+"@picovoice/pvrecorder-node@=1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@picovoice/pvrecorder-node/-/pvrecorder-node-1.2.4.tgz#1e67a1f82a144ad3c8e3f77c18fdbfe1ab5880cf"
+  integrity sha512-s8l6LtJnTHZ+FfIgXJZ9d8pKONSWs04v5q83F2zmfRr9IV1m7SQ5RlsmL0FO7NsB0GjIar3qHndryAQCjgSInw==
 
 commander@^6.1.0:
   version "6.2.1"

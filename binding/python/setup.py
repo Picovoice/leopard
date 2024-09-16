@@ -1,5 +1,5 @@
 #
-# Copyright 2022-2023 Picovoice Inc.
+# Copyright 2022-2024 Picovoice Inc.
 #
 # You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 # file accompanying this source.
@@ -15,7 +15,7 @@ import shutil
 import setuptools
 
 INCLUDE_FILES = ('../../LICENSE', '__init__.py', '_factory.py', '_leopard.py', '_util.py')
-INCLUDE_LIBS = ('linux', 'mac', 'windows', 'jetson', 'raspberry-pi')
+INCLUDE_LIBS = ('linux', 'mac', 'windows', 'raspberry-pi')
 
 os.system('git clean -dfx')
 
@@ -48,7 +48,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
 
 setuptools.setup(
     name="pvleopard",
-    version="2.0.2",
+    version="2.0.3",
     author="Picovoice",
     author_email="hello@picovoice.ai",
     description="Leopard Speech-to-Text Engine.",
