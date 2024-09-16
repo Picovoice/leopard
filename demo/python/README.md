@@ -39,7 +39,7 @@ Signup or Login to [Picovoice Console](https://console.picovoice.ai/) to get you
 Run the following in the terminal:
 
 ```console
-leopard_demo_file --access_key ${ACCESS_KEY} --audio_paths ${AUDIO_FILE_PATH}
+leopard_demo_file --access_key ${ACCESS_KEY} --wav_paths ${AUDIO_FILE_PATH}
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_FILE_PATH}` with a path to an audio file you
