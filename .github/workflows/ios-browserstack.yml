@@ -1,19 +1,17 @@
-name: iOS Performance
+name: iOS BrowserStack Tests
 
 on:
   workflow_dispatch:
   push:
     branches: [ master ]
     paths:
-      - 'lib/ios/**'
-      - 'lib/common/**'
-      - '.github/workflows/ios-perf.yml'
+      - 'binding/ios/LeopardAppTest/Podfile.lock'
+      - '.github/workflows/ios-browserstack.yml'
   pull_request:
     branches: [ master, 'v[0-9]+.[0-9]+' ]
     paths:
-      - 'lib/ios/**'
-      - 'lib/common/**'
-      - '.github/workflows/ios-perf.yml'
+      - 'binding/ios/LeopardAppTest/Podfile.lock'
+      - '.github/workflows/ios-browserstack.yml'
 
 defaults:
   run:
@@ -24,26 +22,22 @@ jobs:
     name: Run iOS Tests on BrowserStack
     runs-on: macos-latest
 
-    strategy:
-      matrix:
-        device: [ ios-perf ]
-        include:
-        - device: ios-perf
-          initPerformanceThresholdSec: 3.0
-          procPerformanceThresholdSec: 0.4
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
       - name: Installing Python
         uses: actions/setup-python@v5
+        with:
           python-version: '3.10'
       - run:
           pip3 install requests
 
       - name: Install Cocoapods
         run: gem install cocoapods
+
+      - name: Install AppCenter CLI
+        run: npm install -g appcenter-cli
 
       - name: Make build dir
         run: mkdir ddp
@@ -56,28 +50,14 @@ jobs:
 
       - name: Inject AccessKey
         run: sed -i '.bak' 's:{TESTING_ACCESS_KEY_HERE}:${{secrets.PV_VALID_ACCESS_KEY}}:'
-          PerformanceTest/PerformanceTest.swift
-
-      - name: Inject Number of Iterations
-        run: sed -i '.bak' 's:{NUM_TEST_ITERATIONS}:30:'
-          PerformanceTest/PerformanceTest.swift
-
-      - name: Inject Performance Threshold
-        run: sed -i '.bak'
-          '1,/{INIT_PERFORMANCE_THRESHOLD_SEC}/s/{INIT_PERFORMANCE_THRESHOLD_SEC}/${{ matrix.initPerformanceThresholdSec }}/'
-          PerformanceTest/PerformanceTest.swift
-
-      - name: Inject Performance Threshold
-        run: sed -i '.bak'
-          '1,/{PROC_PERFORMANCE_THRESHOLD_SEC}/s/{PROC_PERFORMANCE_THRESHOLD_SEC}/${{ matrix.procPerformanceThresholdSec }}/'
-          PerformanceTest/PerformanceTest.swift
+          LeopardAppTestUITests/LeopardAppTestUITests.swift
 
       - name: XCode Build
         run: xcrun xcodebuild build-for-testing
           -configuration Debug
           -workspace LeopardAppTest.xcworkspace
           -sdk iphoneos
-          -scheme PerformanceTest
+          -scheme LeopardAppTest
           -derivedDataPath ddp
           CODE_SIGNING_ALLOWED=NO
 
@@ -90,14 +70,14 @@ jobs:
 
       - name: Zipping Tests
         run: cd ddp/Build/Products/Debug-iphoneos/ &&
-          zip --symlinks -r PerformanceTest.zip PerformanceTest-Runner.app
+          zip --symlinks -r LeopardAppTestUITests.zip LeopardAppTestUITests-Runner.app
 
       - name: Run tests on BrowserStack
         run: python3 ../../../script/automation/browserstack.py
           --type xcuitest
           --username "${{secrets.BROWSERSTACK_USERNAME}}"
           --access_key "${{secrets.BROWSERSTACK_ACCESS_KEY}}"
-          --project_name "Leopard-iOS-Performance"
-          --devices "${{ matrix.device }}"
+          --project_name "Leopard-iOS"
+          --devices "ios-min-max"
           --app_path "ddp/Build/Products/Debug-iphoneos/LeopardAppTest.ipa"
-          --test_path "ddp/Build/Products/Debug-iphoneos/PerformanceTest.zip"
+          --test_path "ddp/Build/Products/Debug-iphoneos/LeopardAppTestUITests.zip"
