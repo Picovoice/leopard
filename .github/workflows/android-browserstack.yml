@@ -75,7 +75,7 @@ jobs:
         --project_name "Leopard-Android"
         --devices "android-min-max"
         --app_path "leopard-test-app/build/outputs/apk/en/debug/leopard-test-app-en-debug.apk"
-        --test_path "leopard-test-app/build/outputs/apk/en/androidTest/debug/leopard-test-app-en-debug-androidTest.apk"
+        --test_path "leopard-test-app/build/outputs/apk/androidTest/en/debug/leopard-test-app-en-debug-androidTest.apk"
 
   build-integ:
     name: Run Android Integration Tests on BrowserStack
