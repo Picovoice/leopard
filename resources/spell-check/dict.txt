@@ -158,5 +158,6 @@ xcodeproj
 xcscheme
 xcschemes
 xcshareddata
+xcuitest
 xcworkspace
 ytdlp

@@ -17,7 +17,7 @@ devices_dict = {
         'Google Pixel 6 Pro-15.0'
     ],
     'ios-min-max': [
-        'iPhone SE 2020-13',
+        'iPhone SE 2022-15',
         'iPhone 14 Pro-16',
         'iPhone 14-18'
     ],
@@ -64,7 +64,8 @@ def main(args: argparse.Namespace) -> None:
         'app': app_response_json['app_url'],
         'testSuite': test_response_json['test_suite_url'],
         'project': args.project_name,
-        'devices': devices_dict[args.devices]
+        'devices': devices_dict[args.devices],
+        'deviceLogs': True
     }
 
     while True:

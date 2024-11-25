@@ -133,6 +133,7 @@ android {
     lint {
         abortOnError false
     }
+    namespace 'ai.picovoice.leopard.testapp'
 }
 
 dependencies {
