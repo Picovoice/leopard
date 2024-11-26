@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,22 +13,18 @@
 		3276967434C9CEBD0AF09237 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 327694975368499C3B7946DD /* Assets.xcassets */; };
 		327698EADFD16D8F70823520 /* LeopardDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327697358B823E5B2EF0FA8C /* LeopardDemoApp.swift */; };
 		32769B2E1B2C5A2A897FFB10 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32769F3923C69C8C0C435CCF /* ContentView.swift */; };
-		AF10BC13B27DBA6B733B192A /* libPods-LeopardDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CB997F06C7C673F9F2446D95 /* libPods-LeopardDemo.a */; };
+		E1B2D77D2CF68F4000A28024 /* Leopard in Frameworks */ = {isa = PBXBuildFile; productRef = E1B2D77C2CF68F4000A28024 /* Leopard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1E6041C02A0EBF9100A10522 /* pre-build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = "pre-build.sh"; sourceTree = SOURCE_ROOT; };
 		1E6041C62A0EC1FE00A10522 /* models */ = {isa = PBXFileReference; lastKnownFileType = folder; path = models; sourceTree = "<group>"; };
-		2B1ED6A74FFAB956F22EB7BB /* Pods-LeopardDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardDemo.debug.xcconfig"; path = "Target Support Files/Pods-LeopardDemo/Pods-LeopardDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		327694975368499C3B7946DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		327695EA9D71F6A29C6D079A /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		327697358B823E5B2EF0FA8C /* LeopardDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeopardDemoApp.swift; sourceTree = "<group>"; };
 		327699927E572962C40A7A04 /* LeopardDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LeopardDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		32769E49F724E169E0E13E27 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		32769F3923C69C8C0C435CCF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		5FF6489235A4DC2A8D3777FC /* Pods-LeopardDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeopardDemo.release.xcconfig"; path = "Target Support Files/Pods-LeopardDemo/Pods-LeopardDemo.release.xcconfig"; sourceTree = "<group>"; };
-		6317D5AC3BB798341835D07F /* libPods-LeopardDemoUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LeopardDemoUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CB997F06C7C673F9F2446D95 /* libPods-LeopardDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LeopardDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,38 +32,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AF10BC13B27DBA6B733B192A /* libPods-LeopardDemo.a in Frameworks */,
+				E1B2D77D2CF68F4000A28024 /* Leopard in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		152DF7E2EA2DFC4CD7EB46DC /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				CB997F06C7C673F9F2446D95 /* libPods-LeopardDemo.a */,
-				6317D5AC3BB798341835D07F /* libPods-LeopardDemoUITests.a */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		1918003DDB7013A004865A81 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				2B1ED6A74FFAB956F22EB7BB /* Pods-LeopardDemo.debug.xcconfig */,
-				5FF6489235A4DC2A8D3777FC /* Pods-LeopardDemo.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		327692BCE8C735F3534C318E = {
 			isa = PBXGroup;
 			children = (
 				32769B87809678D96B1C6C55 /* Products */,
 				32769C17C8FD0599F872D3D1 /* LeopardDemo */,
-				152DF7E2EA2DFC4CD7EB46DC /* Frameworks */,
-				1918003DDB7013A004865A81 /* Pods */,
 				1E6041C02A0EBF9100A10522 /* pre-build.sh */,
 			);
 			sourceTree = "<group>";
@@ -100,11 +76,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 32769440EBAF1B96C25C64E5 /* Build configuration list for PBXNativeTarget "LeopardDemo" */;
 			buildPhases = (
-				EEEBC400C3F382C9ADB47297 /* [CP] Check Pods Manifest.lock */,
 				32769E8C15D0D566DE02D742 /* Sources */,
 				32769FD78B69EE3D028A9BD8 /* Frameworks */,
 				327698D80053ADD919041906 /* Resources */,
-				6B8F74027D329047EE376040 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -138,6 +112,9 @@
 				en,
 			);
 			mainGroup = 327692BCE8C735F3534C318E;
+			packageReferences = (
+				E1B2D77B2CF68F4000A28024 /* XCLocalSwiftPackageReference "../../../../leopard" */,
+			);
 			productRefGroup = 32769B87809678D96B1C6C55 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -159,49 +136,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		6B8F74027D329047EE376040 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-LeopardDemo/Pods-LeopardDemo-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Leopard-iOS/PvLeopard.framework/PvLeopard",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PvLeopard.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-LeopardDemo/Pods-LeopardDemo-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		EEEBC400C3F382C9ADB47297 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-LeopardDemo-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		32769E8C15D0D566DE02D742 /* Sources */ = {
@@ -268,15 +202,15 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_INCLUDE_PATHS = "${SRCROOT}";
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 		3276957BE00965E54B1F13C1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2B1ED6A74FFAB956F22EB7BB /* Pods-LeopardDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -292,7 +226,10 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ai.picovoice.LeopardDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -304,7 +241,6 @@
 		};
 		327698DB666EFBD22F7AB2D5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5FF6489235A4DC2A8D3777FC /* Pods-LeopardDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -320,7 +256,10 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ai.picovoice.LeopardDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -416,6 +355,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		E1B2D77B2CF68F4000A28024 /* XCLocalSwiftPackageReference "../../../../leopard" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../../../leopard;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E1B2D77C2CF68F4000A28024 /* Leopard */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Leopard;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 32769964E3C57B4A4BE3CC9E /* Project object */;
 }
