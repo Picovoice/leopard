@@ -4,7 +4,6 @@ alcune
 alla
 anche
 androidx
-Appcenter
 aprender
 arbovm
 armv
@@ -30,7 +29,6 @@ conseiller
 conservateur
 constraintlayout
 consulat
-convmv
 cstring
 cword
 devient
@@ -160,5 +158,6 @@ xcodeproj
 xcscheme
 xcschemes
 xcshareddata
+xcuitest
 xcworkspace
 ytdlp

@@ -133,6 +133,7 @@ android {
     lint {
         abortOnError false
     }
+    namespace 'ai.picovoice.leopard.testapp'
 }
 
 dependencies {
@@ -140,6 +141,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.code.gson:gson:2.10'
+    implementation 'com.google.errorprone:error_prone_annotations:2.36.0'
     implementation 'ai.picovoice:leopard-android:2.0.1'
 
     // Espresso UI Testing
@@ -147,7 +150,6 @@ dependencies {
     androidTestImplementation('androidx.test.espresso:espresso-core:3.2.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    androidTestImplementation('com.microsoft.appcenter:espresso-test-extension:1.4')
     androidTestImplementation('androidx.test.espresso:espresso-intents:3.5.1')
 }
 
@@ -156,7 +158,11 @@ afterEvaluate {
         flavor ->
             tasks."merge${flavor.name.capitalize()}DebugAssets".dependsOn "${flavor.name}CopyParams"
             tasks."merge${flavor.name.capitalize()}ReleaseAssets".dependsOn "${flavor.name}CopyParams"
+            tasks."generate${flavor.name.capitalize()}ReleaseLintVitalReportModel".dependsOn "${flavor.name}CopyParams"
+            tasks."lintVitalAnalyze${flavor.name.capitalize()}Release".dependsOn "${flavor.name}CopyParams"
             tasks."merge${flavor.name.capitalize()}DebugAssets".dependsOn "${flavor.name}CopyAudio"
             tasks."merge${flavor.name.capitalize()}ReleaseAssets".dependsOn "${flavor.name}CopyAudio"
+            tasks."generate${flavor.name.capitalize()}ReleaseLintVitalReportModel".dependsOn "${flavor.name}CopyAudio"
+            tasks."lintVitalAnalyze${flavor.name.capitalize()}Release".dependsOn "${flavor.name}CopyAudio"
     }
 }
