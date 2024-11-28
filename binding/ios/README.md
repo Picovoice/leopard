@@ -18,8 +18,15 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 ## Installation
 
 <!-- markdown-link-check-disable -->
-The Leopard iOS binding is available via [CocoaPods](https://cocoapods.org/pods/Leopard-iOS). To import it into your iOS project, add the following line to your Podfile:
+The Leopard iOS binding is available via [Swift Package Manager](https://www.swift.org/documentation/package-manager/) or [CocoaPods](https://cocoapods.org/pods/Leopard-iOS).
 <!-- markdown-link-check-enable -->
+
+To import the package using SPM, open up your project's Package Dependencies in XCode and add:
+```
+https://github.com/Picovoice/leopard.git
+```
+To import it into your iOS project using CocoaPods, add the following line to your Podfile:
+
 ```ruby
 pod 'Leopard-iOS'
 ```
@@ -100,7 +107,7 @@ Along with the transcript, Leopard returns metadata for each transcribed word. A
 
 ## Running Unit Tests
 
-Copy your `AccessKey` into the `accessKey` variable in [`LeopardAppTestUITests.swift`](LeopardAppTest/LeopardAppTestUITests/LeopardAppTestUITests.swift). Open `LeopardAppTest.xcworkspace` with XCode and run the tests with `Product > Test`.
+Copy your `AccessKey` into the `accessKey` variable in [`LeopardAppTestUITests.swift`](LeopardAppTest/LeopardAppTestUITests/LeopardAppTestUITests.swift). Open [`LeopardAppTest.xcodeproj`](LeopardAppTest/LeopardAppTest.xcodeproj) with XCode and run the tests with `Product > Test`.
 
 ## Demo App
 

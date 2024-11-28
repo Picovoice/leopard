@@ -154,6 +154,7 @@ wavefile
 webfonts
 webm
 wurde
+xcframework
 xcodeproj
 xcscheme
 xcschemes
