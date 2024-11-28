@@ -8,7 +8,7 @@
         "transcript_with_punctuation": "Mr. Quilter is the apostle of the middle classes and we are glad to welcome his gospel.",
         "error_rate": 0.025,
         "words": [
-          {"word": "Mr", "start_sec": 0.54, "end_sec": 0.8, "confidence": 0.87, "speaker_tag": 1},
+          {"word": "Mr", "start_sec": 0.54, "end_sec": 0.8, "confidence": 0.86, "speaker_tag": 1},
           {"word": "quilter", "start_sec": 0.86, "end_sec": 1.18, "confidence": 0.8, "speaker_tag": 1},
           {"word": "is", "start_sec": 1.31, "end_sec": 1.38, "confidence": 0.96, "speaker_tag": 1},
           {"word": "the", "start_sec": 1.44, "end_sec": 1.5, "confidence": 0.97, "speaker_tag": 1},
@@ -101,7 +101,7 @@
           {"word": "radio", "start_sec": 1.38, "end_sec": 1.73, "confidence": 0.54, "speaker_tag": 1},
           {"word": "nacquero", "start_sec": 1.92, "end_sec": 2.37, "confidence": 0.35, "speaker_tag": 1},
           {"word": "anche", "start_sec": 2.43, "end_sec": 2.59, "confidence": 0.68, "speaker_tag": 1},
-          {"word": "alcune", "start_sec": 2.66, "end_sec": 2.98, "confidence": 0.73, "speaker_tag": 1},
+          {"word": "alcune", "start_sec": 2.66, "end_sec": 2.98, "confidence": 0.66, "speaker_tag": 1},
           {"word": "sue", "start_sec": 3.07, "end_sec": 3.17, "confidence": 0.66, "speaker_tag": 1},
           {"word": "canzoni", "start_sec": 3.26, "end_sec": 3.78, "confidence": 0.83, "speaker_tag": 1},
           {"word": "o", "start_sec": 4.03, "end_sec": 4.03, "confidence": 0.52, "speaker_tag": 1},
