@@ -18,6 +18,9 @@
 		1E5B7B1E2800E2DA00F8BDDB /* test.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1E5B7B1D2800E2DA00F8BDDB /* test.wav */; };
 		1E5B7B202800E2E300F8BDDB /* leopard_params.pv in Resources */ = {isa = PBXBuildFile; fileRef = 1E5B7B1F2800E2E300F8BDDB /* leopard_params.pv */; };
 		C7C8601229CBA3A300EB6E87 /* test_resources in Resources */ = {isa = PBXBuildFile; fileRef = C7C8601129CBA3A300EB6E87 /* test_resources */; };
+		E1577CA52CF7F69800CB78C2 /* Leopard in Frameworks */ = {isa = PBXBuildFile; productRef = E1577CA42CF7F69800CB78C2 /* Leopard */; };
+		E1577CA72CF7F69D00CB78C2 /* Leopard in Frameworks */ = {isa = PBXBuildFile; productRef = E1577CA62CF7F69D00CB78C2 /* Leopard */; };
+		E1577CA92CF7F6A100CB78C2 /* Leopard in Frameworks */ = {isa = PBXBuildFile; productRef = E1577CA82CF7F6A100CB78C2 /* Leopard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1577CA52CF7F69800CB78C2 /* Leopard in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,6 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1577CA72CF7F69D00CB78C2 /* Leopard in Frameworks */,
 				0BDFC0A822E9A2F6228E92A8 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -76,6 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1577CA92CF7F6A100CB78C2 /* Leopard in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,6 +94,7 @@
 				1E5B7B182800E2A100F8BDDB /* PerformanceTest */,
 				1E00651427CFEF00006FF6E9 /* LeopardAppTest */,
 				1E00653527CFEF02006FF6E9 /* LeopardAppTestUITests */,
+				E1577CA32CF7F69800CB78C2 /* Frameworks */,
 				1E00651327CFEF00006FF6E9 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -134,6 +141,13 @@
 				1E5B7B1F2800E2E300F8BDDB /* leopard_params.pv */,
 			);
 			path = PerformanceTest;
+			sourceTree = "<group>";
+		};
+		E1577CA32CF7F69800CB78C2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -639,6 +653,24 @@
 			relativePath = ../../../../leopard;
 		};
 /* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E1577CA42CF7F69800CB78C2 /* Leopard */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1B2D77A2CF68EAF00A28024 /* XCLocalSwiftPackageReference "../../../../leopard" */;
+			productName = Leopard;
+		};
+		E1577CA62CF7F69D00CB78C2 /* Leopard */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1B2D77A2CF68EAF00A28024 /* XCLocalSwiftPackageReference "../../../../leopard" */;
+			productName = Leopard;
+		};
+		E1577CA82CF7F6A100CB78C2 /* Leopard */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1B2D77A2CF68EAF00A28024 /* XCLocalSwiftPackageReference "../../../../leopard" */;
+			productName = Leopard;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1E00650A27CFEF00006FF6E9 /* Project object */;
 }
