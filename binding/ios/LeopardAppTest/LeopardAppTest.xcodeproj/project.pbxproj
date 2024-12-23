@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -18,9 +18,9 @@
 		1E5B7B1E2800E2DA00F8BDDB /* test.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1E5B7B1D2800E2DA00F8BDDB /* test.wav */; };
 		1E5B7B202800E2E300F8BDDB /* leopard_params.pv in Resources */ = {isa = PBXBuildFile; fileRef = 1E5B7B1F2800E2E300F8BDDB /* leopard_params.pv */; };
 		C7C8601229CBA3A300EB6E87 /* test_resources in Resources */ = {isa = PBXBuildFile; fileRef = C7C8601129CBA3A300EB6E87 /* test_resources */; };
-		E1577CA52CF7F69800CB78C2 /* Leopard in Frameworks */ = {isa = PBXBuildFile; productRef = E1577CA42CF7F69800CB78C2 /* Leopard */; };
-		E1577CA72CF7F69D00CB78C2 /* Leopard in Frameworks */ = {isa = PBXBuildFile; productRef = E1577CA62CF7F69D00CB78C2 /* Leopard */; };
-		E1577CA92CF7F6A100CB78C2 /* Leopard in Frameworks */ = {isa = PBXBuildFile; productRef = E1577CA82CF7F6A100CB78C2 /* Leopard */; };
+		E19A093C2D1A248D0088A996 /* Leopard in Frameworks */ = {isa = PBXBuildFile; productRef = E19A093B2D1A248D0088A996 /* Leopard */; };
+		E19A093E2D1A24930088A996 /* Leopard in Frameworks */ = {isa = PBXBuildFile; productRef = E19A093D2D1A24930088A996 /* Leopard */; };
+		E19A09402D1A24970088A996 /* Leopard in Frameworks */ = {isa = PBXBuildFile; productRef = E19A093F2D1A24970088A996 /* Leopard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,7 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1577CA52CF7F69800CB78C2 /* Leopard in Frameworks */,
+				E19A093C2D1A248D0088A996 /* Leopard in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,7 +72,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1577CA72CF7F69D00CB78C2 /* Leopard in Frameworks */,
+				E19A093E2D1A24930088A996 /* Leopard in Frameworks */,
 				0BDFC0A822E9A2F6228E92A8 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -81,7 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1577CA92CF7F6A100CB78C2 /* Leopard in Frameworks */,
+				E19A09402D1A24970088A996 /* Leopard in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,7 +238,7 @@
 			);
 			mainGroup = 1E00650927CFEF00006FF6E9;
 			packageReferences = (
-				E18BD0062D1383850033C982 /* XCLocalSwiftPackageReference "../../../../leopard" */,
+				E19A093A2D1A24850088A996 /* XCRemoteSwiftPackageReference "leopard" */,
 			);
 			productRefGroup = 1E00651327CFEF00006FF6E9 /* Products */;
 			projectDirPath = "";
@@ -647,31 +647,31 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		E18BD0062D1383850033C982 /* XCLocalSwiftPackageReference "../../../../leopard" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../../../leopard;
+/* Begin XCRemoteSwiftPackageReference section */
+		E19A093A2D1A24850088A996 /* XCRemoteSwiftPackageReference "leopard" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Picovoice/leopard";
+			requirement = {
+				kind = exactVersion;
+				version = 2.0.2;
+			};
 		};
-		E1B2D77A2CF68EAF00A28024 /* XCLocalSwiftPackageReference "../../../../leopard" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../../../leopard;
-		};
-/* End XCLocalSwiftPackageReference section */
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E1577CA42CF7F69800CB78C2 /* Leopard */ = {
+		E19A093B2D1A248D0088A996 /* Leopard */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E1B2D77A2CF68EAF00A28024 /* XCLocalSwiftPackageReference "../../../../leopard" */;
+			package = E19A093A2D1A24850088A996 /* XCRemoteSwiftPackageReference "leopard" */;
 			productName = Leopard;
 		};
-		E1577CA62CF7F69D00CB78C2 /* Leopard */ = {
+		E19A093D2D1A24930088A996 /* Leopard */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E1B2D77A2CF68EAF00A28024 /* XCLocalSwiftPackageReference "../../../../leopard" */;
+			package = E19A093A2D1A24850088A996 /* XCRemoteSwiftPackageReference "leopard" */;
 			productName = Leopard;
 		};
-		E1577CA82CF7F6A100CB78C2 /* Leopard */ = {
+		E19A093F2D1A24970088A996 /* Leopard */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E1B2D77A2CF68EAF00A28024 /* XCLocalSwiftPackageReference "../../../../leopard" */;
+			package = E19A093A2D1A24850088A996 /* XCRemoteSwiftPackageReference "leopard" */;
 			productName = Leopard;
 		};
 /* End XCSwiftPackageProductDependency section */

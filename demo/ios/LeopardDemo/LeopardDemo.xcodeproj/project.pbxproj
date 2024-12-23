@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,7 +13,7 @@
 		3276967434C9CEBD0AF09237 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 327694975368499C3B7946DD /* Assets.xcassets */; };
 		327698EADFD16D8F70823520 /* LeopardDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327697358B823E5B2EF0FA8C /* LeopardDemoApp.swift */; };
 		32769B2E1B2C5A2A897FFB10 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32769F3923C69C8C0C435CCF /* ContentView.swift */; };
-		E1577CAF2CF7F9A900CB78C2 /* Leopard in Frameworks */ = {isa = PBXBuildFile; productRef = E1577CAE2CF7F9A900CB78C2 /* Leopard */; };
+		E19A09432D1A24BA0088A996 /* Leopard in Frameworks */ = {isa = PBXBuildFile; productRef = E19A09422D1A24BA0088A996 /* Leopard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,7 +32,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1577CAF2CF7F9A900CB78C2 /* Leopard in Frameworks */,
+				E19A09432D1A24BA0088A996 /* Leopard in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,7 +113,7 @@
 			);
 			mainGroup = 327692BCE8C735F3534C318E;
 			packageReferences = (
-				E1577CAD2CF7F9A900CB78C2 /* XCLocalSwiftPackageReference "../../../../leopard" */,
+				E19A09412D1A24BA0088A996 /* XCRemoteSwiftPackageReference "leopard" */,
 			);
 			productRefGroup = 32769B87809678D96B1C6C55 /* Products */;
 			projectDirPath = "";
@@ -356,16 +356,21 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		E1577CAD2CF7F9A900CB78C2 /* XCLocalSwiftPackageReference "../../../../leopard" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../../../leopard;
+/* Begin XCRemoteSwiftPackageReference section */
+		E19A09412D1A24BA0088A996 /* XCRemoteSwiftPackageReference "leopard" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Picovoice/leopard";
+			requirement = {
+				kind = exactVersion;
+				version = 2.0.2;
+			};
 		};
-/* End XCLocalSwiftPackageReference section */
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E1577CAE2CF7F9A900CB78C2 /* Leopard */ = {
+		E19A09422D1A24BA0088A996 /* Leopard */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E19A09412D1A24BA0088A996 /* XCRemoteSwiftPackageReference "leopard" */;
 			productName = Leopard;
 		};
 /* End XCSwiftPackageProductDependency section */
