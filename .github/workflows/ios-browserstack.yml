@@ -33,9 +33,6 @@ jobs:
       - run:
           pip3 install requests
 
-      - name: Install AppCenter CLI
-        run: npm install -g appcenter-cli
-
       - name: Make build dir
         run: mkdir ddp
 

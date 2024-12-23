@@ -238,7 +238,7 @@
 			);
 			mainGroup = 1E00650927CFEF00006FF6E9;
 			packageReferences = (
-				E1B2D77A2CF68EAF00A28024 /* XCLocalSwiftPackageReference "../../../../leopard" */,
+				E18BD0062D1383850033C982 /* XCLocalSwiftPackageReference "../../../../leopard" */,
 			);
 			productRefGroup = 1E00651327CFEF00006FF6E9 /* Products */;
 			projectDirPath = "";
@@ -648,6 +648,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		E18BD0062D1383850033C982 /* XCLocalSwiftPackageReference "../../../../leopard" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../../../leopard;
+		};
 		E1B2D77A2CF68EAF00A28024 /* XCLocalSwiftPackageReference "../../../../leopard" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../../../leopard;
