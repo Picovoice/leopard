@@ -33,20 +33,11 @@ jobs:
       - run:
           pip3 install requests
 
-      - name: Install Cocoapods
-        run: gem install cocoapods
-
-      - name: Install AppCenter CLI
-        run: npm install -g appcenter-cli
-
       - name: Make build dir
         run: mkdir ddp
 
       - name: Copy test_resources
         run: ./copy_test_resources.sh
-
-      - name: Run Cocoapods
-        run: pod install
 
       - name: Inject AccessKey
         run: sed -i '.bak' 's:{TESTING_ACCESS_KEY_HERE}:${{secrets.PV_VALID_ACCESS_KEY}}:'
@@ -55,7 +46,7 @@ jobs:
       - name: XCode Build
         run: xcrun xcodebuild build-for-testing
           -configuration Debug
-          -workspace LeopardAppTest.xcworkspace
+          -project LeopardAppTest.xcodeproj
           -sdk iphoneos
           -scheme LeopardAppTest
           -derivedDataPath ddp
