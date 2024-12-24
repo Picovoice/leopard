@@ -14,8 +14,8 @@
     "ios-bundle": "node scripts/run_demo.js bundle --dev false --platform ios --entry-file index.js --bundle-output ios/app.jsbundle"
   },
   "dependencies": {
-    "@picovoice/leopard-react-native": "~2.0.2",
-    "@picovoice/react-native-voice-processor": "~1.2.2",
+    "@picovoice/leopard-react-native": "../../binding/react-native/pkg/picovoice-leopard-react-native-2.0.3.tgz",
+    "@picovoice/react-native-voice-processor": "1.2.3",
     "@react-native-picker/picker": "^1.9.2",
     "react": "^17.0.2",
     "react-native": "0.68.7",
