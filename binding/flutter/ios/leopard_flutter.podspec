@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'leopard_flutter'
-  s.version          = '2.0.2'
+  s.version          = '2.0.3'
   s.summary          = 'A Flutter package plugin for Picovoice\'s Leopard Speech-to-Text engine'
   s.description      = <<-DESC
   A Flutter package plugin for Picovoice\'s Leopard Speech-to-Text engine
@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   s.source_files = 'Classes/**/*'
   s.platform = :ios, '13.0'
   s.dependency 'Flutter'
-  s.dependency 'Leopard-iOS', '~> 2.0.1'
+  s.dependency 'Leopard-iOS', '~> 2.0.2'
 
   s.swift_version = '5.0'
 end
