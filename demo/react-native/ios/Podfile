@@ -5,7 +5,6 @@ platform :ios, '13.0'
 
 target 'LeopardDemo' do
   config = use_native_modules!
-  pod 'Leopard-iOS', '~> 2.0.1'
   use_react_native!(:path => config["reactNativePath"])
 end
 

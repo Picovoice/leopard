@@ -303,7 +303,6 @@ DEPENDENCIES:
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
-  - Leopard-iOS (~> 2.0.1)
   - "leopard-react-native (from `../node_modules/@picovoice/leopard-react-native`)"
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
@@ -455,6 +454,6 @@ SPEC CHECKSUMS:
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   Yoga: 0bc4b37c3b8a345336ff601e2cf7d9704bab7e93
 
-PODFILE CHECKSUM: 480cef90cd539a1a880dfa4dd4ad9ba2e4bbb913
+PODFILE CHECKSUM: d1f7c93cb3954969d6411b6bdbe50caa1072c8b1
 
 COCOAPODS: 1.16.2
