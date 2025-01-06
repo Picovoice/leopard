@@ -125,9 +125,10 @@ packages:
   leopard_flutter:
     dependency: "direct main"
     description:
-      path: "../../binding/flutter"
-      relative: true
-    source: path
+      name: leopard_flutter
+      sha256: "0321e1f749fc0e08e20be2e2d49758cfead85cbf2f54307b450e9c79e0e97fde"
+      url: "https://pub.dev"
+    source: hosted
     version: "2.0.3"
   lints:
     dependency: "direct dev"
