@@ -68,6 +68,7 @@
     "**/build_defs.bzl",
     "**/binding/react-native/test-app/**/*.xml",
     "**/binding/react-native/test-app/**/*.mm",
+    "**/demo/react-native/patches/*.patch",
 
     // rust
     "**/Cargo.toml",
