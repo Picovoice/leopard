@@ -218,9 +218,9 @@ class Utils {
     public static String getPackagedLibraryPath() {
         switch (ENVIRONMENT_NAME) {
             case "windows":
-                return RESOURCE_DIRECTORY.resolve("lib/java/windows/")
+                return RESOURCE_DIRECTORY.resolve("lib/java/windows")
                                          .resolve(ARCHITECTURE)
-                                         .resolve("/libpv_leopard_jni.dll").toString();
+                                         .resolve("libpv_leopard_jni.dll").toString();
             case "mac":
                 return RESOURCE_DIRECTORY.resolve("lib/java/mac")
                         .resolve(ARCHITECTURE)
