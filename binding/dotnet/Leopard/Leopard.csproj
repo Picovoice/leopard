@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFrameworks>net8.0;net6.0;netcoreapp3.0;netstandard2.0</TargetFrameworks>
-        <Version>2.0.3</Version>
+        <Version>2.0.4</Version>
         <Authors>Picovoice</Authors>
         <Company/>
         <Product>Leopard Speech-to-Text Engine</Product>
@@ -19,7 +19,7 @@
             - Private; All voice processing runs locally.
             - Accurate
             - Compact and Computationally-Efficient
-            - Cross-Platform: Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64), and Raspberry Pi (3, 4, 5)
+            - Cross-Platform: Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64, arm64), and Raspberry Pi (3, 4, 5)
         </Description>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageIcon>pv_circle_512.png</PackageIcon>
@@ -54,6 +54,16 @@
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\windows\amd64\libpv_leopard.dll</Link>
+            <Visible>false</Visible>
+        </Content>
+        <Content Include="..\..\..\lib\windows\arm64\libpv_leopard.dll">
+            <PackagePath>
+                build/netcoreapp3.0/lib/windows/arm64/libpv_leopard.dll;
+                build/net6.0/lib/windows/arm64/libpv_leopard.dll;
+                build/net8.0/lib/windows/arm64/libpv_leopard.dll;
+            </PackagePath>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Link>lib\windows\arm64\libpv_leopard.dll</Link>
             <Visible>false</Visible>
         </Content>
         <Content Include="..\..\..\lib\linux\x86_64\libpv_leopard.so">

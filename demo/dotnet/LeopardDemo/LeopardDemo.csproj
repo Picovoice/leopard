@@ -20,6 +20,6 @@
 
     <ItemGroup>
         <PackageReference Include="PvRecorder" Version="1.2.6" />
-        <PackageReference Include="Leopard" Version="2.0.3" />
+        <ProjectReference Include="..\..\..\binding\dotnet\Leopard\Leopard.csproj" />
     </ItemGroup>
 </Project>
