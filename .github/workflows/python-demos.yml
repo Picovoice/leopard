@@ -63,9 +63,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install dependencies
-      run: pip3 install -r requirements.txt
-
     # ************ REMOVE AFTER RELEASE ***************
     - name: build local binding
       run: |
@@ -73,6 +70,9 @@ jobs:
         python3 -m setup sdist bdist_wheel
       working-directory: binding/python
     # ************ REMOVE AFTER RELEASE ***************
+
+    - name: Install dependencies
+      run: pip3 install -r requirements.txt
 
     - name: Test
       run: python3 leopard_demo_file.py --access_key ${{secrets.PV_VALID_ACCESS_KEY}} --wav_paths ../../resources/audio_samples/test.wav
