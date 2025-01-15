@@ -36,7 +36,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Picovoice/leopard",
     packages=["pvleoparddemo"],
-    install_requires=["pvleopard==2.0.4", "pvrecorder==1.2.3", "tabulate==0.8.10"],
+    install_requires=["pvleopard==2.0.4", "pvrecorder==1.2.4", "tabulate==0.8.10"],
     include_package_data=True,
     classifiers=[
         "Development Status :: 5 - Production/Stable",
