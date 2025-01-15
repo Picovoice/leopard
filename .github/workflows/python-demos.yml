@@ -78,7 +78,6 @@ jobs:
       run: python3 leopard_demo_file.py --access_key ${{secrets.PV_VALID_ACCESS_KEY}} --wav_paths ../../resources/audio_samples/test.wav
 
   build-subtitle-demo:
-    if: false # YouTube: "Sign in to confirm you’re not a bot."
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -118,7 +117,6 @@ jobs:
         --subtitle_path test.txt
 
   build-youtube-demo:
-    if: false # YouTube: "Sign in to confirm you’re not a bot."
     runs-on: ${{ matrix.os }}
     defaults:
       run:
