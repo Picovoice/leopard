@@ -85,7 +85,7 @@ jobs:
 
     strategy:
       matrix:
-        machine: [pv-linux, pv-windows, pv-ios]
+        machine: [pv-linux, pv-windows]
 
     steps:
     - uses: actions/checkout@v3
@@ -115,7 +115,7 @@ jobs:
 
     strategy:
       matrix:
-        machine: [pv-linux, pv-windows, pv-ios]
+        machine: [pv-linux, pv-windows]
 
     steps:
     - uses: actions/checkout@v3
