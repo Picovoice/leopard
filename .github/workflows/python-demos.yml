@@ -99,7 +99,7 @@ jobs:
     # ************ REMOVE AFTER RELEASE ***************
 
     - name: Install dependencies
-      run: pip install -r requirements.txt
+      run: python3 -m pip install -r requirements.txt
 
     - name: Test
       run: python main.py
@@ -129,7 +129,7 @@ jobs:
     # ************ REMOVE AFTER RELEASE ***************
 
     - name: Install dependencies
-      run: pip install -r requirements.txt
+      run: python3 -m pip install -r requirements.txt
 
     - name: Test
       run: python main.py
