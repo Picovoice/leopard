@@ -19,7 +19,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="PvRecorder" Version="1.2.6" />
-        <PackageReference Include="Leopard" Version="2.0.3" />
+        <PackageReference Include="PvRecorder" Version="1.2.9" />
+        <PackageReference Include="Leopard" Version="2.0.4" />
     </ItemGroup>
 </Project>

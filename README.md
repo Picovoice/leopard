@@ -27,7 +27,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 - [Accurate](https://picovoice.ai/docs/benchmark/stt/)
 - [Compact and Computationally-Efficient](https://github.com/Picovoice/speech-to-text-benchmark#rtf)
 - Cross-Platform:
-  - Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64)
+  - Linux (x86_64), macOS (x86_64, arm64), Windows (x86_64, arm64)
   - Android and iOS
   - Chrome, Safari, Firefox, and Edge
   - Raspberry Pi (3, 4, 5)
