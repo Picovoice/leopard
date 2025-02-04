@@ -14,7 +14,6 @@
 [![CocoaPods](https://img.shields.io/cocoapods/v/Leopard-iOS)](https://cocoapods.org/pods/Leopard-iOS)<!-- markdown-link-check-disable-line -->
 [![Pub Version](https://img.shields.io/pub/v/leopard_flutter)](https://pub.dev/packages/leopard_flutter)
 [![PyPI](https://img.shields.io/pypi/v/pvleopard)](https://pypi.org/project/pvleopard/)
-[![Go Reference](https://pkg.go.dev/badge/github.com/Picovoice/leopard/binding/go.svg)](https://pkg.go.dev/github.com/Picovoice/leopard/binding/go)
 
 Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
@@ -45,7 +44,6 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [Android](#android-demo)
         - [Node.js](#nodejs-demo)
         - [Flutter](#flutter-demo)
-        - [Go](#go-demo)
         - [React Native](#react-native-demo)
         - [Java](#java-demo)
         - [.NET](#net-demo)
@@ -60,7 +58,6 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [Android](#android)
         - [Node.js](#nodejs)
         - [Flutter](#flutter)
-        - [Go](#go)
         - [React Native](#react-native)
         - [Java](#java)
         - [.NET](#net)
@@ -177,20 +174,6 @@ Run the following command from [demo/flutter](./demo/flutter) to build and deplo
 ```console
 flutter run
 ```
-
-### Go Demo
-
-The demo requires `cgo`, which on Windows may mean that you need to install a gcc compiler like [Mingw](https://www.mingw-w64.org/) to build it properly.
-
-From [demo/go](./demo/go) run the following command from the terminal to build and run the file demo:
-
-```console
-go run filedemo/leopard_file_demo.go -access_key "${ACCESS_KEY}" -input_audio_path "${AUDIO_FILE_PATH}"
-```
-
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_FILE_PATH}` with a path to an audio file you wish to transcribe.
-
-For more information about Go demos go to [demo/go](./demo/go).
 
 ### React Native Demo
 
@@ -493,38 +476,6 @@ try {
 ```
 
 Replace `${ACCESS_KEY}` with your `AccessKey` obtained from [Picovoice Console](https://console.picovoice.ai/), `${MODEL_FILE_PATH}` with a custom trained model from [Picovoice Console](https://console.picovoice.ai/) or the [default model](./lib/common/leopard_params.pv), and `${AUDIO_FILE_PATH}` with the path to the audio file.
-
-### Go
-
-Install the Go binding:
-
-```console
-go get github.com/Picovoice/leopard/binding/go/v2
-```
-
-Create an instance of the engine and transcribe an audio file:
-
-```go
-import . "github.com/Picovoice/leopard/binding/go/v2"
-
-leopard = Leopard{AccessKey: "${ACCESS_KEY}"}
-err := leopard.Init()
-if err != nil {
-    // handle err init
-}
-defer leopard.Delete()
-
-transcript, words, err := leopard.ProcessFile("${AUDIO_FILE_PATH}")
-if err != nil {
-    // handle process error
-}
-
-log.Println(transcript)
-```
-
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/) and
-`${AUDIO_FILE_PATH}` to path an audio file. Finally, when done be sure to explicitly release the resources using
-`leopard.Delete()`.
 
 ### React Native
 
