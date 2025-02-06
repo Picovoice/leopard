@@ -48,7 +48,7 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md'), 'r') as f:
 
 setuptools.setup(
     name="pvleopard",
-    version="2.0.4",
+    version="2.0.5",
     author="Picovoice",
     author_email="hello@picovoice.ai",
     description="Leopard Speech-to-Text Engine.",
