@@ -30,15 +30,15 @@
     <ItemGroup>
         <Content Include="Leopard.netstandard2.0.targets">
             <PackagePath>
-                build/netstandard2.0/Leopard.targets;
+                buildTransitive/netstandard2.0/Leopard.targets;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
         <Content Include="Leopard.targets">
             <PackagePath>
-                build/netcoreapp3.0/Leopard.targets;
-                build/net6.0/Leopard.targets;
-                build/net8.0/Leopard.targets;
+                buildTransitive/netcoreapp3.0/Leopard.targets;
+                buildTransitive/net6.0/Leopard.targets;
+                buildTransitive/net8.0/Leopard.targets;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
@@ -48,10 +48,10 @@
     <ItemGroup>
         <Content Include="..\..\..\lib\windows\amd64\libpv_leopard.dll">
             <PackagePath>
-                build/netstandard2.0/libpv_leopard.dll;
-                build/netcoreapp3.0/lib/windows/amd64/libpv_leopard.dll;
-                build/net6.0/lib/windows/amd64/libpv_leopard.dll;
-                build/net8.0/lib/windows/amd64/libpv_leopard.dll;
+                buildTransitive/netstandard2.0/libpv_leopard.dll;
+                buildTransitive/netcoreapp3.0/lib/windows/amd64/libpv_leopard.dll;
+                buildTransitive/net6.0/lib/windows/amd64/libpv_leopard.dll;
+                buildTransitive/net8.0/lib/windows/amd64/libpv_leopard.dll;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\windows\amd64\libpv_leopard.dll</Link>
@@ -59,10 +59,10 @@
         </Content>
         <Content Include="..\..\..\lib\mac\x86_64\libpv_leopard.dylib">
             <PackagePath>
-                build/netstandard2.0/libpv_leopard.dylib;
-                build/netcoreapp3.0/lib/mac/x86_64/libpv_leopard.dylib;
-                build/net6.0/lib/mac/x86_64/libpv_leopard.dylib;
-                build/net8.0/lib/mac/x86_64/libpv_leopard.dylib;
+                buildTransitive/netstandard2.0/libpv_leopard.dylib;
+                buildTransitive/netcoreapp3.0/lib/mac/x86_64/libpv_leopard.dylib;
+                buildTransitive/net6.0/lib/mac/x86_64/libpv_leopard.dylib;
+                buildTransitive/net8.0/lib/mac/x86_64/libpv_leopard.dylib;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\mac\x86_64\libpv_leopard.dylib</Link>
@@ -74,8 +74,8 @@
     <ItemGroup>
         <Content Include="..\..\..\lib\mac\arm64\libpv_leopard.dylib">
             <PackagePath>
-                build/net6.0/lib/mac/arm64/libpv_leopard.dylib;
-                build/net8.0/lib/mac/arm64/libpv_leopard.dylib;
+                buildTransitive/net6.0/lib/mac/arm64/libpv_leopard.dylib;
+                buildTransitive/net8.0/lib/mac/arm64/libpv_leopard.dylib;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\mac\arm64\libpv_leopard.dylib</Link>
@@ -83,8 +83,8 @@
         </Content>
         <Content Include="..\..\..\lib\windows\arm64\libpv_leopard.dll">
             <PackagePath>
-                build/net6.0/lib/windows/arm64/libpv_leopard.dll;
-                build/net8.0/lib/windows/arm64/libpv_leopard.dll;
+                buildTransitive/net6.0/lib/windows/arm64/libpv_leopard.dll;
+                buildTransitive/net8.0/lib/windows/arm64/libpv_leopard.dll;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\windows\arm64\libpv_leopard.dll</Link>
@@ -92,8 +92,8 @@
         </Content>
         <Content Include="..\..\..\lib\linux\x86_64\libpv_leopard.so">
             <PackagePath>
-                build/net6.0/lib/linux/x86_64/libpv_leopard.so;
-                build/net8.0/lib/linux/x86_64/libpv_leopard.so;
+                buildTransitive/net6.0/lib/linux/x86_64/libpv_leopard.so;
+                buildTransitive/net8.0/lib/linux/x86_64/libpv_leopard.so;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\linux\x86_64\libpv_leopard.so</Link>
@@ -101,8 +101,8 @@
         </Content>
         <Content Include="..\..\..\lib\raspberry-pi\**\*">
             <PackagePath>
-                build/net6.0/lib/raspberry-pi;
-                build/net8.0/lib/raspberry-pi;
+                buildTransitive/net6.0/lib/raspberry-pi;
+                buildTransitive/net8.0/lib/raspberry-pi;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\raspberry-pi\%(RecursiveDir)%(Filename)%(Extension)</Link>
@@ -114,10 +114,7 @@
     <ItemGroup>
         <Content Include="..\..\..\lib\common\leopard_params.pv">
             <PackagePath>
-                build/netstandard2.0/lib/common/leopard_params.pv;
-                build/netcoreapp3.0/lib/common/leopard_params.pv;
-                build/net6.0/lib/common/leopard_params.pv;
-                build/net8.0/lib/common/leopard_params.pv;
+                buildTransitive/common/leopard_params.pv;
             </PackagePath>
             <Link>lib\common\leopard_params.pv</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
