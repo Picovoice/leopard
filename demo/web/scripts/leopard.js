@@ -1,9 +1,9 @@
 let leopard = null;
 
 window.onload = function () {
-  const audioContext = new (window.AudioContext || window.webKitAudioContext)(
-    {sampleRate: 16000}
-  );
+  const audioContext = new (window.AudioContext || window.webKitAudioContext)({
+    sampleRate: 16000,
+  });
 
   function readAudioFile(selectedFile, callback) {
     let reader = new FileReader();
@@ -30,11 +30,13 @@ window.onload = function () {
           if (f > INT16_MAX) i = INT16_MAX;
           if (f < INT16_MIN) i = INT16_MIN;
           return i;
-        })
+        }),
       );
 
       writeMessage("Transcribing audio file...");
-      const {transcript, words} = await leopard.process(i16PCM, {transfer: true});
+      const { transcript, words } = await leopard.process(i16PCM, {
+        transfer: true,
+      });
       document.getElementById("result").innerHTML = transcript;
       setWordTable(words);
       writeMessage("Transcribing audio file... done!");
@@ -55,8 +57,8 @@ window.onload = function () {
           audioData.push(event.data.inputFrame);
           break;
       }
-    }
-  }
+    },
+  };
   recordButton.addEventListener("click", async () => {
     displayTimer.style.display = "inline";
     stopRecord.style.display = "inline";
@@ -66,7 +68,9 @@ window.onload = function () {
     audioData = [];
     try {
       writeMessage("Recording audio...");
-      await window.WebVoiceProcessor.WebVoiceProcessor.subscribe(recorderEngine);
+      await window.WebVoiceProcessor.WebVoiceProcessor.subscribe(
+        recorderEngine,
+      );
       timer = setInterval(() => {
         currentTimer += 0.1;
         displayTimer.innerText = `${currentTimer.toFixed(1)} / 120`;
@@ -84,7 +88,9 @@ window.onload = function () {
     stopRecord.style.display = "none";
     recordButton.style.display = "inline";
 
-    await window.WebVoiceProcessor.WebVoiceProcessor.unsubscribe(recorderEngine);
+    await window.WebVoiceProcessor.WebVoiceProcessor.unsubscribe(
+      recorderEngine,
+    );
     clearInterval(timer);
 
     const frames = new Int16Array(audioData.length * 512);
@@ -93,12 +99,14 @@ window.onload = function () {
     }
 
     writeMessage("Transcribing audio file...");
-    const {transcript, words} = await leopard.process(frames, {transfer: true});
+    const { transcript, words } = await leopard.process(frames, {
+      transfer: true,
+    });
     document.getElementById("result").innerHTML = transcript;
     setWordTable(words);
     writeMessage("Transcribing audio file... done!");
   });
-}
+};
 
 function writeMessage(message) {
   console.log(message);
@@ -115,7 +123,7 @@ function setWordTable(words) {
       <th>speaker tag</th>
     </tr>
   `;
-  words.forEach(obj => {
+  words.forEach((obj) => {
     html += `
       <tr>
         <td>${obj.word}</td>
@@ -124,7 +132,7 @@ function setWordTable(words) {
         <td>${obj.confidence.toFixed(3)}</td>
         <td>${obj.speakerTag}</td>
       </tr>
-    `
+    `;
   });
   document.getElementById("words").innerHTML = html;
 }
@@ -132,14 +140,10 @@ function setWordTable(words) {
 async function startLeopard(accessKey) {
   writeMessage("Leopard is loading. Please wait...");
   try {
-    leopard = await LeopardWeb.LeopardWorker.create(
-      accessKey,
-      leopardModel,
-      {
-          enableAutomaticPunctuation: true,
-          enableDiarization: true
-      }
-    );
+    leopard = await LeopardWeb.LeopardWorker.create(accessKey, leopardModel, {
+      enableAutomaticPunctuation: true,
+      enableDiarization: true,
+    });
     document.getElementById("control").style.display = "block";
     writeMessage("Leopard worker ready!");
   } catch (err) {
