@@ -3,6 +3,7 @@ import groovy.json.JsonSlurper
 apply plugin: 'com.android.application'
 
 android {
+    def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
     compileSdk defaultTargetSdkVersion
 
     defaultConfig {
@@ -30,8 +31,10 @@ android {
 
     flavorDimensions "language"
     productFlavors {
-        en {
-            getIsDefault().set(true)
+        if (agpVersion.tokenize('.')[0].toInteger() >= 7) {
+            en {
+                getIsDefault().set(true)
+            }
         }
 
         languages.each { language ->
@@ -49,11 +52,11 @@ android {
                 if (flavor.name != 'en') {
                     from("$projectDir/../../../../lib/common/")
                     include("leopard_params_${flavor.name}.pv")
-                    into("$projectDir/src/main/assets/models")
+                    into("$projectDir/src/${flavor.name}/assets/models")
                 } else {
                     from("$projectDir/../../../../lib/common/")
                     include("leopard_params.pv")
-                    into("$projectDir/src/main/assets/models")
+                    into("$projectDir/src/${flavor.name}/assets/models")
                 }
             }
         }
@@ -62,10 +65,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    lint {
+    lintOptions {
         abortOnError false
     }
-    namespace 'ai.picovoice.leoparddemo'
+    if (agpVersion.tokenize('.')[0].toInteger() >= 7) {
+        namespace 'ai.picovoice.leoparddemo'
+    }
 }
 
 dependencies {
