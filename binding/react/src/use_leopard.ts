@@ -90,10 +90,17 @@ export const useLeopard = (): {
         return;
       }
 
-      const processResult = await leopardRef.current.process(pcm, {
-        transfer: true,
-      });
-      setResult(processResult);
+      if (pcm.length == 0) {
+        setResult({
+          transcript: "",
+          words: []
+        });
+      } else {
+        const processResult = await leopardRef.current.process(pcm, {
+          transfer: true,
+        });
+        setResult(processResult);
+      }
     } catch (e: any) {
       setError(e);
     }
