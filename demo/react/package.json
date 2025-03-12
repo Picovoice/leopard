@@ -1,10 +1,10 @@
 {
   "name": "leopard-react-demo",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "private": true,
   "description": "Leopard React demo (made with Create React App)",
   "dependencies": {
-    "@picovoice/leopard-react": "=2.0.2",
+    "@picovoice/leopard-react": "=2.0.3",
     "@picovoice/web-voice-processor": "~4.0.8",
     "@types/node": "^18.11.9",
     "@types/react": "^19.0.0",
