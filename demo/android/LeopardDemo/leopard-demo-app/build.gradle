@@ -3,6 +3,7 @@ import groovy.json.JsonSlurper
 apply plugin: 'com.android.application'
 
 android {
+    def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
     compileSdk defaultTargetSdkVersion
 
     defaultConfig {
@@ -13,6 +14,9 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildFeatures {
+        buildConfig true
     }
     buildTypes {
         release {
@@ -31,7 +35,9 @@ android {
     flavorDimensions "language"
     productFlavors {
         en {
-            getIsDefault().set(true)
+            if (agpVersion.tokenize('.')[0].toInteger() >= 7) {
+                getIsDefault().set(true)
+            }
         }
 
         languages.each { language ->
@@ -49,11 +55,11 @@ android {
                 if (flavor.name != 'en') {
                     from("$projectDir/../../../../lib/common/")
                     include("leopard_params_${flavor.name}.pv")
-                    into("$projectDir/src/main/assets/models")
+                    into("$projectDir/src/${flavor.name}/assets/models")
                 } else {
                     from("$projectDir/../../../../lib/common/")
                     include("leopard_params.pv")
-                    into("$projectDir/src/main/assets/models")
+                    into("$projectDir/src/${flavor.name}/assets/models")
                 }
             }
         }
@@ -62,16 +68,18 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    lint {
+    lintOptions {
         abortOnError false
     }
-    namespace 'ai.picovoice.leoparddemo'
+    if (agpVersion.tokenize('.')[0].toInteger() >= 7) {
+        namespace 'ai.picovoice.leoparddemo'
+    }
 }
 
 dependencies {
 
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'ai.picovoice:leopard-android:2.0.1'
     implementation 'ai.picovoice:android-voice-processor:1.0.2'
