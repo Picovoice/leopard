@@ -2,6 +2,8 @@
 
 Made in Vancouver, Canada by [Picovoice](https://picovoice.ai)
 
+> Rust SDKs will no longer be maintained after **July 15, 2025**. If you plan to use the Leopard Speech-to-Text Rust SDK for commercial purposes, please [contact us](https://picovoice.ai/contact/).
+
 ## Leopard
 
 Leopard is an on-device speech-to-text engine. Leopard is:
