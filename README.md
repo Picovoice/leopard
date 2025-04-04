@@ -230,6 +230,8 @@ For more information about .NET demos, go to [demo/dotnet](./demo/dotnet).
 
 ### Rust Demo
 
+> Rust SDKs will no longer be maintained after **July 15, 2025**. If you plan to use the Leopard Speech-to-Text Rust SDK for commercial purposes, please [contact us](https://picovoice.ai/contact/).
+
 [Leopard Rust demo](./demo/rust) is a command-line application that lets you choose between running Leopard on an audio
 file or on real-time microphone input.
 
@@ -558,6 +560,8 @@ Console.Write(leopard.ProcessFile(audioPath));
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/). Finally, when done release the resources using `leopard.Dispose()`.
 
 ### Rust
+
+> Rust SDKs will no longer be maintained after **July 15, 2025**. If you plan to use the Leopard Speech-to-Text Rust SDK for commercial purposes, please [contact us](https://picovoice.ai/contact/).
 
 First you will need [Rust and Cargo](https://rustup.rs/) installed on your system.
 
