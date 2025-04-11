@@ -66,6 +66,7 @@ Javadoc
 javax
 Jetson
 jiwer
+jsbundle
 LCURLY
 LDFLAGS
 Leichenhalle
@@ -130,6 +131,7 @@ Sameline
 Signup
 sizecache
 SLIST
+soloader
 SRCROOT
 stdbool
 stdint
