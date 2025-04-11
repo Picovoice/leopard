@@ -1,4 +1,4 @@
-package com.rndiffapp
+package com.leopardtestapp
  
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
