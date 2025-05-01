@@ -3,7 +3,7 @@ name: Android Upload
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ master ]
     paths:
       - '.github/workflows/android-upload.yml'
       - 'demo/android/**'
@@ -11,7 +11,7 @@ on:
       - '!demo/android/LeopardDemo/README.md'
       - '!binding/android/README.md'
   pull_request:
-    branches: [ main, 'v[0-9]+.[0-9]+' ]
+    branches: [ master, 'v[0-9]+.[0-9]+' ]
     paths:
       - '.github/workflows/android-upload.yml'
       - 'demo/android/LeopardDemo/**'
