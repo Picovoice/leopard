@@ -56,7 +56,7 @@ jobs:
         run: echo ${{ secrets.EXPORT_PLIST_BASE64 }} | base64 --decode -o ./ExportOptions.plist
 
       - name: Archive app
-        run: xcodebuild -project LeopardDemo.xcodeproj -sdk iphoneos -scheme LeopardDemo -destination "generic/platform=ios" archive -archivePath "./archive" CODE_SIGNING_ALLOWED=No CODE_SIGNING_REQUIRED=Yes
+        run: xcodebuild -project LeopardDemo.xcodeproj -sdk iphoneos -scheme _enDemo -destination "generic/platform=ios" archive -archivePath "./archive" CODE_SIGNING_ALLOWED=No CODE_SIGNING_REQUIRED=Yes
 
       - name: Export App
         run: xcodebuild -exportArchive -archivePath ./archive.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath ./output/
