@@ -60,17 +60,15 @@ public class DiarizationTests extends BaseTest {
             JsonObject testData = languageTests.get(i).getAsJsonObject();
 
             String language = testData.get("language").getAsString();
-            String audioFile = testData.get("audio_file").getAsString();
+            String testAudioFile = testData.get("audio_file").getAsString();
             JsonArray words = testData.get("words").getAsJsonArray();
 
             String modelFile;
             if (language.equals("en")) {
-                modelFile = "model_files/leopard_params.pv";
+                modelFile = "leopard_params.pv";
             } else {
-                modelFile = String.format("model_files/leopard_params_%s.pv", language);
+                modelFile = String.format("leopard_params_%s.pv", language);
             }
-
-            String testAudioFile = String.format("audio_samples/%s", audioFile);
 
             LeopardTranscript.Word[] paramWords = new LeopardTranscript.Word[words.size()];
             for (int j = 0; j < words.size(); j++) {
@@ -101,14 +99,14 @@ public class DiarizationTests extends BaseTest {
 
     @Test
     public void testDiarizationMultipleSpeakers() throws Exception {
-        String modelPath = new File(testResourcesPath, modelFile).getAbsolutePath();
+        String modelPath = getModelFilepath(modelFile);
         Leopard leopard = new Leopard.Builder()
                 .setAccessKey(accessKey)
                 .setModelPath(modelPath)
                 .setEnableDiarization(true)
                 .build(appContext);
 
-        File audioFile = new File(testResourcesPath, testAudioFile);
+        File audioFile = new File(getAudioFilepath(testAudioFile));
         short[] pcm = readAudioFile(audioFile.getAbsolutePath());
 
         LeopardTranscript result = leopard.process(pcm);

@@ -69,7 +69,7 @@ public class LanguageTests extends BaseTest {
             JsonObject testData = languageTests.get(i).getAsJsonObject();
 
             String language = testData.get("language").getAsString();
-            String audioFile = testData.get("audio_file").getAsString();
+            String testAudioFile = testData.get("audio_file").getAsString();
             String transcript = testData.get("transcript").getAsString();
             String transcriptWithPunctuation = testData.get("transcript_with_punctuation").getAsString();
             float errorRate = testData.get("error_rate").getAsFloat();
@@ -77,12 +77,10 @@ public class LanguageTests extends BaseTest {
 
             String modelFile;
             if (language.equals("en")) {
-                modelFile = "model_files/leopard_params.pv";
+                modelFile = "leopard_params.pv";
             } else {
-                modelFile = String.format("model_files/leopard_params_%s.pv", language);
+                modelFile = String.format("leopard_params_%s.pv", language);
             }
-
-            String testAudioFile = String.format("audio_samples/%s", audioFile);
 
             LeopardTranscript.Word[] paramWords = new LeopardTranscript.Word[words.size()];
             for (int j = 0; j < words.size(); j++) {
@@ -119,13 +117,13 @@ public class LanguageTests extends BaseTest {
 
     @Test
     public void testTranscribeAudioFile() throws Exception {
-        String modelPath = new File(testResourcesPath, modelFile).getAbsolutePath();
+        String modelPath = getModelFilepath(modelFile);
         Leopard leopard = new Leopard.Builder()
                 .setAccessKey(accessKey)
                 .setModelPath(modelPath)
                 .build(appContext);
 
-        File audioFile = new File(testResourcesPath, testAudioFile);
+        File audioFile = new File(getAudioFilepath(testAudioFile));
         boolean useCER = language.equals("ja");
 
         LeopardTranscript result = leopard.processFile(audioFile.getAbsolutePath());
@@ -142,14 +140,14 @@ public class LanguageTests extends BaseTest {
 
     @Test
     public void testTranscribeAudioFileWithPunctuation() throws Exception {
-        String modelPath = new File(testResourcesPath, modelFile).getAbsolutePath();
+        String modelPath = getModelFilepath(modelFile);
         Leopard leopard = new Leopard.Builder()
                 .setAccessKey(accessKey)
                 .setModelPath(modelPath)
                 .setEnableAutomaticPunctuation(true)
                 .build(appContext);
 
-        File audioFile = new File(testResourcesPath, testAudioFile);
+        File audioFile = new File(getAudioFilepath(testAudioFile));
         boolean useCER = language.equals("ja");
 
         LeopardTranscript result = leopard.processFile(audioFile.getAbsolutePath());
@@ -167,13 +165,13 @@ public class LanguageTests extends BaseTest {
 
     @Test
     public void testTranscribeAudioData() throws Exception {
-        String modelPath = new File(testResourcesPath, modelFile).getAbsolutePath();
+        String modelPath = getModelFilepath(modelFile);
         Leopard leopard = new Leopard.Builder()
                 .setAccessKey(accessKey)
                 .setModelPath(modelPath)
                 .build(appContext);
 
-        File audioFile = new File(testResourcesPath, testAudioFile);
+        File audioFile = new File(getAudioFilepath(testAudioFile));
         short[] pcm = readAudioFile(audioFile.getAbsolutePath());
 
         LeopardTranscript result = leopard.process(pcm);
@@ -191,14 +189,14 @@ public class LanguageTests extends BaseTest {
 
     @Test
     public void testTranscribeAudioDataWithDiarization() throws Exception {
-        String modelPath = new File(testResourcesPath, modelFile).getAbsolutePath();
+        String modelPath = getModelFilepath(modelFile);
         Leopard leopard = new Leopard.Builder()
                 .setAccessKey(accessKey)
                 .setModelPath(modelPath)
                 .setEnableDiarization(true)
                 .build(appContext);
 
-        File audioFile = new File(testResourcesPath, testAudioFile);
+        File audioFile = new File(getAudioFilepath(testAudioFile));
         short[] pcm = readAudioFile(audioFile.getAbsolutePath());
 
         LeopardTranscript result = leopard.process(pcm);
