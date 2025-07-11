@@ -30,10 +30,11 @@ public class StandardTests extends BaseTest {
     @Test
     public void testInitFailWithInvalidAccessKey() {
         boolean didFail = false;
+        String modelPath = getModelFilepath(defaultModelFile);
         try {
             new Leopard.Builder()
                     .setAccessKey("")
-                    .setModelPath(defaultModelPath)
+                    .setModelPath(modelPath)
                     .build(appContext);
         } catch (LeopardException e) {
             didFail = true;
@@ -45,9 +46,10 @@ public class StandardTests extends BaseTest {
     @Test
     public void testInitFailWithMissingAccessKey() {
         boolean didFail = false;
+        String modelPath = getModelFilepath(defaultModelFile);
         try {
             new Leopard.Builder()
-                    .setModelPath(defaultModelPath)
+                    .setModelPath(modelPath)
                     .build(appContext);
         } catch (LeopardException e) {
             didFail = true;
@@ -88,8 +90,9 @@ public class StandardTests extends BaseTest {
 
     @Test
     public void getVersion() throws LeopardException {
+        String modelPath = getModelFilepath(defaultModelFile);
         Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
-                .setModelPath(defaultModelPath)
+                .setModelPath(modelPath)
                 .build(appContext);
 
         assertTrue(leopard.getVersion() != null && !leopard.getVersion().equals(""));
@@ -99,8 +102,9 @@ public class StandardTests extends BaseTest {
 
     @Test
     public void getSampleRate() throws LeopardException {
+        String modelPath = getModelFilepath(defaultModelFile);
         Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
-                .setModelPath(defaultModelPath)
+                .setModelPath(modelPath)
                 .build(appContext);
 
         assertTrue(leopard.getSampleRate() > 0);
@@ -111,10 +115,11 @@ public class StandardTests extends BaseTest {
     @Test
     public void testErrorStack() {
         String[] error = {};
+        String modelPath = getModelFilepath(defaultModelFile);
         try {
             new Leopard.Builder()
                     .setAccessKey("invalid")
-                    .setModelPath(defaultModelPath)
+                    .setModelPath(modelPath)
                     .build(appContext);
         } catch (LeopardException e) {
             error = e.getMessageStack();
@@ -123,10 +128,11 @@ public class StandardTests extends BaseTest {
         assertTrue(0 < error.length);
         assertTrue(error.length <= 8);
 
+        String modelPath = getModelFilepath(defaultModelFile);
         try {
             new Leopard.Builder()
                     .setAccessKey("invalid")
-                    .setModelPath(defaultModelPath)
+                    .setModelPath(modelPath)
                     .build(appContext);
         } catch (LeopardException e) {
             for (int i = 0; i < error.length; i++) {

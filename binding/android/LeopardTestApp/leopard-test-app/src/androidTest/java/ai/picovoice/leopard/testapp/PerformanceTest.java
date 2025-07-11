@@ -48,11 +48,12 @@ public class PerformanceTest extends BaseTest {
         Assume.assumeFalse(initThresholdString.equals(""));
         double initPerformanceThresholdSec = Double.parseDouble(initThresholdString);
 
+        String modelPath = getModelFilepath(defaultModelFile);
         long totalNSec = 0;
         for (int i = 0; i < numTestIterations + 1; i++) {
             long before = System.nanoTime();
             Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
-                    .setModelPath(defaultModelPath)
+                    .setModelPath(modelPath)
                     .build(appContext);
             long after = System.nanoTime();
 
@@ -80,8 +81,9 @@ public class PerformanceTest extends BaseTest {
 
         double procPerformanceThresholdSec = Double.parseDouble(procThresholdString);
 
+        String modelPath = getModelFilepath(defaultModelFile)
         Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
-                .setModelPath(defaultModelPath)
+                .setModelPath(modelPath)
                 .build(appContext);
 
         File audioFile = new File(getAudioFilepath("test.wav"));
