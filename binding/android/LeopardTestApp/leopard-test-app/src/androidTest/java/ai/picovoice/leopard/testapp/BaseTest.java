@@ -44,8 +44,7 @@ public class BaseTest {
     Context testContext;
     Context appContext;
     AssetManager assetManager;
-    String testResourcesPath;
-    String defaultModelPath;
+    String defaultModelFile;
 
     String accessKey;
 
@@ -54,8 +53,7 @@ public class BaseTest {
         testContext = InstrumentationRegistry.getInstrumentation().getContext();
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assetManager = testContext.getAssets();
-        testResourcesPath = new File(appContext.getFilesDir(), "test_resources").getAbsolutePath();
-        defaultModelPath = getModelFilepath("leopard_params.pv");
+        defaultModelFile = "leopard_params.pv"
 
         accessKey = appContext.getString(R.string.pvTestingAccessKey);
     }
