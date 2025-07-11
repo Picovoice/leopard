@@ -225,8 +225,8 @@ public class LeopardTest {
         assertEquals(words.length, referenceWords.length);
         for (int i = 0; i < words.length; i++) {
             assertEquals(
-                words[i].getWord().toUpperCase(Locale.ENGLISH),
-                referenceWords[i].getWord().toUpperCase(Locale.ENGLISH)
+                    words[i].getWord().toUpperCase(Locale.ENGLISH),
+                    referenceWords[i].getWord().toUpperCase(Locale.ENGLISH)
             );
             assertEquals(words[i].getStartSec(), referenceWords[i].getStartSec(), 0.1);
             assertEquals(words[i].getEndSec(), referenceWords[i].getEndSec(), 0.1);
@@ -350,8 +350,8 @@ public class LeopardTest {
         assertEquals(result.getWordArray().length, referenceWords.length);
         for (int i = 0; i < words.length; i++) {
             assertEquals(
-                words[i].getWord().toUpperCase(Locale.ENGLISH),
-                referenceWords[i].getWord().toUpperCase(Locale.ENGLISH)
+                    words[i].getWord().toUpperCase(Locale.ENGLISH),
+                    referenceWords[i].getWord().toUpperCase(Locale.ENGLISH)
             );
             assertEquals(words[i].getSpeakerTag(), referenceWords[i].getSpeakerTag());
         }
