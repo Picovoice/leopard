@@ -62,6 +62,7 @@ public class StandardTests extends BaseTest {
     @Test
     public void testInitFailWithInvalidModelPath() {
         boolean didFail = false;
+        String testResourcesPath = new File(appContext.getFilesDir(), "test_resources").getAbsolutePath();
         File modelPath = new File(testResourcesPath, "bad_path/bad_path.pv");
         try {
             new Leopard.Builder()
