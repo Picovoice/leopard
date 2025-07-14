@@ -53,7 +53,7 @@ public class BaseTest {
         testContext = InstrumentationRegistry.getInstrumentation().getContext();
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assetManager = testContext.getAssets();
-        defaultModelFile = "leopard_params.pv"
+        defaultModelFile = "leopard_params.pv";
 
         accessKey = appContext.getString(R.string.pvTestingAccessKey);
     }

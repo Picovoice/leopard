@@ -81,7 +81,7 @@ public class PerformanceTest extends BaseTest {
 
         double procPerformanceThresholdSec = Double.parseDouble(procThresholdString);
 
-        String modelPath = getModelFilepath(defaultModelFile)
+        String modelPath = getModelFilepath(defaultModelFile);
         Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
                 .setModelPath(modelPath)
                 .build(appContext);
