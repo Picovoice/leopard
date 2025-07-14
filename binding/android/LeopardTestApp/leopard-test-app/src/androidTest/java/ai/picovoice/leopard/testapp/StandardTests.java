@@ -128,7 +128,6 @@ public class StandardTests extends BaseTest {
         assertTrue(0 < error.length);
         assertTrue(error.length <= 8);
 
-        String modelPath = getModelFilepath(defaultModelFile);
         try {
             new Leopard.Builder()
                     .setAccessKey("invalid")
