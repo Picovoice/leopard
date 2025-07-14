@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.io.IOException;
 
 import ai.picovoice.leopard.Leopard;
 import ai.picovoice.leopard.LeopardException;
@@ -28,7 +29,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 public class StandardTests extends BaseTest {
 
     @Test
-    public void testInitFailWithInvalidAccessKey() {
+    public void testInitFailWithInvalidAccessKey() throws IOException {
         boolean didFail = false;
         String modelPath = getModelFilepath(defaultModelFile);
         try {
@@ -44,7 +45,7 @@ public class StandardTests extends BaseTest {
     }
 
     @Test
-    public void testInitFailWithMissingAccessKey() {
+    public void testInitFailWithMissingAccessKey() throws IOException {
         boolean didFail = false;
         String modelPath = getModelFilepath(defaultModelFile);
         try {
@@ -89,7 +90,7 @@ public class StandardTests extends BaseTest {
     }
 
     @Test
-    public void getVersion() throws LeopardException {
+    public void getVersion() throws LeopardException, IOException {
         String modelPath = getModelFilepath(defaultModelFile);
         Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
                 .setModelPath(modelPath)
@@ -101,7 +102,7 @@ public class StandardTests extends BaseTest {
     }
 
     @Test
-    public void getSampleRate() throws LeopardException {
+    public void getSampleRate() throws LeopardException, IOException {
         String modelPath = getModelFilepath(defaultModelFile);
         Leopard leopard = new Leopard.Builder().setAccessKey(accessKey)
                 .setModelPath(modelPath)
@@ -113,7 +114,7 @@ public class StandardTests extends BaseTest {
     }
 
     @Test
-    public void testErrorStack() {
+    public void testErrorStack() throws IOException {
         String[] error = {};
         String modelPath = getModelFilepath(defaultModelFile);
         try {
