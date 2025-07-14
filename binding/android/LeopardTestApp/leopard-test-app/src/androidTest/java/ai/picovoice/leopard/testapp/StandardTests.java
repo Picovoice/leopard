@@ -61,7 +61,7 @@ public class StandardTests extends BaseTest {
     @Test
     public void testInitFailWithInvalidModelPath() {
         boolean didFail = false;
-        File modelPath = getModelFilepath('bad_file.pv');
+        File modelPath = getModelFilepath("bad_file.pv");
         try {
             new Leopard.Builder()
                     .setAccessKey(accessKey)
