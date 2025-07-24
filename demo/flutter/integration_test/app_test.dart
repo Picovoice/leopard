@@ -95,15 +95,19 @@ void main() {
   }
 
   Future<void> validateMetadata(
-      List<LeopardWord> words,
-      List<dynamic> expectedWords,
-      bool enableDiarization) async {
+    List<LeopardWord> words,
+    List<dynamic> expectedWords,
+    bool enableDiarization,
+  ) async {
     expect(words.length, expectedWords.length);
     for (var i = 0; i < words.length; i++) {
       expect(words[i].word, expectedWords[i]["word"]);
       expect(words[i].startSec, closeTo(expectedWords[i]["start_sec"], 0.01));
       expect(words[i].endSec, closeTo(expectedWords[i]["end_sec"], 0.01));
-      expect(words[i].confidence, closeTo(expectedWords[i]["confidence"], 0.01));
+      expect(
+        words[i].confidence,
+        closeTo(expectedWords[i]["confidence"], 0.01),
+      );
       if (enableDiarization) {
         expect(words[i].speakerTag, expectedWords[i]["speaker_tag"]);
       } else {
@@ -116,34 +120,38 @@ void main() {
     late dynamic testData;
 
     setUp(() async {
-      String testDataJson =
-          await rootBundle.loadString('assets/test_resources/test_data.json');
+      String testDataJson = await rootBundle.loadString(
+        'assets/test_resources/test_data.json',
+      );
       testData = json.decode(testDataJson);
     });
 
     Future<void> runLeopardProcess(
-        String language,
-        String expectedTranscript,
-        List<dynamic> expectedWords,
-        double errorRate,
-        String audioFile,
-        {
-          bool asFile = false,
-          bool enableAutomaticPunctuation = false,
-          bool enableDiarization = false
-        }) async {
+      String language,
+      String expectedTranscript,
+      List<dynamic> expectedWords,
+      double errorRate,
+      String audioFile, {
+      bool asFile = false,
+      bool enableAutomaticPunctuation = false,
+      bool enableDiarization = false,
+    }) async {
       String modelPath = getModelPath(language);
 
       Leopard leopard;
       try {
-        leopard = await Leopard.create(accessKey,
-            modelPath,
-            enableAutomaticPunctuation: enableAutomaticPunctuation,
-            enableDiarization: enableDiarization
-          );
+        leopard = await Leopard.create(
+          accessKey,
+          modelPath,
+          enableAutomaticPunctuation: enableAutomaticPunctuation,
+          enableDiarization: enableDiarization,
+        );
       } on LeopardException catch (ex) {
-        expect(ex, equals(null),
-            reason: "Failed to initialize Leopard for $language: ${ex.message}");
+        expect(
+          ex,
+          equals(null),
+          reason: "Failed to initialize Leopard for $language: ${ex.message}",
+        );
         return;
       }
 
@@ -158,95 +166,121 @@ void main() {
 
       leopard.delete();
 
-      expect(characterErrorRate(res.transcript, expectedTranscript),
-          lessThanOrEqualTo(errorRate),
-          reason: "Character error rate for $language was incorrect");
+      expect(
+        characterErrorRate(res.transcript, expectedTranscript),
+        lessThanOrEqualTo(errorRate),
+        reason: "Character error rate for $language was incorrect",
+      );
       await validateMetadata(res.words, expectedWords, enableDiarization);
     }
 
     testWidgets('Test process all languages', (tester) async {
       for (int t = 0; t < testData['tests']['language_tests'].length; t++) {
         String language = testData['tests']['language_tests'][t]['language'];
-        String transcript = testData['tests']['language_tests'][t]['transcript'];
-        List<dynamic> expectedWords = testData['tests']['language_tests'][t]['words'];
+        String transcript =
+            testData['tests']['language_tests'][t]['transcript'];
+        List<dynamic> expectedWords =
+            testData['tests']['language_tests'][t]['words'];
         double errorRate = testData['tests']['language_tests'][t]['error_rate'];
         String audioFile = testData['tests']['language_tests'][t]['audio_file'];
 
         await runLeopardProcess(
-            language, transcript, expectedWords, errorRate, audioFile);
+          language,
+          transcript,
+          expectedWords,
+          errorRate,
+          audioFile,
+        );
       }
     });
 
     testWidgets('Test process all languages with punctuation', (tester) async {
       for (int t = 0; t < testData['tests']['language_tests'].length; t++) {
         String language = testData['tests']['language_tests'][t]['language'];
-        String transcriptWithPunctuation = testData['tests']['language_tests'][t]['transcript_with_punctuation'];
-        List<dynamic> expectedWords = testData['tests']['language_tests'][t]['words'];
+        String transcriptWithPunctuation =
+            testData['tests']['language_tests'][t]['transcript_with_punctuation'];
+        List<dynamic> expectedWords =
+            testData['tests']['language_tests'][t]['words'];
         double errorRate = testData['tests']['language_tests'][t]['error_rate'];
         String audioFile = testData['tests']['language_tests'][t]['audio_file'];
 
         await runLeopardProcess(
-            language,
-            transcriptWithPunctuation,
-            expectedWords,
-            errorRate,
-            audioFile,
-            enableAutomaticPunctuation: true);
+          language,
+          transcriptWithPunctuation,
+          expectedWords,
+          errorRate,
+          audioFile,
+          enableAutomaticPunctuation: true,
+        );
       }
     });
 
     testWidgets('Test process file all languages', (tester) async {
       for (int t = 0; t < testData['tests']['language_tests'].length; t++) {
         String language = testData['tests']['language_tests'][t]['language'];
-        String transcript = testData['tests']['language_tests'][t]['transcript'];
-        List<dynamic> expectedWords = testData['tests']['language_tests'][t]['words'];
+        String transcript =
+            testData['tests']['language_tests'][t]['transcript'];
+        List<dynamic> expectedWords =
+            testData['tests']['language_tests'][t]['words'];
         double errorRate = testData['tests']['language_tests'][t]['error_rate'];
         String audioFile = testData['tests']['language_tests'][t]['audio_file'];
 
         await runLeopardProcess(
-            language,
-            transcript,
-            expectedWords,
-            errorRate,
-            audioFile,
-            asFile: true);
+          language,
+          transcript,
+          expectedWords,
+          errorRate,
+          audioFile,
+          asFile: true,
+        );
       }
     });
 
-    testWidgets('Test process file all languages with diarization', (tester) async {
+    testWidgets('Test process file all languages with diarization', (
+      tester,
+    ) async {
       for (int t = 0; t < testData['tests']['language_tests'].length; t++) {
         String language = testData['tests']['language_tests'][t]['language'];
-        String transcript = testData['tests']['language_tests'][t]['transcript'];
-        List<dynamic> expectedWords = testData['tests']['language_tests'][t]['words'];
+        String transcript =
+            testData['tests']['language_tests'][t]['transcript'];
+        List<dynamic> expectedWords =
+            testData['tests']['language_tests'][t]['words'];
         double errorRate = testData['tests']['language_tests'][t]['error_rate'];
         String audioFile = testData['tests']['language_tests'][t]['audio_file'];
 
         await runLeopardProcess(
-            language,
-            transcript,
-            expectedWords,
-            errorRate,
-            audioFile,
-            enableDiarization: true);
+          language,
+          transcript,
+          expectedWords,
+          errorRate,
+          audioFile,
+          enableDiarization: true,
+        );
       }
     });
 
     testWidgets('Test diarization with multiple speakers', (tester) async {
       for (int t = 0; t < testData['tests']['diarization_tests'].length; t++) {
         String language = testData['tests']['diarization_tests'][t]['language'];
-        List<dynamic> expectedWords = testData['tests']['diarization_tests'][t]['words'];
-        String audioFile = testData['tests']['diarization_tests'][t]['audio_file'];
+        List<dynamic> expectedWords =
+            testData['tests']['diarization_tests'][t]['words'];
+        String audioFile =
+            testData['tests']['diarization_tests'][t]['audio_file'];
 
         String modelPath = getModelPath(language);
         Leopard leopard;
         try {
-          leopard = await Leopard.create(accessKey,
-              modelPath,
-              enableDiarization: true
-            );
+          leopard = await Leopard.create(
+            accessKey,
+            modelPath,
+            enableDiarization: true,
+          );
         } on LeopardException catch (ex) {
-          expect(ex, equals(null),
-              reason: "Failed to initialize Leopard for $language: ${ex.message}");
+          expect(
+            ex,
+            equals(null),
+            reason: "Failed to initialize Leopard for $language: ${ex.message}",
+          );
           return;
         }
 
