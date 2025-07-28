@@ -24,11 +24,13 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   final String accessKey =
       '{YOUR_ACCESS_KEY_HERE}'; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
   final int maxRecordingLengthSecs = 120;
@@ -234,21 +236,19 @@ class _MyAppState extends State<MyApp> {
 
     return Expanded(
       flex: 1,
-      child: Container(
-        child: SizedBox(
-          width: 130,
-          height: 65,
-          child: ElevatedButton(
-            style: buttonStyle,
-            onPressed: (isButtonDisabled || isError)
-                ? null
-                : isRecording
-                ? _stopRecording
-                : _startRecording,
-            child: Text(
-              isRecording ? "Stop" : "Start",
-              style: TextStyle(fontSize: 30),
-            ),
+      child: SizedBox(
+        width: 130,
+        height: 65,
+        child: ElevatedButton(
+          style: buttonStyle,
+          onPressed: (isButtonDisabled || isError)
+              ? null
+              : isRecording
+                  ? _stopRecording
+                  : _startRecording,
+          child: Text(
+            isRecording ? "Stop" : "Start",
+            style: TextStyle(fontSize: 30),
           ),
         ),
       ),
