@@ -36,6 +36,11 @@ jobs:
       run: sed -i 's:{TESTING_ACCESS_KEY_HERE}:${{secrets.PV_VALID_ACCESS_KEY}}:'
         integration_test/app_test.dart
 
+    - name: Install Flutter 3.24.0
+      run: |
+        fvm install 3.24.0
+        fvm use 3.24.0
+
     - name: Install dependencies
       run: flutter pub get
 
@@ -58,6 +63,11 @@ jobs:
       - name: Inject AppID
         run: sed -i '.bak' 's:{TESTING_ACCESS_KEY_HERE}:${{secrets.PV_VALID_ACCESS_KEY}}:'
           integration_test/app_test.dart
+
+      - name: Install Flutter 3.24.0
+        run: |
+          fvm install 3.24.0
+          fvm use 3.24.0
 
       - name: Install dependencies
         run: flutter pub get
