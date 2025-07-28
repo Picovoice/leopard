@@ -42,13 +42,13 @@ jobs:
         fvm use 3.24.0
 
     - name: Install dependencies
-      run: flutter pub get
+      run: fvm flutter pub get
 
     - name: Prepare demo
       run: dart scripts/prepare_demo.dart en
 
     - name: Run integration tests
-      run: flutter test integration_test
+      run: fvm flutter test integration_test
 
   test-ios:
       name: Test iOS
@@ -70,10 +70,10 @@ jobs:
           fvm use 3.24.0
 
       - name: Install dependencies
-        run: flutter pub get
+        run: fvm flutter pub get
 
       - name: Prepare demo
         run: dart scripts/prepare_demo.dart en
 
       - name: Run integration tests
-        run: flutter test integration_test
+        run: fvm flutter test integration_test
