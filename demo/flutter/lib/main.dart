@@ -369,7 +369,13 @@ class MyAppState extends State<MyApp> {
       child: Container(
         alignment: Alignment.center,
         padding: EdgeInsets.only(bottom: 20),
-        child: Text(statusAreaText, style: TextStyle(color: Colors.black)),
+        child: Text(
+          statusAreaText,
+          textAlign: TextAlign.center,
+          softWrap: true,
+          overflow: TextOverflow.visible,
+          style: TextStyle(color: Colors.black),
+        ),
       ),
     );
   }
@@ -401,7 +407,7 @@ class MyAppState extends State<MyApp> {
     flex: 1,
     child: Container(
       alignment: Alignment.bottomCenter,
-      padding: EdgeInsets.only(bottom: 20),
+      padding: EdgeInsets.only(bottom: 10),
       margin: EdgeInsets.only(top: 10),
       child: const Text(
         "Made in Vancouver, Canada by Picovoice",
