@@ -25,6 +25,8 @@ jobs:
   test-android:
     name: Test Android
     runs-on: pv-android
+    env:
+      JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
 
     steps:
     - uses: actions/checkout@v3
@@ -45,7 +47,7 @@ jobs:
       run: fvm flutter pub get
 
     - name: Prepare demo
-      run: dart scripts/prepare_demo.dart en
+      run: fvm dart scripts/prepare_demo.dart en
 
     - name: Run integration tests
       run: fvm flutter test integration_test
@@ -73,7 +75,7 @@ jobs:
         run: fvm flutter pub get
 
       - name: Prepare demo
-        run: dart scripts/prepare_demo.dart en
+        run: fvm dart scripts/prepare_demo.dart en
 
       - name: Run integration tests
         run: fvm flutter test integration_test
