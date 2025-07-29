@@ -36,12 +36,6 @@ jobs:
       run: sed -i 's:{TESTING_ACCESS_KEY_HERE}:${{secrets.PV_VALID_ACCESS_KEY}}:'
         integration_test/app_test.dart
 
-    - name: Set JAVA_HOME and update PATH
-      run: |
-        echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
-        echo "/usr/lib/jvm/java-17-openjdk-amd64/bin" >> $GITHUB_PATH
-        echo "org.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64" >> gradle.properties
-
     - name: Install Flutter 3.24.0
       run: |
         fvm install 3.24.0
@@ -55,6 +49,8 @@ jobs:
 
     - name: Run integration tests
       run: fvm flutter test integration_test
+      env:
+        JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
 
   test-ios:
       name: Test iOS
