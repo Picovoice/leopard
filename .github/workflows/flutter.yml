@@ -51,6 +51,7 @@ jobs:
       run: |
         export TEMP_HOME=$(mktemp -d)
         export HOME=$TEMP_HOME
+        fvm flutter doctor -v
         fvm flutter config --jdk-dir="/usr/lib/jvm/java-17-openjdk-amd64"
         export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
         export PATH=$JAVA_HOME/bin:$PATH
