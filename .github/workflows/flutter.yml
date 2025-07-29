@@ -25,9 +25,6 @@ jobs:
   test-android:
     name: Test Android
     runs-on: pv-android
-    env:
-      JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
-      PATH: /usr/lib/jvm/java-17-openjdk-amd64/bin:$PATH
 
     steps:
     - uses: actions/checkout@v3
@@ -39,8 +36,10 @@ jobs:
       run: sed -i 's:{TESTING_ACCESS_KEY_HERE}:${{secrets.PV_VALID_ACCESS_KEY}}:'
         integration_test/app_test.dart
 
-    - name: Set Gradle Java home
-      run: echo "org.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64" >> gradle.properties
+    - name: Set JAVA_HOME and update PATH
+      run: |
+        echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
+        echo "/usr/lib/jvm/java-17-openjdk-amd64/bin" >> $GITHUB_PATH
 
     - name: Install Flutter 3.24.0
       run: |
