@@ -1,5 +1,5 @@
 //
-// Copyright 2022-2023 Picovoice Inc.
+// Copyright 2022-2025 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -24,11 +24,13 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   final String accessKey =
       '{YOUR_ACCESS_KEY_HERE}'; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
   final int maxRecordingLengthSecs = 120;
@@ -66,14 +68,18 @@ class _MyAppState extends State<MyApp> {
   Future<void> initLeopard() async {
     String language = "";
     try {
-      final paramsString =
-          await DefaultAssetBundle.of(context).loadString('assets/params.json');
+      final paramsString = await DefaultAssetBundle.of(
+        context,
+      ).loadString('assets/params.json');
       final params = json.decode(paramsString);
 
       language = params["language"];
     } catch (_) {
-      errorCallback(LeopardException(
-          "Could not find `params.json`. Ensure 'prepare_demo.dart' script was run before launching the demo."));
+      errorCallback(
+        LeopardException(
+          "Could not find `params.json`. Ensure 'prepare_demo.dart' script was run before launching the demo.",
+        ),
+      );
       return;
     }
 
@@ -81,12 +87,17 @@ class _MyAppState extends State<MyApp> {
     final String modelPath = "assets/models/leopard_params$suffix.pv";
 
     try {
-      _leopard = await Leopard.create(accessKey,
-          modelPath,
-          enableAutomaticPunctuation: true,
-          enableDiarization: true);
+      _leopard = await Leopard.create(
+        accessKey,
+        modelPath,
+        enableAutomaticPunctuation: true,
+        enableDiarization: true,
+      );
       _micRecorder = await MicRecorder.create(
-          _leopard!.sampleRate, recordedCallback, errorCallback);
+        _leopard!.sampleRate,
+        recordedCallback,
+        errorCallback,
+      );
       setState(() {
         statusAreaText =
             "Press START to start recording some audio to transcribe";
@@ -95,13 +106,15 @@ class _MyAppState extends State<MyApp> {
     } on LeopardActivationException {
       errorCallback(LeopardActivationException("AccessKey activation error."));
     } on LeopardActivationLimitException {
-      errorCallback(LeopardActivationLimitException(
-          "AccessKey reached its device limit."));
+      errorCallback(
+        LeopardActivationLimitException("AccessKey reached its device limit."),
+      );
     } on LeopardActivationRefusedException {
       errorCallback(LeopardActivationRefusedException("AccessKey refused."));
     } on LeopardActivationThrottledException {
       errorCallback(
-          LeopardActivationThrottledException("AccessKey has been throttled."));
+        LeopardActivationThrottledException("AccessKey has been throttled."),
+      );
     } on LeopardException catch (ex) {
       errorCallback(ex);
     }
@@ -174,8 +187,9 @@ class _MyAppState extends State<MyApp> {
     Duration elapsed = stopwatch.elapsed;
 
     String audioLength = recordedLength.toStringAsFixed(1);
-    String transcriptionTime =
-        (elapsed.inMilliseconds / 1000).toStringAsFixed(1);
+    String transcriptionTime = (elapsed.inMilliseconds / 1000).toStringAsFixed(
+      1,
+    );
 
     setState(() {
       statusAreaText =
@@ -197,159 +211,208 @@ class _MyAppState extends State<MyApp> {
           backgroundColor: picoBlue,
         ),
         body: Container(
-            color: Colors.white,
-            child: Column(
-              children: [
-                buildLeopardTextArea(context),
-                buildLeopardWordArea(context),
-                buildErrorMessage(context),
-                buildLeopardStatusArea(context),
-                buildStartButton(context),
-                footer
-              ],
-            )),
+          color: Colors.white,
+          child: Column(
+            children: [
+              buildLeopardTextArea(context),
+              buildLeopardWordArea(context),
+              buildErrorMessage(context),
+              buildLeopardStatusArea(context),
+              buildStartButton(context),
+              footer,
+            ],
+          ),
+        ),
       ),
     );
   }
 
   buildStartButton(BuildContext context) {
     final ButtonStyle buttonStyle = ElevatedButton.styleFrom(
-        backgroundColor: picoBlue,
-        shape: BeveledRectangleBorder(),
-        textStyle: TextStyle(color: Colors.white));
+      backgroundColor: picoBlue,
+      shape: BeveledRectangleBorder(),
+      textStyle: TextStyle(color: Colors.white),
+    );
 
     return Expanded(
       flex: 1,
-      child: Container(
-          child: SizedBox(
-              width: 130,
-              height: 65,
-              child: ElevatedButton(
-                style: buttonStyle,
-                onPressed: (isButtonDisabled || isError)
-                    ? null
-                    : isRecording
-                        ? _stopRecording
-                        : _startRecording,
-                child: Text(isRecording ? "Stop" : "Start",
-                    style: TextStyle(fontSize: 30)),
-              ))),
+      child: SizedBox(
+        width: 130,
+        height: 65,
+        child: ElevatedButton(
+          style: buttonStyle,
+          onPressed: (isButtonDisabled || isError)
+              ? null
+              : isRecording
+                  ? _stopRecording
+                  : _startRecording,
+          child: Text(
+            isRecording ? "Stop" : "Start",
+            style: TextStyle(fontSize: 30),
+          ),
+        ),
+      ),
     );
   }
 
   buildLeopardTextArea(BuildContext context) {
     return Expanded(
-        flex: 6,
-        child: Container(
-            alignment: Alignment.topCenter,
-            color: Color(0xff25187e),
-            margin: EdgeInsets.all(10),
-            child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                padding: EdgeInsets.all(10),
-                physics: RangeMaintainingScrollPhysics(),
-                child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      transcriptText,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    )))));
+      flex: 6,
+      child: Container(
+        alignment: Alignment.topCenter,
+        color: Color(0xff25187e),
+        margin: EdgeInsets.all(10),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          padding: EdgeInsets.all(10),
+          physics: RangeMaintainingScrollPhysics(),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              transcriptText,
+              textAlign: TextAlign.left,
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   buildLeopardWordArea(BuildContext context) {
     List<TableRow> tableRows = words.map<TableRow>((leopardWord) {
-      return TableRow(children: [
-        Column(children: [
-          Text(leopardWord.word, style: TextStyle(color: Colors.white))
-        ]),
-        Column(children: [
-          Text('${leopardWord.startSec.toStringAsFixed(2)}s',
-              style: TextStyle(color: Colors.white))
-        ]),
-        Column(children: [
-          Text('${leopardWord.endSec.toStringAsFixed(2)}s',
-              style: TextStyle(color: Colors.white))
-        ]),
-        Column(children: [
-          Text('${(leopardWord.confidence * 100).toStringAsFixed(0)}%',
-              style: TextStyle(color: Colors.white))
-        ]),
-        Column(children: [
-          Text('${leopardWord.speakerTag}',
-              style: TextStyle(color: Colors.white))
-        ]),
-      ]);
+      return TableRow(
+        children: [
+          Column(
+            children: [
+              Text(leopardWord.word, style: TextStyle(color: Colors.white)),
+            ],
+          ),
+          Column(
+            children: [
+              Text(
+                '${leopardWord.startSec.toStringAsFixed(2)}s',
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+          Column(
+            children: [
+              Text(
+                '${leopardWord.endSec.toStringAsFixed(2)}s',
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+          Column(
+            children: [
+              Text(
+                '${(leopardWord.confidence * 100).toStringAsFixed(0)}%',
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+          Column(
+            children: [
+              Text(
+                '${leopardWord.speakerTag}',
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+        ],
+      );
     }).toList();
 
     return Expanded(
-        flex: 4,
-        child: Container(
-          color: Color(0xff25187e),
-          alignment: Alignment.topCenter,
-          margin: EdgeInsets.all(10),
-          child: Column(children: [
+      flex: 4,
+      child: Container(
+        color: Color(0xff25187e),
+        alignment: Alignment.topCenter,
+        margin: EdgeInsets.all(10),
+        child: Column(
+          children: [
             Container(
-                color: Colors.white,
-                padding: EdgeInsets.only(bottom: 5, top: 5),
-                child: Table(children: [
-                  TableRow(children: [
-                    Column(children: [Text("Word")]),
-                    Column(children: [Text("Start")]),
-                    Column(children: [Text("End")]),
-                    Column(children: [Text("Confidence")]),
-                    Column(children: [Text("Tag")]),
-                  ])
-                ])),
+              color: Colors.white,
+              padding: EdgeInsets.only(bottom: 5, top: 5),
+              child: Table(
+                children: [
+                  TableRow(
+                    children: [
+                      Column(children: [Text("Word")]),
+                      Column(children: [Text("Start")]),
+                      Column(children: [Text("End")]),
+                      Column(children: [Text("Confidence")]),
+                      Column(children: [Text("Tag")]),
+                    ],
+                  ),
+                ],
+              ),
+            ),
             Flexible(
-                child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    padding: EdgeInsets.all(10),
-                    physics: RangeMaintainingScrollPhysics(),
-                    child: Table(children: tableRows)))
-          ]),
-        ));
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                padding: EdgeInsets.all(10),
+                physics: RangeMaintainingScrollPhysics(),
+                child: Table(children: tableRows),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   buildLeopardStatusArea(BuildContext context) {
     return Expanded(
-        flex: 1,
-        child: Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.only(bottom: 20),
-            child: Text(
-              statusAreaText,
-              style: TextStyle(color: Colors.black),
-            )));
+      flex: 1,
+      child: Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.only(bottom: 20),
+        child: Text(
+          statusAreaText,
+          textAlign: TextAlign.center,
+          softWrap: true,
+          overflow: TextOverflow.visible,
+          style: TextStyle(color: Colors.black),
+        ),
+      ),
+    );
   }
 
   buildErrorMessage(BuildContext context) {
     return Expanded(
-        flex: isError ? 4 : 0,
-        child: Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(left: 20, right: 20),
-            padding: EdgeInsets.all(5),
-            decoration: !isError
-                ? null
-                : BoxDecoration(
-                    color: Colors.red, borderRadius: BorderRadius.circular(5)),
-            child: !isError
-                ? null
-                : Text(
-                    errorMessage,
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  )));
+      flex: isError ? 4 : 0,
+      child: Container(
+        alignment: Alignment.center,
+        margin: EdgeInsets.only(left: 20, right: 20),
+        padding: EdgeInsets.all(5),
+        decoration: !isError
+            ? null
+            : BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(5),
+              ),
+        child: !isError
+            ? null
+            : Text(
+                errorMessage,
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+      ),
+    );
   }
 
   Widget footer = Expanded(
-      flex: 1,
-      child: Container(
-          alignment: Alignment.bottomCenter,
-          padding: EdgeInsets.only(bottom: 20),
-          margin: EdgeInsets.only(top: 10),
-          child: const Text(
-            "Made in Vancouver, Canada by Picovoice",
-            style: TextStyle(color: Color(0xff666666)),
-          )));
+    flex: 1,
+    child: Container(
+      alignment: Alignment.bottomCenter,
+      padding: EdgeInsets.only(bottom: 10),
+      margin: EdgeInsets.only(top: 10),
+      child: const Text(
+        "Made in Vancouver, Canada by Picovoice",
+        style: TextStyle(color: Color(0xff666666)),
+      ),
+    ),
+  );
 }

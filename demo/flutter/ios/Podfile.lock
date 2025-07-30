@@ -10,15 +10,16 @@ PODS:
   - leopard_flutter (2.0.3):
     - Flutter
     - Leopard-iOS (~> 2.0.2)
-  - path_provider_ios (0.0.1):
+  - path_provider_foundation (0.0.1):
     - Flutter
+    - FlutterMacOS
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_voice_processor (from `.symlinks/plugins/flutter_voice_processor/ios`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
   - leopard_flutter (from `.symlinks/plugins/leopard_flutter/ios`)
-  - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
 
 SPEC REPOS:
   trunk:
@@ -34,18 +35,18 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/integration_test/ios"
   leopard_flutter:
     :path: ".symlinks/plugins/leopard_flutter/ios"
-  path_provider_ios:
-    :path: ".symlinks/plugins/path_provider_ios/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_voice_processor: 9ebe2cae6612db22d20e7e7833937ea19fa3e59c
-  integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
+  flutter_voice_processor: f60363f959515eaebc35bcaaf26017596c953fc6
+  integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
   ios-voice-processor: 6b5ca08962f39e434fe39dca0f483d923a3b1b97
   Leopard-iOS: 636fd4245497e1f7c348a8e346a6a9357ac07d0c
-  leopard_flutter: 5440ec6ff3b4929d16a6d3b055cc265782e0857e
-  path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
+  leopard_flutter: 296d6d524886cc7f0b537fae2063ab80413e1192
+  path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
 
-PODFILE CHECKSUM: cc1f88378b4bfcf93a6ce00d2c587857c6008d3b
+PODFILE CHECKSUM: ade96bceabe3919b69c16573938e4268fe3a6c9d
 
 COCOAPODS: 1.16.2
