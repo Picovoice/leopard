@@ -3,7 +3,6 @@
 [![GitHub release](https://img.shields.io/github/release/Picovoice/Leopard.svg)](https://github.com/Picovoice/Leopard/releases)
 [![GitHub](https://img.shields.io/github/license/Picovoice/leopard)](https://github.com/Picovoice/leopard/)
 
-[![Crates.io](https://img.shields.io/crates/v/pv_leopard)](https://crates.io/crates/pv_leopard)<!-- markdown-link-check-disable-line -->
 [![Maven Central](https://img.shields.io/maven-central/v/ai.picovoice/leopard-android?label=maven-central%20%5Bandroid%5D)](https://repo1.maven.org/maven2/ai/picovoice/leopard-android/)
 [![Maven Central](https://img.shields.io/maven-central/v/ai.picovoice/leopard-java?label=maven%20central%20%5Bjava%5D)](https://repo1.maven.org/maven2/ai/picovoice/leopard-java/)
 [![npm](https://img.shields.io/npm/v/@picovoice/leopard-node?label=npm%20%5Bnode%5D)](https://www.npmjs.com/package/@picovoice/leopard-node)
