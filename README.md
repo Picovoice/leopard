@@ -47,7 +47,6 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [React Native](#react-native-demo)
         - [Java](#java-demo)
         - [.NET](#net-demo)
-        - [Rust](#rust-demo)
         - [Web](#web-demos)
           - [Vanilla JavaScript and HTML](#vanilla-javascript-and-html)
           - [React](#react-demo)
@@ -61,7 +60,6 @@ Leopard is an on-device speech-to-text engine. Leopard is:
         - [React Native](#react-native)
         - [Java](#java)
         - [.NET](#net)
-        - [Rust](#rust)
         - [Web](#web)
           - [Vanilla JavaScript and HTML (ES Modules)](#vanilla-javascript-and-html-es-modules)
           - [React](#react)
@@ -227,24 +225,6 @@ Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_
 wish to transcribe.
 
 For more information about .NET demos, go to [demo/dotnet](./demo/dotnet).
-
-### Rust Demo
-
-> Rust SDKs will no longer be maintained after **July 15, 2025**. If you plan to use the Leopard Speech-to-Text Rust SDK for commercial purposes, please [contact us](https://picovoice.ai/contact/).
-
-[Leopard Rust demo](./demo/rust) is a command-line application that lets you choose between running Leopard on an audio
-file or on real-time microphone input.
-
-From [demo/rust/filedemo](./demo/rust/filedemo) run the following in the terminal:
-
-```console
-cargo run --release -- --access_key ${ACCESS_KEY} --input_audio_path ${AUDIO_FILE_PATH}
-```
-
-Replace `${ACCESS_KEY}` with yours obtained from Picovoice Console and `${AUDIO_FILE_PATH}` with a path to an audio file you
-wish to transcribe.
-
-For more information about Rust demos, go to [demo/rust](./demo/rust).
 
 ### Web Demos
 
@@ -558,35 +538,6 @@ Console.Write(leopard.ProcessFile(audioPath));
 ```
 
 Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/). Finally, when done release the resources using `leopard.Dispose()`.
-
-### Rust
-
-> Rust SDKs will no longer be maintained after **July 15, 2025**. If you plan to use the Leopard Speech-to-Text Rust SDK for commercial purposes, please [contact us](https://picovoice.ai/contact/).
-
-First you will need [Rust and Cargo](https://rustup.rs/) installed on your system.
-
-To add the leopard library into your app, add `pv_leopard` to your app's `Cargo.toml` manifest:
-```toml
-[dependencies]
-pv_leopard = "*"
-```
-
-Create an instance of the engine using `LeopardBuilder` instance and transcribe an audio file:
-
-```rust
-use leopard::LeopardBuilder;
-
-fn main() {
-    let access_key = "${ACCESS_KEY}"; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
-    let leopard: Leopard = LeopardBuilder::new().access_key(access_key).init().expect("Unable to create Leopard");
-
-    if let Ok(leopard_transcript) = leopard.process_file("/absolute/path/to/audio_file") {
-        println!("{}", leopard_transcript.transcript);
-    }
-}
-```
-
-Replace `${ACCESS_KEY}` with yours obtained from [Picovoice Console](https://console.picovoice.ai/).
 
 ### Web
 

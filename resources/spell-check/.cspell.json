@@ -73,9 +73,6 @@
     "**/binding/react-native/test-app/**/*.mm",
     "**/demo/react-native/patches/*.patch",
 
-    // rust
-    "**/Cargo.toml",
-
     // test
     "**/test_data.json"
   ]
