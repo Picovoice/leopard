@@ -1,6 +1,6 @@
 # leopard-web-react-demo
 
-This demo application consists of a `VoiceWidget` component which uses the `useLeopard` react hook to perform speech-to-text. It instantiates a Leopard worker engine and uses it with the [@picovoice/web-voice-processor](https://www.npmjs.com/package/@picovoice/web-voice-processor) to access (and automatically downsample) microphone audio. You can also directly upload an audio file to be transcribed.
+This demo application consists of a `VoiceWidget` component which uses the `useLeopard` react hook to perform speech-to-text. It instantiates a Leopard worker engine and uses it with the [@picovoice/web-voice-processor](https://www.npmjs.com/package/@picovoice/web-voice-processor) to access (and automatically downsample) microphone audio. You can also directly upload an audio file to be transcribed. <!-- markdown-link-check-disable-line -->
 
 If you choose to record audio and decline microphone permission in the browser, or another such issue prevents Leopard from starting, the error will be displayed.
 
