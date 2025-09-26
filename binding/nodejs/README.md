@@ -78,4 +78,4 @@ Along with the transcript, Leopard returns metadata for each transcribed word. A
 
 ## Demos
 
-[Leopard Node.js demo package](https://www.npmjs.com/package/@picovoice/leopard-node-demo) provides command-line utilities for processing audio using leopard.
+[Leopard Node.js demo package](https://www.npmjs.com/package/@picovoice/leopard-node-demo) provides command-line utilities for processing audio using leopard. <!-- markdown-link-check-disable-line -->

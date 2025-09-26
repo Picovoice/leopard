@@ -5,10 +5,10 @@
 
 [![Maven Central](https://img.shields.io/maven-central/v/ai.picovoice/leopard-android?label=maven-central%20%5Bandroid%5D)](https://repo1.maven.org/maven2/ai/picovoice/leopard-android/)
 [![Maven Central](https://img.shields.io/maven-central/v/ai.picovoice/leopard-java?label=maven%20central%20%5Bjava%5D)](https://repo1.maven.org/maven2/ai/picovoice/leopard-java/)
-[![npm](https://img.shields.io/npm/v/@picovoice/leopard-node?label=npm%20%5Bnode%5D)](https://www.npmjs.com/package/@picovoice/leopard-node)
-[![npm](https://img.shields.io/npm/v/@picovoice/leopard-react?label=npm%20%5Breact%5D)](https://www.npmjs.com/package/@picovoice/leopard-react)
-[![npm](https://img.shields.io/npm/v/@picovoice/leopard-react-native?label=npm%20%5Breact-native%5D)](https://www.npmjs.com/package/@picovoice/leopard-react-native)
-[![npm](https://img.shields.io/npm/v/@picovoice/leopard-web?label=npm%20%5Bweb%5D)](https://www.npmjs.com/package/@picovoice/leopard-web)
+[![npm](https://img.shields.io/npm/v/@picovoice/leopard-node?label=npm%20%5Bnode%5D)](https://www.npmjs.com/package/@picovoice/leopard-node)<!-- markdown-link-check-disable-line -->
+[![npm](https://img.shields.io/npm/v/@picovoice/leopard-react?label=npm%20%5Breact%5D)](https://www.npmjs.com/package/@picovoice/leopard-react)<!-- markdown-link-check-disable-line -->
+[![npm](https://img.shields.io/npm/v/@picovoice/leopard-react-native?label=npm%20%5Breact-native%5D)](https://www.npmjs.com/package/@picovoice/leopard-react-native)<!-- markdown-link-check-disable-line -->
+[![npm](https://img.shields.io/npm/v/@picovoice/leopard-web?label=npm%20%5Bweb%5D)](https://www.npmjs.com/package/@picovoice/leopard-web)<!-- markdown-link-check-disable-line -->
 [![Nuget](https://img.shields.io/nuget/v/leopard)](https://www.nuget.org/packages/Leopard/)
 [![CocoaPods](https://img.shields.io/cocoapods/v/Leopard-iOS)](https://cocoapods.org/pods/Leopard-iOS)<!-- markdown-link-check-disable-line -->
 [![Pub Version](https://img.shields.io/pub/v/leopard_flutter)](https://pub.dev/packages/leopard_flutter)
@@ -460,7 +460,8 @@ Replace `${ACCESS_KEY}` with your `AccessKey` obtained from [Picovoice Console](
 
 ### React Native
 
-The Leopard React Native binding is available via [NPM](https://www.npmjs.com/package/@picovoice/leopard-react-native). Add it via the following command:
+The Leopard React Native binding is available via [NPM](https://www.npmjs.com/package/@picovoice/leopard-react-native). <!-- markdown-link-check-disable-line -->
+Add it via the following command:
 
 ```console
 yarn add @picovoice/leopard-react-native
