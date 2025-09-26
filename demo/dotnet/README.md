@@ -33,7 +33,7 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 
 ## Installation
 
-Both demos use [Microsoft's .NET Core framework](https://dotnet.microsoft.com/download).
+Both demos use [Microsoft's .NET Core framework](https://dotnet.microsoft.com/download). <!-- markdown-link-check-disable-line -->
 
 Build with the dotnet CLI:
 
