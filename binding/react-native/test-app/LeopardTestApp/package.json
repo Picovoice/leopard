@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@picovoice/leopard-react-native": "file:../..",
+    "@picovoice/leopard-react-native": "../../pkg/picovoice-leopard-react-native-2.0.4.tgz",
     "@picovoice/react-native-voice-processor": "1.2.3",
     "base-64": "^1.0.0",
     "react": "19.0.0",
