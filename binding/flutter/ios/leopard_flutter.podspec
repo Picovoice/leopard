@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'leopard_flutter'
-  s.version          = '2.0.3'
+  s.version          = '2.0.4'
   s.summary          = 'A Flutter package plugin for Picovoice\'s Leopard Speech-to-Text engine'
   s.description      = <<-DESC
   A Flutter package plugin for Picovoice\'s Leopard Speech-to-Text engine
