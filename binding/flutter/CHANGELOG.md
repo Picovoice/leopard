@@ -31,3 +31,6 @@
 
 ## [2.0.3] - 2025-01-06
 * Update native packages
+
+## [2.0.4] - 2025-10-01
+* Update android package
