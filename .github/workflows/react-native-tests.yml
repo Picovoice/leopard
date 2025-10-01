@@ -47,7 +47,7 @@ jobs:
       run: yarn remove @picovoice/leopard-react-native
 
     - name: Add new local package
-      run: yarn add ../pkg/picovoice-leopard-react-native-2.0.4.tgz
+      run: yarn add ../../pkg/picovoice-leopard-react-native-2.0.4.tgz
 # ************** REMOVE AFTER RELEASE ********************
 
     - name: Pre-build dependencies
@@ -86,7 +86,7 @@ jobs:
       run: yarn remove @picovoice/leopard-react-native
 
     - name: Add new local package
-      run: yarn add ../pkg/picovoice-leopard-react-native-2.0.4.tgz
+      run: yarn add ../../pkg/picovoice-leopard-react-native-2.0.4.tgz
 # ************** REMOVE AFTER RELEASE ********************
 
     - name: Pre-build dependencies
