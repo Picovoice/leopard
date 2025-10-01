@@ -35,9 +35,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Pre-build dependencies
-      run: npm install yarn
-
 # ************** REMOVE AFTER RELEASE ********************
     - name: Install React Native Binding Dependencies
       run: yarn install
@@ -53,6 +50,9 @@ jobs:
     - name: Add new local package
       run: yarn add ../../binding/react-native/pkg/picovoice-leopard-react-native-2.0.4.tgz
 # ************** REMOVE AFTER RELEASE ********************
+
+    - name: Pre-build dependencies
+      run: npm install yarn
 
     - name: Install dependencies
       run: yarn android-install
@@ -79,9 +79,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Pre-build dependencies
-      run: npm install yarn
-
 # ************** REMOVE AFTER RELEASE ********************
     - name: Install React Native Binding Dependencies
       run: yarn install
@@ -97,6 +94,9 @@ jobs:
     - name: Add new local package
       run: yarn add ../../binding/react-native/pkg/picovoice-leopard-react-native-2.0.4.tgz
 # ************** REMOVE AFTER RELEASE ********************
+
+    - name: Pre-build dependencies
+      run: npm install yarn
 
     - name: Install dependencies
       run: yarn ios-install

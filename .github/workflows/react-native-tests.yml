@@ -44,7 +44,7 @@ jobs:
       working-directory: binding/react-native
 
     - name: Remove old package
-      run: yarn remove @picovoice/cheetah-react-native
+      run: yarn remove @picovoice/leopard-react-native
 
     - name: Add new local package
       run: yarn add ../pkg/picovoice-leopard-react-native-2.0.4.tgz
@@ -83,7 +83,7 @@ jobs:
       working-directory: binding/react-native
 
     - name: Remove old package
-      run: yarn remove @picovoice/cheetah-react-native
+      run: yarn remove @picovoice/leopard-react-native
 
     - name: Add new local package
       run: yarn add ../pkg/picovoice-leopard-react-native-2.0.4.tgz
