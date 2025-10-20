@@ -1,5 +1,5 @@
 //
-// Copyright 2022-2023 Picovoice Inc.
+// Copyright 2022-2025 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -30,17 +30,20 @@ class MicRecorder {
   final List<int> _pcmData = [];
 
   static Future<MicRecorder> create(
-      int sampleRate,
-      RecordedCallback recordedCallback,
-      ProcessErrorCallback processErrorCallback) async {
+    int sampleRate,
+    RecordedCallback recordedCallback,
+    ProcessErrorCallback processErrorCallback,
+  ) async {
     return MicRecorder._(sampleRate, recordedCallback, processErrorCallback);
   }
 
-  MicRecorder._(this._sampleRate, RecordedCallback recordedCallback,
-      ProcessErrorCallback processErrorCallback)
-      : _voiceProcessor = VoiceProcessor.instance {
+  MicRecorder._(
+    this._sampleRate,
+    RecordedCallback recordedCallback,
+    ProcessErrorCallback processErrorCallback,
+  ) : _voiceProcessor = VoiceProcessor.instance {
     _voiceProcessor?.addFrameListener((frame) async {
-      if (await _voiceProcessor?.isRecording() ?? false) {
+      if (await _voiceProcessor.isRecording() ?? false) {
         _pcmData.addAll(frame);
         recordedCallback(_pcmData.length / _sampleRate);
       }
@@ -62,11 +65,13 @@ class MicRecorder {
         await _voiceProcessor?.start(_frameLength, _sampleRate);
       } on PlatformException catch (e) {
         throw LeopardRuntimeException(
-            "Failed to start audio recording: ${e.message}");
+          "Failed to start audio recording: ${e.message}",
+        );
       }
     } else {
       throw LeopardRuntimeException(
-          "User did not give permission to record audio.");
+        "User did not give permission to record audio.",
+      );
     }
   }
 
@@ -76,7 +81,8 @@ class MicRecorder {
         await _voiceProcessor?.stop();
       } on PlatformException catch (e) {
         throw LeopardRuntimeException(
-            "Failed to stop audio recording: ${e.message}");
+          "Failed to stop audio recording: ${e.message}",
+        );
       }
     }
 

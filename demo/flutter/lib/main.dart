@@ -244,8 +244,8 @@ class MyAppState extends State<MyApp> {
           onPressed: (isButtonDisabled || isError)
               ? null
               : isRecording
-                  ? _stopRecording
-                  : _startRecording,
+              ? _stopRecording
+              : _startRecording,
           child: Text(
             isRecording ? "Stop" : "Start",
             style: TextStyle(fontSize: 30),
