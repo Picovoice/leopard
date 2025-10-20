@@ -7,10 +7,8 @@ class Recorder {
   _totalCount: number = 0;
 
   constructor() {
-    if (Platform.OS === 'android') {
+    if (Platform.OS === 'android' || Platform.OS === 'ios') {
       this._recordingPath = `${RNFS.DocumentDirectoryPath}/recording.wav`;
-    } else if (Platform.OS === 'ios') {
-      this._recordingPath = `${RNFS.MainBundlePath}/recording.wav`;
     } else {
       throw new Error('Unsupported platform');
     }
