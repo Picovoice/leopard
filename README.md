@@ -176,20 +176,20 @@ flutter run
 
 To run the React Native Leopard demo app you will first need to set up your React Native environment. For this,
 please refer to [React Native's documentation](https://reactnative.dev/docs/environment-setup). Once your environment has
-been set up, navigate to [demo/react-native](./demo/react-native) to run the following commands:
+been set up, navigate to [demo/react-native/LeopardDemo/src](./demo/react-native/LeopardDemo/src) to run the following commands:
 
 For Android:
 
 ```console
-yarn android-install    # sets up environment
-yarn android-run        # builds and deploys to Android
+yarn android-install          # sets up environment
+yarn android-run ${LANGUAGE}  # builds and deploys to Android
 ```
 
 For iOS:
 
 ```console
-yarn ios-install        # sets up environment
-yarn ios-run
+yarn ios-install              # sets up environment
+yarn ios-run ${LANGUAGE}      # builds and deploys to iOS
 ```
 
 ### Java Demo

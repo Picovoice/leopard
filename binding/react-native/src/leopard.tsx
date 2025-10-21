@@ -32,7 +32,7 @@ class Leopard {
    * @param options Optional configuration arguments.
    * @param options.enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
    * @param options.enableDiarization Set to `true` to enable speaker diarization, which allows Leopard to differentiate speakers
-   * as part of the transcription process. Word metadata will include a `speakerTag` to identify unique speakers. 
+   * as part of the transcription process. Word metadata will include a `speakerTag` to identify unique speakers.
    * @returns An instance of the engine.
    */
   public static async create(
@@ -40,11 +40,8 @@ class Leopard {
     modelPath: string,
     options: LeopardOptions = {}
   ) {
-    const { 
-      enableAutomaticPunctuation = false,
-      enableDiarization = false
-    } = options;
-
+    const { enableAutomaticPunctuation = false, enableDiarization = false } =
+      options;
     try {
       let { handle, sampleRate, version } = await RCTLeopard.create(
         accessKey,
