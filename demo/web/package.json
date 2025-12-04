@@ -17,8 +17,9 @@
   "author": "Picovoice Inc",
   "license": "Apache-2.0",
   "dependencies": {
-    "@picovoice/leopard-web": "~2.0.1",
-    "@picovoice/web-voice-processor": "~4.0.8"
+    "@picovoice/leopard-web": "../../binding/web",
+    "@picovoice/web-voice-processor": "~4.0.8",
+    "mime-types": "^2.1.35"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",

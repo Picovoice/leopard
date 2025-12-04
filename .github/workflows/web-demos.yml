@@ -38,5 +38,11 @@ jobs:
     - name: Pre-build dependencies
       run: npm install yarn
 
+# ************** REMOVE AFTER RELEASE ********************
+    - name: Build binding
+      run: npm install yarn && yarn copywasm && yarn build
+      working-directory: binding/web
+# ********************************************************
+
     - name: Install dependencies
       run: yarn install

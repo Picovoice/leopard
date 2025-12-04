@@ -21,6 +21,23 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 - Firefox
 - Safari
 
+## Requirements
+
+Falcon Web Binding uses [SharedArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer)
+for processing speaker diarization.
+
+Include the following headers in the response to enable the use of `SharedArrayBuffers`:
+
+```
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp
+```
+
+Refer to our [Web demo](../../demo/web) for an example on creating a server with the corresponding response headers.
+
+Browsers that lack support for `SharedArrayBuffers` or required headers will fall back to using standard `ArrayBuffers`,
+which disables multithreaded performance.
+
 ### Restrictions
 
 IndexedDB is required to use `Leopard` in a worker thread. Browsers without IndexedDB support

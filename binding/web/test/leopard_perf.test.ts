@@ -1,6 +1,7 @@
 import { Leopard, LeopardWorker } from "../";
 
 const ACCESS_KEY = Cypress.env('ACCESS_KEY');
+const DEVICE = Cypress.env('DEVICE');
 const NUM_TEST_ITERATIONS = Number(Cypress.env('NUM_TEST_ITERATIONS'));
 const INIT_PERFORMANCE_THRESHOLD_SEC = Number(Cypress.env('INIT_PERFORMANCE_THRESHOLD_SEC'));
 const PROC_PERFORMANCE_THRESHOLD_SEC = Number(Cypress.env('PROC_PERFORMANCE_THRESHOLD_SEC'));
@@ -17,7 +18,10 @@ async function testPerformance(
 
     const leopard = await instance.create(
       ACCESS_KEY,
-      { publicPath: '/test/leopard_params.pv', forceWrite: true }
+      { publicPath: '/test/leopard_params.pv', forceWrite: true },
+      {
+        device: DEVICE,
+      }
     );
 
     let end = Date.now();
