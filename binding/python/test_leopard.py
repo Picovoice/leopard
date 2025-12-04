@@ -1,5 +1,5 @@
 #
-#    Copyright 2018-2023 Picovoice Inc.
+#    Copyright 2018-2025 Picovoice Inc.
 #
 #    You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 #    file accompanying this source.
@@ -25,6 +25,7 @@ class LeopardTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls._access_key = sys.argv[1]
+        cls._device = sys.argv[2]
         cls._audio_directory = os.path.join('..', '..', 'resources', 'audio_samples')
 
     def _validate_metadata(
@@ -48,6 +49,7 @@ class LeopardTestCase(unittest.TestCase):
             Leopard(
                 access_key='invalid',
                 model_path=default_model_path('../../'),
+                device=self._device,
                 library_path=default_library_path('../../'))
 
     def test_invalid_model_path(self):
@@ -55,6 +57,7 @@ class LeopardTestCase(unittest.TestCase):
             Leopard(
                 access_key=self._access_key,
                 model_path='invalid',
+                device=self._device,
                 library_path=default_library_path('../../'))
 
     def test_invalid_library_path(self):
@@ -62,12 +65,14 @@ class LeopardTestCase(unittest.TestCase):
             Leopard(
                 access_key=self._access_key,
                 model_path=default_model_path('../../'),
+                device=self._device,
                 library_path='invalid')
 
     def test_version(self):
         o = Leopard(
             access_key=self._access_key,
             model_path=default_model_path('../../'),
+            device=self._device,
             library_path=default_library_path('../../'))
         self.assertIsInstance(o.version, str)
         self.assertGreater(len(o.version), 0)
@@ -87,6 +92,7 @@ class LeopardTestCase(unittest.TestCase):
             o = Leopard(
                 access_key=self._access_key,
                 model_path=get_model_path_by_language(language=language),
+                device=self._device,
                 library_path=default_library_path('../../'))
 
             pcm = read_wav_file(
@@ -120,6 +126,7 @@ class LeopardTestCase(unittest.TestCase):
             o = Leopard(
                 access_key=self._access_key,
                 model_path=get_model_path_by_language(language=language),
+                device=self._device,
                 library_path=default_library_path('../../'))
 
             transcript, words = o.process_file(os.path.join(self._audio_directory, audio_file))
@@ -149,6 +156,7 @@ class LeopardTestCase(unittest.TestCase):
             o = Leopard(
                 access_key=self._access_key,
                 model_path=get_model_path_by_language(language=language),
+                device=self._device,
                 library_path=default_library_path('../../'),
                 enable_automatic_punctuation=True)
 
@@ -179,6 +187,7 @@ class LeopardTestCase(unittest.TestCase):
             o = Leopard(
                 access_key=self._access_key,
                 model_path=get_model_path_by_language(language=language),
+                device=self._device,
                 library_path=default_library_path('../../'),
                 enable_diarization=True)
 
@@ -205,6 +214,7 @@ class LeopardTestCase(unittest.TestCase):
             o = Leopard(
                 access_key=self._access_key,
                 model_path=get_model_path_by_language(language=language),
+                device=self._device,
                 library_path=default_library_path('../../'),
                 enable_diarization=True)
 
@@ -224,6 +234,7 @@ class LeopardTestCase(unittest.TestCase):
             o = Leopard(
                 access_key='invalid',
                 model_path=get_model_path_by_language(language='en'),
+                device=self._device,
                 library_path=default_library_path('../../'))
             self.assertIsNone(o)
         except LeopardError as e:
@@ -236,6 +247,7 @@ class LeopardTestCase(unittest.TestCase):
             o = Leopard(
                 access_key='invalid',
                 model_path=get_model_path_by_language(language='en'),
+                device=self._device,
                 library_path=default_library_path('../../'))
             self.assertIsNone(o)
         except LeopardError as e:
@@ -246,6 +258,7 @@ class LeopardTestCase(unittest.TestCase):
         o = Leopard(
             access_key=self._access_key,
             model_path=get_model_path_by_language(language_tests[0][0]),
+            device=self._device,
             library_path=default_library_path('../../'))
 
         res = o.process_file(os.path.join(self._audio_directory, language_tests[0][1]))
@@ -264,10 +277,17 @@ class LeopardTestCase(unittest.TestCase):
             o._handle = address
             o.delete()
 
+    def test_available_devices(self) -> None:
+        res = list_hardware_devices(library_path=default_library_path("../.."))
+        self.assertGreater(len(res), 0)
+        for x in res:
+            self.assertIsInstance(x, str)
+            self.assertGreater(len(x), 0)
+
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print("usage: %s ${ACCESS_KEY}" % sys.argv[0])
+    if len(sys.argv) != 3:
+        print("usage: %s ${ACCESS_KEY} ${DEVICE}" % sys.argv[0])
         exit(1)
 
     unittest.main(argv=sys.argv[:1])
