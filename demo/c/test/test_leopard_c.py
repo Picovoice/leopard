@@ -33,6 +33,10 @@ class PorcupineCTestCase(unittest.TestCase):
         cls._root_dir = os.path.join(os.path.dirname(__file__), "../../..")
 
     def _get_library_file(self):
+        if self._platform == "windows":
+            if self._arch == "amd64":
+                os.environ["PATH"] += os.pathsep + os.path.join(self._root_dir, "lib", "windows", "amd64")
+
         return os.path.join(
             self._root_dir,
             "lib",
@@ -62,7 +66,6 @@ class PorcupineCTestCase(unittest.TestCase):
         ]
         process = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         stdout, stderr = process.communicate()
-        print(stderr)
         self.assertEqual(process.poll(), 0)
         self.assertEqual(stderr.decode('utf-8'), '')
         transcript = stdout.decode('utf-8').strip().split('\n')[1]
