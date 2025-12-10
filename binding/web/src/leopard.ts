@@ -70,7 +70,6 @@ type pv_free_error_stack_type = (messageStack: number) => void;
 type LeopardModule = EmscriptenModule & {
   _pv_free: (address: number) => void;
 
-  _pv_leopard_delete: pv_leopard_delete_type;
   _pv_leopard_transcript_delete: pv_leopard_transcript_delete_type;
   _pv_leopard_words_delete: pv_leopard_words_delete_type;
   _pv_sample_rate: pv_sample_rate_type;
@@ -90,6 +89,7 @@ type LeopardWasmOutput = {
   module: LeopardModule;
 
   pv_leopard_process: pv_leopard_process_type;
+  pv_leopard_delete: pv_leopard_delete_type;
 
   version: string;
   sampleRate: number;
@@ -106,9 +106,10 @@ const CPU_DEVICE_REGEX = /^cpu(:\d+)?$/;
 const MAX_PCM_LENGTH_SEC = 60 * 15;
 
 export class Leopard {
-  private readonly _module: LeopardModule;
+  private _module?: LeopardModule;
 
   private readonly _pv_leopard_process: pv_leopard_process_type;
+  private readonly _pv_leopard_delete: pv_leopard_delete_type;
 
   private readonly _sampleRate: number;
   private readonly _version: string;
@@ -133,6 +134,7 @@ export class Leopard {
     this._module = handleWasm.module;
 
     this._pv_leopard_process = handleWasm.pv_leopard_process;
+    this._pv_leopard_delete = handleWasm.pv_leopard_delete;
 
     this._version = handleWasm.version;
     this._sampleRate = handleWasm.sampleRate;
@@ -266,22 +268,20 @@ export class Leopard {
       throw new LeopardErrors.LeopardRuntimeError('Browser not supported.');
     }
 
-    if (device === "best") {
-      device = "cpu:1";
+    const isWorkerScope =
+      typeof WorkerGlobalScope !== 'undefined' &&
+      self instanceof WorkerGlobalScope;
+    if (
+      !isWorkerScope &&
+      (device === 'best' || (device.startsWith('cpu') && device !== 'cpu:1'))
+    ) {
+      // eslint-disable-next-line no-console
+      console.warn('Multi-threading is not supported on main thread.');
+      device = 'cpu:1';
     }
 
-    const isWorkerScope = typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope;
-    if (!isWorkerScope) {
-      if (device && CPU_DEVICE_REGEX.test(device)) {
-        if (device !== "cpu" && device !== "cpu:1") {
-          console.warn("Multi-threading is not supported on main thread.");
-        }
-        device = "cpu:1";
-      }
-    }
-
-    const sabDefined = (typeof SharedArrayBuffer !== 'undefined')
-      && (device !== "cpu") && (device !== "cpu:1");
+    const sabDefined = typeof SharedArrayBuffer !== 'undefined'
+      && (device !== "cpu:1");
 
     return new Promise<Leopard>((resolve, reject) => {
       Leopard._leopardMutex
@@ -421,12 +421,13 @@ export class Leopard {
     if (!this._module) {
       return;
     }
-    this._module._pv_leopard_delete(this._objectAddress);
+    this._pv_leopard_delete(this._objectAddress);
     this._module._pv_free(this._transcriptAddressAddress);
     this._module._pv_free(this._numWordsAddress);
     this._module._pv_free(this._wordsAddressAddress);
     this._module._pv_free(this._messageStackAddressAddressAddress);
     this._module._pv_free(this._messageStackDepthAddress);
+    this._module = undefined;
   }
 
   private static async initWasm(
@@ -456,6 +457,10 @@ export class Leopard {
       module,
       "pv_leopard_process",
       6);
+    const pv_leopard_delete: pv_leopard_delete_type = this.wrapAsyncFunction(
+      module,
+      "pv_leopard_delete",
+      1);
 
     const transcriptAddressAddress = module._malloc(Int32Array.BYTES_PER_ELEMENT);
     if (transcriptAddressAddress === 0) {
@@ -581,6 +586,7 @@ export class Leopard {
       module: module,
 
       pv_leopard_process: pv_leopard_process,
+      pv_leopard_delete: pv_leopard_delete,
 
       version: version,
       sampleRate: sampleRate,
