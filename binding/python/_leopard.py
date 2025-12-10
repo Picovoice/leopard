@@ -392,11 +392,11 @@ def list_hardware_devices(library_path: str) -> Sequence[str]:
 
     list_hardware_devices_func = library.pv_leopard_list_hardware_devices
     list_hardware_devices_func.argtypes = [POINTER(POINTER(c_char_p)), POINTER(c_int32)]
-    list_hardware_devices_func.restype = PicovoiceStatuses
+    list_hardware_devices_func.restype = Leopard.PicovoiceStatuses
     c_hardware_devices = POINTER(c_char_p)()
     c_num_hardware_devices = c_int32()
     status = list_hardware_devices_func(byref(c_hardware_devices), byref(c_num_hardware_devices))
-    if status is not PicovoiceStatuses.SUCCESS:
+    if status is not Leopard.PicovoiceStatuses.SUCCESS:
         raise _PICOVOICE_STATUS_TO_EXCEPTION[status](message='`pv_leopard_list_hardware_devices` failed.')
     res = [c_hardware_devices[i].decode() for i in range(c_num_hardware_devices.value)]
 
