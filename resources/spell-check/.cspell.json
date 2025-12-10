@@ -75,6 +75,9 @@
     "**/demo/react-native/LeopardDemo/Gemfile",
 
     // test
-    "**/test_data.json"
+    "**/test_data.json",
+
+    // wasm
+    "**/lib/wasm/**/*.js"
   ]
 }

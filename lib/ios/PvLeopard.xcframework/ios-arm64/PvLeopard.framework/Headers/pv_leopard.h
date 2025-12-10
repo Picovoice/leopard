@@ -1,5 +1,5 @@
 /*
-    Copyright 2019-2022 Picovoice Inc.
+    Copyright 2019-2025 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -24,15 +24,20 @@ extern "C" {
 #endif
 
 /**
- * Forward Declaration for Leopard speech-to-text engine.
+ * Forward declaration for Leopard speech-to-text engine.
  */
 typedef struct pv_leopard pv_leopard_t;
 
 /**
  * Constructor.
  *
- * @param access_key AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
+ * @param access_key AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).
  * @param model_path Absolute path to the file containing model parameters.
+ * @param device String representation of the device (e.g., CPU or GPU) to use. If set to `best`, leopard
+ * picks the most suitable device. If set to `gpu`, the engine uses the first available GPU device. To select a specific
+ * GPU device, set this argument to `gpu:${GPU_INDEX}`, where `${GPU_INDEX}` is the index of the target GPU. If set to
+ * `cpu`, the engine will run on the CPU with the default number of threads. To specify the number of threads, set this
+ * argument to `cpu:${NUM_THREADS}`, where `${NUM_THREADS}` is the desired number of threads.
  * @param enable_automatic_punctuation Set to `true` to enable automatic punctuation insertion.
  * @param enable_diarization Set to `true` to enable speaker diarization, which allows Leopard to differentiate speakers
  * as part of the transcription process. Word metadata will include a `speaker_tag` to identify unique speakers.
@@ -44,6 +49,7 @@ typedef struct pv_leopard pv_leopard_t;
 PV_API pv_status_t pv_leopard_init(
         const char *access_key,
         const char *model_path,
+        const char *device,
         bool enable_automatic_punctuation,
         bool enable_diarization,
         pv_leopard_t **object);
@@ -67,6 +73,15 @@ typedef struct {
                           * otherwise, it's a non-negative integer identifying unique speakers, with `0` reserved for
                           * unknown speakers.
                           */
+
+#ifdef __PV_DUMP__
+
+    int32_t num_phoneme;
+    float acoustic_cost;
+    float lm_cost;
+
+#endif
+
 } pv_word_t;
 
 /**
@@ -105,7 +120,7 @@ PV_API pv_status_t pv_leopard_process(
  * @param[out] words Transcribed words and their associated metadata.
  * @return Status code. Returns `PV_STATUS_OUT_OF_MEMORY`, `PV_STATUS_IO_ERROR`, `PV_STATUS_INVALID_ARGUMENT`,
  * `PV_STATUS_RUNTIME_ERROR`, `PV_STATUS_ACTIVATION_ERROR`, `PV_STATUS_ACTIVATION_LIMIT_REACHED`,
- * `PV_STATUS_ACTIVATION_THROTTLED`, or `PV_STATUS_ACTIVATION_REFUSED` on failure
+ * `PV_STATUS_ACTIVATION_THROTTLED`, or `PV_STATUS_ACTIVATION_REFUSED` on failure.
  */
 PV_API pv_status_t pv_leopard_process_file(
         pv_leopard_t *object,
@@ -134,6 +149,30 @@ PV_API void pv_leopard_words_delete(pv_word_t *words);
  * @return Version.
  */
 PV_API const char *pv_leopard_version(void);
+
+/**
+* Gets a list of hardware devices that can be specified when calling `pv_leopard_init`
+*
+* @param[out] hardware_devices Array of available hardware devices. Devices are NULL terminated strings.
+*                              The array must be freed using `pv_leopard_free_hardware_devices`.
+* @param[out] num_hardware_devices The number of devices in the `hardware_devices` array.
+* @return Status code. Returns `PV_STATUS_OUT_OF_MEMORY`, `PV_STATUS_INVALID_ARGUMENT`, `PV_STATUS_INVALID_STATE`,
+* `PV_STATUS_RUNTIME_ERROR`, `PV_STATUS_ACTIVATION_ERROR`, `PV_STATUS_ACTIVATION_LIMIT_REACHED`,
+* `PV_STATUS_ACTIVATION_THROTTLED`, or `PV_STATUS_ACTIVATION_REFUSED` on failure.
+*/
+PV_API pv_status_t pv_leopard_list_hardware_devices(
+    char ***hardware_devices,
+    int32_t *num_hardware_devices);
+
+/**
+* Frees memory allocated by `pv_leopard_list_hardware_devices`.
+*
+* @param[out] hardware_devices Array of available hardware devices allocated by `pv_leopard_list_hardware_devices`.
+* @param[out] num_hardware_devices The number of devices in the `hardware_devices` array.
+*/
+PV_API void pv_leopard_free_hardware_devices(
+    char **hardware_devices,
+    int32_t num_hardware_devices);
 
 #ifdef __cplusplus
 
