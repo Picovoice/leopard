@@ -11,7 +11,7 @@
 
 import argparse
 
-from pvleopard import create, LeopardActivationLimitError
+from pvleopard import available_devices, create, LeopardActivationLimitError
 from tabulate import tabulate
 
 
