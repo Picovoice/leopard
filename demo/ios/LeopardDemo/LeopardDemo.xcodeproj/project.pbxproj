@@ -3,12 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		1E6041C12A0EBF9100A10522 /* pre-build.sh in Resources */ = {isa = PBXBuildFile; fileRef = 1E6041C02A0EBF9100A10522 /* pre-build.sh */; };
 		1E6041C72A0EC1FE00A10522 /* models in Resources */ = {isa = PBXBuildFile; fileRef = 1E6041C62A0EC1FE00A10522 /* models */; };
+		1E9C52292EEA344B00860AA4 /* Leopard in Frameworks */ = {isa = PBXBuildFile; productRef = 1E9C52282EEA344B00860AA4 /* Leopard */; };
 		32769079E5BC2BA141FA659F /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327695EA9D71F6A29C6D079A /* ViewModel.swift */; };
 		3276967434C9CEBD0AF09237 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 327694975368499C3B7946DD /* Assets.xcassets */; };
 		327698EADFD16D8F70823520 /* LeopardDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 327697358B823E5B2EF0FA8C /* LeopardDemoApp.swift */; };
@@ -32,6 +33,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E9C52292EEA344B00860AA4 /* Leopard in Frameworks */,
 				E19A09432D1A24BA0088A996 /* Leopard in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -113,7 +115,7 @@
 			);
 			mainGroup = 327692BCE8C735F3534C318E;
 			packageReferences = (
-				E19A09412D1A24BA0088A996 /* XCRemoteSwiftPackageReference "leopard" */,
+				1E9C52272EEA344B00860AA4 /* XCLocalSwiftPackageReference "../../../../leopard" */,
 			);
 			productRefGroup = 32769B87809678D96B1C6C55 /* Products */;
 			projectDirPath = "";
@@ -225,7 +227,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -255,7 +257,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -356,6 +358,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		1E9C52272EEA344B00860AA4 /* XCLocalSwiftPackageReference "../../../../leopard" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../../../leopard;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		E19A09412D1A24BA0088A996 /* XCRemoteSwiftPackageReference "leopard" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -368,6 +377,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1E9C52282EEA344B00860AA4 /* Leopard */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Leopard;
+		};
 		E19A09422D1A24BA0088A996 /* Leopard */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E19A09412D1A24BA0088A996 /* XCRemoteSwiftPackageReference "leopard" */;
