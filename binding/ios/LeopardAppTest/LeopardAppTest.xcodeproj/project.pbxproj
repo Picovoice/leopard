@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,6 +17,7 @@
 		1E5B7B1A2800E2B200F8BDDB /* PerformanceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E5B7B192800E2B200F8BDDB /* PerformanceTest.swift */; };
 		1E5B7B1E2800E2DA00F8BDDB /* test.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1E5B7B1D2800E2DA00F8BDDB /* test.wav */; };
 		1E5B7B202800E2E300F8BDDB /* leopard_params.pv in Resources */ = {isa = PBXBuildFile; fileRef = 1E5B7B1F2800E2E300F8BDDB /* leopard_params.pv */; };
+		1E9C52252EEA341100860AA4 /* Leopard in Frameworks */ = {isa = PBXBuildFile; productRef = 1E9C52242EEA341100860AA4 /* Leopard */; };
 		C7C8601229CBA3A300EB6E87 /* test_resources in Resources */ = {isa = PBXBuildFile; fileRef = C7C8601129CBA3A300EB6E87 /* test_resources */; };
 		E19A093C2D1A248D0088A996 /* Leopard in Frameworks */ = {isa = PBXBuildFile; productRef = E19A093B2D1A248D0088A996 /* Leopard */; };
 		E19A093E2D1A24930088A996 /* Leopard in Frameworks */ = {isa = PBXBuildFile; productRef = E19A093D2D1A24930088A996 /* Leopard */; };
@@ -64,6 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E9C52252EEA341100860AA4 /* Leopard in Frameworks */,
 				E19A093C2D1A248D0088A996 /* Leopard in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -238,7 +240,7 @@
 			);
 			mainGroup = 1E00650927CFEF00006FF6E9;
 			packageReferences = (
-				E19A093A2D1A24850088A996 /* XCRemoteSwiftPackageReference "leopard" */,
+				1E9C522A2EEA3BE400860AA4 /* XCLocalSwiftPackageReference "../../../../leopard" */,
 			);
 			productRefGroup = 1E00651327CFEF00006FF6E9 /* Products */;
 			projectDirPath = "";
@@ -471,7 +473,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -500,7 +502,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -521,7 +523,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 65723695GD;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -544,7 +546,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 65723695GD;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -567,7 +569,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 65723695GD;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -590,7 +592,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 65723695GD;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -647,6 +649,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		1E9C522A2EEA3BE400860AA4 /* XCLocalSwiftPackageReference "../../../../leopard" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../../../leopard;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		E19A093A2D1A24850088A996 /* XCRemoteSwiftPackageReference "leopard" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -659,6 +668,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1E9C52242EEA341100860AA4 /* Leopard */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Leopard;
+		};
 		E19A093B2D1A248D0088A996 /* Leopard */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E19A093A2D1A24850088A996 /* XCRemoteSwiftPackageReference "leopard" */;

@@ -1,5 +1,5 @@
 //
-//  Copyright 2022-2024 Picovoice Inc.
+//  Copyright 2022-2025 Picovoice Inc.
 //  You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 //  file accompanying this source.
 //  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
@@ -79,11 +79,41 @@ public class Leopard {
         self.sdk = sdk
     }
 
+    /// Lists all available devices that Leopard can use for inference.
+    /// Entries in the list can be used as the `device` argument when initializing Leopard.
+    ///
+    /// - Throws: LeopardError
+    /// - Returns: Array of available devices that Leopard can be used for inference.
+    public static func getAvailableDevices() throws -> [String] {
+        var cHardwareDevices: UnsafeMutablePointer<UnsafeMutablePointer<Int8>?>?
+        var numHardwareDevices: Int32 = 0
+        let status = pv_leopard_list_hardware_devices(&cHardwareDevices, &numHardwareDevices)
+        if status != PV_STATUS_SUCCESS {
+            let messageStack = try Leopard.getMessageStack()
+            throw Leopard.pvStatusToLeopardError(status, "Leopard getAvailableDevices failed", messageStack)
+        }
+
+        var hardwareDevices: [String] = []
+        for i in 0..<numHardwareDevices {
+            hardwareDevices.append(String(cString: cHardwareDevices!.advanced(by: Int(i)).pointee!))
+        }
+
+        pv_leopard_free_hardware_devices(cHardwareDevices, numHardwareDevices)
+
+        return hardwareDevices
+    }
+
     /// Constructor.
     ///
     /// - Parameters:
     ///   - accessKey: The AccessKey obtained from Picovoice Console (https://console.picovoice.ai).
     ///   - modelPath: Absolute path to file containing model parameters.
+    ///   - device: String representation of the device (e.g., CPU or GPU) to use. If set to `best`, the most
+    ///     suitable device is selected automatically. If set to `gpu`, the engine uses the first available GPU
+    ///     device. To select a specific GPU device, set this argument to `gpu:${GPU_INDEX}`, where `${GPU_INDEX}`
+    ///     is the index of the target GPU. If set to `cpu`, the engine will run on the CPU with the default
+    ///     number of threads. To specify the number of threads, set this argument to `cpu:${NUM_THREADS}`,
+    ///     where `${NUM_THREADS}` is the desired number of threads.
     ///   - enableAutomaticPunctuation: Set to `true` to enable automatic punctuation insertion.
     ///   - enableDiarization: Set to `true` to enable speaker diarization, which allows Leopard to
     ///     differentiate speakers as part of the transcription process. Word metadata will include
@@ -92,6 +122,7 @@ public class Leopard {
     public init(
         accessKey: String,
         modelPath: String,
+        device: String? = nil,
         enableAutomaticPunctuation: Bool = false,
         enableDiarization: Bool = false) throws {
 
@@ -104,9 +135,15 @@ public class Leopard {
             modelPathArg = try getResourcePath(modelPathArg)
         }
 
+        var deviceArg = device
+        if device == nil {
+            deviceArg = "best"
+        }
+
         let status = pv_leopard_init(
                 accessKey,
                 modelPathArg,
+                deviceArg,
                 enableAutomaticPunctuation,
                 enableDiarization,
                 &handle)
@@ -114,8 +151,8 @@ public class Leopard {
         pv_set_sdk(Leopard.sdk)
 
         if status != PV_STATUS_SUCCESS {
-            let messageStack = try getMessageStack()
-            throw pvStatusToLeopardError(status, "Leopard init failed", messageStack)
+            let messageStack = try Leopard.getMessageStack()
+            throw Leopard.pvStatusToLeopardError(status, "Leopard init failed", messageStack)
         }
     }
 
@@ -124,6 +161,12 @@ public class Leopard {
     /// - Parameters:
     ///   - accessKey: The AccessKey obtained from Picovoice Console (https://console.picovoice.ai).
     ///   - modelURL: URL to the file containing model parameters.
+    ///   - device: String representation of the device (e.g., CPU or GPU) to use. If set to `best`, the most
+    ///     suitable device is selected automatically. If set to `gpu`, the engine uses the first available GPU
+    ///     device. To select a specific GPU device, set this argument to `gpu:${GPU_INDEX}`, where `${GPU_INDEX}`
+    ///     is the index of the target GPU. If set to `cpu`, the engine will run on the CPU with the default
+    ///     number of threads. To specify the number of threads, set this argument to `cpu:${NUM_THREADS}`,
+    ///     where `${NUM_THREADS}` is the desired number of threads.
     ///   - enableAutomaticPunctuation: Set to `true` to enable automatic punctuation insertion.
     ///   - enableDiarization: Set to `true` to enable speaker diarization, which allows Leopard to
     ///     differentiate speakers as part of the transcription process. Word metadata will include
@@ -132,11 +175,13 @@ public class Leopard {
     public convenience init(
         accessKey: String,
         modelURL: URL,
+        device: String? = nil,
         enableAutomaticPunctuation: Bool = false,
         enableDiarization: Bool = false) throws {
         try self.init(
                 accessKey: accessKey,
                 modelPath: modelURL.path,
+                device: device,
                 enableAutomaticPunctuation: enableAutomaticPunctuation,
                 enableDiarization: enableDiarization)
     }
@@ -181,8 +226,8 @@ public class Leopard {
                 &numWords,
                 &cWords)
         if status != PV_STATUS_SUCCESS {
-            let messageStack = try getMessageStack()
-            throw pvStatusToLeopardError(status, "Leopard process failed", messageStack)
+            let messageStack = try Leopard.getMessageStack()
+            throw Leopard.pvStatusToLeopardError(status, "Leopard process failed", messageStack)
         }
 
         let transcript = String(cString: cTranscript!)
@@ -233,8 +278,8 @@ public class Leopard {
                 &numWords,
                 &cWords)
         if status != PV_STATUS_SUCCESS {
-            let messageStack = try getMessageStack()
-            throw pvStatusToLeopardError(status, "Leopard process file failed", messageStack)
+            let messageStack = try Leopard.getMessageStack()
+            throw Leopard.pvStatusToLeopardError(status, "Leopard process file failed", messageStack)
         }
 
         let transcript = String(cString: cTranscript!)
@@ -290,7 +335,7 @@ public class Leopard {
                 "If this is a packaged asset, ensure you have added it to your xcode project.")
     }
 
-    private func pvStatusToLeopardError(
+    private static func pvStatusToLeopardError(
         _ status: pv_status_t,
         _ message: String,
         _ messageStack: [String] = []) -> LeopardError {
@@ -323,7 +368,7 @@ public class Leopard {
         }
     }
 
-    private func getMessageStack() throws -> [String] {
+    private static func getMessageStack() throws -> [String] {
         var messageStackRef: UnsafeMutablePointer<UnsafeMutablePointer<Int8>?>?
         var messageStackDepth: Int32 = 0
         let status = pv_get_error_stack(&messageStackRef, &messageStackDepth)
