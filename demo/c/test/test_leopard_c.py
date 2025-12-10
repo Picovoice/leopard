@@ -1,5 +1,5 @@
 #
-# Copyright 2023 Picovoice Inc.
+# Copyright 2023-2025 Picovoice Inc.
 #
 # You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 # file accompanying this source.
@@ -27,8 +27,9 @@ class PorcupineCTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls._access_key = sys.argv[1]
-        cls._platform = sys.argv[2]
-        cls._arch = "" if len(sys.argv) != 4 else sys.argv[3]
+        cls._devicey = sys.argv[2]
+        cls._platform = sys.argv[3]
+        cls._arch = "" if len(sys.argv) != 5 else sys.argv[4]
         cls._root_dir = os.path.join(os.path.dirname(__file__), "../../..")
 
     def _get_library_file(self):
@@ -54,6 +55,7 @@ class PorcupineCTestCase(unittest.TestCase):
         args = [
             os.path.join(os.path.dirname(__file__), "../build/leopard_demo"),
             "-a", self._access_key,
+            "-y", self._device,
             "-l", self._get_library_file(),
             "-m", self._get_model_path_by_language(language),
             os.path.join(self._root_dir, 'resources/audio_samples', audio_file_name),
@@ -66,9 +68,20 @@ class PorcupineCTestCase(unittest.TestCase):
         error = wer(ground_truth, transcript)
         self.assertLessEqual(error, error_rate)
 
+    def test_list_hardware_devices(self):
+        args = [
+            os.path.join(os.path.dirname(__file__), "../build/leopard_demo"),
+            "-l", self._get_library_file(),
+            "-z"
+        ]
+        process = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        stdout, stderr = process.communicate()
+        self.assertEqual(process.poll(), 0)
+        self.assertEqual(stderr.decode('utf-8'), '')
+
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3 or len(sys.argv) > 4:
-        print("usage: test_leopard_c.py ${AccessKey} ${Platform} [${Arch}]")
+    if len(sys.argv) < 4 or len(sys.argv) > 5:
+        print("usage: test_leopard_c.py ${AccessKey} ${Device} ${Platform} [${Arch}]")
         exit(1)
     unittest.main(argv=sys.argv[:1])
