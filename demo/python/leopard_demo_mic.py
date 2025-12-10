@@ -15,7 +15,7 @@ import time
 from argparse import ArgumentParser
 from threading import Thread
 
-from pvleopard import create, LeopardActivationLimitError
+from pvleopard import available_devices, create, LeopardActivationLimitError
 from pvrecorder import PvRecorder
 from tabulate import tabulate
 
