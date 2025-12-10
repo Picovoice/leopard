@@ -143,7 +143,7 @@ public class Leopard {
         let status = pv_leopard_init(
                 accessKey,
                 modelPathArg,
-                device,
+                deviceArg,
                 enableAutomaticPunctuation,
                 enableDiarization,
                 &handle)
