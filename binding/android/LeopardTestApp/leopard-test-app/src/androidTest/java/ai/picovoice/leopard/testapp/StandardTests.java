@@ -139,11 +139,11 @@ public class StandardTests extends BaseTest {
     public void testInitFailWithInvalidDevice() {
         boolean didFail = false;
         try {
-            new Falcon.Builder()
+            new Leopard.Builder()
                     .setAccessKey(accessKey)
                     .setDevice("invalid:9")
                     .build(appContext);
-        } catch (FalconException e) {
+        } catch (LEopardException e) {
             didFail = true;
         }
 
@@ -151,8 +151,8 @@ public class StandardTests extends BaseTest {
     }
 
     @Test
-    public void testGetAvailableDevices() throws FalconException {
-        String[] availableDevices = Falcon.getAvailableDevices();
+    public void testGetAvailableDevices() throws LeopardException {
+        String[] availableDevices = Leopard.getAvailableDevices();
         assertTrue(availableDevices.length > 0);
         for (String d : availableDevices) {
             assertTrue(d != null && d.length() > 0);
