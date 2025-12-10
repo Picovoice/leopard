@@ -143,7 +143,7 @@ public class StandardTests extends BaseTest {
                     .setAccessKey(accessKey)
                     .setDevice("invalid:9")
                     .build(appContext);
-        } catch (LEopardException e) {
+        } catch (LeopardException e) {
             didFail = true;
         }
 
