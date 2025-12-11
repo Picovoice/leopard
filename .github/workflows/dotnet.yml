@@ -97,6 +97,9 @@ jobs:
 
   build-self-hosted:
     runs-on: ${{ matrix.machine }}
+    env:
+      ACCESS_KEY: ${{secrets.PV_VALID_ACCESS_KEY}}
+
     strategy:
       matrix:
         machine: [ rpi3-32, rpi3-64, rpi4-32, rpi4-64, rpi5-32, rpi5-64, pv-windows-arm64 ]
