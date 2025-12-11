@@ -30,6 +30,7 @@ conservateur
 constraintlayout
 consulat
 cstring
+cuda
 cword
 devient
 dgryski

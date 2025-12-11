@@ -1,5 +1,5 @@
 /*
-    Copyright 2022-2023 Picovoice Inc.
+    Copyright 2022-2025 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LeopardTest {
     private final String accessKey = System.getProperty("pvTestingAccessKey");
+    private final String device = System.getProperty("pvTestingDevice");
     private Leopard leopard;
 
     private static String appendLanguage(String s, String language) {
@@ -214,7 +215,10 @@ public class LeopardTest {
 
     @AfterEach
     void tearDown() {
-        leopard.delete();
+        if (leopard != null) {
+            leopard.delete();
+            leopard = null;
+        }
     }
 
     void validateMetadata(
@@ -242,6 +246,7 @@ public class LeopardTest {
     void getVersion() throws Exception {
         leopard = new Leopard.Builder()
                 .setAccessKey(accessKey)
+                .setDevice(device)
                 .build();
 
         assertTrue(leopard.getVersion() != null && !leopard.getVersion().equals(""));
@@ -251,8 +256,15 @@ public class LeopardTest {
     void getSampleRate() throws Exception {
         leopard = new Leopard.Builder()
                 .setAccessKey(accessKey)
+                .setDevice(device)
                 .build();
         assertTrue(leopard.getSampleRate() > 0);
+    }
+
+    @Test
+    void getAvailableDevices() throws LeopardException {
+        String[] devices = Leopard.getAvailableDevices();
+        assertTrue(0 < devices.length);
     }
 
     @ParameterizedTest(name = "test process data for ''{0}'' with punctuation ''{3}'' and diarization ''{4}''")
@@ -272,6 +284,7 @@ public class LeopardTest {
         leopard = new Leopard.Builder()
                 .setAccessKey(accessKey)
                 .setModelPath(modelPath)
+                .setDevice(device)
                 .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
                 .setEnableDiarization(enableDiarization)
                 .build();
@@ -307,6 +320,7 @@ public class LeopardTest {
         leopard = new Leopard.Builder()
                 .setAccessKey(accessKey)
                 .setModelPath(modelPath)
+                .setDevice(device)
                 .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
                 .setEnableDiarization(enableDiarization)
                 .build();
@@ -337,6 +351,7 @@ public class LeopardTest {
         leopard = new Leopard.Builder()
                 .setAccessKey(accessKey)
                 .setModelPath(modelPath)
+                .setDevice(device)
                 .setEnableDiarization(true)
                 .build();
 

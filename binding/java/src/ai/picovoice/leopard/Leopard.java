@@ -1,5 +1,5 @@
 /*
-    Copyright 2022-2023 Picovoice Inc.
+    Copyright 2022-2025 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
@@ -13,6 +13,7 @@
 package ai.picovoice.leopard;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,6 +40,14 @@ public class Leopard {
      *
      * @param accessKey                  AccessKey obtained from Picovoice Console
      * @param modelPath                  Absolute path to the file containing Leopard model parameters.
+     * @param device                     String representation of the device (e.g., CPU or GPU) to use. If set
+     *                                   to `best`, the most suitable device is selected automatically. If set
+     *                                   to `gpu`, the engine uses the first available GPU device. To select
+     *                                   a specific GPU device, set this argument to `gpu:${GPU_INDEX}`, where
+     *                                   `${GPU_INDEX}` is the index of the target GPU. If set to `cpu`, the engine
+     *                                   will run on the CPU with the default number of threads. To specify the number
+     *                                   of threads, set this argument to `cpu:${NUM_THREADS}`, where `${NUM_THREADS}`
+     *                                   is the desired number of threads.
      * @param libraryPath                Absolute path to the native Leopard library.
      * @param enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
      * @param enableDiarization          Set to `true` to enable speaker diarization, which allows Leopard to
@@ -49,10 +58,15 @@ public class Leopard {
     private Leopard(
             String accessKey,
             String modelPath,
+            String device,
             String libraryPath,
             boolean enableAutomaticPunctuation,
             boolean enableDiarization) throws LeopardException {
         try {
+            ArrayList<String> libraryDependencies = Utils.getLibraryDependencyPaths(libraryPath);
+            for (String dependency : libraryDependencies) {
+                System.load(dependency);
+            }
             System.load(libraryPath);
         } catch (Exception exception) {
             throw new LeopardException(exception);
@@ -62,6 +76,7 @@ public class Leopard {
         handle = LeopardNative.init(
                 accessKey,
                 modelPath,
+                device,
                 enableAutomaticPunctuation,
                 enableDiarization);
     }
@@ -152,12 +167,45 @@ public class Leopard {
     }
 
     /**
+     * Retrieves a list of available hardware devices that Leopard can use to run inference.
+     *
+     * @param libraryPath Path to a native Leopard library. Set to `null` to use default library.
+     *
+     * @return List of available hardware devices that Leopard can use to run inference.
+     * @throws LeopardException if the library file cannot be loaded.
+     */
+    public static String[] getAvailableDevices(String libraryPath) throws LeopardException {
+        try {
+            System.load(libraryPath);
+        } catch (Exception exception) {
+            throw new LeopardException(exception);
+        }
+        return LeopardNative.listHardwareDevices();
+    }
+
+    /**
+     * Retrieves a list of available hardware devices that Leopard can use to run inference.
+     *
+     * @return List of available hardware devices that Leopard can use to run inference.
+     * @throws LeopardException if the default library file cannot be loaded.
+     */
+    public static String[] getAvailableDevices() throws LeopardException {
+        if (Utils.isResourcesAvailable()) {
+            return Leopard.getAvailableDevices(LIBRARY_PATH);
+        } else {
+            throw new LeopardInvalidArgumentException("Default library unavailable. " +
+                    "Please provide a valid native Leopard library path.");
+        }
+    }
+
+    /**
      * Builder for creating an instance of Leopard with a mixture of default arguments.
      */
     public static class Builder {
         private String accessKey = null;
         private String libraryPath = null;
         private String modelPath = null;
+        private String device = null;
         private boolean enableAutomaticPunctuation = false;
         private boolean enableDiarization = false;
 
@@ -188,6 +236,16 @@ public class Leopard {
          */
         public Builder setModelPath(String modelPath) {
             this.modelPath = modelPath;
+            return this;
+        }
+
+        /**
+         * Setter for device.
+         *
+         * @param device String representation of the device
+         */
+        public Builder setDevice(String device) {
+            this.device = device;
             return this;
         }
 
@@ -256,9 +314,14 @@ public class Leopard {
                 }
             }
 
+            if (device == null) {
+                device = "best";
+            }
+
             return new Leopard(
                     accessKey,
                     modelPath,
+                    device,
                     libraryPath,
                     enableAutomaticPunctuation,
                     enableDiarization);
