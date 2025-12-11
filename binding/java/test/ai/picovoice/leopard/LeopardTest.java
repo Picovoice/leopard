@@ -215,7 +215,10 @@ public class LeopardTest {
 
     @AfterEach
     void tearDown() {
-        leopard.delete();
+        if (leopard != null) {
+            leopard.delete();
+            leopard = null;
+        }
     }
 
     void validateMetadata(
