@@ -34,7 +34,6 @@ defaults:
     working-directory: binding/dotnet
 
 jobs:
-jobs:
   build-github-hosted:
     runs-on: ${{ matrix.os }}
     env:
