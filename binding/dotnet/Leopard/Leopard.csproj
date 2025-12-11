@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net8.0;net6.0;netcoreapp3.0;netstandard2.0</TargetFrameworks>
-        <Version>2.0.5</Version>
+        <TargetFrameworks>net6.0;netstandard2.0</TargetFrameworks>
+        <Version>3.0.0</Version>
         <Authors>Picovoice</Authors>
         <Company/>
         <Product>Leopard Speech-to-Text Engine</Product>
@@ -12,7 +12,7 @@
         <RepositoryType>git</RepositoryType>
         <PackageTags>Speech-to-Text, Speech Recognition, Voice Recognition, ASR</PackageTags>
         <PackageReleaseNotes>See https://github.com/Picovoice/leopard/</PackageReleaseNotes>
-        <Copyright>Picovoice 2022-2024</Copyright>
+        <Copyright>Picovoice 2022-2025</Copyright>
         <Description>
             Leopard is an on-device speech-to-text engine. Leopard is:
 
@@ -36,9 +36,7 @@
         </Content>
         <Content Include="Leopard.targets">
             <PackagePath>
-                buildTransitive/netcoreapp3.0/Leopard.targets;
                 buildTransitive/net6.0/Leopard.targets;
-                buildTransitive/net8.0/Leopard.targets;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
@@ -46,23 +44,19 @@
 
     <!--.NET Standard 2.0+ libs-->
     <ItemGroup>
-        <Content Include="..\..\..\lib\windows\amd64\libpv_leopard.dll">
+        <Content Include="..\..\..\lib\windows\amd64\*">
             <PackagePath>
-                buildTransitive/netstandard2.0/libpv_leopard.dll;
-                buildTransitive/netcoreapp3.0/lib/windows/amd64/libpv_leopard.dll;
-                buildTransitive/net6.0/lib/windows/amd64/libpv_leopard.dll;
-                buildTransitive/net8.0/lib/windows/amd64/libpv_leopard.dll;
+                buildTransitive\netstandard2.0;
+                buildTransitive\net6.0\lib\windows\amd64;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <Link>lib\windows\amd64\libpv_leopard.dll</Link>
+            <Link>lib\windows\amd64\%(Filename)%(Extension)</Link>
             <Visible>false</Visible>
         </Content>
         <Content Include="..\..\..\lib\mac\x86_64\libpv_leopard.dylib">
             <PackagePath>
                 buildTransitive/netstandard2.0/libpv_leopard.dylib;
-                buildTransitive/netcoreapp3.0/lib/mac/x86_64/libpv_leopard.dylib;
                 buildTransitive/net6.0/lib/mac/x86_64/libpv_leopard.dylib;
-                buildTransitive/net8.0/lib/mac/x86_64/libpv_leopard.dylib;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\mac\x86_64\libpv_leopard.dylib</Link>
@@ -75,7 +69,6 @@
         <Content Include="..\..\..\lib\mac\arm64\libpv_leopard.dylib">
             <PackagePath>
                 buildTransitive/net6.0/lib/mac/arm64/libpv_leopard.dylib;
-                buildTransitive/net8.0/lib/mac/arm64/libpv_leopard.dylib;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\mac\arm64\libpv_leopard.dylib</Link>
@@ -84,7 +77,6 @@
         <Content Include="..\..\..\lib\windows\arm64\libpv_leopard.dll">
             <PackagePath>
                 buildTransitive/net6.0/lib/windows/arm64/libpv_leopard.dll;
-                buildTransitive/net8.0/lib/windows/arm64/libpv_leopard.dll;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\windows\arm64\libpv_leopard.dll</Link>
@@ -93,7 +85,6 @@
         <Content Include="..\..\..\lib\linux\x86_64\libpv_leopard.so">
             <PackagePath>
                 buildTransitive/net6.0/lib/linux/x86_64/libpv_leopard.so;
-                buildTransitive/net8.0/lib/linux/x86_64/libpv_leopard.so;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\linux\x86_64\libpv_leopard.so</Link>
@@ -102,7 +93,6 @@
         <Content Include="..\..\..\lib\raspberry-pi\**\*">
             <PackagePath>
                 buildTransitive/net6.0/lib/raspberry-pi;
-                buildTransitive/net8.0/lib/raspberry-pi;
             </PackagePath>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Link>lib\raspberry-pi\%(RecursiveDir)%(Filename)%(Extension)</Link>

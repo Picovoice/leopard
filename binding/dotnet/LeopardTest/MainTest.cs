@@ -1,5 +1,5 @@
 /*
-    Copyright 2022-2023 Picovoice Inc.
+    Copyright 2022-2025 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -29,12 +29,15 @@ namespace LeopardTest
     public class MainTest
     {
         private static string _accessKey;
+        private static string _device;
+
         private static readonly string ROOT_DIR = Path.Combine(AppContext.BaseDirectory, "../../../../../..");
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext _)
         {
             _accessKey = Environment.GetEnvironmentVariable("ACCESS_KEY");
+            _device = Environment.GetEnvironmentVariable("DEVICE");
         }
 
         [Serializable]
@@ -207,7 +210,7 @@ namespace LeopardTest
         [TestMethod]
         public void TestVersion()
         {
-            using (Leopard leopard = Leopard.Create(_accessKey))
+            using (Leopard leopard = Leopard.Create(_accessKey, device: _device))
             {
                 Assert.IsFalse(
                     string.IsNullOrWhiteSpace(leopard?.Version),
@@ -218,11 +221,22 @@ namespace LeopardTest
         [TestMethod]
         public void TestSampleRate()
         {
-            using (Leopard leopard = Leopard.Create(_accessKey))
+            using (Leopard leopard = Leopard.Create(_accessKey, device: _device))
             {
                 Assert.IsTrue(
                     leopard.SampleRate > 0,
                     "Leopard did not return a valid sample rate number.");
+            }
+        }
+
+        [TestMethod]
+        public void TestGetAvailableDevices()
+        {
+            string[] devices = Leopard.GetAvailableDevices();
+            Assert.IsTrue(devices.Length > 0);
+            foreach (string device in devices)
+            {
+                Assert.IsFalse(string.IsNullOrEmpty(device));
             }
         }
 
@@ -234,7 +248,7 @@ namespace LeopardTest
 
             try
             {
-                l = Leopard.Create("invalid");
+                l = Leopard.Create("invalid", device: _device);
                 Assert.IsNull(l);
                 l.Dispose();
             }
@@ -248,7 +262,7 @@ namespace LeopardTest
 
             try
             {
-                l = Leopard.Create("invalid");
+                l = Leopard.Create("invalid", device: _device);
                 Assert.IsNull(l);
                 l.Dispose();
             }
@@ -264,7 +278,7 @@ namespace LeopardTest
         [TestMethod]
         public void TestProcessMessageStack()
         {
-            Leopard l = Leopard.Create(_accessKey);
+            Leopard l = Leopard.Create(_accessKey, device: _device);
             short[] testPcm = new short[1024];
 
             var obj = typeof(Leopard).GetField("_libraryPointer", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -299,7 +313,8 @@ namespace LeopardTest
         {
             using (Leopard leopard = Leopard.Create(
                        _accessKey,
-                       GetModelPath(language)))
+                       GetModelPath(language),
+                       device: _device))
             {
                 string testAudioPath = Path.Combine(ROOT_DIR, "resources/audio_samples", testAudioFile);
 
@@ -324,7 +339,8 @@ namespace LeopardTest
         {
             using (Leopard leopard = Leopard.Create(
                        _accessKey,
-                       GetModelPath(language)))
+                       GetModelPath(language),
+                       device: _device))
             {
                 string testAudioPath = Path.Combine(ROOT_DIR, "resources/audio_samples", testAudioFile);
                 LeopardTranscript result = leopard.ProcessFile(testAudioPath);
@@ -349,6 +365,7 @@ namespace LeopardTest
             using (Leopard leopard = Leopard.Create(
                        _accessKey,
                        GetModelPath(language),
+                       device: _device,
                        enableAutomaticPunctuation: true))
             {
                 string testAudioPath = Path.Combine(ROOT_DIR, "resources/audio_samples", testAudioFile);
@@ -374,6 +391,7 @@ namespace LeopardTest
             using (Leopard leopard = Leopard.Create(
                        _accessKey,
                        GetModelPath(language),
+                       device: _device,
                        enableDiarization: true))
             {
                 string testAudioPath = Path.Combine(ROOT_DIR, "resources/audio_samples", testAudioFile);
@@ -396,6 +414,7 @@ namespace LeopardTest
             using (Leopard leopard = Leopard.Create(
                        _accessKey,
                        GetModelPath(language),
+                       device: _device,
                        enableDiarization: true))
             {
                 string testAudioPath = Path.Combine(ROOT_DIR, "resources/audio_samples", testAudioFile);
