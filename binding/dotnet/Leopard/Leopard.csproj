@@ -12,7 +12,7 @@
         <RepositoryType>git</RepositoryType>
         <PackageTags>Speech-to-Text, Speech Recognition, Voice Recognition, ASR</PackageTags>
         <PackageReleaseNotes>See https://github.com/Picovoice/leopard/</PackageReleaseNotes>
-        <Copyright>Picovoice 2022-2024</Copyright>
+        <Copyright>Picovoice 2022-2025</Copyright>
         <Description>
             Leopard is an on-device speech-to-text engine. Leopard is:
 
