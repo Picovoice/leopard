@@ -22,7 +22,7 @@ from test_util import *
 language_tests = load_languages_test_data()
 
 
-class PorcupineCTestCase(unittest.TestCase):
+class LeopardCTestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
