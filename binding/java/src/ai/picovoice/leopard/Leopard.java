@@ -321,8 +321,8 @@ public class Leopard {
             return new Leopard(
                     accessKey,
                     modelPath,
-                    libraryPath,
                     device,
+                    libraryPath,
                     enableAutomaticPunctuation,
                     enableDiarization);
         }
