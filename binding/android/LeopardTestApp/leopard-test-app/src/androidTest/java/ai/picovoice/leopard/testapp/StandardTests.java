@@ -1,5 +1,5 @@
 /*
-    Copyright 2022-2024 Picovoice Inc.
+    Copyright 2022-2025 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
@@ -132,6 +132,30 @@ public class StandardTests extends BaseTest {
             for (int i = 0; i < error.length; i++) {
                 assertEquals(e.getMessageStack()[i], error[i]);
             }
+        }
+    }
+
+    @Test
+    public void testInitFailWithInvalidDevice() {
+        boolean didFail = false;
+        try {
+            new Leopard.Builder()
+                    .setAccessKey(accessKey)
+                    .setDevice("invalid:9")
+                    .build(appContext);
+        } catch (LeopardException e) {
+            didFail = true;
+        }
+
+        assertTrue(didFail);
+    }
+
+    @Test
+    public void testGetAvailableDevices() throws LeopardException {
+        String[] availableDevices = Leopard.getAvailableDevices();
+        assertTrue(availableDevices.length > 0);
+        for (String d : availableDevices) {
+            assertTrue(d != null && d.length() > 0);
         }
     }
 }

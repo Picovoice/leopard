@@ -15,6 +15,9 @@ if (rootProject.file("local.properties").exists()) {
     if (project.hasProperty("procPerformanceThresholdSec")) {
         properties.put("procPerformanceThresholdSec", project.getProperty("procPerformanceThresholdSec"))
     }
+    if (project.hasProperty("pvTestingDevice")) {
+        properties.put("pvTestingDevice", project.getProperty("pvTestingDevice"))
+    }
 
     if (project.hasProperty("storePassword")) {
         properties.put("storePassword", project.getProperty("storePassword"))
@@ -46,6 +49,7 @@ android {
         resValue 'string', 'numTestIterations', properties.getProperty("numTestIterations", "")
         resValue 'string', 'initPerformanceThresholdSec', properties.getProperty("initPerformanceThresholdSec", "")
         resValue 'string', 'procPerformanceThresholdSec', properties.getProperty("procPerformanceThresholdSec", "")
+        resValue 'string', 'pvTestingDevice', properties.getProperty("pvTestingDevice", "")
     }
 
     signingConfigs {
@@ -143,7 +147,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.code.gson:gson:2.10'
     implementation 'com.google.errorprone:error_prone_annotations:2.36.0'
-    implementation 'ai.picovoice:leopard-android:2.0.2'
+    implementation files('../../Leopard/leopard/build/outputs/aar/leopard-release.aar')
 
     // Espresso UI Testing
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

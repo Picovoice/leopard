@@ -1,5 +1,5 @@
 /*
-    Copyright 2022-2024 Picovoice Inc.
+    Copyright 2022-2025 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
@@ -121,6 +121,7 @@ public class LanguageTests extends BaseTest {
         Leopard leopard = new Leopard.Builder()
                 .setAccessKey(accessKey)
                 .setModelPath(modelPath)
+                .setDevice(device)
                 .build(appContext);
 
         File audioFile = new File(getAudioFilepath(testAudioFile));
@@ -144,6 +145,7 @@ public class LanguageTests extends BaseTest {
         Leopard leopard = new Leopard.Builder()
                 .setAccessKey(accessKey)
                 .setModelPath(modelPath)
+                .setDevice(device)
                 .setEnableAutomaticPunctuation(true)
                 .build(appContext);
 
@@ -169,6 +171,7 @@ public class LanguageTests extends BaseTest {
         Leopard leopard = new Leopard.Builder()
                 .setAccessKey(accessKey)
                 .setModelPath(modelPath)
+                .setDevice(device)
                 .build(appContext);
 
         File audioFile = new File(getAudioFilepath(testAudioFile));
@@ -193,6 +196,7 @@ public class LanguageTests extends BaseTest {
         Leopard leopard = new Leopard.Builder()
                 .setAccessKey(accessKey)
                 .setModelPath(modelPath)
+                .setDevice(device)
                 .setEnableDiarization(true)
                 .build(appContext);
 
