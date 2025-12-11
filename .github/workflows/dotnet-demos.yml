@@ -77,7 +77,7 @@ jobs:
       working-directory: binding/dotnet
 
     - name: Add binding to demo
-      run: dotnet add package -s ../../../binding/dotnet/Porcupine/bin/Release Porcupine
+      run: dotnet add package -s ../../../binding/dotnet/Leopard/bin/Release Leopard
     # ******************************************************
 
     - name: Dotnet build micdemo
