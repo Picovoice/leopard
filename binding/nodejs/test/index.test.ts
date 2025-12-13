@@ -1,5 +1,5 @@
 //
-// Copyright 2022-2023 Picovoice Inc.
+// Copyright 2022-2025 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -30,6 +30,9 @@ const DIARIZATION_TEST_PARAMETERS = getDiarizationTestParameters();
 const ACCESS_KEY = process.argv
   .filter(x => x.startsWith('--access_key='))[0]
   .split('--access_key=')[1];
+const DEVICE = process.argv
+  .filter(x => x.startsWith('--device='))[0]
+  .split('--device=')[1] ?? 'best';
 
 const levenshteinDistance = (words1: string[], words2: string[]) => {
   const res = Array.from(
@@ -107,6 +110,7 @@ const testLeopardProcess = (
 
   let leopardEngine = new Leopard(ACCESS_KEY, {
     modelPath,
+    device: DEVICE,
     enableAutomaticPunctuation,
     enableDiarization,
   });
@@ -246,6 +250,7 @@ describe('successful diarization', () => {
 
       let leopardEngine = new Leopard(ACCESS_KEY, {
         modelPath,
+        device: DEVICE,
         enableDiarization: true,
       });
 
@@ -269,6 +274,12 @@ describe('Defaults', () => {
       new Leopard('');
     }).toThrow(LeopardInvalidArgumentError);
   });
+
+  test('list hardware devices', () => {
+    const hardwareDevices: string[] = Leopard.listAvailableDevices();
+    expect(Array.isArray(hardwareDevices)).toBeTruthy();
+    expect(hardwareDevices.length).toBeGreaterThan(0);
+  });
 });
 
 describe('manual paths', () => {
@@ -276,6 +287,7 @@ describe('manual paths', () => {
     const libraryPath = getSystemLibraryPath();
 
     let leopardEngine = new Leopard(ACCESS_KEY, {
+      device: DEVICE,
       libraryPath: libraryPath,
       enableAutomaticPunctuation: false,
     });
