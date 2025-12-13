@@ -32,8 +32,8 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      matrix:
-        node-version: [16.x, 18.x, 20.x]
+      device: [ cpu:1, cpu ]
+      node-version: [18.x, 20.x, 22.x, 24.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -43,12 +43,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Pre-build dependencies
-        run: npm install yarn
-
-      - name: Build Local Web SDK
-        run: yarn && yarn copywasm && yarn build
+# ************** REMOVE AFTER RELEASE ********************
+      - name: Build Web SDK
+        run: yarn install && yarn copywasm && yarn build
         working-directory: binding/web
+# ************** REMOVE AFTER RELEASE ********************
 
       - name: Install dependencies
         run: yarn install
@@ -60,4 +59,4 @@ jobs:
         run: yarn setup-test
 
       - name: Run test
-        run: yarn test --env ACCESS_KEY=${{secrets.PV_VALID_ACCESS_KEY}}
+        run: yarn test --env ACCESS_KEY=${{secrets.PV_VALID_ACCESS_KEY}},DEVICE=${{ matrix.device }}
