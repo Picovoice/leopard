@@ -1,5 +1,5 @@
 //
-// Copyright 2022-2023 Picovoice Inc.
+// Copyright 2022-2025 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -19,7 +19,12 @@ import {
   pvStatusToException,
 } from './errors';
 
-import { LeopardWord, LeopardTranscript, LeopardOptions } from './types';
+import {
+  LeopardInputOptions,
+  LeopardOptions,
+  LeopardTranscript,
+  LeopardWord,
+} from './types';
 
 import { getSystemLibraryPath } from './platforms';
 
@@ -44,6 +49,10 @@ type LeopardResult = {
   words: LeopardWord[];
   status: PvStatus;
 };
+type LeopardHardwareDevicesResult = {
+  hardware_devices: string[];
+  status: PvStatus;
+};
 
 /**
  * Node.js binding for Leopard speech-to-text engine.
@@ -64,6 +73,12 @@ export class Leopard {
    * @param {string} accessKey AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).
    * @param {LeopardOptions} options Optional configuration arguments.
    * @param {string} options.modelPath The path to save and use the model from (.pv extension)
+   * @param {string} options.device String representation of the device (e.g., CPU or GPU) to use for inference.
+   * If set to `best`, the most suitable device is selected automatically. If set to `gpu`, the engine uses the
+   * first available GPU device. To select a specific GPU device, set this argument to `gpu:${GPU_INDEX}`, where
+   * `${GPU_INDEX}` is the index of the target GPU. If set to `cpu`, the engine will run on the CPU with the
+   * default number of threads. To specify the number of threads, set this argument to `cpu:${NUM_THREADS}`,
+   * where `${NUM_THREADS}` is the desired number of threads.
    * @param {string} options.libraryPath the path to the Leopard dynamic library (.node extension)
    * @param {boolean} options.enableAutomaticPunctuation Flag to enable automatic punctuation insertion.
    * @param {boolean} options.enableDiarization Flag to enable speaker diarization, which allows Leopard to
@@ -81,6 +96,7 @@ export class Leopard {
 
     const {
       modelPath = path.resolve(__dirname, DEFAULT_MODEL_PATH),
+      device = 'best',
       libraryPath = getSystemLibraryPath(),
       enableAutomaticPunctuation = false,
       enableDiarization = false,
@@ -108,6 +124,7 @@ export class Leopard {
       leopardHandleAndStatus = pvLeopard.init(
         accessKey,
         modelPath,
+        device,
         enableAutomaticPunctuation,
         enableDiarization
       );
@@ -254,6 +271,39 @@ export class Leopard {
       // eslint-disable-next-line no-console
       console.warn('Leopard is not initialized');
     }
+  }
+
+  /**
+   * Lists all available devices that Leopard can use for inference. Each entry in the list can be the `device` argument
+   * of the constructor.
+   *
+   * @returns List of all available devices that Leopard can use for inference.
+   */
+  static listAvailableDevices(options: LeopardInputOptions = {}): string[] {
+    const {
+      libraryPath = getSystemLibraryPath(),
+    } = options;
+
+    const pvLeopard = require(libraryPath); // eslint-disable-line
+
+    let leopardHardwareDevicesResult: LeopardHardwareDevicesResult | null = null;
+    try {
+      leopardHardwareDevicesResult = pvLeopard.list_hardware_devices();
+    } catch (err: any) {
+      pvStatusToException(<PvStatus>err.code, err);
+    }
+
+    const status = leopardHardwareDevicesResult!.status;
+    if (status !== PvStatus.SUCCESS) {
+      const errorObject = pvLeopard.get_error_stack();
+      if (errorObject.status === PvStatus.SUCCESS) {
+        pvStatusToException(status, 'Leopard failed to get available devices', errorObject.message_stack);
+      } else {
+        pvStatusToException(status, 'Unable to get Leopard error state');
+      }
+    }
+
+    return leopardHardwareDevicesResult!.hardware_devices;
   }
 
   private handlePvStatus(status: PvStatus, message: string): void {
