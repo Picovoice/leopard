@@ -8,6 +8,7 @@ import { LeopardWord } from '../src';
 import { LeopardError } from '../src/leopard_errors';
 
 const ACCESS_KEY: string = Cypress.env('ACCESS_KEY');
+const DEVICE = Cypress.env('DEVICE');
 
 const levenshteinDistance = (words1: string[], words2: string[]) => {
   const res = Array.from(
@@ -70,19 +71,23 @@ const runInitTest = async (
   params: {
     accessKey?: string;
     model?: PvModel;
+    device?: string;
     expectFailure?: boolean;
   } = {}
 ) => {
   const {
     accessKey = ACCESS_KEY,
     model = { publicPath: '/test/leopard_params.pv', forceWrite: true },
+    device = undefined,
     expectFailure = false,
   } = params;
 
   let isFailed = false;
 
   try {
-    const leopard = await instance.create(accessKey, model);
+    const leopard = await instance.create(accessKey, model, {
+      device: device,
+    });
     expect(leopard.sampleRate).to.be.eq(16000);
     expect(typeof leopard.version).to.eq('string');
     expect(leopard.version.length).to.be.greaterThan(0);
@@ -114,6 +119,7 @@ const runProcTest = async (
   params: {
     accessKey?: string;
     model?: PvModel;
+    device?: string;
     enablePunctuation?: boolean;
     enableDiarization?: boolean;
     useCER?: boolean;
@@ -122,6 +128,7 @@ const runProcTest = async (
   const {
     accessKey = ACCESS_KEY,
     model = { publicPath: '/test/leopard_params.pv', forceWrite: true },
+    device = undefined,
     enablePunctuation = false,
     enableDiarization = false,
     useCER = false,
@@ -129,6 +136,7 @@ const runProcTest = async (
 
   try {
     const leopard = await instance.create(accessKey, model, {
+      device: device,
       enableAutomaticPunctuation: enablePunctuation,
       enableDiarization: enableDiarization,
     });
@@ -263,6 +271,15 @@ describe('Leopard Binding', function () {
       });
     });
 
+    it(`should be able to handle invalid device (${instanceString})`, () => {
+      cy.wrap(null).then(async () => {
+        await runInitTest(instance, {
+          device: 'invalid',
+          expectFailure: true,
+        });
+      });
+    });
+
     for (const testParam of testData.tests.language_tests) {
       it(`should be able to process (${testParam.language}) (${instanceString})`, () => {
         try {
@@ -287,6 +304,7 @@ describe('Leopard Binding', function () {
                     publicPath: `/test/leopard_params${suffix}.pv`,
                     forceWrite: true,
                   },
+                  device: DEVICE,
                   useCER: testParam.language === 'ja',
                 }
               );
@@ -320,6 +338,7 @@ describe('Leopard Binding', function () {
                     publicPath: `/test/leopard_params${suffix}.pv`,
                     forceWrite: true,
                   },
+                  device: DEVICE,
                   enablePunctuation: true,
                   useCER: testParam.language === 'ja',
                 }
@@ -354,6 +373,7 @@ describe('Leopard Binding', function () {
                     publicPath: `/test/leopard_params${suffix}.pv`,
                     forceWrite: true,
                   },
+                  device: DEVICE,
                   enableDiarization: true,
                   useCER: testParam.language === 'ja',
                 }
@@ -381,6 +401,7 @@ describe('Leopard Binding', function () {
                   forceWrite: true,
                 },
                 {
+                  device: DEVICE,
                   enableDiarization: true,
                 }
               );

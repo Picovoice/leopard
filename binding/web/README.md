@@ -21,10 +21,27 @@ Leopard is an on-device speech-to-text engine. Leopard is:
 - Firefox
 - Safari
 
+## Requirements
+
+The Leopard Web Binding uses [SharedArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer).
+
+Include the following headers in the response to enable the use of `SharedArrayBuffers`:
+
+```
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp
+```
+
+Refer to our [Web demo](../../demo/web) for an example on creating a server with the corresponding response headers.
+
+Browsers that don't support `SharedArrayBuffers` or applications that don't include the required headers will fall back to using standard `ArrayBuffers`. This will disable multithreaded processing.
+
 ### Restrictions
 
 IndexedDB is required to use `Leopard` in a worker thread. Browsers without IndexedDB support
 (i.e. Firefox Incognito Mode) should use `Leopard` in the main thread.
+
+Multi-threading is only enabled for `Leopard` when using on a web worker.
 
 ## Installation
 

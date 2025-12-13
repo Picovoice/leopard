@@ -26,7 +26,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
-        node-version: [ 16.x, 18.x, 20.x ]
+        node-version: [ 18.x, 20.x, 22.x, 24.x ]
 
     steps:
       - uses: actions/checkout@v3
@@ -36,16 +36,15 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Pre-build dependencies
-        run: npm install yarn
-
-      - name: Build Local Web SDK
-        run: yarn && yarn copywasm && yarn build
+# ************** REMOVE AFTER RELEASE ********************
+      - name: Build Web SDK
+        run: yarn install && yarn copywasm && yarn build
         working-directory: binding/web
 
-      - name: Build Local React SDK
-        run: yarn && yarn build
+      - name: Install dependencies
+        run: yarn install && yarn build
         working-directory: binding/react
+# ************** REMOVE AFTER RELEASE ********************
 
       - name: Install dependencies
         run: yarn install

@@ -9,6 +9,7 @@ import leopardParams from '@/leopard_params.js';
 import testData from './test_data.json';
 
 const ACCESS_KEY = Cypress.env('ACCESS_KEY');
+const DEVICE = Cypress.env('DEVICE');
 
 const levenshteinDistance = (words1: string[], words2: string[]) => {
   const res = Array.from(
@@ -90,6 +91,7 @@ const runProcTest = async (
 
   cy.wrapHook(() =>
     result.current.init(accessKey, model, {
+      device: DEVICE,
       enableAutomaticPunctuation: enableAutomaticPunctuation,
       enableDiarization: enableDiarization,
     })
@@ -136,6 +138,8 @@ describe('Leopard binding', () => {
       result.current.init(ACCESS_KEY, {
         publicPath: '/test/leopard_params.pv',
         forceWrite: true,
+      }, {
+        device: DEVICE
       })
     ).then(() => {
       expect(
@@ -152,6 +156,8 @@ describe('Leopard binding', () => {
       result.current.init(ACCESS_KEY, {
         base64: leopardParams,
         forceWrite: true,
+      }, {
+        device: DEVICE,
       })
     ).then(() => {
       expect(
@@ -168,6 +174,8 @@ describe('Leopard binding', () => {
       result.current.init(ACCESS_KEY, {
         publicPath: '/leopard_params_failed.pv',
         forceWrite: true,
+      }, {
+        device: DEVICE,
       })
     ).then(() => {
       expect(result.current.isLoaded).to.be.false;
@@ -184,6 +192,8 @@ describe('Leopard binding', () => {
       result.current.init('', {
         publicPath: '/test/leopard_params.pv',
         forceWrite: true,
+      }, {
+        device: DEVICE,
       })
     ).then(() => {
       expect(result.current.isLoaded).to.be.false;
@@ -199,6 +209,8 @@ describe('Leopard binding', () => {
       result.current.init(ACCESS_KEY, {
         publicPath: '/test/leopard_params.pv',
         forceWrite: true,
+      }, {
+        device: DEVICE,
       })
     ).then(() => {
       expect(
@@ -292,6 +304,8 @@ describe('Leopard binding', () => {
               ? `/test/leopard_params.pv`
               : `/test/leopard_params_${testParam.language}.pv`,
           forceWrite: true,
+        }, {
+          device: DEVICE,
         })
       ).then(() => {
         expect(
@@ -356,7 +370,7 @@ describe('Leopard binding', () => {
                 : `/test/leopard_params_${testParam.language}.pv`,
             forceWrite: true,
           },
-          { enableDiarization: true }
+          { device: DEVICE, enableDiarization: true }
         )
       ).then(() => {
         expect(

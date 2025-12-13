@@ -14,6 +14,8 @@ blanquecinas
 BXOR
 calcsize
 camelcase
+ccall
+cwrap
 Cdecl
 checkstyle
 Checkstyle
@@ -43,6 +45,8 @@ downsample
 dylib
 EACCES
 EADDRINUSE
+Embedder
+Emscripten
 exopackage
 Fastenshtein
 favourite
@@ -57,6 +61,8 @@ genutzt
 gradlew
 grano
 gzipped
+HEAPU
+HEAPF
 HMODULE
 iife
 instanceof
@@ -107,6 +113,7 @@ processfile
 proto
 protobuf
 protoc
+pthread
 pubspec
 pvbase
 pvleopard

@@ -140,7 +140,7 @@ function setWordTable(words) {
 async function startLeopard(accessKey) {
   writeMessage("Leopard is loading. Please wait...");
   try {
-    leopard = await LeopardWeb.LeopardWorker.create(accessKey, leopardModel, {
+    leopard = await LeopardWeb.Leopard.create(accessKey, leopardModel, {
       enableAutomaticPunctuation: true,
       enableDiarization: true,
     });
