@@ -1,5 +1,5 @@
 //
-// Copyright 2022-2023 Picovoice Inc.
+// Copyright 2022-2025 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -20,6 +20,9 @@ const ACCESS_KEY =
   process.argv
     .filter(x => x.startsWith('--access_key='))[0]
     ?.split('--access_key=')[1] ?? '';
+const DEVICE = process.argv
+  .filter(x => x.startsWith('--device='))[0]
+  .split('--device=')[1] ?? 'best';
 const NUM_TEST_ITERATIONS = Number(
   process.argv
     .filter(x => x.startsWith('--num_test_iterations='))[0]
@@ -41,7 +44,9 @@ describe('Performance', () => {
     let perfResults = [];
     for (let i = 0; i < NUM_TEST_ITERATIONS; i++) {
       const before = performance.now();
-      let leopardEngine = new Leopard(ACCESS_KEY);
+      let leopardEngine = new Leopard(ACCESS_KEY, {
+        device: DEVICE
+      });
       let initTime = performance.now() - before;
 
       leopardEngine.release();
@@ -61,7 +66,9 @@ describe('Performance', () => {
 
   test('proc performance', () => {
     const waveFilePath = path.join(__dirname, WAV_PATH);
-    let leopardEngine = new Leopard(ACCESS_KEY);
+    let leopardEngine = new Leopard(ACCESS_KEY, {
+      device: DEVICE
+    });
 
     let perfResults = [];
     for (let i = 0; i < NUM_TEST_ITERATIONS; i++) {
