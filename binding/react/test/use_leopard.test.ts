@@ -11,6 +11,8 @@ import testData from './test_data.json';
 const ACCESS_KEY = Cypress.env('ACCESS_KEY');
 const DEVICE = Cypress.env('DEVICE');
 
+const CYPRESS_BASE_URI = "/__cypress/src";
+
 const levenshteinDistance = (words1: string[], words2: string[]) => {
   const res = Array.from(
     Array(words1.length + 1),
@@ -82,7 +84,7 @@ const runProcTest = async (
 ) => {
   const {
     accessKey = ACCESS_KEY,
-    model = { publicPath: '/test/leopard_params.pv', forceWrite: true },
+    model = { publicPath: `${CYPRESS_BASE_URI}/test/leopard_params.pv`, forceWrite: true },
     enableAutomaticPunctuation = false,
     enableDiarization = false,
     useCER = false,
@@ -136,7 +138,7 @@ describe('Leopard binding', () => {
 
     cy.wrapHook(() =>
       result.current.init(ACCESS_KEY, {
-        publicPath: '/test/leopard_params.pv',
+        publicPath: `${CYPRESS_BASE_URI}/test/leopard_params.pv`,
         forceWrite: true,
       }, {
         device: DEVICE
@@ -172,7 +174,7 @@ describe('Leopard binding', () => {
 
     cy.wrapHook(() =>
       result.current.init(ACCESS_KEY, {
-        publicPath: '/leopard_params_failed.pv',
+        publicPath: `${CYPRESS_BASE_URI}/leopard_params_failed.pv`,
         forceWrite: true,
       }, {
         device: DEVICE,
@@ -180,7 +182,7 @@ describe('Leopard binding', () => {
     ).then(() => {
       expect(result.current.isLoaded).to.be.false;
       expect(result.current.error?.toString()).to.contain(
-        "Error response returned while fetching model from '/leopard_params_failed.pv'"
+        `Error response returned while fetching model from '${CYPRESS_BASE_URI}/leopard_params_failed.pv'`
       );
     });
   });
@@ -190,7 +192,7 @@ describe('Leopard binding', () => {
 
     cy.wrapHook(() =>
       result.current.init('', {
-        publicPath: '/test/leopard_params.pv',
+        publicPath: `${CYPRESS_BASE_URI}/test/leopard_params.pv`,
         forceWrite: true,
       }, {
         device: DEVICE,
@@ -207,7 +209,7 @@ describe('Leopard binding', () => {
 
     cy.wrapHook(() =>
       result.current.init(ACCESS_KEY, {
-        publicPath: '/test/leopard_params.pv',
+        publicPath: `${CYPRESS_BASE_URI}/test/leopard_params.pv`,
         forceWrite: true,
       }, {
         device: DEVICE,
@@ -245,7 +247,7 @@ describe('Leopard binding', () => {
             testParam.error_rate,
             {
               model: {
-                publicPath: `/test/leopard_params${suffix}.pv`,
+                publicPath: `${CYPRESS_BASE_URI}/test/leopard_params${suffix}.pv`,
                 forceWrite: true,
               },
             }
@@ -265,7 +267,7 @@ describe('Leopard binding', () => {
             {
               enableAutomaticPunctuation: true,
               model: {
-                publicPath: `/test/leopard_params${suffix}.pv`,
+                publicPath: `${CYPRESS_BASE_URI}/test/leopard_params${suffix}.pv`,
                 forceWrite: true,
               },
             }
@@ -285,7 +287,7 @@ describe('Leopard binding', () => {
             {
               enableDiarization: true,
               model: {
-                publicPath: `/test/leopard_params${suffix}.pv`,
+                publicPath: `${CYPRESS_BASE_URI}/test/leopard_params${suffix}.pv`,
                 forceWrite: true,
               },
             }
@@ -301,8 +303,8 @@ describe('Leopard binding', () => {
         result.current.init(ACCESS_KEY, {
           publicPath:
             testParam.language === 'en'
-              ? `/test/leopard_params.pv`
-              : `/test/leopard_params_${testParam.language}.pv`,
+              ? `${CYPRESS_BASE_URI}/test/leopard_params.pv`
+              : `${CYPRESS_BASE_URI}/test/leopard_params_${testParam.language}.pv`,
           forceWrite: true,
         }, {
           device: DEVICE,
@@ -366,8 +368,8 @@ describe('Leopard binding', () => {
           {
             publicPath:
               testParam.language === 'en'
-                ? `/test/leopard_params.pv`
-                : `/test/leopard_params_${testParam.language}.pv`,
+                ? `${CYPRESS_BASE_URI}/test/leopard_params.pv`
+                : `${CYPRESS_BASE_URI}/test/leopard_params_${testParam.language}.pv`,
             forceWrite: true,
           },
           { device: DEVICE, enableDiarization: true }
