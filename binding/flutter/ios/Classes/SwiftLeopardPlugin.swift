@@ -1,5 +1,5 @@
 //
-// Copyright 2022-2024 Picovoice Inc.
+// Copyright 2022-2025 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -14,6 +14,7 @@ import UIKit
 import Leopard
 
 enum Method: String {
+    case GET_AVAILABLE_DEVICES
     case CREATE
     case PROCESS
     case PROCESSFILE
@@ -41,16 +42,27 @@ public class SwiftLeopardPlugin: NSObject, FlutterPlugin {
         let args = call.arguments as! [String: Any]
 
         switch method {
+        case .GET_AVAILABLE_DEVICES:
+            do {
+                var deviceList: [String] = try Leopard.getAvailableDevices()
+                result(deviceList)
+            } catch let error as LeopardError {
+                result(errorToFlutterError(error))
+            } catch {
+                result(errorToFlutterError(LeopardError(error.localizedDescription)))
+            }
         case .CREATE:
             do {
                 if let accessKey = args["accessKey"] as? String,
                    let modelPath = args["modelPath"] as? String {
+                    let device = args["device"] as? String
                     let enableAutomaticPunctuation = args["enableAutomaticPunctuation"] as? Bool
                     let enableDiarization = args["enableDiarization"] as? Bool
 
                     let leopard = try Leopard(
                             accessKey: accessKey,
                             modelPath: modelPath,
+                            device: device,
                             enableAutomaticPunctuation: enableAutomaticPunctuation ?? false,
                             enableDiarization: enableDiarization ?? false
                     )
