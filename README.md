@@ -641,10 +641,12 @@ function App(props) {
 
 ### v3.0.0 - December 9th, 2025
 
- - Improved engine performance
- - Added support for running on GPU or multiple CPU cores
- - Node.js min version bumped to Node 18
- - iOS min version bumped to iOS 16
+- Improved engine performance
+- Added support for running on GPU or multiple CPU cores
+- Node.js min version bumped to 18
+- iOS min version bumped to 16
+- Flutter min version bumped to 3.10
+- React Native min version bumped to 0.73
 
 ### v2.0.0 - November 30th, 2023
 
