@@ -88,9 +88,9 @@ class Leopard {
     String accessKey,
     String modelPath,
     {
-      String device?,
-      enableAutomaticPunctuation = false,
-      enableDiarization = false
+      String? device,
+      bool enableAutomaticPunctuation = false,
+      bool enableDiarization = false
     }) async {
     modelPath = await _tryExtractFlutterAsset(modelPath);
 
