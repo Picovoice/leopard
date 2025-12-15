@@ -1,5 +1,5 @@
 /*
-Copyright 2022-2023 Picovoice Inc.
+Copyright 2022-2025 Picovoice Inc.
 
 You may not use this file except in compliance with the license. A copy of the license is
 located in the "LICENSE" file accompanying this source.
@@ -48,9 +48,24 @@ public class LeopardModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void getAvailableDevices(Promise promise) {
+        try {
+            String[] devices = Leopard.getAvailableDevices();
+            WritableArray result = Arguments.createArray();
+            for (int i = 0; i < devices.length; i++) {
+                result.pushString(devices[i]);
+            }
+            promise.resolve(result);
+        } catch (LeopardException e) {
+            promise.reject(e.getClass().getSimpleName(), e.getMessage());
+        }
+    }
+
+    @ReactMethod
     public void create(
             String accessKey,
             String modelPath,
+            String device,
             boolean enableAutomaticPunctuation,
             boolean enableDiarization,
             Promise promise) {
@@ -59,6 +74,7 @@ public class LeopardModule extends ReactContextBaseJavaModule {
             Leopard leopard = new Leopard.Builder()
                     .setAccessKey(accessKey)
                     .setModelPath(modelPath.isEmpty() ? null : modelPath)
+                    .setDevice(device.isEmpty() ? null : device)
                     .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
                     .setEnableDiarization(enableDiarization)
                     .build(reactContext);

@@ -1,6 +1,6 @@
 {
   "name": "leopard-react-native-demo",
-  "version": "2.0.3",
+  "version": "3.0.0",
   "private": true,
   "scripts": {
     "lint": "eslint .",
@@ -15,7 +15,7 @@
     "ios-bundle": "node scripts/run_demo.js bundle --dev false --platform ios --entry-file index.js --bundle-output ios/app.jsbundle"
   },
   "dependencies": {
-    "@picovoice/leopard-react-native": "2.0.3",
+    "@picovoice/leopard-react-native": "../../../binding/react-native/pkg/picovoice-leopard-react-native-3.0.0.tgz",
     "@picovoice/react-native-voice-processor": "1.2.3",
     "@react-native-picker/picker": "^2.11.4",
     "@react-native/new-app-screen": "0.82.0",
