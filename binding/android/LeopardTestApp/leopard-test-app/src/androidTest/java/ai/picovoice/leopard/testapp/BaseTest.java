@@ -1,5 +1,5 @@
 /*
-    Copyright 2022-2024 Picovoice Inc.
+    Copyright 2022-2025 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
@@ -48,6 +48,7 @@ public class BaseTest {
     String defaultModelPath;
 
     String accessKey;
+    String device;
 
     @Before
     public void Setup() throws IOException {
@@ -58,6 +59,7 @@ public class BaseTest {
         defaultModelPath = getModelFilepath("leopard_params.pv");
 
         accessKey = appContext.getString(R.string.pvTestingAccessKey);
+        device = appContext.getString(R.string.pvTestingDevice);
     }
 
     public static String getTestDataString() throws IOException {
