@@ -6,10 +6,10 @@ PODS:
   - integration_test (0.0.1):
     - Flutter
   - ios-voice-processor (1.2.0)
-  - Leopard-iOS (2.0.2)
-  - leopard_flutter (2.0.4):
+  - Leopard-iOS (3.0.0)
+  - leopard_flutter (3.0.0):
     - Flutter
-    - Leopard-iOS (~> 2.0.2)
+    - Leopard-iOS (~> 3.0.0)
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -18,13 +18,13 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_voice_processor (from `.symlinks/plugins/flutter_voice_processor/ios`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
+  - Leopard-iOS (from `https://raw.githubusercontent.com/Picovoice/leopard/v3.0/binding/ios/Leopard-iOS.podspec`)
   - leopard_flutter (from `.symlinks/plugins/leopard_flutter/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
 
 SPEC REPOS:
   trunk:
     - ios-voice-processor
-    - Leopard-iOS
 
 EXTERNAL SOURCES:
   Flutter:
@@ -33,6 +33,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_voice_processor/ios"
   integration_test:
     :path: ".symlinks/plugins/integration_test/ios"
+  Leopard-iOS:
+    :podspec: https://raw.githubusercontent.com/Picovoice/leopard/v3.0/binding/ios/Leopard-iOS.podspec
   leopard_flutter:
     :path: ".symlinks/plugins/leopard_flutter/ios"
   path_provider_foundation:
@@ -40,13 +42,13 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  flutter_voice_processor: 9ebe2cae6612db22d20e7e7833937ea19fa3e59c
-  integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
+  flutter_voice_processor: f60363f959515eaebc35bcaaf26017596c953fc6
+  integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
   ios-voice-processor: 6b5ca08962f39e434fe39dca0f483d923a3b1b97
-  Leopard-iOS: 636fd4245497e1f7c348a8e346a6a9357ac07d0c
-  leopard_flutter: c62cc1f527420bb1fff2c920f3bd38926d1903e8
-  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
+  Leopard-iOS: dab4f2534fa855d4b7abc7a8fa72942b0c74bcf4
+  leopard_flutter: 1c70c8f8a851753325b3b4e7708d51ee6696d4ac
+  path_provider_foundation: bb55f6dbba17d0dccd6737fe6f7f34fbd0376880
 
-PODFILE CHECKSUM: ade96bceabe3919b69c16573938e4268fe3a6c9d
+PODFILE CHECKSUM: 09ad6e892876bf8c22e06f5b977dbf731a49406d
 
 COCOAPODS: 1.16.2

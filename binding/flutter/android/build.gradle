@@ -1,8 +1,9 @@
 group 'ai.picovoice.flutter.leopard'
-version '2.0.4'
+version '3.0.0'
 
 buildscript {
     repositories {
+        mavenLocal()
         google()
         mavenCentral()
     }
@@ -14,6 +15,7 @@ buildscript {
 
 rootProject.allprojects {
     repositories {
+        mavenLocal()
         google()
         mavenCentral()
     }
@@ -44,5 +46,5 @@ android {
 }
 
 dependencies {
-    implementation 'ai.picovoice:leopard-android:2.0.2'
+    implementation 'ai.picovoice:leopard-android:3.0.0'
 }
