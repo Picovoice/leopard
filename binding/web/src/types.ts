@@ -32,7 +32,7 @@ export enum PvStatus {
 export type LeopardModel = PvModel;
 
 export type LeopardOptions = {
-  /** @defaultValue undefined */
+  /** @defaultValue best */
   device?: string;
   /** @defaultValue false */
   enableAutomaticPunctuation?: boolean;

@@ -102,7 +102,6 @@ type LeopardWasmOutput = {
   messageStackDepthAddress: number;
 };
 
-const CPU_DEVICE_REGEX = /^cpu(:\d+)?$/;
 const MAX_PCM_LENGTH_SEC = 60 * 15;
 
 export class Leopard {
