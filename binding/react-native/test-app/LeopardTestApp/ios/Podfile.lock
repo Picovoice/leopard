@@ -9,9 +9,9 @@ PODS:
     - hermes-engine/Pre-built (= 0.78.0)
   - hermes-engine/Pre-built (0.78.0)
   - ios-voice-processor (1.2.0)
-  - Leopard-iOS (2.0.2)
-  - leopard-react-native (2.0.3):
-    - Leopard-iOS (~> 2.0.2)
+  - Leopard-iOS (3.0.0)
+  - leopard-react-native (3.0.0):
+    - Leopard-iOS (~> 3.0.0)
     - React
   - RCT-Folly (2024.11.18.00):
     - boost
@@ -1552,7 +1552,7 @@ DEPENDENCIES:
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
-  - Leopard-iOS (~> 2.0.1)
+  - Leopard-iOS (from `https://raw.githubusercontent.com/Picovoice/leopard/v3.0-ios/binding/ios/Leopard-iOS.podspec`)
   - "leopard-react-native (from `../node_modules/@picovoice/leopard-react-native`)"
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCT-Folly/Fabric (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
@@ -1621,7 +1621,6 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - ios-voice-processor
-    - Leopard-iOS
     - React-Codegen
     - SocketRocket
 
@@ -1641,6 +1640,8 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-2025-01-13-RNv0.78.0-a942ef374897d85da38e9c8904574f8376555388
+  Leopard-iOS:
+    :podspec: https://raw.githubusercontent.com/Picovoice/leopard/v3.0-ios/binding/ios/Leopard-iOS.podspec
   leopard-react-native:
     :path: "../node_modules/@picovoice/leopard-react-native"
   RCT-Folly:
@@ -1775,8 +1776,8 @@ SPEC CHECKSUMS:
   glog: eb93e2f488219332457c3c4eafd2738ddc7e80b8
   hermes-engine: b417d2b2aee3b89b58e63e23a51e02be91dc876d
   ios-voice-processor: 6b5ca08962f39e434fe39dca0f483d923a3b1b97
-  Leopard-iOS: 636fd4245497e1f7c348a8e346a6a9357ac07d0c
-  leopard-react-native: a7e6febdbed607279df21912215d34cde3481e42
+  Leopard-iOS: dab4f2534fa855d4b7abc7a8fa72942b0c74bcf4
+  leopard-react-native: c6f59d95917c956979e4db0532235761001fccad
   RCT-Folly: e78785aa9ba2ed998ea4151e314036f6c49e6d82
   RCTDeprecation: b2eecf2d60216df56bc5e6be5f063826d3c1ee35
   RCTRequired: 78522de7dc73b81f3ed7890d145fa341f5bb32ea
@@ -1841,6 +1842,6 @@ SPEC CHECKSUMS:
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: afd04ff05ebe0121a00c468a8a3c8080221cb14c
 
-PODFILE CHECKSUM: c34cdfafff5378c5ef5e53de83a3c38ce7f7bbf7
+PODFILE CHECKSUM: 8bbbce8834d19d8447b901e45b18fb194dbe67bc
 
 COCOAPODS: 1.16.2

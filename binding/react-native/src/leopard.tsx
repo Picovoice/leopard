@@ -1,5 +1,5 @@
 //
-// Copyright 2022-2023 Picovoice Inc.
+// Copyright 2022-2025 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -26,9 +26,34 @@ class Leopard {
   private readonly _version: string;
 
   /**
+   * Gets all available devices that Leopard can use for inference. Each entry in the list can be the `device` argument
+   * of the constructor.
+   *
+   * @returns Array of all available devices that Leopard can use for inference.
+   */
+  public static async getAvailableDevices() {
+    try {
+      return await RCTLeopard.getAvailableDevices();
+    } catch (err) {
+      if (err instanceof LeopardErrors.LeopardError) {
+        throw err;
+      } else {
+        const nativeError = err as NativeError;
+        throw this.codeToError(nativeError.code, nativeError.message);
+      }
+    }
+  }
+
+  /**
    * Static creator for initializing Leopard given the model path.
    * @param accessKey AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).
    * @param modelPath Path to the file containing model parameters.
+   * @param device String representation of the device (e.g., CPU or GPU) to use for inference.
+   * If set to `best`, the most suitable device is selected automatically. If set to `gpu`, the engine uses the
+   * first available GPU device. To select a specific GPU device, set this argument to `gpu:${GPU_INDEX}`, where
+   * `${GPU_INDEX}` is the index of the target GPU. If set to `cpu`, the engine will run on the CPU with the
+   * default number of threads. To specify the number of threads, set this argument to `cpu:${NUM_THREADS}`,
+   * where `${NUM_THREADS}` is the desired number of threads.
    * @param options Optional configuration arguments.
    * @param options.enableAutomaticPunctuation Set to `true` to enable automatic punctuation insertion.
    * @param options.enableDiarization Set to `true` to enable speaker diarization, which allows Leopard to differentiate speakers
@@ -38,6 +63,7 @@ class Leopard {
   public static async create(
     accessKey: string,
     modelPath: string,
+    device: string = '',
     options: LeopardOptions = {}
   ) {
     const { enableAutomaticPunctuation = false, enableDiarization = false } =
@@ -46,6 +72,7 @@ class Leopard {
       let { handle, sampleRate, version } = await RCTLeopard.create(
         accessKey,
         modelPath,
+        device,
         enableAutomaticPunctuation,
         enableDiarization
       );
