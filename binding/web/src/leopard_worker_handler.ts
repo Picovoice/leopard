@@ -1,5 +1,5 @@
 /*
-  Copyright 2022-2023 Picovoice Inc.
+  Copyright 2022-2025 Picovoice Inc.
 
   You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
   file accompanying this source.
@@ -32,8 +32,10 @@ const initRequest = async (request: LeopardWorkerInitRequest): Promise<any> => {
     };
   }
   try {
-    Leopard.setWasm(request.wasm);
     Leopard.setWasmSimd(request.wasmSimd);
+    Leopard.setWasmSimdLib(request.wasmSimdLib);
+    Leopard.setWasmPThread(request.wasmPThread);
+    Leopard.setWasmPThreadLib(request.wasmPThreadLib);
     Leopard.setSdk(request.sdk);
     leopard = await Leopard._init(
       request.accessKey,
