@@ -26,7 +26,7 @@ class PvLeopard: NSObject {
         rejecter reject: RCTPromiseRejectBlock
     ) {
         do {
-            var result: [String] = try Leopard.getAvailableDevices()
+            let result: [String] = try Leopard.getAvailableDevices()
             resolve(result)
         } catch let error as LeopardError {
             let (code, message) = errorToCodeAndMessage(error)
@@ -50,7 +50,7 @@ class PvLeopard: NSObject {
         do {
             let leopard = try Leopard(
                     accessKey: accessKey,
-                    modelPath: modelPath.isEmpty ? nil : modelPath,
+                    modelPath: modelPath,
                     device: device.isEmpty ? nil : device,
                     enableAutomaticPunctuation: enableAutomaticPunctuation,
                     enableDiarization: enableDiarization
