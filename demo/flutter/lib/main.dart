@@ -32,7 +32,7 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> {
   final String accessKey =
-      'Tw4jothrMMLyRYQ793yD/XF3DeithcbeNVsYlNN0Dc1vY26suWNOkg=='; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
+      '{YOUR_ACCESS_KEY_HERE}'; // AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
   final int maxRecordingLengthSecs = 120;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
