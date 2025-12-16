@@ -16,7 +16,7 @@ end
 
 target 'LeopardDemo' do
   config = use_native_modules!
-  pod 'Leopard-iOS', :podspec => 'https://raw.githubusercontent.com/Picovoice/leopard/v3.0-ios/binding/ios/Leopard-iOS.podspec'
+  pod 'Leopard-iOS', :podspec => 'https://raw.githubusercontent.com/Picovoice/leopard/v3.0/binding/ios/Leopard-iOS.podspec'
 
   use_react_native!(
     :path => config[:reactNativePath],
