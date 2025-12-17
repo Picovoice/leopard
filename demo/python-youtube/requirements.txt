@@ -1,2 +1,2 @@
-pvleopard==2.0.4
+pvleopard==3.0.0
 yt-dlp
