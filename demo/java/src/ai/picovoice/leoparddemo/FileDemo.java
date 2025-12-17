@@ -1,5 +1,5 @@
 /*
-    Copyright 2022-2023 Picovoice Inc.
+    Copyright 2022-2025 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
@@ -13,6 +13,7 @@
 package ai.picovoice.leoparddemo;
 
 import ai.picovoice.leopard.Leopard;
+import ai.picovoice.leopard.LeopardException;
 import ai.picovoice.leopard.LeopardTranscript;
 import org.apache.commons.cli.*;
 
@@ -23,6 +24,7 @@ public class FileDemo {
     public static void runDemo(
             String accessKey,
             String modelPath,
+            String device,
             String libraryPath,
             boolean enableAutomaticPunctuation,
             boolean enableDiarization,
@@ -34,6 +36,7 @@ public class FileDemo {
                     .setAccessKey(accessKey)
                     .setLibraryPath(libraryPath)
                     .setModelPath(modelPath)
+                    .setDevice(device)
                     .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
                     .setEnableDiarization(enableDiarization)
                     .build();
@@ -90,8 +93,22 @@ public class FileDemo {
             return;
         }
 
+        if (cmd.hasOption("show_inference_devices")) {
+            try {
+                String[] devices = Leopard.getAvailableDevices();
+                for (int i = 0; i < devices.length; i++) {
+                    System.out.println(devices[i]);
+                }
+                return;
+            } catch (LeopardException e) {
+                System.out.println(e.getMessage());
+                System.exit(1);
+            }
+        }
+
         String accessKey = cmd.getOptionValue("access_key");
         String modelPath = cmd.getOptionValue("model_path");
+        String device = cmd.getOptionValue("device");
         String libraryPath = cmd.getOptionValue("library_path");
         boolean enableAutomaticPunctuation = !cmd.hasOption("disable_automatic_punctuation");
         boolean enableDiarization = !cmd.hasOption("disable_speaker_diarization");
@@ -118,9 +135,14 @@ public class FileDemo {
             modelPath = Leopard.MODEL_PATH;
         }
 
+        if (device == null) {
+            device = "best";
+        }
+
         runDemo(
                 accessKey,
                 modelPath,
+                device,
                 libraryPath,
                 enableAutomaticPunctuation,
                 enableDiarization,
@@ -141,6 +163,13 @@ public class FileDemo {
                 .longOpt("model_path")
                 .hasArg(true)
                 .desc("Absolute path to the file containing model parameters.")
+                .build());
+
+        options.addOption(Option.builder("y")
+                .longOpt("device")
+                .hasArg(true)
+                .desc("Device to run inference on (`best`, `cpu:{num_threads}` or `gpu:{gpu_index}`). " +
+                        "Default: automatically selects best device.")
                 .build());
 
         options.addOption(Option.builder("l")
@@ -169,6 +198,11 @@ public class FileDemo {
                 .longOpt("verbose")
                 .desc("Enable verbose logging.")
                 .build());
+
+        options.addOption(new Option("sy",
+                "show_inference_devices",
+                false,
+                "Print devices that are available to run Leopard inference."));
 
         options.addOption(new Option("h", "help", false, ""));
 

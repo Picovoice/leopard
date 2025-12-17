@@ -1,5 +1,5 @@
 /*
-    Copyright 2022-2023 Picovoice Inc.
+    Copyright 2022-2025 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
@@ -23,6 +23,7 @@ class LeopardNative {
     static native long init(
             String accessKey,
             String modelPath,
+            String device,
             boolean enableAutomaticPunctuation,
             boolean enableDiarization) throws LeopardException;
 
@@ -36,4 +37,6 @@ class LeopardNative {
     static native LeopardTranscript processFile(
             long object,
             String path) throws LeopardException;
+
+    static native String[] listHardwareDevices() throws LeopardException;
 }
