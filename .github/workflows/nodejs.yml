@@ -53,6 +53,8 @@ jobs:
 
   build-self-hosted:
     runs-on: ${{ matrix.machine }}
+    env:
+      NODE_OPTIONS: --max-old-space-size=1024
 
     strategy:
       matrix:
