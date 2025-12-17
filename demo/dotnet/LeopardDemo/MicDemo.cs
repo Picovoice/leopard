@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright 2020-2023 Picovoice Inc.
+    Copyright 2020-2025 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -36,6 +36,13 @@ namespace LeopardDemo
         /// Absolute path to the file containing model parameters.
         /// If not set it will be set to the default location.
         /// </param>
+        /// <param name="device">
+        /// String representation of the device (e.g., CPU or GPU) to use. If set to `best`, the most
+        /// suitable device is selected automatically. If set to `gpu`, the engine uses the first available GPU device. To select a specific
+        /// GPU device, set this argument to `gpu:${GPU_INDEX}`, where `${GPU_INDEX}` is the index of the target GPU. If set to
+        /// `cpu`, the engine will run on the CPU with the default number of threads. To specify the number of threads, set this
+        /// argument to `cpu:${NUM_THREADS}`, where `${NUM_THREADS}` is the desired number of threads.
+        /// </param>
         /// <param name="enableAutomaticPunctuation">
         /// Set to `true` to enable automatic punctuation insertion.
         /// </param>
@@ -51,6 +58,7 @@ namespace LeopardDemo
         private static void RunDemo(
             string accessKey,
             string modelPath,
+            string device,
             bool enableAutomaticPunctuation,
             bool enableDiarization,
             bool verbose,
@@ -59,6 +67,7 @@ namespace LeopardDemo
             using (Leopard leopard = Leopard.Create(
                 accessKey: accessKey,
                 modelPath: modelPath,
+                device: device,
                 enableAutomaticPunctuation: enableAutomaticPunctuation,
                 enableDiarization: enableDiarization))
             {
@@ -165,11 +174,13 @@ namespace LeopardDemo
 
             string accessKey = null;
             string modelPath = null;
+            string device = null;
             bool enableAutomaticPunctuation = true;
             bool enableDiarization = true;
             bool verbose = false;
             int audioDeviceIndex = -1;
             bool showAudioDevices = false;
+            bool showInferenceDevices = false;
             bool showHelp = false;
 
             // parse command line arguments
@@ -190,6 +201,13 @@ namespace LeopardDemo
                         modelPath = args[argIndex++];
                     }
                 }
+                else if (args[argIndex] == "--device")
+                {
+                    if (++argIndex < args.Length)
+                    {
+                        device = args[argIndex++];
+                    }
+                }
                 else if (args[argIndex] == "--disable_automatic_punctuation")
                 {
                     enableAutomaticPunctuation = false;
@@ -208,6 +226,11 @@ namespace LeopardDemo
                 else if (args[argIndex] == "--show_audio_devices")
                 {
                     showAudioDevices = true;
+                    argIndex++;
+                }
+                else if (args[argIndex] == "--show_inference_devices")
+                {
+                    showInferenceDevices = true;
                     argIndex++;
                 }
                 else if (args[argIndex] == "--audio_device_index")
@@ -245,10 +268,17 @@ namespace LeopardDemo
                 return;
             }
 
+            if (showInferenceDevices)
+            {
+                Console.WriteLine(string.Join(Environment.NewLine, Leopard.GetAvailableDevices()));
+                return;
+            }
+
             // run demo with validated arguments
             RunDemo(
                 accessKey,
                 modelPath,
+                device,
                 enableAutomaticPunctuation,
                 enableDiarization,
                 verbose,
@@ -265,8 +295,10 @@ namespace LeopardDemo
         private static readonly string HELP_STR = "Available options: \n " +
             "\t--access_key (required): AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)\n" +
             "\t--model_path: Absolute path to the file containing model parameters.\n" +
+            "\t--device: Device to run inference on (`best`, `cpu:{num_threads}` or `gpu:{gpu_index}`). Default: automatically selects best device.\n" +
             "\t--audio_device_index: Index of input audio device.\n" +
             "\t--show_audio_devices: Print available recording devices.\n" +
+            "\t--show_inference_devices: Print devices that are available to run Leopard inference.\n" +
             "\t--disable_automatic_punctuation: Disable automatic punctuation.\n" +
             "\t--disable_speaker_diarization: Disable speaker diarization.\n" +
             "\t--verbose: Enable verbose output. Prints Leopard word metadata.";
