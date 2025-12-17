@@ -10,7 +10,7 @@
     "build:types": "tsc --declaration --declarationMap --emitDeclarationOnly --outDir ./dist/types",
     "prepack": "npm run build",
     "prepare": "node copy.js",
-    "test": "node --max-old-space-size=1024 ./node_modules/.bin/jest --no-cache",
+    "test": "node --max-old-space-size=1024 ./node_modules/jest/bin/jest.js --no-cache",
     "lint": "eslint . --ext .js,.ts"
   },
   "repository": {
