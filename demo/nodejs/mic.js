@@ -42,7 +42,7 @@ program
   .option("-d, --disable_speaker_diarization", "disable speaker diarization")
   .option(
       "-z, --show_inference_devices",
-      "Print devices that are available to run Porcupine inference.",
+      "Print devices that are available to run Leopard inference.",
       false)
   .option("-v, --verbose", "verbose mode, prints metadata");
 

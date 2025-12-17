@@ -30,13 +30,13 @@ export type LeopardTranscript = {
 };
 
 export type LeopardInitOptions = {
+  modelPath?: string;
   device?: string;
   enableAutomaticPunctuation?: boolean;
   enableDiarization?: boolean;
 };
 
 export type LeopardInputOptions = {
-  modelPath?: string;
   libraryPath?: string;
 };
 
