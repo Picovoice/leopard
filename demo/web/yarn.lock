@@ -93,8 +93,10 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/retry/-/retry-0.4.3.tgz#c2b9d2e374ee62c586d3adbea87199b1d7a7a6ba"
   integrity sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==
 
-"@picovoice/leopard-web@../../binding/web":
+"@picovoice/leopard-web@3.0.0":
   version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@picovoice/leopard-web/-/leopard-web-3.0.0.tgz#dd4b4c9d4bd65bdd5978b4e97a734c5c3214b6c9"
+  integrity sha512-Xg9O3iUhTKIN6m5IQKkxILlNm38CpoBWIpYKX8dTigrCGTN5R9Ggb6vvkDiGoj/SwFs9hETd0H2nYc31LBn3HA==
   dependencies:
     "@picovoice/web-utils" "=1.4.3"
 
