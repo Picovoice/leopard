@@ -1,5 +1,5 @@
 ﻿/*
-    Copyright 2022-2023 Picovoice Inc.
+    Copyright 2022-2025 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
     file accompanying this source.
@@ -48,7 +48,7 @@ namespace Pv
         static Leopard()
         {
 
-#if NETCOREAPP3_0_OR_GREATER
+#if NET6_0_OR_GREATER
 
             NativeLibrary.SetDllImportResolver(typeof(Leopard).Assembly, ImportResolver);
 
@@ -57,7 +57,7 @@ namespace Pv
             DEFAULT_MODEL_PATH = Utils.PvModelPath();
         }
 
-#if NETCOREAPP3_0_OR_GREATER
+#if NET6_0_OR_GREATER
 
         private static IntPtr ImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
         {
@@ -72,6 +72,7 @@ namespace Pv
         private static extern PvStatus pv_leopard_init(
             IntPtr accessKey,
             IntPtr modelPath,
+            IntPtr device,
             bool enableAutomaticPunctuation,
             bool enableDiarization,
             out IntPtr handle);
@@ -109,6 +110,16 @@ namespace Pv
         private static extern Int32 pv_sample_rate();
 
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
+        private static extern PvStatus pv_leopard_list_hardware_devices(
+            out IntPtr hardwareDevices,
+            out int numHardwareDevices);
+
+        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void pv_leopard_free_hardware_devices(
+            IntPtr hardwareDevices,
+            int numHardwareDevices);
+
+        [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
         private static extern void pv_set_sdk(string sdk);
 
         [DllImport(LIBRARY, CallingConvention = CallingConvention.Cdecl)]
@@ -138,6 +149,13 @@ namespace Pv
         /// Absolute path to the file containing model parameters. If not set it will be set to the
         /// default location.
         /// </param>
+        /// <param name="device">
+        /// String representation of the device (e.g., CPU or GPU) to use. If set to `best`, the most
+        /// suitable device is selected automatically. If set to `gpu`, the engine uses the first available GPU device. To select a specific
+        /// GPU device, set this argument to `gpu:${GPU_INDEX}`, where `${GPU_INDEX}` is the index of the target GPU. If set to
+        /// `cpu`, the engine will run on the CPU with the default number of threads. To specify the number of threads, set this
+        /// argument to `cpu:${NUM_THREADS}`, where `${NUM_THREADS}` is the desired number of threads.
+        /// </param>
         /// <param name="enableAutomaticPunctuation">
         /// Set to `true` to enable automatic punctuation insertion.
         /// </param>
@@ -149,12 +167,14 @@ namespace Pv
         public static Leopard Create(
             string accessKey,
             string modelPath = null,
+            string device = null,
             bool enableAutomaticPunctuation = false,
             bool enableDiarization = false)
         {
             return new Leopard(
                 accessKey,
                 modelPath ?? DEFAULT_MODEL_PATH,
+                device ?? "best",
                 enableAutomaticPunctuation,
                 enableDiarization);
         }
@@ -167,6 +187,13 @@ namespace Pv
         /// Absolute path to the file containing model parameters. If not set it will be set to the
         /// default location.
         /// </param>
+        /// <param name="device">
+        /// String representation of the device (e.g., CPU or GPU) to use. If set to `best`, the most
+        /// suitable device is selected automatically. If set to `gpu`, the engine uses the first available GPU device. To select a specific
+        /// GPU device, set this argument to `gpu:${GPU_INDEX}`, where `${GPU_INDEX}` is the index of the target GPU. If set to
+        /// `cpu`, the engine will run on the CPU with the default number of threads. To specify the number of threads, set this
+        /// argument to `cpu:${NUM_THREADS}`, where `${NUM_THREADS}` is the desired number of threads.
+        /// </param>
         /// <param name="enableAutomaticPunctuation">
         /// Set to `true` to enable automatic punctuation insertion.
         /// </param>
@@ -177,6 +204,7 @@ namespace Pv
         private Leopard(
             string accessKey,
             string modelPath,
+            string device,
             bool enableAutomaticPunctuation,
             bool enableDiarization)
         {
@@ -192,12 +220,14 @@ namespace Pv
 
             IntPtr accessKeyPtr = Utils.GetPtrFromUtf8String(accessKey);
             IntPtr modelPathPtr = Utils.GetPtrFromUtf8String(modelPath);
+            IntPtr devicePtr = Utils.GetPtrFromUtf8String(device);
 
             pv_set_sdk("dotnet");
 
             PvStatus status = pv_leopard_init(
                 accessKeyPtr,
                 modelPathPtr,
+                devicePtr,
                 enableAutomaticPunctuation,
                 enableDiarization,
                 out _libraryPointer);
@@ -345,6 +375,37 @@ namespace Pv
         public Int32 SampleRate { get; }
 
         /// <summary>
+        /// Retrieves a list of hardware devices that can be specified when constructing the model.
+        /// </summary>
+        /// <returns>An array of available hardware devices.</returns>
+        /// <exception cref="LeopardException">Thrown when an error occurs while retrieving the hardware devices.</exception>
+        public static string[] GetAvailableDevices()
+        {
+            IntPtr hardwareDevicesPtr;
+            int numDevices;
+            PvStatus status = pv_leopard_list_hardware_devices(
+                out hardwareDevicesPtr,
+                out numDevices);
+            if (status != PvStatus.SUCCESS)
+            {
+                throw PvStatusToException(
+                    status,
+                    "Get available devices failed",
+                    GetMessageStack());
+            }
+
+            string[] devices = new string[numDevices];
+            int elementSize = Marshal.SizeOf(typeof(IntPtr));
+            for (int i = 0; i < numDevices; i++)
+            {
+                devices[i] = Utils.GetUtf8StringFromPtr(Marshal.ReadIntPtr(hardwareDevicesPtr, i * elementSize));
+            }
+
+            pv_leopard_free_hardware_devices(hardwareDevicesPtr, numDevices);
+            return devices;
+        }
+
+        /// <summary>
         /// Coverts status codes to relevant .NET exceptions
         /// </summary>
         /// <param name="status">Picovoice library status code.</param>
@@ -410,7 +471,7 @@ namespace Pv
             Dispose();
         }
 
-        private string[] GetMessageStack()
+        private static string[] GetMessageStack()
         {
             Int32 messageStackDepth;
             IntPtr messageStackRef;

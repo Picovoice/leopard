@@ -50,6 +50,9 @@ jobs:
     - name: Inject AccessKey
       run: echo pvTestingAccessKey="${{secrets.PV_VALID_ACCESS_KEY}}" >> local.properties
 
+    - name: Inject Device
+      run: echo pvTestingDevice="cpu:1" >> local.properties
+
     - name: Inject Android keystore variables
       run: |
         echo storePassword="${{secrets.ANDROID_RELEASE_KEYSTORE_PASSWORD}}" >> local.properties
@@ -105,6 +108,9 @@ jobs:
     - name: Inject AccessKey
       run: echo pvTestingAccessKey="${{secrets.PV_VALID_ACCESS_KEY}}" >> local.properties
 
+    - name: Inject Device
+      run: echo pvTestingDevice="cpu:1" >> local.properties
+
     - name: Inject Android keystore variables
       run: |
         echo storePassword="${{secrets.ANDROID_RELEASE_KEYSTORE_PASSWORD}}" >> local.properties
@@ -133,4 +139,3 @@ jobs:
         --devices "android-min-max"
         --app_path "leopard-test-app/build/outputs/apk/en/release/leopard-test-app-en-release.apk"
         --test_path "leopard-test-app/build/outputs/apk/androidTest/en/release/leopard-test-app-en-release-androidTest.apk"
-

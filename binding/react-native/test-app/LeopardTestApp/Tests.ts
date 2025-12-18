@@ -8,6 +8,7 @@ const testData = require('./test_data.json');
 const platform = Platform.OS;
 
 const TEST_ACCESS_KEY: string = '{TESTING_ACCESS_KEY_HERE}';
+const DEVICE: string = '{TESTING_DEVICE_HERE}';
 
 export type Result = {
   testName: string;
@@ -182,7 +183,7 @@ async function runInitTestCase(
 
   let isFailed = false;
   try {
-    const leopard = await Leopard.create(accessKey, modelPath);
+    const leopard = await Leopard.create(accessKey, modelPath, DEVICE);
     if (leopard.sampleRate !== 16000) {
       result.success = false;
       result.errorString = `Invalid sample rate: '${leopard.sampleRate}'`;
@@ -239,7 +240,7 @@ async function runProcTestCase(
         : getPath(`model_files/leopard_params_${language}.pv`);
     const audioPath = getPath(`audio_samples/${audioFile}`);
 
-    const leopard = await Leopard.create(TEST_ACCESS_KEY, modelPath, {
+    const leopard = await Leopard.create(TEST_ACCESS_KEY, modelPath, DEVICE, {
       enableAutomaticPunctuation: enablePunctuation,
       enableDiarization: enableDiarization
     });
@@ -379,10 +380,10 @@ async function diarizationTests(): Promise<Result[]> {
           ? getPath('model_files/leopard_params.pv')
           : getPath(`model_files/leopard_params_${language}.pv`);
 
-      const leopard = await Leopard.create(TEST_ACCESS_KEY, modelPath, {
+      const leopard = await Leopard.create(TEST_ACCESS_KEY, modelPath, DEVICE, {
         enableDiarization: true
       });
-      
+
       const { words } = await leopard.processFile(await absolutePath('audio_samples', audio_file));
       await leopard.delete();
 

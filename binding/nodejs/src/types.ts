@@ -1,5 +1,5 @@
 /*
-  Copyright 2022-2023 Picovoice Inc.
+  Copyright 2022-2025 Picovoice Inc.
   You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
   file accompanying this source.
   Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
@@ -30,12 +30,13 @@ export type LeopardTranscript = {
 };
 
 export type LeopardInitOptions = {
+  modelPath?: string;
+  device?: string;
   enableAutomaticPunctuation?: boolean;
   enableDiarization?: boolean;
 };
 
 export type LeopardInputOptions = {
-  modelPath?: string;
   libraryPath?: string;
 };
 

@@ -1,5 +1,5 @@
 //
-// Copyright 2022-2024 Picovoice Inc.
+// Copyright 2022-2025 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -18,6 +18,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:leopard_flutter/leopard_error.dart';
 
 enum _NativeFunctions {
+  // ignore:constant_identifier_names
+  GET_AVAILABLE_DEVICES,
   // ignore:constant_identifier_names
   CREATE,
   // ignore:constant_identifier_names
@@ -41,11 +43,37 @@ class Leopard {
   /// The audio sample rate required by Leopard
   int get sampleRate => _sampleRate;
 
+  /// Lists all available devices that Leopard can use for inference.
+  /// Entries in the list can be used as the `device` argument when initializing Leopard.
+  ///
+  /// Throws a `LeopardException` if unable to get devices
+  ///
+  /// returns a list of devices Leopard can run inference on
+  static Future<List<String>> getAvailableDevices() async {
+    try {
+      List<String> devices = (await _channel
+          .invokeMethod(_NativeFunctions.GET_AVAILABLE_DEVICES.name, {}))
+          .cast<String>();
+      return devices;
+    } on PlatformException catch (error) {
+      throw leopardStatusToException(error.code, error.message);
+    } on Exception catch (error) {
+      throw leopardStatusToException("LeopardException", error.toString());
+    }
+  }
+
   /// Static creator for initializing Leopard
   ///
   /// [accessKey] AccessKey obtained from Picovoice Console (https://console.picovoice.ai/).
   ///
   /// [modelPath] Path to the file containing model parameters.
+  ///
+  /// [device] is the string representation of the device (e.g., CPU or GPU) to use. If set to `best`, the most
+  /// suitable device is selected automatically. If set to `gpu`, the engine uses the first available GPU
+  /// device. To select a specific GPU device, set this argument to `gpu:${GPU_INDEX}`, where `${GPU_INDEX}`
+  /// is the index of the target GPU. If set to `cpu`, the engine will run on the CPU with the default
+  /// number of threads. To specify the number of threads, set this argument to `cpu:${NUM_THREADS}`,
+  /// where `${NUM_THREADS}` is the desired number of threads.
   ///
   /// [enableAutomaticPunctuation] (Optional) Set to `true` to enable automatic punctuation insertion.
   ///
@@ -56,8 +84,14 @@ class Leopard {
   /// Throws a `LeopardException` if not initialized correctly
   ///
   /// returns an instance of the Leopard Speech-to-Text engine
-  static Future<Leopard> create(String accessKey, String modelPath,
-      {enableAutomaticPunctuation = false, enableDiarization = false}) async {
+  static Future<Leopard> create(
+    String accessKey,
+    String modelPath,
+    {
+      String? device,
+      bool enableAutomaticPunctuation = false,
+      bool enableDiarization = false
+    }) async {
     modelPath = await _tryExtractFlutterAsset(modelPath);
 
     try {
@@ -65,6 +99,7 @@ class Leopard {
           await _channel.invokeMethod(_NativeFunctions.CREATE.name, {
         'accessKey': accessKey,
         'modelPath': modelPath,
+        'device': device,
         'enableAutomaticPunctuation': enableAutomaticPunctuation,
         'enableDiarization': enableDiarization
       }));

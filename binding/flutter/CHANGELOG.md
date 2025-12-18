@@ -34,3 +34,7 @@
 
 ## [2.0.4] - 2025-10-01
 * Update android package
+
+## [3.0.0] - 2025-12-17
+* Improved engine performance
+* Added support for running on multiple CPU cores

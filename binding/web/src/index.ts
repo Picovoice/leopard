@@ -18,13 +18,19 @@ import {
   LeopardWorkerResponse,
 } from './types';
 
-import leopardWasm from '../lib/pv_leopard.wasm';
-import leopardWasmSimd from '../lib/pv_leopard_simd.wasm';
+import leopardWasmSimd from './lib/pv_leopard_simd.wasm';
+import leopardWasmSimdLib from './lib/pv_leopard_simd.txt';
+import leopardWasmPThread from './lib/pv_leopard_pthread.wasm';
+import leopardWasmPThreadLib from './lib/pv_leopard_pthread.txt';
 
-Leopard.setWasm(leopardWasm);
 Leopard.setWasmSimd(leopardWasmSimd);
-LeopardWorker.setWasm(leopardWasm);
+Leopard.setWasmSimdLib(leopardWasmSimdLib);
+Leopard.setWasmPThread(leopardWasmPThread);
+Leopard.setWasmPThreadLib(leopardWasmPThreadLib);
 LeopardWorker.setWasmSimd(leopardWasmSimd);
+LeopardWorker.setWasmSimdLib(leopardWasmSimdLib);
+LeopardWorker.setWasmPThread(leopardWasmPThread);
+LeopardWorker.setWasmPThreadLib(leopardWasmPThreadLib);
 
 export {
   Leopard,

@@ -32,6 +32,8 @@ export enum PvStatus {
 export type LeopardModel = PvModel;
 
 export type LeopardOptions = {
+  /** @defaultValue best */
+  device?: string;
   /** @defaultValue false */
   enableAutomaticPunctuation?: boolean;
   /** @defaultValue false */
@@ -63,8 +65,10 @@ export type LeopardWorkerInitRequest = {
   accessKey: string;
   modelPath: string;
   options: LeopardOptions;
-  wasm: string;
   wasmSimd: string;
+  wasmSimdLib: string;
+  wasmPThread: string;
+  wasmPThreadLib: string;
   sdk: string;
 };
 

@@ -1,5 +1,5 @@
 #
-#    Copyright 2018-2023 Picovoice Inc.
+#    Copyright 2018-2025 Picovoice Inc.
 #
 #    You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 #    file accompanying this source.
@@ -146,6 +146,7 @@ class Leopard(object):
             self,
             access_key: str,
             model_path: str,
+            device: str,
             library_path: str,
             enable_automatic_punctuation: bool = False,
             enable_diarization: bool = False) -> None:
@@ -154,6 +155,12 @@ class Leopard(object):
 
         :param access_key: AccessKey obtained from Picovoice Console (https://console.picovoice.ai/)
         :param model_path: Absolute path to the file containing model parameters.
+        :param device: String representation of the device (e.g., CPU or GPU) to use. If set to `best`, the most
+        suitable device is selected automatically. If set to `gpu`, the engine uses the first available GPU device.
+        To select a specific GPU device, set this argument to `gpu:${GPU_INDEX}`, where `${GPU_INDEX}` is the index
+        of the target GPU. If set to`cpu`, the engine will run on the CPU with the default number of threads. To
+        specify the number of threads, set this argument to `cpu:${NUM_THREADS}`, where `${NUM_THREADS}` is the
+        desired number of threads.
         :param library_path: Absolute path to Leopard's dynamic library.
         :param enable_automatic_punctuation Set to `True` to enable automatic punctuation insertion.
         :param enable_diarization Set to `true` to enable speaker diarization, which allows Leopard to differentiate
@@ -166,6 +173,9 @@ class Leopard(object):
 
         if not os.path.exists(model_path):
             raise LeopardIOError("Could not find model file at `%s`." % model_path)
+
+        if not isinstance(device, str) or len(device) == 0:
+            raise LeopardInvalidArgumentError("`device` should be a non-empty string.")
 
         if not os.path.exists(library_path):
             raise LeopardIOError("Could not find Leopard's dynamic library at `%s`." % library_path)
@@ -187,7 +197,7 @@ class Leopard(object):
         self._free_error_stack_func.restype = None
 
         init_func = library.pv_leopard_init
-        init_func.argtypes = [c_char_p, c_char_p, c_bool, c_bool, POINTER(POINTER(self.CLeopard))]
+        init_func.argtypes = [c_char_p, c_char_p, c_char_p, c_bool, c_bool, POINTER(POINTER(self.CLeopard))]
         init_func.restype = self.PicovoiceStatuses
 
         self._handle = POINTER(self.CLeopard)()
@@ -195,6 +205,7 @@ class Leopard(object):
         status = init_func(
             access_key.encode(),
             model_path.encode(),
+            device.encode(),
             enable_automatic_punctuation,
             enable_diarization,
             byref(self._handle))
@@ -370,6 +381,34 @@ class Leopard(object):
         return message_stack
 
 
+def list_hardware_devices(library_path: str) -> Sequence[str]:
+    dll_dir_obj = None
+    if hasattr(os, "add_dll_directory"):
+        dll_dir_obj = os.add_dll_directory(os.path.dirname(library_path))
+
+    library = cdll.LoadLibrary(library_path)
+
+    if dll_dir_obj is not None:
+        dll_dir_obj.close()
+
+    list_hardware_devices_func = library.pv_leopard_list_hardware_devices
+    list_hardware_devices_func.argtypes = [POINTER(POINTER(c_char_p)), POINTER(c_int32)]
+    list_hardware_devices_func.restype = Leopard.PicovoiceStatuses
+    c_hardware_devices = POINTER(c_char_p)()
+    c_num_hardware_devices = c_int32()
+    status = list_hardware_devices_func(byref(c_hardware_devices), byref(c_num_hardware_devices))
+    if status is not Leopard.PicovoiceStatuses.SUCCESS:
+        raise _PICOVOICE_STATUS_TO_EXCEPTION[status](message='`pv_leopard_list_hardware_devices` failed.')
+    res = [c_hardware_devices[i].decode() for i in range(c_num_hardware_devices.value)]
+
+    free_hardware_devices_func = library.pv_leopard_free_hardware_devices
+    free_hardware_devices_func.argtypes = [POINTER(c_char_p), c_int32]
+    free_hardware_devices_func.restype = None
+    free_hardware_devices_func(c_hardware_devices, c_num_hardware_devices.value)
+
+    return res
+
+
 __all__ = [
     'Leopard',
     'LeopardActivationError',
@@ -384,4 +423,5 @@ __all__ = [
     'LeopardMemoryError',
     'LeopardRuntimeError',
     'LeopardStopIterationError',
+    'list_hardware_devices'
 ]

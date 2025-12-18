@@ -16,6 +16,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   final String accessKey = "{TESTING_ACCESS_KEY_HERE}";
+  final String device = "{TESTING_DEVICE_HERE}";
 
   String getModelPath(String language) {
     return "assets/test_resources/model_files/leopard_params${language != "en" ? "_$language" : ""}.pv";
@@ -138,11 +139,16 @@ void main() {
     }) async {
       String modelPath = getModelPath(language);
 
+      List<String> devices = await Leopard.getAvailableDevices();
+        expect(devices.length, greaterThan(0),
+            reason: "No devices returns from getAvailableDevices");
+
       Leopard leopard;
       try {
         leopard = await Leopard.create(
           accessKey,
           modelPath,
+          device: device,
           enableAutomaticPunctuation: enableAutomaticPunctuation,
           enableDiarization: enableDiarization,
         );
@@ -274,6 +280,7 @@ void main() {
             accessKey,
             modelPath,
             enableDiarization: true,
+            device: device,
           );
         } on LeopardException catch (ex) {
           expect(

@@ -1415,7 +1415,7 @@
     fastq "^1.6.0"
 
 "@picovoice/leopard-react-native@file:../..":
-  version "2.0.4"
+  version "3.0.0"
 
 "@picovoice/react-native-voice-processor@1.2.3":
   version "1.2.3"

@@ -1,5 +1,5 @@
 /*
-    Copyright 2022-2024 Picovoice Inc.
+    Copyright 2022-2025 Picovoice Inc.
 
     You may not use this file except in compliance with the license. A copy of the license is
     located in the "LICENSE" file accompanying this source.
@@ -17,6 +17,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,9 @@ public class LeopardPlugin implements FlutterPlugin, MethodCallHandler {
         }
 
         switch (method) {
+            case GET_AVAILABLE_DEVICES:
+                leopardGetAvailableDevices(result);
+                break;
             case CREATE:
                 leopardCreate(call, result);
                 break;
@@ -87,16 +91,31 @@ public class LeopardPlugin implements FlutterPlugin, MethodCallHandler {
         channel.setMethodCallHandler(null);
     }
 
+    private void leopardGetAvailableDevices(@NonNull Result result) {
+        try {
+            String[] devices = Leopard.getAvailableDevices();
+            List<String> deviceList = Arrays.asList(devices);
+            result.success(deviceList);
+        } catch (LeopardException e) {
+            result.error(
+                    e.getClass().getSimpleName(),
+                    e.getMessage(),
+                    null);
+        }
+    }
+
     private void leopardCreate(@NonNull MethodCall call, @NonNull Result result) {
         try {
             String accessKey = call.argument("accessKey");
             String modelPath = call.argument("modelPath");
+            String device = call.argument("device");
             boolean enableAutomaticPunctuation = call.argument("enableAutomaticPunctuation");
             boolean enableDiarization = call.argument("enableDiarization");
 
             Leopard.Builder leopardBuilder = new Leopard.Builder()
                     .setAccessKey(accessKey)
                     .setModelPath(modelPath)
+                    .setDevice(device)
                     .setEnableAutomaticPunctuation(enableAutomaticPunctuation)
                     .setEnableDiarization(enableDiarization);
 
@@ -230,6 +249,7 @@ public class LeopardPlugin implements FlutterPlugin, MethodCallHandler {
     }
 
     private enum Method {
+        GET_AVAILABLE_DEVICES,
         CREATE,
         PROCESS,
         PROCESSFILE,

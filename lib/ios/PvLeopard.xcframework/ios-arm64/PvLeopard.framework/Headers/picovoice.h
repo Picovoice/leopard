@@ -80,6 +80,7 @@ PV_API void pv_free_error_stack(char **message_stack);
 PV_API void pv_set_sdk(const char *sdk);
 
 #ifdef __cplusplus
+
 }
 
 #endif
