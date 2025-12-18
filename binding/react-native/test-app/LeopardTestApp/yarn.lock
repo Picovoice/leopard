@@ -1414,9 +1414,8 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@picovoice/leopard-react-native@../../pkg/picovoice-leopard-react-native-3.0.0.tgz":
+"@picovoice/leopard-react-native@file:../..":
   version "3.0.0"
-  resolved "../../pkg/picovoice-leopard-react-native-3.0.0.tgz#f439551d87f3c9cfdff9e424aa0e8eeae02c3a87"
 
 "@picovoice/react-native-voice-processor@1.2.3":
   version "1.2.3"

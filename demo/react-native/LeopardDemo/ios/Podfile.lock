@@ -2463,7 +2463,6 @@ DEPENDENCIES:
   - fmt (from `../node_modules/react-native/third-party-podspecs/fmt.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
-  - Leopard-iOS (from `https://raw.githubusercontent.com/Picovoice/leopard/v3.0-ios/binding/ios/Leopard-iOS.podspec`)
   - "leopard-react-native (from `../node_modules/@picovoice/leopard-react-native`)"
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTDeprecation (from `../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
@@ -2541,6 +2540,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - ios-voice-processor
+    - Leopard-iOS
     - React-Codegen
     - SocketRocket
 
@@ -2560,8 +2560,6 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-2025-09-01-RNv0.82.0-265ef62ff3eb7289d17e366664ac0da82303e101
-  Leopard-iOS:
-    :podspec: https://raw.githubusercontent.com/Picovoice/leopard/v3.0-ios/binding/ios/Leopard-iOS.podspec
   leopard-react-native:
     :path: "../node_modules/@picovoice/leopard-react-native"
   RCT-Folly:
@@ -2789,6 +2787,6 @@ SPEC CHECKSUMS:
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: edeb9900b9e5bb5b27b9a6a2d5914e4fe4033c1b
 
-PODFILE CHECKSUM: a95b008992365bd3ffc4f8d762f2eae644ebd333
+PODFILE CHECKSUM: 3d7f8056277ede6b4326f74960fe35d6cdf09da5
 
 COCOAPODS: 1.16.2
