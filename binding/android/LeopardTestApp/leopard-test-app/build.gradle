@@ -147,7 +147,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.code.gson:gson:2.10'
     implementation 'com.google.errorprone:error_prone_annotations:2.36.0'
-    implementation files('../../Leopard/leopard/build/outputs/aar/leopard-release.aar')
+    implementation 'ai.picovoice:leopard-android:3.0.0'
 
     // Espresso UI Testing
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

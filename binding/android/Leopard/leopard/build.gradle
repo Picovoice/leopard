@@ -6,21 +6,6 @@ ext {
     PUBLISH_ARTIFACT_ID = 'leopard-android'
 }
 
-apply plugin: 'maven-publish'
-publishing {
-    publications {
-        release(MavenPublication) {
-            groupId = "ai.picovoice"
-            artifactId = "leopard-android"
-            version = "3.0.0"
-            artifact("$buildDir/outputs/aar/leopard-release.aar")
-        }
-    }
-    repositories {
-        mavenLocal()
-    }
-}
-
 android {
     compileSdkVersion defaultTargetSdkVersion
 
