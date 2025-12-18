@@ -35,7 +35,7 @@
     "test": "cypress run --component"
   },
   "dependencies": {
-    "@picovoice/leopard-web": "../web"
+    "@picovoice/leopard-web": "3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.21.3",

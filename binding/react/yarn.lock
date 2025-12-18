@@ -1210,8 +1210,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@picovoice/leopard-web@../web":
+"@picovoice/leopard-web@3.0.0":
   version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@picovoice/leopard-web/-/leopard-web-3.0.0.tgz#dd4b4c9d4bd65bdd5978b4e97a734c5c3214b6c9"
+  integrity sha512-Xg9O3iUhTKIN6m5IQKkxILlNm38CpoBWIpYKX8dTigrCGTN5R9Ggb6vvkDiGoj/SwFs9hETd0H2nYc31LBn3HA==
   dependencies:
     "@picovoice/web-utils" "=1.4.3"
 
