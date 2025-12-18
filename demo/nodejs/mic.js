@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 //
-// Copyright 2022-2023 Picovoice Inc.
+// Copyright 2022-2025 Picovoice Inc.
 //
 // You may not use this file except in compliance with the license. A copy of the license is located in the "LICENSE"
 // file accompanying this source.
@@ -29,6 +29,9 @@ program
   )
   .option("-m, --model_file_path <string>", "absolute path to leopard model")
   .option(
+    "-y, --device <string>",
+    "Device to run inference on (`best`, `cpu:{num_threads}` or `gpu:{gpu_index}`). Default: selects best device")
+  .option(
     "-i, --audio_device_index <number>",
     "index of audio device to use to record audio",
     Number,
@@ -37,9 +40,13 @@ program
   .option("-s, --show_audio_devices", "show the list of available devices")
   .option("-p, --disable_automatic_punctuation", "disable automatic punctuation")
   .option("-d, --disable_speaker_diarization", "disable speaker diarization")
+  .option(
+      "-z, --show_inference_devices",
+      "Print devices that are available to run Leopard inference.",
+      false)
   .option("-v, --verbose", "verbose mode, prints metadata");
 
-if (process.argv.length < 1) {
+if (process.argv.length < 3) {
   program.help();
 }
 program.parse(process.argv);
@@ -50,11 +57,18 @@ async function micDemo() {
   let accessKey = program["access_key"];
   let libraryFilePath = program["library_file_path"];
   let modelFilePath = program["model_file_path"];
+  let device = program["device"];
   let audioDeviceIndex = program["audio_device_index"];
   let showAudioDevices = program["show_audio_devices"];
   let disableAutomaticPunctuation = program["disable_automatic_punctuation"];
   let disableSpeakerDiarization = program["disable_speaker_diarization"];
   let verbose = program["verbose"];
+
+  const showInferenceDevices = program["show_inference_devices"];
+  if (showInferenceDevices) {
+    console.log(Leopard.listAvailableDevices().join('\n'));
+    process.exit();
+  }
 
   let showAudioDevicesDefined = showAudioDevices !== undefined;
 
@@ -75,6 +89,7 @@ async function micDemo() {
       accessKey,
       {
         'modelPath': modelFilePath,
+        'device': device,
         'libraryPath': libraryFilePath,
         'enableAutomaticPunctuation': !disableAutomaticPunctuation,
         'enableDiarization': !disableSpeakerDiarization
