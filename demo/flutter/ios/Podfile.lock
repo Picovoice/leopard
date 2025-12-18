@@ -18,13 +18,13 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_voice_processor (from `.symlinks/plugins/flutter_voice_processor/ios`)
   - integration_test (from `.symlinks/plugins/integration_test/ios`)
-  - Leopard-iOS (from `https://raw.githubusercontent.com/Picovoice/leopard/v3.0/binding/ios/Leopard-iOS.podspec`)
   - leopard_flutter (from `.symlinks/plugins/leopard_flutter/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
 
 SPEC REPOS:
   trunk:
     - ios-voice-processor
+    - Leopard-iOS
 
 EXTERNAL SOURCES:
   Flutter:
@@ -33,8 +33,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_voice_processor/ios"
   integration_test:
     :path: ".symlinks/plugins/integration_test/ios"
-  Leopard-iOS:
-    :podspec: https://raw.githubusercontent.com/Picovoice/leopard/v3.0/binding/ios/Leopard-iOS.podspec
   leopard_flutter:
     :path: ".symlinks/plugins/leopard_flutter/ios"
   path_provider_foundation:
@@ -49,6 +47,6 @@ SPEC CHECKSUMS:
   leopard_flutter: 1c70c8f8a851753325b3b4e7708d51ee6696d4ac
   path_provider_foundation: bb55f6dbba17d0dccd6737fe6f7f34fbd0376880
 
-PODFILE CHECKSUM: 09ad6e892876bf8c22e06f5b977dbf731a49406d
+PODFILE CHECKSUM: 605c32f2fdd50c4f52b7b468d638bf62f371d321
 
 COCOAPODS: 1.16.2
