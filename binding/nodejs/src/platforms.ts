@@ -40,7 +40,7 @@ const SUPPORTED_NODEJS_SYSTEMS = new Set([
   SYSTEM_WINDOWS,
 ]);
 
-const LIBRARY_PATH_PREFIX = '../lib/';
+const LIBRARY_PATH_PREFIX = 'lib/';
 const SYSTEM_TO_LIBRARY_PATH = new Map();
 SYSTEM_TO_LIBRARY_PATH.set(
   `${SYSTEM_MAC}/${X86_64}`,
@@ -87,17 +87,18 @@ SYSTEM_TO_LIBRARY_PATH.set(
   `${PLATFORM_WINDOWS}/arm64/pv_leopard.node`
 );
 
-export function getDirname(): string {
+export function getNodeProjectRoot(): string {
   const parent: string = path.resolve(__dirname, '..');
   if (path.basename(parent) === 'pre-compiled') {
-    return parent;
+    // if this file is in pre-compiled/src/, then the project root is two levels up
+    return path.resolve(parent, '..');
   }
 
-  return __dirname;
+  return parent;
 }
 
 function absoluteLibraryPath(libraryPath: string): string {
-  return path.resolve(getDirname(), LIBRARY_PATH_PREFIX, libraryPath);
+  return path.resolve(getNodeProjectRoot(), LIBRARY_PATH_PREFIX, libraryPath);
 }
 
 function getCpuPart(): string {
