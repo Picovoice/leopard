@@ -73,10 +73,5 @@ jobs:
       run: yarn install
 
     - name: Test
-      if: matrix.machine != 'rpi3-32'
-      run: yarn test test/index.test.ts --access_key=${{secrets.PV_VALID_ACCESS_KEY}} --device=${{ matrix.device }}
-
-    - name: rpi3-Test
-      if: matrix.machine == 'rpi3-32'
-      # "pre-compiled" avoids dangerous levels of nodejs virtual memory fragmentation in 32-bit architectures
-      run: yarn test:pre-compiled test/index.test.js --access_key=${{secrets.PV_VALID_ACCESS_KEY}} --device=${{ matrix.device }}
+      # "pre-compiled" avoids dangerous levels of nodejs virtual memory fragmentation on 32-bit architectures
+      run: yarn test test/index.test.js --access_key=${{secrets.PV_VALID_ACCESS_KEY}} --device=${{ matrix.device }}
