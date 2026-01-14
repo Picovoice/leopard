@@ -11,7 +11,7 @@
     "prepack": "npm run build",
     "prepare": "node copy.js",
     "test": "jest --config jest.config.js --no-cache",
-    "test:precompiled": "tsc -p tsconfig-test.json && jest --config jest-test.config.js --no-cache",
+    "test:pre-compiled": "tsc -p tsconfig-test.json && jest --config jest-test.config.js --no-cache",
     "lint": "eslint . --ext .js,.ts"
   },
   "repository": {
