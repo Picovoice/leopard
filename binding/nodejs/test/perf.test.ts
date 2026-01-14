@@ -13,6 +13,7 @@
 import { Leopard } from '../src';
 import * as path from 'path';
 import { performance } from 'perf_hooks';
+import { getDirname } from '../src/platforms';
 
 const WAV_PATH = '../../../resources/audio_samples/test.wav';
 
@@ -65,7 +66,7 @@ describe('Performance', () => {
   });
 
   test('proc performance', () => {
-    const waveFilePath = path.join(__dirname, WAV_PATH);
+    const waveFilePath = path.join(getDirname(), WAV_PATH);
     let leopardEngine = new Leopard(ACCESS_KEY, {
       device: DEVICE
     });

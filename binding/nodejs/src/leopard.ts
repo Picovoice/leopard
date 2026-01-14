@@ -26,7 +26,7 @@ import {
   LeopardWord,
 } from './types';
 
-import { getSystemLibraryPath } from './platforms';
+import { getSystemLibraryPath, getDirname } from './platforms';
 
 const DEFAULT_MODEL_PATH = '../lib/common/leopard_params.pv';
 
@@ -95,7 +95,7 @@ export class Leopard {
     }
 
     const {
-      modelPath = path.resolve(__dirname, DEFAULT_MODEL_PATH),
+      modelPath = path.resolve(getDirname(), DEFAULT_MODEL_PATH),
       device = 'best',
       libraryPath = getSystemLibraryPath(),
       enableAutomaticPunctuation = false,

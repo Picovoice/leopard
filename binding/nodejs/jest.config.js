@@ -1,6 +1,6 @@
 /** @type {import('jest').Config} */
 module.exports = {
-  rootDir: '.',
+  rootDir: 'pre-compiled',
   testEnvironment: 'node',
   transform: {},
   testMatch: ['<rootDir>/test/*.test.js'],

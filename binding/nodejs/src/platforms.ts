@@ -87,8 +87,17 @@ SYSTEM_TO_LIBRARY_PATH.set(
   `${PLATFORM_WINDOWS}/arm64/pv_leopard.node`
 );
 
+export function getDirname(): string {
+  const parent: string = path.resolve(__dirname, '..');
+  if (path.basename(parent) === 'pre-compiled') {
+    return parent;
+  }
+
+  return __dirname;
+}
+
 function absoluteLibraryPath(libraryPath: string): string {
-  return path.resolve(__dirname, LIBRARY_PATH_PREFIX, libraryPath);
+  return path.resolve(getDirname(), LIBRARY_PATH_PREFIX, libraryPath);
 }
 
 function getCpuPart(): string {

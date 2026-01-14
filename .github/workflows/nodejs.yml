@@ -49,7 +49,7 @@ jobs:
       run: yarn install
 
     - name: Test
-      run: yarn test test/index.test.ts --access_key=${{secrets.PV_VALID_ACCESS_KEY}} --device=${{ matrix.device }}
+      run: yarn test test/index.test.js --access_key=${{secrets.PV_VALID_ACCESS_KEY}} --device=${{ matrix.device }}
 
   build-self-hosted:
     runs-on: ${{ matrix.machine }}
