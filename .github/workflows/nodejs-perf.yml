@@ -54,7 +54,7 @@ jobs:
       run: yarn install
 
     - name: Test
-      run: yarn test test/perf.test.js --access_key=${{secrets.PV_VALID_ACCESS_KEY}} --device=cpu:1 --num_test_iterations=50 --init_performance_threshold_sec=${{matrix.init_performance_threshold_sec}} --proc_performance_threshold_sec=${{matrix.proc_performance_threshold_sec}}
+      run: yarn test test/perf.test.ts --access_key=${{secrets.PV_VALID_ACCESS_KEY}} --device=cpu:1 --num_test_iterations=50 --init_performance_threshold_sec=${{matrix.init_performance_threshold_sec}} --proc_performance_threshold_sec=${{matrix.proc_performance_threshold_sec}}
 
   perf-self-hosted:
     runs-on: ${{ matrix.machine }}
@@ -91,7 +91,7 @@ jobs:
       run: bash machine-state.sh
 
     - name: Test
-      run: yarn test test/perf.test.js --access_key=${{secrets.PV_VALID_ACCESS_KEY}} --device=cpu:1 --num_test_iterations=20 --init_performance_threshold_sec=${{matrix.init_performance_threshold_sec}} --proc_performance_threshold_sec=${{matrix.proc_performance_threshold_sec}}
+      run: yarn test test/perf.test.ts --access_key=${{secrets.PV_VALID_ACCESS_KEY}} --device=cpu:1 --num_test_iterations=20 --init_performance_threshold_sec=${{matrix.init_performance_threshold_sec}} --proc_performance_threshold_sec=${{matrix.proc_performance_threshold_sec}}
 
     - name: Machine state after
       working-directory: resources/scripts
@@ -116,4 +116,4 @@ jobs:
       run: yarn install
 
     - name: Test
-      run: yarn test test/perf.test.js --access_key=${{secrets.PV_VALID_ACCESS_KEY}} --device=cpu:1 --num_test_iterations=20 --init_performance_threshold_sec=${{matrix.init_performance_threshold_sec}} --proc_performance_threshold_sec=${{matrix.proc_performance_threshold_sec}}
+      run: yarn test test/perf.test.ts --access_key=${{secrets.PV_VALID_ACCESS_KEY}} --device=cpu:1 --num_test_iterations=20 --init_performance_threshold_sec=${{matrix.init_performance_threshold_sec}} --proc_performance_threshold_sec=${{matrix.proc_performance_threshold_sec}}

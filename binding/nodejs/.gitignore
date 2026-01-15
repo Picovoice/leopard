@@ -7,5 +7,5 @@ yarn-error.log
 
 test/*.js
 test/*.js.map
-src/*.ts
-src/*.ts.map
+src/*.js
+src/*.js.map
