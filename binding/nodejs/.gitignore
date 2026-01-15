@@ -4,3 +4,8 @@ resources
 package-lock.json
 dist
 yarn-error.log
+
+test/*.js
+test/*.js.map
+src/*.js
+src/*.js.map
