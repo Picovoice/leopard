@@ -16,5 +16,5 @@
     "strict": true,
     "noImplicitAny": true
   },
-  "exclude": ["node_modules", "dist", "test", "pre-compiled"]
+  "exclude": ["node_modules", "dist", "test"]
 }

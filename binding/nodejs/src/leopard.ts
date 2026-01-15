@@ -26,9 +26,9 @@ import {
   LeopardWord,
 } from './types';
 
-import { getSystemLibraryPath, getNodeProjectRoot } from './platforms';
+import { getSystemLibraryPath } from './platforms';
 
-const DEFAULT_MODEL_PATH = 'lib/common/leopard_params.pv';
+const DEFAULT_MODEL_PATH = '../lib/common/leopard_params.pv';
 
 const VALID_AUDIO_EXTENSIONS = [
   '.flac',
@@ -95,7 +95,7 @@ export class Leopard {
     }
 
     const {
-      modelPath = path.resolve(getNodeProjectRoot(), DEFAULT_MODEL_PATH),
+      modelPath = path.resolve(__dirname, DEFAULT_MODEL_PATH),
       device = 'best',
       libraryPath = getSystemLibraryPath(),
       enableAutomaticPunctuation = false,

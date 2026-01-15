@@ -3,5 +3,9 @@ lib
 resources
 package-lock.json
 dist
-pre-compiled
 yarn-error.log
+
+test/*.js
+test/*.js.map
+src/*.ts
+src/*.ts.map

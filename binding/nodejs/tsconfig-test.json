@@ -1,12 +1,12 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "pre-compiled",
+    "outDir": ".",
     "rootDir": "."
   },
   "include": [
     "src/**/*.ts",
     "test/**/*.ts"
   ],
-  "exclude": ["node_modules", "dist", "pre-compiled"]
+  "exclude": ["node_modules", "dist"]
 }

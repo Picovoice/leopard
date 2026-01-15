@@ -10,9 +10,8 @@
 //
 import * as path from 'path';
 import { LeopardWord } from '../src';
-import { getNodeProjectRoot } from '../src/platforms';
 
-const ROOT_DIR = path.join(getNodeProjectRoot(), '../..');
+const ROOT_DIR = path.join(__dirname, '../../..');
 const TEST_DATA_JSON = require(path.join(
   ROOT_DIR,
   'resources/.test/test_data.json'
