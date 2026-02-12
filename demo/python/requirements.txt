@@ -1,3 +1,4 @@
-pvleopard==3.0.0
+../../binding/python/dist/pvleopard-3.0.1-py3-none-any.whl
+# pvleopard==3.0.1
 pvrecorder==1.2.4
 tabulate==0.8.10

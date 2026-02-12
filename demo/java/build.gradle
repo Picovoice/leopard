@@ -3,6 +3,9 @@ plugins {
 }
 
 repositories {
+    flatDir {
+        dirs '../../binding/java/build/libs'
+    }
     mavenCentral()
 }
 
@@ -15,7 +18,8 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'ai.picovoice:leopard-java:3.0.0'
+    // implementation 'ai.picovoice:leopard-java:3.0.1'
+    implementation name: 'Leopard'
     implementation 'commons-cli:commons-cli:1.4'
 }
 
