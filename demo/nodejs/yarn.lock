@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@picovoice/leopard-node@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@picovoice/leopard-node/-/leopard-node-3.0.0.tgz#a9d3f8594d84316843ff428052e415dfc058f402"
-  integrity sha512-ZbA4jkPYOxwPftR2BHoD8i6a7R2NxnugGV6SjNnu0oVx4RyddQjHXnZ1bc8AGqhdfn2/1vvI+ox5trIHuX61+g==
+"@picovoice/leopard-node@3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@picovoice/leopard-node/-/leopard-node-3.0.1.tgz#973df1b85b4d30aa2ee1ebf059b6e48c8fd20777"
+  integrity sha512-pYxus4KC7Q8Gr8VYcRz3YV+x4hz15/QSyYmNCWrzIaX95JZnYnMFAmkS1+ZfQuViLdHo87l+B85iaR7XlkNGZA==
 
 "@picovoice/pvrecorder-node@=1.2.6":
   version "1.2.6"

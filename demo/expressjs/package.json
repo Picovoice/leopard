@@ -1,12 +1,12 @@
 {
   "name": "rss-transcribe",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "@picovoice/leopard-node": "3.0.0",
+    "@picovoice/leopard-node": "3.0.1",
     "axios": "^1.13.5",
     "express": "^4.20.0",
     "rss-parser": "^3.12.0"

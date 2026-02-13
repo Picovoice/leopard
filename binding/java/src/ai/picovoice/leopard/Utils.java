@@ -259,7 +259,7 @@ class Utils {
         switch (ENVIRONMENT_NAME) {
             case "windows":
                 if (ARCHITECTURE == "amd64") {
-                    String[] dependencies = { "pv_ypu_impl_cuda.dll" };
+                    String[] dependencies = { "pv_ypu_impl_cuda_leopard.dll" };
                     for (int i = 0; i < dependencies.length; i++) {
                         Path depPath = libraryDirpath.resolve(dependencies[i]);
                         if (Files.exists(depPath)) {
