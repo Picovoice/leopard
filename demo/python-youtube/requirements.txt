@@ -1,3 +1,2 @@
-../../binding/python/dist/pvleopard-3.0.1-py3-none-any.whl
-# pvleopard==3.0.1
+pvleopard==3.0.1
 yt-dlp
