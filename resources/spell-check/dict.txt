@@ -173,3 +173,4 @@ xcshareddata
 xcuitest
 xcworkspace
 ytdlp
+XCTEST
