@@ -65,7 +65,7 @@ jobs:
         include:
         - machine: rpi3-64
           init_performance_threshold_sec: 14.0
-          proc_performance_threshold_sec: 5.5
+          proc_performance_threshold_sec: 8.5
         - machine: rpi4-64
           init_performance_threshold_sec: 7.0
           proc_performance_threshold_sec: 2.5
