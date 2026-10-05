@@ -129,6 +129,20 @@ jobs:
       - name: Build demo
         run: cmake --build ./build --target leopard_demo
 
+      - name: Setup Python virtualenv (*nix)
+        if: ${{ matrix.machine != 'pv-windows' && matrix.machine != 'pv-windows-arm64' }}
+        run: |
+          python3 -m venv .venv
+          . .venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
+
+      - name: Setup Python virtualenv (windows)
+        if: ${{ matrix.machine == 'pv-windows' || matrix.machine == 'pv-windows-arm64' }}
+        run: |
+          python3 -m venv .venv --symlinks
+          .venv\Scripts\activate
+          echo PATH=$PATH >> $GITHUB_ENV
+
       - name: Install dependencies
         run: pip install -r test/requirements.txt
 
