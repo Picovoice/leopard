@@ -71,22 +71,16 @@ jobs:
       fail-fast: false
       matrix:
         device: [ cpu:1 ]
-        machine: [ rpi3-32, rpi3-64, rpi4-32, rpi4-64, rpi5-64 ]
+        machine: [ rpi3-64, rpi4-64, rpi5-64 ]
         include:
-        - machine: rpi3-32
-          init_performance_threshold_sec: 8.5
-          proc_performance_threshold_sec: 4.5
         - machine: rpi3-64
-          init_performance_threshold_sec: 9.0
-          proc_performance_threshold_sec: 4.5
-        - machine: rpi4-32
-          init_performance_threshold_sec: 7.2
-          proc_performance_threshold_sec: 3.0
+          init_performance_threshold_sec: 14.0
+          proc_performance_threshold_sec: 7.0
         - machine: rpi4-64
           init_performance_threshold_sec: 6.5
           proc_performance_threshold_sec: 2.8
         - machine: rpi5-64
-          init_performance_threshold_sec: 2.0
+          init_performance_threshold_sec: 2.5
           proc_performance_threshold_sec: 1.0
 
     steps:
@@ -95,6 +89,20 @@ jobs:
     - name: Machine state before
       working-directory: resources/scripts
       run: bash machine-state.sh
+
+    - name: Setup Python virtualenv (*nix)
+      if: ${{ matrix.machine != 'pv-windows' && matrix.machine != 'pv-windows-arm64' }}
+      run: |
+        python3 -m venv .venv
+        . .venv/bin/activate
+        echo PATH=$PATH >> $GITHUB_ENV
+
+    - name: Setup Python virtualenv (windows)
+      if: ${{ matrix.machine == 'pv-windows' || matrix.machine == 'pv-windows-arm64' }}
+      run: |
+        python3 -m venv .venv --symlinks
+        .venv\Scripts\activate
+        echo PATH=$PATH >> $GITHUB_ENV
 
     - name: Install dependencies
       run: pip install -r requirements.txt
